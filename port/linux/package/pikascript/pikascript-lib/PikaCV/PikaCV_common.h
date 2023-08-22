@@ -19,12 +19,12 @@ typedef struct PikaCV_Image {
     int size;
 } PikaCV_Image;
 
-typedef enum  {
+typedef enum {
     PikaCV_Check_ReturnError = 0,
     PikaCV_Check_Converter,
 } PikaCV_Check_ReturnMode;
 
-typedef enum  {
+typedef enum {
     PikaCV_Check_Size = 0,
     PikaCV_Check_SHW,
     PikaCV_Check_HW,
@@ -34,6 +34,12 @@ uint8_t* _image_getData(PikaObj* self);
 PIKA_RES _image_setData(PikaObj* self, uint8_t* data, int size);
 int _image_getDataSize(PikaObj* self);
 
-int PikaCV_Format_Check(PikaObj* image,PikaCV_ImageFormat_Type type,PikaCV_Check_ReturnMode returnMode);
-int PikaCV_Format_CheckTwo(PikaObj* image1,PikaObj* image2,PikaCV_Check_ReturnMode returnMode);
-int PikaCV_Size_Check(PikaObj* image1,PikaObj* image2,PikaCV_Check_SizeMode sizeMode);
+int PikaCV_Format_Check(PikaObj* image,
+                        PikaCV_ImageFormat_Type type,
+                        PikaCV_Check_ReturnMode returnMode);
+int PikaCV_Format_CheckTwo(PikaObj* image1,
+                           PikaObj* image2,
+                           PikaCV_Check_ReturnMode returnMode);
+int PikaCV_Size_Check(PikaObj* image1,
+                      PikaObj* image2,
+                      PikaCV_Check_SizeMode sizeMode);

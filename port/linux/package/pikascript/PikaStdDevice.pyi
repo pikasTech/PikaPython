@@ -5,7 +5,7 @@ PikaStdDevice is a standard and abstract device module for PikaScript.
 
 PikaStdDevice supplies the standard device API for users.
 
-Document: https://pikadoc.readthedocs.io/en/latest/PikaStdDevice%20%E6%A0%87%E5%87%86%E8%AE%BE%E5%A4%87.html
+Document: https://pikadoc-en.readthedocs.io/en/latest/PikaStdDevice%20%E6%A0%87%E5%87%86%E8%AE%BE%E5%A4%87.html
 
 """
 from PikaObj import *
@@ -74,7 +74,7 @@ class GPIO(BaseDev):
     SIGNAL_FALLING: int
     SIGNAL_ANY: int
 
-    def setCallBack(self, eventCallBack: any, filter: int):
+    def setCallback(self, eventCallBack: any, filter: int):
         """
         Add a callback function to the pin.
         Example: 
@@ -85,6 +85,11 @@ class GPIO(BaseDev):
         ```
         The `signal` parameter is the signal type.
         The callback function will be called when the signal is triggered.
+        """
+
+    def setCallBack(self, eventCallBack: any, filter: int):
+        """
+        deprecated, you can use `setCallback` instead.
         """
 
     def close(self): ...
@@ -103,7 +108,50 @@ class GPIO(BaseDev):
 
 
 def Time() -> time:
-    """ use time module instead """
+    """ deprecated use time module instead """
+
+
+class Timer:
+    def __init__(self): ...
+
+    def setPeriod(self, period_ms: int):
+        """Set the period of the timer."""
+
+    def setMode(self, mode: str):
+        """ 
+        Set the mode of the timer. 
+        Example: `"continuous"`, `"oneshot"` ...
+        """
+
+    SIGNAL_TIMEOUT: int
+    SIGNAL_ANY: int
+
+    def setCallback(self, callback: any, filter: int):
+        """
+        Add a callback function to the timer.
+        The callback function will be called when the timer is triggered.
+        """
+
+    def enable(self):
+        """Enable the timer."""
+
+    def disable(self):
+        """Disable the timer."""
+
+    def setName(self, name: str):
+        """Set the name of the timer."""
+
+    def setId(self, id: int):
+        """Set the id of the timer."""
+
+    def getName(self) -> str:
+        """Get the name of the timer."""
+
+    def getId(self) -> int:
+        """Get the id of the timer."""
+
+    def close(self):
+        """Close the timer."""
 
 
 class ADC(BaseDev):
@@ -234,7 +282,7 @@ class UART:
     SIGNAL_RX: int
     SIGNAL_TX: int
 
-    def setCallBack(self, eventCallBack: any, filter: int):
+    def setCallback(self, eventCallBack: any, filter: int):
         """
         Add a callback function to the pin.
         Example: 
@@ -243,6 +291,11 @@ class UART:
             print(uart.read(-1))
         io.setCallBack(cb1, uart.SIGNAL_RX)
         ```
+        """
+
+    def setCallBack(self, eventCallBack: any, filter: int):
+        """
+        deprecated, you can use `setCallback` instead.
         """
 
     @abstractmethod
@@ -502,8 +555,11 @@ class CAN(BaseDev):
 
 class BaseDev:
     @PIKA_C_MACRO_IF("PIKA_EVENT_ENABLE")
-    def addEventCallBack(self, eventCallback: any):
+    def addEventCallback(self, eventCallback: any):
         """ Add an event callback. """
+
+    def addEventCallBack(self, eventCallback: any):
+        """ deprecated, use addEventCallback instead. """
 
     @abstractmethod
     @PIKA_C_MACRO_IF("PIKA_EVENT_ENABLE")

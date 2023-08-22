@@ -103,9 +103,9 @@ int __fmodeflags(const char* mode) {
     else if (*mode == 'r')
         flags = FA_READ;
     else
-        flags = FA_WRITE;
+        flags = FA_CREATE_ALWAYS;
     if (*mode == 'w')
-        flags |= FA_OPEN_ALWAYS;
+        flags |= FA_CREATE_ALWAYS;
     if (*mode == 'a')
         flags |= FA_OPEN_APPEND;
     return flags;

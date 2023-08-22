@@ -21,7 +21,7 @@ int LibObj_staticLink(LibObj* self,
                       size_t size);
 int LibObj_staticLinkFile(LibObj* self, char* input_file_name);
 void LibObj_listModules(LibObj* self);
-int LibObj_saveLibraryFile(LibObj* self, char* output_file_name);
+int LibObj_linkFile(LibObj* self, char* output_file_name);
 int LibObj_loadLibraryFile(LibObj* self, char* input_file_name);
 int Lib_loadLibraryFileToArray(char* origin_file_name, char* pikascript_root);
 PikaMaker* New_PikaMaker(void);
@@ -35,28 +35,33 @@ PIKA_RES pikaMaker_linkCompiledModulesFullPath(PikaMaker* self, char* lib_path);
 PIKA_RES pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name);
 PIKA_RES _do_pikaMaker_linkCompiledModules(PikaMaker* self,
                                            char* lib_name,
-                                           PIKA_BOOL gen_c_array);
+                                           pika_bool gen_c_array);
 int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes);
 void LibObj_printModules(LibObj* self);
 void pikaMaker_deinit(PikaMaker* self);
 PIKA_RES pikaMaker_linkRaw(PikaMaker* self, char* file_path);
+PIKA_RES pikaMaker_linkRaw_New(PikaMaker* self,
+                               char* file_path,
+                               char* pack_path);
 PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
                                  char* module_name,
                                  uint8_t** addr_p,
                                  size_t* size_p);
 
-#define LIB_VERSION_NUMBER 4
+#define LIB_VERSION_NUMBER 6
 #define LIB_INFO_BLOCK_SIZE 32
 #define PIKA_APP_MAGIC_CODE_OFFSET 0
 #define PIKA_APP_MODULE_SIZE_OFFSET 1
 #define PIKA_APP_VERSION_OFFSET 2
 #define PIKA_APP_MODULE_NUM_OFFSET 3
+#define PIKA_APP_INFO_BLOCK_SIZE_OFFSET 4
 
 typedef struct {
+    Arg* farg;
     uint8_t* addr;
     size_t size;
     size_t pos;
-    PIKA_BOOL need_free;
+    pika_bool need_free;
 } pikafs_FILE;
 
 pikafs_FILE* pikafs_fopen(char* file_name, char* mode);

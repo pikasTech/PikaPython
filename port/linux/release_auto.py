@@ -14,7 +14,7 @@ for folder in os.listdir(LINUX_PACKAGE_PATH):
     # call `bash pkg-push $folder`
     cmd = f"./pkg-push.sh {folder}"
     output = subprocess.check_output(["bash", "-c", cmd])
-    print(output)
+    print(output.decode())
 
 # for each folder in package, run the following command
 for folder in os.listdir(PACKAGE_PATH):

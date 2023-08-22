@@ -4,27 +4,26 @@
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2021 lyon liang6516@outlook.com
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
  */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -75,7 +74,7 @@ void* args_getPtr(Args* self, char* name);
 
 PIKA_RES args_setInt(Args* self, char* name, int64_t int64In);
 int64_t args_getInt(Args* self, char* name);
-PIKA_BOOL args_getBool(Args* self, char* name);
+pika_bool args_getBool(Args* self, char* name);
 
 char* args_print(Args* self, char* name);
 
@@ -125,161 +124,6 @@ size_t args_getBytesSize(Args* self, char* name);
 
 Args* New_args(Args* args);
 
-typedef struct PikaList PikaList;
-struct PikaList {
-    Args super;
-};
-
-typedef struct PikaTuple PikaTuple;
-struct PikaTuple {
-    PikaList super;
-};
-
-typedef struct PikaDict PikaDict;
-struct PikaDict {
-    Args super;
-};
-
-/* dict api */
-PikaDict* New_pikaDict(void);
-
-static inline PIKA_RES pikaDict_setInt(PikaDict* self,
-                                       char* name,
-                                       int64_t val) {
-    return args_setInt((&((self)->super)), (name), (val));
-}
-static inline PIKA_RES pikaDict_setFloat(PikaDict* self,
-                                         char* name,
-                                         pika_float val) {
-    return args_setFloat((&((self)->super)), (name), (val));
-}
-static inline PIKA_RES pikaDict_setStr(PikaDict* self, char* name, char* val) {
-    return args_setStr((&((self)->super)), (name), (val));
-}
-static inline PIKA_RES pikaDict_setPtr(PikaDict* self, char* name, void* val) {
-    return args_setPtr((&((self)->super)), (name), (val));
-}
-
-static inline PIKA_RES pikaDict_setArg(PikaDict* self, Arg* val) {
-    return args_setArg((&((self)->super)), (val));
-}
-
-static inline PIKA_RES pikaDict_removeArg(PikaDict* self, Arg* val) {
-    return args_removeArg((&((self)->super)), (val));
-}
-
-static inline PIKA_RES pikaDict_setBytes(PikaDict* self,
-                                         char* name,
-                                         uint8_t* val,
-                                         size_t size) {
-    return args_setBytes((&((self)->super)), (name), (val), (size));
-}
-
-static inline int64_t pikaDict_getInt(PikaDict* self, char* name) {
-    return args_getInt((&((self)->super)), (name));
-}
-
-static inline pika_float pikaDict_getFloat(PikaDict* self, char* name) {
-    return args_getFloat((&((self)->super)), (name));
-}
-
-static inline char* pikaDict_getStr(PikaDict* self, char* name) {
-    return args_getStr((&((self)->super)), (name));
-}
-
-static inline void* pikaDict_getPtr(PikaDict* self, char* name) {
-    return args_getPtr((&((self)->super)), (name));
-}
-
-static inline Arg* pikaDict_getArg(PikaDict* self, char* name) {
-    return args_getArg((&((self)->super)), (name));
-}
-
-static inline int32_t pikaDict_isArgExist(PikaDict* self, char* name) {
-    return args_isArgExist((&((self)->super)), (name));
-}
-
-static inline uint8_t* pikaDict_getBytes(PikaDict* self, char* name) {
-    return args_getBytes((&((self)->super)), (name));
-}
-
-static inline ArgType pikaDict_getType(PikaDict* self, char* name) {
-    return args_getType((&((self)->super)), (name));
-}
-
-static inline size_t pikaDict_getBytesSize(PikaDict* self, char* name) {
-    return args_getBytesSize((&((self)->super)), (name));
-}
-
-static inline void pikaDict_deinit(PikaDict* self) {
-    args_deinit((&((self)->super)));
-}
-
-/* list api */
-PIKA_RES pikaList_append(PikaList* self, Arg* arg);
-PIKA_RES pikaList_setArg(PikaList* self, int index, Arg* arg);
-int pikaList_getInt(PikaList* self, int index);
-pika_float pikaList_getFloat(PikaList* self, int index);
-char* pikaList_getStr(PikaList* self, int index);
-void* pikaList_getPtr(PikaList* self, int index);
-Arg* pikaList_getArg(PikaList* self, int index);
-size_t pikaList_getSize(PikaList* self);
-void pikaList_reverse(PikaList* self);
-PIKA_RES pikaList_insert(PikaList* self, int index, Arg* arg);
-Arg* pikaList_pop(PikaList* list);
-Arg* pikaList_pop_withIndex(PikaList* list, int index);
-PIKA_RES pikaList_remove(PikaList* list, Arg* arg);
-static inline void pikaList_deinit(PikaList* self) {
-    args_deinit((&((self)->super)));
-}
-
-static inline ArgType pikaList_getType(PikaList* self, int index) {
-    Arg* arg = pikaList_getArg(self, index);
-    return arg_getType(arg);
-}
-
-/* tuple api */
-static inline void pikaTuple_deinit(PikaTuple* self) {
-    pikaList_deinit((&((self)->super)));
-}
-
-static inline Arg* pikaTuple_getArg(PikaTuple* self, int index) {
-    return pikaList_getArg((&((self)->super)), (index));
-}
-
-static inline size_t pikaTuple_getSize(PikaTuple* self) {
-    if (self == NULL) {
-        return 0;
-    }
-    return pikaList_getSize((&((self)->super)));
-}
-
-static inline int64_t pikaTuple_getInt(PikaTuple* self, int index) {
-    return pikaList_getInt((&((self)->super)), (index));
-}
-
-static inline pika_float pikaTuple_getFloat(PikaTuple* self, int index) {
-    return pikaList_getFloat((&((self)->super)), (index));
-}
-
-static inline char* pikaTuple_getStr(PikaTuple* self, int index) {
-    return pikaList_getStr((&((self)->super)), (index));
-}
-
-static inline void* pikaTuple_getPtr(PikaTuple* self, int index) {
-    return pikaList_getPtr((&((self)->super)), (index));
-}
-
-static inline ArgType pikaTuple_getType(PikaTuple* self, int index) {
-    return pikaList_getType((&((self)->super)), (index));
-}
-
-PikaList* New_pikaList(void);
-PikaTuple* New_pikaTuple(void);
-PikaTuple* args_getTuple(Args* self, char* name);
-PikaDict* args_getDict(Args* self, char* name);
-
-char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list);
 char* args_cacheStr(Args* self, char* str);
 char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg);
 

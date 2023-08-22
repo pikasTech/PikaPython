@@ -8,8 +8,11 @@ int PikaStdData_FILEIO_init(PikaObj* self, char* path, char* mode) {
         /* already initialized */
         return 0;
     }
-    if (strIsStartWith(path, "pikafs/")) {
-        pikafs_FILE* f = pikafs_fopen(path + 7, "rb");
+    if (strIsStartWith(path, "/pikafs/")) {
+        pikafs_FILE* f = pikafs_fopen(path + 8, "rb");
+        if (f == NULL) {
+            return 1;
+        }
         obj_setInt(self, "pikafs", PIKA_TRUE);
         obj_setPtr(self, "_f", f);
         obj_setStr(self, "_mode", mode);
@@ -150,27 +153,39 @@ char* PikaStdData_FILEIO_readline(PikaObj* self) {
         __platform_printf("Error: can't read line from file\n");
         return NULL;
     }
-    obj_setBytes(self, "_line_buff", NULL, PIKA_LINE_BUFF_SIZE);
-    char* line_buff = (char*)obj_getBytes(self, "_line_buff");
+    int line_buff_size = 16;
+    int line_size = 0;
+    char* line_buff = (char*)pika_platform_malloc(line_buff_size);
+    pika_platform_memset(line_buff, 0, line_buff_size);
     while (1) {
         char char_buff[2] = {0};
         int n = __platform_fread(char_buff, 1, 1, f);
         if (n == 0) {
             /* EOF */
-            return NULL;
+            if (strGetSize(line_buff) == 0) {
+                pika_platform_free(line_buff);
+                return NULL;
+            }
+            obj_setStr(self, "@sc", line_buff);
+            pika_platform_free(line_buff);
+            return obj_getStr(self, "@sc");
+        }
+        line_size++;
+        if (line_size >= line_buff_size) {
+            /* line too long, double buff and realloc */
+            line_buff_size *= 2;
+            line_buff = (char*)pika_platform_realloc(line_buff, line_buff_size);
+            pika_platform_memset(line_buff + line_size, 0,
+                                 line_buff_size - line_size);
         }
         if (char_buff[0] == '\n') {
             /* end of line */
-            strAppend(line_buff, char_buff);
-            return line_buff;
+            line_buff[line_size - 1] = '\n';
+            obj_setStr(self, "@sc", line_buff);
+            pika_platform_free(line_buff);
+            return obj_getStr(self, "@sc");
         }
-        if (strGetSize(line_buff) >= PIKA_LINE_BUFF_SIZE) {
-            /* line too long */
-            obj_setErrorCode(self, PIKA_RES_ERR_IO);
-            __platform_printf("Error: line too long\n");
-            return NULL;
-        }
-        strAppend(line_buff, char_buff);
+        line_buff[line_size - 1] = char_buff[0];
     }
 }
 
@@ -202,14 +217,8 @@ void PikaStdData_FILEIO_writelines(PikaObj* self, PikaObj* lines) {
         __platform_printf("Error: can't write lines to file\n");
         return;
     }
-    PikaList* list = obj_getPtr(lines, "list");
-    if (list == NULL) {
-        obj_setErrorCode(self, PIKA_RES_ERR_IO);
-        __platform_printf("Error: can't write lines to file\n");
-        return;
-    }
-    for (size_t i = 0; i < pikaList_getSize(list); i++) {
-        char* line = pikaList_getStr(list, i);
+    for (size_t i = 0; i < pikaList_getSize(lines); i++) {
+        char* line = pikaList_getStr(lines, i);
         Arg* arg_str = arg_newStr(line);
         PikaStdData_FILEIO_write(self, arg_str);
         arg_deinit(arg_str);

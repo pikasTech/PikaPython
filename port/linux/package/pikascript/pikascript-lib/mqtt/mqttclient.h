@@ -3,8 +3,8 @@
  * @Github: https://github.com/jiejieTop
  * @Date: 2019-12-09 21:31:25
  * @LastEditTime : 2022-06-11 22:45:02
- * @Description: the code belongs to jiejie, please keep the author information
- * and source code according to the license.
+ * @Description: the code belongs to jiejie, please keep the author
+ * information and source code according to the license.
  */
 #ifndef _MQTTCLIENT_H_
 #define _MQTTCLIENT_H_

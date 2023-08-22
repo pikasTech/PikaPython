@@ -10,7 +10,7 @@ void GTestTask_Task_platformGetTick(PikaObj* self) {
 }
 
 void PikaStdTask_Task___init__(PikaObj* self);
-void GTestTask_Task___init__(PikaObj *self){
+void GTestTask_Task___init__(PikaObj* self) {
     PikaStdTask_Task___init__(self);
     tick_ms = 0;
 }
@@ -60,10 +60,10 @@ void GTestTask_ProxyTest___setattr__(PikaObj* self,
                       arg_getStr(__value));
 }
 
-void GTestTask_test_raise(PikaObj *self){
+void GTestTask_test_raise(PikaObj* self) {
     obj_setErrorCode(self, 1);
 }
 
-void GTestTask__test___init__(PikaObj *self){
+void GTestTask__test___init__(PikaObj* self) {
     obj_setStr(self, "a", NULL);
 }

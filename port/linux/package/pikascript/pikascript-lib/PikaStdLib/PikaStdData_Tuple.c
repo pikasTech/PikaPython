@@ -3,17 +3,15 @@
 #include "dataStrs.h"
 
 int PikaStdData_Tuple_len(PikaObj* self) {
-    PikaList* list = obj_getPtr(self, "list");
-    return pikaList_getSize(list);
+    return pikaList_getSize(self);
 }
 
 Arg* PikaStdData_Tuple_get(PikaObj* self, int i) {
-    PikaList* list = obj_getPtr(self, "list");
-    return arg_copy(pikaList_getArg(list, i));
+    return arg_copy(pikaList_get(self, i));
 }
 
 void PikaStdData_Tuple___init__(PikaObj* self) {
-    __vm_List___init__(self);
+    pikaList_init(self);
 }
 
 Arg* PikaStdData_Tuple___iter__(PikaObj* self) {
@@ -25,7 +23,7 @@ Arg* PikaStdData_Tuple___next__(PikaObj* self) {
     int __iter_i = args_getInt(self->list, "__iter_i");
     Arg* res = PikaStdData_Tuple_get(self, __iter_i);
     if (NULL == res) {
-        return arg_newNull();
+        return arg_newNone();
     }
     args_setInt(self->list, "__iter_i", __iter_i + 1);
     return res;
@@ -33,8 +31,7 @@ Arg* PikaStdData_Tuple___next__(PikaObj* self) {
 
 Arg* PikaStdData_Tuple___getitem__(PikaObj* self, Arg* __key) {
     int i = arg_getInt(__key);
-    PikaList* list = obj_getPtr(self, "list");
-    if (i < 0 || i >= pikaList_getSize(list)) {
+    if (i < 0 || i >= pikaList_getSize(self)) {
         obj_setErrorCode(self, PIKA_RES_ERR_INDEX);
         obj_setSysOut(self, "IndexError: index out of range");
         return NULL;
@@ -46,42 +43,53 @@ void PikaStdData_Tuple___del__(PikaObj* self) {
     if (0 == obj_getInt(self, "needfree")) {
         return;
     }
-    Args* list = obj_getPtr(self, "list");
+    Args* list = _OBJ2LIST(self);
     args_deinit(list);
 }
 
-char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg);
-char* PikaStdData_Tuple___str__(PikaObj* self) {
-    Arg* str_arg = arg_newStr("(");
-    PikaList* list = obj_getPtr(self, "list");
+char* builtins_str(PikaObj* self, Arg* arg);
+typedef struct {
+    Arg* buf;
+    int count;
+} TupleToStrContext;
 
-    int i = 0;
-    while (PIKA_TRUE) {
-        Arg* item = pikaList_getArg(list, i);
-        if (NULL == item) {
-            if (i == 1) {
-                // single tuple
-                str_arg = arg_strAppend(str_arg, ",");
-            }
-            break;
-        }
-        if (i != 0) {
-            str_arg = arg_strAppend(str_arg, ", ");
-        }
-        char* item_str = PikaStdLib_SysObj_str(self, item);
-        if (arg_getType(item) == ARG_TYPE_STRING) {
-            str_arg = arg_strAppend(str_arg, "'");
-        }
-        str_arg = arg_strAppend(str_arg, item_str);
-        if (arg_getType(item) == ARG_TYPE_STRING) {
-            str_arg = arg_strAppend(str_arg, "'");
-        }
-        i++;
+int32_t tupleToStrEachHandle(PikaObj* self,
+                             int itemIndex,
+                             Arg* itemEach,
+                             void* context) {
+    TupleToStrContext* ctx = (TupleToStrContext*)context;
+
+    char* item_str = builtins_str(self, itemEach);
+    if (ctx->count != 0) {
+        ctx->buf = arg_strAppend(ctx->buf, ", ");
+    }
+    if (arg_getType(itemEach) == ARG_TYPE_STRING) {
+        ctx->buf = arg_strAppend(ctx->buf, "'");
+    }
+    ctx->buf = arg_strAppend(ctx->buf, item_str);
+    if (arg_getType(itemEach) == ARG_TYPE_STRING) {
+        ctx->buf = arg_strAppend(ctx->buf, "'");
     }
 
-    str_arg = arg_strAppend(str_arg, ")");
-    obj_setStr(self, "_buf", arg_getStr(str_arg));
-    arg_deinit(str_arg);
+    ctx->count++;
+
+    return 0;
+}
+
+char* PikaStdData_Tuple___str__(PikaObj* self) {
+    TupleToStrContext context;
+    context.buf = arg_newStr("(");
+    context.count = 0;
+
+    pikaTuple_forEach(self, tupleToStrEachHandle, &context);
+
+    if (context.count == 1) {
+        context.buf = arg_strAppend(context.buf, ",");
+    }
+
+    context.buf = arg_strAppend(context.buf, ")");
+    obj_setStr(self, "_buf", arg_getStr(context.buf));
+    arg_deinit(context.buf);
     return obj_getStr(self, "_buf");
 }
 
@@ -90,12 +98,32 @@ int PikaStdData_Tuple___len__(PikaObj* self) {
 }
 
 int PikaStdData_Tuple___contains__(PikaObj* self, Arg* val) {
-    PikaList* list = obj_getPtr(self, "list");
-    for (size_t i = 0; i < pikaList_getSize(list); i++) {
-        Arg* arg = pikaList_getArg(list, i);
+    for (size_t i = 0; i < pikaList_getSize(self); i++) {
+        Arg* arg = pikaList_get(self, i);
         if (arg_isEqual(arg, val)) {
             return 1;
         }
     }
     return 0;
+}
+
+int PikaStdData_Tuple___eq__(PikaObj* self, Arg* other) {
+    if (!arg_isObject(other)) {
+        return 0;
+    }
+    PikaObj* oOther = arg_getObj(other);
+    if (self->constructor != oOther->constructor) {
+        return 0;
+    }
+    if (obj_getSize(self) != obj_getSize(oOther)) {
+        return 0;
+    }
+    for (size_t i = 0; i < pikaList_getSize(self); i++) {
+        Arg* arg = pikaList_get(self, i);
+        Arg* otherArg = pikaList_get(oOther, i);
+        if (!arg_isEqual(arg, otherArg)) {
+            return 0;
+        }
+    }
+    return 1;
 }

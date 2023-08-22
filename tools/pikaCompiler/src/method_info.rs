@@ -111,7 +111,7 @@ impl MethodInfo {
 
     pub fn method_api_name(&self) -> String {
         return format!(
-            "void {}_{}Method(PikaObj *self, Args *args)",
+            "void {}_{}Method(PikaObj *self, Args *_args_)",
             self.class_name, self.name
         );
     }

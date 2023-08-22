@@ -4,26 +4,26 @@
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2021 lyon liang6516@outlook.com
  * Copyright (c) 2023 Gorgon Meducer embedded_zhuroan@hotmail.com
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
  */
 #define __DATA_QUEUE_CLASS_IMPLEMENT__
 #include "dataQueue.h"
@@ -99,7 +99,7 @@ char* queue_popStr(Queue* queue) {
 ByteQueue* byteQueue_init(ByteQueue* queue,
                           void* buffer,
                           uint_fast16_t size,
-                          PIKA_BOOL is_queue_full) {
+                          pika_bool is_queue_full) {
     pika_assert(NULL != queue);
     pika_assert(NULL != buffer);
     pika_assert(size > 0);
@@ -116,10 +116,10 @@ ByteQueue* byteQueue_init(ByteQueue* queue,
     return queue;
 }
 
-PIKA_BOOL byteQueue_readOne(ByteQueue* queue, uint8_t* byte_ptr) {
+pika_bool byteQueue_readOne(ByteQueue* queue, uint8_t* byte_ptr) {
     pika_assert(NULL != queue);
     uint8_t byte;
-    PIKA_BOOL result = PIKA_FALSE;
+    pika_bool result = pika_false;
 
     /* ------------------atomicity sensitive start---------------- */
     do {
@@ -141,17 +141,17 @@ PIKA_BOOL byteQueue_readOne(ByteQueue* queue, uint8_t* byte_ptr) {
         if (NULL != byte_ptr) {
             *byte_ptr = byte;
         }
-        result = PIKA_TRUE;
+        result = pika_true;
     } while (0);
     /* ------------------atomicity sensitive end  ---------------- */
 
     return result;
 }
 
-PIKA_BOOL byteQueue_peekOne(ByteQueue* queue, uint8_t* byte_ptr) {
+pika_bool byteQueue_peekOne(ByteQueue* queue, uint8_t* byte_ptr) {
     pika_assert(NULL != queue);
     uint8_t byte;
-    PIKA_BOOL result = PIKA_FALSE;
+    pika_bool result = pika_false;
 
     /* ------------------atomicity sensitive start---------------- */
     do {
@@ -169,7 +169,7 @@ PIKA_BOOL byteQueue_peekOne(ByteQueue* queue, uint8_t* byte_ptr) {
         if (NULL != byte_ptr) {
             *byte_ptr = byte;
         }
-        result = PIKA_TRUE;
+        result = pika_true;
     } while (0);
     /* ------------------atomicity sensitive end  ---------------- */
 
@@ -200,9 +200,9 @@ void byteQueue_dropAllPeeked(ByteQueue* queue) {
     /* ------------------atomicity sensitive end  ---------------- */
 }
 
-PIKA_BOOL byteQueue_writeOne(ByteQueue* queue, uint8_t byte) {
+pika_bool byteQueue_writeOne(ByteQueue* queue, uint8_t byte) {
     pika_assert(NULL != queue);
-    PIKA_BOOL result = PIKA_FALSE;
+    pika_bool result = pika_false;
 
     /* ------------------atomicity sensitive start---------------- */
     do {
@@ -218,7 +218,7 @@ PIKA_BOOL byteQueue_writeOne(ByteQueue* queue, uint8_t byte) {
             queue->tail = 0;
         }
 
-        result = PIKA_TRUE;
+        result = pika_true;
     } while (0);
     /* ------------------atomicity sensitive end  ---------------- */
 

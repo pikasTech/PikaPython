@@ -1,7 +1,30 @@
 use crate::compiler::*;
 use crate::version_info::*;
+use std::collections::HashSet;
+use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
+use std::path::Path;
+
+fn collect_pyi_files(dir: &Path) -> std::io::Result<Vec<String>> {
+    let mut result = Vec::new();
+    if dir.is_dir() {
+        for entry in fs::read_dir(dir)? {
+            let entry = entry?;
+            let path = entry.path();
+            if path.is_file() && path.extension() == Some(std::ffi::OsStr::new("pyi")) {
+                if let Some(file_name) = path.file_name() {
+                    if let Some(file_name_str) = file_name.to_str() {
+                        // remove extension
+                        let file_name_str = file_name_str.split(".").collect::<Vec<&str>>()[0];
+                        result.push(file_name_str.to_string());
+                    }
+                }
+            }
+        }
+    }
+    Ok(result)
+}
 
 pub fn pika_compiler_entry() {
     let head_info = "/*
@@ -10,20 +33,20 @@ pub fn pika_compiler_entry() {
  * The source code is *.pyi file.
  * More details: 
  * English Doc:
- * https://pikadoc.readthedocs.io/en/latest/PikaScript%20%E6%A8%A1%E5%9D%97%E6%A6%82%E8%BF%B0.html
+ * https://pikadoc-en.readthedocs.io/en/latest/PikaScript%20%E6%A8%A1%E5%9D%97%E6%A6%82%E8%BF%B0.html
  * Chinese Doc:
- * https://pikadoc.readthedocs.io/zh/latest/PikaScript%20%E6%A8%A1%E5%9D%97%E6%A6%82%E8%BF%B0.html
+ * http://pikapython.com/doc/PikaScript%20%E6%A8%A1%E5%9D%97%E6%A6%82%E8%BF%B0.html
  */
 
 ";
 
     /* new a version_info object */
-    println!("(pikascript) packages installed:");
+    println!("(pikapython) packages installed:");
     let mut version_info = VersionInfo::new();
     version_info = VersionInfo::analyse_file(version_info, String::from("requestment.txt"));
     println!();
 
-    println!("(pikascript) pika compiler:");
+    println!("(pikapython) pika compiler:");
     /* new a compiler, sellect to path */
     let mut compiler = Compiler::new(String::from(""), String::from("pikascript-api/"));
 
@@ -39,14 +62,25 @@ pub fn pika_compiler_entry() {
         if package_name == "pikascript-core" {
             continue;
         }
-        compiler = Compiler::analyse_c_package_top(compiler, String::from(package_name));
+        compiler = Compiler::analyse_c_package_inner(compiler, String::from(package_name));
     }
 
     /* Compile packages in PikaStdLib */
     compiler = Compiler::analyse_c_package_top(compiler, String::from("PikaStdTask"));
     compiler = Compiler::analyse_c_package_top(compiler, String::from("PikaStdData"));
     compiler = Compiler::analyse_c_package_top(compiler, String::from("PikaDebug"));
-
+    compiler = Compiler::analyse_c_package_top(compiler, String::from("builtins"));
+    /* search all *.pyi file and analyse */
+    let dir = Path::new(".");
+    let pyi_files = collect_pyi_files(&dir);
+    for file in pyi_files.unwrap() {
+        // skip PikaObj
+        if file == "PikaObj" {
+            continue;
+        }
+        // just generate *.h to support -lib compile
+        compiler = Compiler::analyse_c_package_inner(compiler, file);
+    }
     /* clean pikascript-api/ */
     compiler.clean_path();
 
@@ -64,17 +98,38 @@ pub fn pika_compiler_entry() {
     let mut f = File::create(api_file_path).unwrap();
     f.write(head_info.as_bytes()).unwrap();
     /* create include for calsses */
+    let mut written_includes = HashSet::new();
+
     f.write("#include <stdio.h>\n".as_bytes()).unwrap();
     f.write("#include <stdlib.h>\n".as_bytes()).unwrap();
     f.write("#include \"BaseObj.h\"\n".as_bytes()).unwrap();
+    written_includes.insert(String::from("#include \"BaseObj.h\"\n"));
 
     for (_, class_info) in compiler.class_list.iter() {
-        /* create include for calsses */
-        f.write(class_info.include().as_bytes()).unwrap();
+        let include = class_info.include();
+
+        // 将字符串按换行符分割成多个 include
+        let includes: Vec<&str> = include.split('\n').collect();
+
+        for include in includes {
+            // 如果这个 include 之前没有被写入过
+            if !written_includes.contains(include) {
+                // 写入文件
+                f.write(format!("{}\n", include).as_bytes()).unwrap();
+                // println!("{} has been inserted", include);
+                written_includes.insert(include.to_string());
+            } else {
+                // println!("{} has been written, skip", include);
+            }
+        }
     }
+
     f.write("\n".as_bytes()).unwrap();
 
     for (_, class_info) in compiler.class_list.iter() {
+        if class_info.is_package && !class_info.is_top{
+            continue;
+        }
         /* get module_name */
         let mut module_name = class_info.this_file_name.clone();
         if module_name == "" {
@@ -103,6 +158,7 @@ pub fn pika_compiler_entry() {
         f.write("#endif\n".as_bytes()).unwrap();
         f.write("\n".as_bytes()).unwrap();
     }
+    drop(f);
 
     /* make the .h file for each python class */
     for (_, class_info) in compiler.class_list.iter() {
@@ -124,6 +180,7 @@ pub fn pika_compiler_entry() {
             .unwrap();
         f.write("\n".as_bytes()).unwrap();
         f.write("#endif\n".as_bytes()).unwrap();
+        drop(f);
     }
     /* make the pikascript.c */
     let api_file_path = format!("{}pikaScript.c", compiler.dist_path);
@@ -143,6 +200,7 @@ pub fn pika_compiler_entry() {
     /* make the pikascript.c */
     f.write(pika_main.script_fn(version_info).as_bytes())
         .unwrap();
+    drop(f);
 
     /* make the pikascript.h */
     let api_file_path = format!("{}pikaScript.h", compiler.dist_path);
@@ -162,8 +220,11 @@ pub fn pika_compiler_entry() {
     f.write("#include \"PikaObj.h\"\n".as_bytes()).unwrap();
     f.write("#include \"PikaMain.h\"\n".as_bytes()).unwrap();
     f.write("\n".as_bytes()).unwrap();
-    f.write("PikaObj * pikaScriptInit(void);\n".as_bytes())
+    f.write("PikaObj * pikaPythonInit(void);\n".as_bytes())
         .unwrap();
     f.write("\n".as_bytes()).unwrap();
     f.write("#endif\n".as_bytes()).unwrap();
+    drop(f);
+
+    compiler.reuse_old_file();
 }

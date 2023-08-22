@@ -9,3 +9,5 @@ esp-idf 5.0
     idf.py set-target <esp32c3/esp32s3>
     make.bat
     ```
+- tips
+  - use ESP's USB port to flash code, not the COM port.

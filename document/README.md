@@ -2,7 +2,7 @@ document is moved to :
 
 English:
 
-[https://pikadoc.readthedocs.io/en/latest/index.html](https://pikadoc.readthedocs.io/en/latest/index.html)
+[https://pikadoc-en.readthedocs.io/en/latest/index.html](https://pikadoc-en.readthedocs.io/en/latest/index.html)
 
 Chinese:
 

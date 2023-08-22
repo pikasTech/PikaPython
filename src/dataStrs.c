@@ -4,27 +4,26 @@
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2021 lyon liang6516@outlook.com
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
  */
-
 #include "dataStrs.h"
 #include "PikaPlatform.h"
 #include "dataString.h"
@@ -102,6 +101,10 @@ char* strsGetFirstToken(Args* buffs_p, char* strIn, char sign) {
 
 char* strsPopToken(Args* buffs_p, char** tokens, char sign) {
     return strsCopy(buffs_p, strPopFirstToken(tokens, sign));
+}
+
+char* strsPopLine(Args* buffs_p, char** tokens) {
+    return strsCopy(buffs_p, strPopFirstToken(tokens, '\n'));
 }
 
 char* strsCopy(Args* buffs_p, char* source) {
@@ -227,4 +230,72 @@ char* strsPathGetFileName(Args* buffs_p, char* input) {
     char* buff = args_getBuff(buffs_p, size);
     strPathGetFileName(input, buff);
     return buff;
+}
+
+char* strsTransfer(Args* buffs, char* str, size_t* iout_p) {
+    char* transfered_str = args_getBuff(buffs, strGetSize(str));
+    size_t i_out = 0;
+    size_t len = strGetSize(str);
+    for (size_t i = 0; i < len; i++) {
+        /* eg. replace '\x33' to '3' */
+        if ((str[i] == '\\') && (str[i + 1] == 'x')) {
+            char hex_str[] = "0x00";
+            hex_str[2] = str[i + 2];
+            hex_str[3] = str[i + 3];
+            char hex = (char)strtoll(hex_str, NULL, 0);
+            transfered_str[i_out++] = hex;
+            i += 3;
+            continue;
+        }
+        if (str[i] == '\\') {
+            switch (str[i + 1]) {
+                case 'r':
+                    transfered_str[i_out++] = '\r';
+                    break;
+                case 'n':
+                    transfered_str[i_out++] = '\n';
+                    break;
+                case 't':
+                    transfered_str[i_out++] = '\t';
+                    break;
+                case 'b':
+                    transfered_str[i_out++] = '\b';
+                    break;
+                case '\\':
+                    transfered_str[i_out++] = '\\';
+                    break;
+                case '\'':
+                    transfered_str[i_out++] = '\'';
+                    break;
+                case '\"':
+                    transfered_str[i_out++] = '\"';
+                    break;
+                case '?':
+                    transfered_str[i_out++] = '\?';
+                    break;
+                default:
+                    transfered_str[i_out++] = str[i];
+                    break;
+            }
+            i += 1;
+            continue;
+        }
+        /* normal char */
+        transfered_str[i_out++] = str[i];
+    }
+    *iout_p = i_out;
+    return transfered_str;
+}
+
+char* strsFilePreProcess(Args* outbuffs, char* lines) {
+    Args buffs = {0};
+    /* replace the "\r\n" to "\n" */
+    lines = strsReplace(&buffs, lines, "\r\n", "\n");
+    /* clear the void line */
+    lines = strsReplace(&buffs, lines, "\n\n", "\n");
+    /* add '\n' at the end */
+    lines = strsAppend(&buffs, lines, "\n\n");
+    char* result = strsCopy(outbuffs, lines);
+    strsDeinit(&buffs);
+    return result;
 }

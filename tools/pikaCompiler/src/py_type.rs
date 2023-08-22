@@ -30,7 +30,7 @@ impl PyType {
             return "Arg*".to_string();
         }
         if self.type_name == "bool"{
-            return "PIKA_BOOL".to_string();
+            return "pika_bool".to_string();
         }
         if self.type_name == "@tupleVarPar" {
             return "PikaTuple*".to_string();
@@ -49,7 +49,7 @@ impl PyType {
             return "int64_t".to_string();
         }
         if self.type_name == "bool" {
-            return "PIKA_BOOL".to_string();
+            return "pika_bool".to_string();
         }
         if self.type_name == "float" {
             return "pika_float".to_string();
@@ -82,30 +82,30 @@ impl PyType {
     }
     pub fn return_fn(&self) -> String {
         if self.type_name == "int" {
-            return "    method_returnInt(args, res);\n".to_string();
+            return "    method_returnInt(_args_, res);\n".to_string();
         }
         if self.type_name == "int64" {
-            return "    method_returnInt(args, res);\n".to_string();
+            return "    method_returnInt(_args_, res);\n".to_string();
         }
         if self.type_name == "bool" {
-            return "    method_returnBool(args, res);\n".to_string();
+            return "    method_returnBool(_args_, res);\n".to_string();
         }
         if self.type_name == "float" {
-            return "    method_returnFloat(args, res);\n".to_string();
+            return "    method_returnFloat(_args_, res);\n".to_string();
         }
         if self.type_name == "pointer" {
-            return "    method_returnPtr(args, res);\n".to_string();
+            return "    method_returnPtr(_args_, res);\n".to_string();
         }
         if self.type_name == "str" {
-            return "    method_returnStr(args, res);\n".to_string();
+            return "    method_returnStr(_args_, res);\n".to_string();
         }
         if self.type_name == "bytes" {
-            return "    method_returnArg(args, res);\n".to_string();
+            return "    method_returnArg(_args_, res);\n".to_string();
         }
         if self.type_name == "any" {
-            return "    method_returnArg(args, res);\n".to_string();
+            return "    method_returnArg(_args_, res);\n".to_string();
         }
-        return "    method_returnObj(args, res);\n".to_string();
+        return "    method_returnObj(_args_, res);\n".to_string();
     }
     // pub fn set_fn(&self) -> String {
     //     if self.type_name == "int" {

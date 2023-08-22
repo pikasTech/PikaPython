@@ -1,9 +1,8 @@
 #include "_requests.h"
-#include "PikaObj.h"
 #include <ctype.h>
+#include "PikaObj.h"
 #include "_requests_Response.h"
 #include "webclient.h"
-#include "random.h"
 
 #if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 11, 9)
 #error "This library requires PikaScript version 1.11.9 or higher"
@@ -12,8 +11,10 @@
 /* 标准输出函数 */
 #define RQ_print(fmt, ...) __platform_printf(fmt, ##__VA_ARGS__)
 #define RQ_cli(fmt, ...) __platform_printf(fmt, ##__VA_ARGS__)
-#define RQ_debug(fmt, ...)   {}
-/* #define RQ_debug(fmt, ...) __platform_printf("[RQ]:**|"fmt"|**\n", ##__VA_ARGS__) */
+#define RQ_debug(fmt, ...) \
+    {}
+/* #define RQ_debug(fmt, ...) __platform_printf("[RQ]:**|"fmt"|**\n",
+ * ##__VA_ARGS__) */
 #define RQ_error_pointer(...) \
     RQ_print("[%s]: Checking NULL pointer of {" #__VA_ARGS__ "}.\n", __fun__)
 #define RQ_error_value(str, ...)                                            \
@@ -202,10 +203,9 @@ int _requests_Response_urlencode_write(PikaObj* self,
     RQ_debug("Add url content:");
     RQ_debug("buffer:%p,len:%d.", session->header->buffer, header_length);
     RQ_debug("%s%s%s%s", start, s1, connect, s2);
-    
+
     if (*start == 0) {
-        while(*s1)
-        {
+        while (*s1) {
             *p++ = *s1++;
         }
         goto end;

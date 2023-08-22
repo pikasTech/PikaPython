@@ -1,7 +1,5 @@
 ROOT=$PWD
-rm -rf test
-ln -s ../../test test
-
+reset
 cp config/pika_config_default.h config/pika_config.h
 
 # git submodule init

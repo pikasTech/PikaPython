@@ -10,6 +10,9 @@ void _socket_socket__init(PikaObj* self) {
     int type = obj_getInt(self, "type");
     int protocol = obj_getInt(self, "protocol");
     int sockfd = 0;
+#ifdef _WIN32
+    pika_platform_init_winsock();
+#endif
     sockfd = __platform_socket(family, type, protocol);
     if (sockfd < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
@@ -23,6 +26,9 @@ void _socket_socket__init(PikaObj* self) {
 void _socket_socket__close(PikaObj* self) {
     int sockfd = obj_getInt(self, "sockfd");
     __platform_close(sockfd);
+#ifdef _WIN32
+    pika_platform_cleanup_winsock();
+#endif
 }
 
 void _socket_socket__send(PikaObj* self, Arg* data) {
@@ -62,6 +68,9 @@ void _socket_socket__accept(PikaObj* self) {
         __platform_printf("accept error\n");
         return;
     }
+#ifdef _WIN32
+    pika_platform_init_winsock();
+#endif
     obj_setInt(self, "client_sockfd", client_sockfd);
     obj_setStr(self, "client_addr", inet_ntoa(client_addr.sin_addr));
 }
@@ -78,7 +87,11 @@ Arg* _socket_socket__recv(PikaObj* self, int num) {
     if (ret <= 0) {
         if (obj_getInt(self, "blocking")) {
             obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-            // __platform_printf("recv error\n");
+            if (ret == 0) {
+                // __platform_printf("connect closed\n");
+            } else {
+                __platform_printf("recv error: %d\n", ret);
+            }
             arg_deinit(res);
             return NULL;
         } else {
@@ -106,26 +119,37 @@ void _socket_socket__listen(PikaObj* self, int num) {
 
 void _socket_socket__connect(PikaObj* self, char* host, int port) {
     int sockfd = obj_getInt(self, "sockfd");
-    struct sockaddr_in server_addr;
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(port);
-    server_addr.sin_addr.s_addr = inet_addr(host);
+    struct addrinfo hints, *res;
+    __platform_memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_INET;
+
+    if (__platform_getaddrinfo(host, NULL, &hints, &res) != 0) {
+        obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
+        pika_platform_printf("Failed to resolve domain name\n");
+        return;
+    }
+
+    struct sockaddr_in* server_addr = (struct sockaddr_in*)res->ai_addr;
+    server_addr->sin_port = pika_platform_htons(port);
+
     pika_GIL_EXIT();
-    int err = pika_platform_connect(sockfd, (struct sockaddr*)&server_addr,
-                                    sizeof(server_addr));
+    int err = __platform_connect(sockfd, (struct sockaddr*)server_addr,
+                                 sizeof(*server_addr));
     pika_GIL_ENTER();
     if (0 != err) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
+        pika_platform_printf("connect error, err = %d\n", err);
         return;
     }
     if (obj_getInt(self, "blocking") == 0) {
-        int flags = fcntl(sockfd, F_GETFL, 0);
-        if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
+        int flags = pika_platform_fcntl(sockfd, F_GETFL, 0);
+        if (__platform_fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
             obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
             pika_platform_printf("Unable to set socket non blocking\n");
             return;
         }
     }
+    __platform_freeaddrinfo(res);
 }
 
 void _socket_socket__bind(PikaObj* self, char* host, int port) {
@@ -146,8 +170,34 @@ void _socket_socket__bind(PikaObj* self, char* host, int port) {
 char* _socket__gethostname(PikaObj* self) {
     char hostname_buff[128] = {0};
     char* hostname = (char*)hostname_buff;
-    __platform_gethostname(hostname_buff, 128);
+#ifdef _WIN32
+    pika_platform_init_winsock();
+#endif
+    pika_platform_gethostname(hostname_buff, 128);
+#ifdef _WIN32
+    pika_platform_cleanup_winsock();
+#endif
     return obj_cacheStr(self, hostname);
+}
+
+char* _socket__gethostbyname(PikaObj* self, char* host) {
+    struct hostent* host_entry;
+    char* ip = NULL;
+#ifdef _WIN32
+    pika_platform_init_winsock();
+#endif
+    host_entry = pika_platform_gethostbyname(host);
+    if (host_entry == NULL) {
+        obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
+        __platform_printf("gethostbyname error\n");
+        return NULL;
+    }
+    ip =
+        pika_platform_inet_ntoa(*((struct in_addr*)host_entry->h_addr_list[0]));
+#ifdef _WIN32
+    pika_platform_cleanup_winsock();
+#endif
+    return obj_cacheStr(self, ip);
 }
 
 void _socket_socket__setblocking(PikaObj* self, int sta) {

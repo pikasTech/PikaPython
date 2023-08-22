@@ -41,8 +41,7 @@ void _hmac_HMAC_new(PikaObj* self, Arg* key, Arg* msg, char* digestmod) {
     mbedtls_md_context_t ctx;
     mbedtls_md_init(&ctx);
 
-    if (strcmp(digestmod, "md5") == 0 ||
-        strcmp(digestmod, "MD5") == 0) {
+    if (strcmp(digestmod, "md5") == 0 || strcmp(digestmod, "MD5") == 0) {
         mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(MBEDTLS_MD_MD5), 1);
         obj_setInt(self, "_mode", PIKA_HMAC_MD5);
         init_buff(self, PIKA_HMAC_MD5);
@@ -86,14 +85,14 @@ Arg* _hmac_HMAC_digest(PikaObj* self) {
 
     if (flag & 0x01)  // already digest
     {
-        goto exit;
+        goto __exit;
     } else {
         mbedtls_md_context_t* ctx = obj_getStruct(self, "_context");
         mbedtls_md_hmac_finish(ctx, buff);
         obj_setInt(self, "_digest_flags", flag | 0x01);
-        goto exit;
+        goto __exit;
     }
-exit:
+__exit:
     return arg_newBytes(buff, obj_getInt(self, "_mode"));
 }
 
@@ -104,7 +103,7 @@ char* _hmac_HMAC_hexdigest(PikaObj* self) {
 
     if (flag & 0x01) {                                   // already digest
         obj_setInt(self, "_digest_flags", flag | 0x02);  // set hexdigest flag
-        goto exit;
+        goto __exit;
     } else if (flag & 0x02) {  // already hexdigest
         return (char*)hexbuff;
     } else {
@@ -112,9 +111,9 @@ char* _hmac_HMAC_hexdigest(PikaObj* self) {
         mbedtls_md_hmac_finish(ctx, buff);
         // set digest and hexdigest flags
         obj_setInt(self, "_digest_flags", flag | 0x03);
-        goto exit;
+        goto __exit;
     }
-exit:
+__exit:
     hmac_to_hex(buff, obj_getInt(self, "_mode"), hexbuff);
     return (char*)hexbuff;
 }

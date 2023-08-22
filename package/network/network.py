@@ -10,10 +10,13 @@ STAT_NO_AP_FOUND = _network.STAT_NO_AP_FOUND
 STAT_CONNECT_FAIL = _network.STAT_CONNECT_FAIL
 STAT_GOT_IP = _network.STAT_GOT_IP
 
-
+_instence:"WLAN" = None
 class WLAN(_network.WLAN):
     def __init__(self, interface_id: int):
+        global _instence
         super().__init__(interface_id)
+        if _instence is None:
+            _instence = self
 
     def active(self, is_active=None):
         if is_active is None:
@@ -55,3 +58,8 @@ class WLAN(_network.WLAN):
 
     def scan(self):
         return super().scan()
+
+def isconnected():
+    if _instence is None:
+        return False
+    return _instence.isconnected()

@@ -2,12 +2,14 @@ use crate::class_info::ClassInfo;
 use crate::decorator::Decorator;
 // use crate::my_string;
 // use crate::script::Script;
+use fs_extra::dir::remove;
 use std::collections::BTreeMap;
 use std::collections::LinkedList;
 use std::fs;
 use std::fs::File;
 use std::io;
-use std::io::prelude::*;
+use std::io::Read;
+use std::path::Path;
 
 enum PackageType {
     CPackageTop,
@@ -44,13 +46,84 @@ impl Compiler {
     pub fn clean_path(&mut self) {
         /* create path if not exist */
         if !fs::metadata(&self.dist_path).is_ok() {
-            fs::create_dir_all(&self.dist_path).unwrap();
+            fs::create_dir_all(&self.dist_path).expect("Failed to create directory");
+        } else {
+            /* rename the path to self.dist_path+'-old' */
+            let trimmed_path = self.dist_path.trim_end_matches('/');
+            let old_path = format!("{}-old", trimmed_path);
+            if fs::metadata(&old_path).is_ok() {
+                remove(&old_path).expect("Failed to remove old directory");
+                // delete old path if it exists
+            }
+            fs::rename(&self.dist_path, &old_path).expect("Failed to rename directory"); // rename current path
+            fs::create_dir_all(&self.dist_path).expect("Failed to create directory");
+            // create new path
         }
-        /* clean the path */
-        let file_list = fs::read_dir(&self.dist_path).unwrap();
-        for file in file_list {
-            let file_path = file.unwrap().path();
-            fs::remove_file(file_path).unwrap();
+    }
+
+    pub fn reuse_old_file(&mut self) {
+        let old_path_str = format!("{}-old", self.dist_path.trim_end_matches('/'));
+        let old_path = Path::new(&old_path_str);
+        let new_path = Path::new(&self.dist_path);
+
+        if old_path.exists() && old_path.is_dir() && new_path.exists() && new_path.is_dir() {
+            // Iterate over all the files in the old directory
+            for entry in fs::read_dir(&old_path).expect("Failed to read old directory") {
+                let entry = entry.expect("Failed to read entry in old directory");
+                let file_name = entry.file_name();
+
+                // Check if the same file exists in the new directory
+                let new_file_path = new_path.join(&file_name);
+                if new_file_path.exists() {
+                    // If the file exists in the new directory, compare its contents to the old file
+                    let mut old_file =
+                        fs::File::open(old_path.join(&file_name)).expect("Failed to open old file");
+                    let mut new_file =
+                        fs::File::open(&new_file_path).expect("Failed to open new file");
+
+                    let mut old_contents = Vec::new();
+                    let mut new_contents = Vec::new();
+
+                    old_file
+                        .read_to_end(&mut old_contents)
+                        .expect("Failed to read old file");
+                    new_file
+                        .read_to_end(&mut new_contents)
+                        .expect("Failed to read new file");
+
+                    // If the contents are the same, overwrite the new file
+                    if old_contents != new_contents {
+                        fs::copy(&new_file_path, old_path.join(&file_name))
+                            .expect("Failed to copy new file to old directory");
+                    }
+                    drop(old_file);
+                    drop(new_file);
+                } else {
+                    // If the file doesn't exist in the new directory, delete it from the old directory
+                    fs::remove_file(old_path.join(&file_name))
+                        .expect("Failed to remove file from old directory");
+                }
+            }
+
+            // Iterate over all the files in the new directory
+            for entry in fs::read_dir(&new_path).expect("Failed to read new directory") {
+                let entry = entry.expect("Failed to read entry in new directory");
+                let file_name = entry.file_name();
+
+                // Check if the file exists in the old directory
+                let old_file_path = old_path.join(&file_name);
+                if !old_file_path.exists() {
+                    // If the file doesn't exist in the old directory, copy it from the new directory
+                    fs::copy(&new_path.join(&file_name), &old_file_path)
+                        .expect("Failed to copy new file to old directory");
+                }
+            }
+
+            // Remove the new directory
+            fs::remove_dir_all(&self.dist_path).expect("Failed to remove new directory");
+
+            fs::rename(&old_path, &new_path)
+                .expect("Failed to rename old directory to new directory");
         }
     }
 
@@ -243,7 +316,7 @@ impl Compiler {
         let mut file_str = String::new();
         file.read_to_string(&mut file_str).unwrap();
 
-        if is_top_c_pkg {
+        if suffix == "pyi" {
             /*
                 Push top C package to PikaMain.
                 Solve the package as a class
@@ -251,15 +324,30 @@ impl Compiler {
                         class PikaStdDevice(TinyObj):
             */
             let pkg_define = format!("class {}(TinyObj):", &file_name);
-            let package_now = match ClassInfo::new(&String::from(""), &pkg_define, true) {
+            let mut package_now = match ClassInfo::new(&String::from(""), &pkg_define, true) {
                 Some(s) => s,
                 None => return self,
             };
-            let package_name = package_now.this_class_name.clone();
-            self.class_list
-                .entry(package_name.clone())
-                .or_insert(package_now);
-            self.package_name_now = Some(package_name.clone());
+            let package_name = file_name.clone();
+            // println!("package_name: {}", package_name);
+            if is_top_c_pkg {
+                self.package_name_now = Some(package_name.clone());
+                package_now.is_top = true;
+                // println!("set top package: {}", package_name);
+            }
+            match self.class_list.entry(package_name.clone()) {
+                std::collections::btree_map::Entry::Occupied(mut entry) => {
+                    // 如果 `package_now.is_top == true`，将 `class_list` 中对应项的 `is_top` 设为 `true`
+                    if package_now.is_top {
+                        let class_info = entry.get_mut();
+                        // 需要确保 `ClassInfo` 结构体中存在 `is_top` 字段
+                        class_info.is_top = true;
+                    }
+                }
+                std::collections::btree_map::Entry::Vacant(entry) => {
+                    entry.insert(package_now);
+                }
+            }
         }
 
         /* return when compiled */

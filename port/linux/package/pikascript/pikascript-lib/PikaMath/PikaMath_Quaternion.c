@@ -264,9 +264,7 @@ PikaObj* PikaMath_Quaternion_toEuler(PikaObj* self) {
 
     for (int i = 0; i < 3; i++) {
         Arg* token_arg = arg_newFloat(rpy[i]);
-        /* 添加到 list 对象 */
         PikaStdData_List_append(list, token_arg);
-        /* 销毁 arg */
         arg_deinit(token_arg);
     }
 

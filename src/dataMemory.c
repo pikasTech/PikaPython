@@ -4,25 +4,25 @@
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2021 lyon liang6516@outlook.com
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
  */
 
 #define __DATA_MEMORY_CLASS_IMPLEMENT__
@@ -89,6 +89,7 @@ void pikaMemMaxReset(void) {
     g_PikaMemInfo.heapUsedMax = 0;
 }
 
+#if PIKA_POOL_ENABLE
 uint32_t pool_getBlockIndex_byMemSize(Pool* pool, uint32_t size) {
     if (0 == size) {
         return 0;
@@ -109,7 +110,7 @@ Pool pool_init(uint32_t size, uint8_t aline) {
     pool.mem = pika_platform_malloc(pool_aline(&pool, pool.size));
     pool.first_free_block = 0;
     pool.purl_free_block_start = 0;
-    pool.inited = PIKA_TRUE;
+    pool.inited = pika_true;
     return pool;
 }
 
@@ -288,7 +289,6 @@ void bitmap_deinit(BitMap bitmap) {
     pika_platform_free(bitmap);
 }
 
-#if PIKA_POOL_ENABLE
 Pool pikaPool = {0};
 void* pika_user_malloc(size_t size) {
     return pool_malloc(&pikaPool, size);

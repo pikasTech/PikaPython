@@ -11,16 +11,8 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=pikaui.*"
-                // "--gtest_filter=doc.*"
-                // "--gtest_filter=packtool.*"
-                // "--gtest_filter=os.path"
-                // "--gtest_filter=packtool.packread"
-                // "--gtest_filter=thread.test1"
-                // "--gtest_filter=eventloop.test1"
-                // "--gtest_filter=parser.tuple_single"
-                // "--gtest_filter=parser.*"
-                "--gtest_filter=builtin.max_min"
+                // "--gtest_filter=vm.keyword_2"
+                "--gtest_filter=builtin.eq"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

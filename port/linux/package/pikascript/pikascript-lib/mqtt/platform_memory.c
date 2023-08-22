@@ -3,8 +3,8 @@
  * @Github: https://github.com/jiejieTop
  * @Date: 2019-12-14 22:02:07
  * @LastEditTime: 2020-02-19 20:26:04
- * @Description: the code belongs to jiejie, please keep the author information
- * and source code according to the license.
+ * @Description: the code belongs to jiejie, please keep the author
+ * information and source code according to the license.
  */
 #include "platform_memory.h"
 

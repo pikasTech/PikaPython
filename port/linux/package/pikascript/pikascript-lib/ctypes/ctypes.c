@@ -77,7 +77,7 @@ int ctypes_c_buffer___getitem__(PikaObj* self, int __key) {
     return buffer[i];
 }
 
-void ctypes_c_buffer___init__(PikaObj *self, Arg* value, int size){
+void ctypes_c_buffer___init__(PikaObj* self, Arg* value, int size) {
     uint8_t* buffer;
     uint8_t* value_buffer;
     size_t value_size;

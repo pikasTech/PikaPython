@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="源文件\pikascript-core">
+      <UniqueIdentifier>{49c8dd26-aeef-4129-92a4-48a8744aecef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\pikascript-lib">
+      <UniqueIdentifier>{a8992e79-fe5d-417d-8684-42af95bb7b3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\pikascript-api">
+      <UniqueIdentifier>{607de44d-7f6c-424a-aaa5-3b32ed5a6547}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\BaseObj.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\dataArg.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\dataArgs.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\dataLink.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\dataLinkNode.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\dataMemory.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\dataQueue.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\dataQueueObj.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\dataStack.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\dataString.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\dataStrs.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\PikaCompiler.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\PikaObj.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\PikaParser.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\PikaPlatform.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\PikaVM.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-core\TinyObj.c">
+      <Filter>源文件\pikascript-core</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaDebuger_Debuger.c">
+      <Filter>源文件\pikascript-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdData_ByteArray.c">
+      <Filter>源文件\pikascript-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdData_Dict.c">
+      <Filter>源文件\pikascript-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdData_FILEIO.c">
+      <Filter>源文件\pikascript-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdData_List.c">
+      <Filter>源文件\pikascript-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdData_String.c">
+      <Filter>源文件\pikascript-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdData_Tuple.c">
+      <Filter>源文件\pikascript-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdData_Utils.c">
+      <Filter>源文件\pikascript-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdLib_MemChecker.c">
+      <Filter>源文件\pikascript-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdLib_RangeObj.c">
+      <Filter>源文件\pikascript-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdLib_StringObj.c">
+      <Filter>源文件\pikascript-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.c">
+      <Filter>源文件\pikascript-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdTask_Task.c">
+      <Filter>源文件\pikascript-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-api\__asset_pikaModules_py_a.c">
+      <Filter>源文件\pikascript-api</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-api\pikaScript.c">
+      <Filter>源文件\pikascript-api</Filter>
+    </ClCompile>
+    <ClCompile Include="pikapython\pikascript-api\__pikaBinding.c">
+      <Filter>源文件\pikascript-api</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

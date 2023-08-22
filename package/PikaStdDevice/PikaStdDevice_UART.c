@@ -1,6 +1,5 @@
 #include "PikaStdDevice_UART.h"
 #include "PikaStdDevice_common.h"
-#include "pika_hal.h"
 
 void PikaStdDevice_UART_enable(PikaObj* self) {
     obj_runNativeMethod(self, "platformEnable", NULL);
@@ -40,7 +39,6 @@ void PikaStdDevice_UART_init(PikaObj* self) {
     obj_setInt(self, "dataBits", 8);
     obj_setInt(self, "parity", PIKA_HAL_UART_PARITY_NONE);
     obj_setInt(self, "stopBits", PIKA_HAL_UART_STOP_BITS_1);
-    obj_setInt(self, "enabled", 0);
 }
 
 void PikaStdDevice_UART___init__(PikaObj* self) {
@@ -59,52 +57,24 @@ Arg* PikaStdDevice_UART_readBytes(PikaObj* self, int length) {
     return arg_copy(obj_getArg(self, "readData"));
 }
 
-int _config_update(PikaObj* self, pika_hal_UART_config* cfg){
-    if (obj_getInt(self, "enabled")) {
-        pika_debug("UART %s config update.\r\n", obj_getStr(self, "id"));
-        int err = pika_hal_ioctl(obj_getPtr(self, "pika_dev"),
-                        PIKA_HAL_IOCTL_CONFIG, cfg);
-        if (err == 0) {
-            return 0;
-        }
-        pika_debug("UART %s config update failed.\r\n", obj_getStr(self, "id"));
-    }
-    return -1;
-}
-
 void PikaStdDevice_UART_setBaudRate(PikaObj* self, int baudRate) {
     obj_setInt(self, "baudRate", baudRate);
-    pika_hal_UART_config cfg = {0};
-    cfg.baudrate = baudRate;
-    _config_update(self, &cfg);
 }
 
 void PikaStdDevice_UART_setFlowControl(PikaObj* self, int flowControl) {
     obj_setInt(self, "flowControl", flowControl);
-    pika_hal_UART_config cfg = {0};
-    cfg.flow_control = flowControl;
-    _config_update(self, &cfg);
 }
 
 void PikaStdDevice_UART_setDataBits(PikaObj* self, int dataBits) {
     obj_setInt(self, "dataBits", dataBits);
-    pika_hal_UART_config cfg = {0};
-    cfg.data_bits = dataBits;
-    _config_update(self, &cfg);
 }
 
 void PikaStdDevice_UART_setParity(PikaObj* self, int parity) {
     obj_setInt(self, "parity", parity);
-    pika_hal_UART_config cfg = {0};
-    cfg.parity = parity;
-    _config_update(self, &cfg);
 }
 
 void PikaStdDevice_UART_setStopBits(PikaObj* self, int stopBits) {
     obj_setInt(self, "stopBits", stopBits);
-    pika_hal_UART_config cfg = {0};
-    cfg.stop_bits = stopBits;
-    _config_update(self, &cfg);
 }
 
 void PikaStdDevice_UART_setId(PikaObj* self, int id) {
@@ -191,7 +161,6 @@ void PikaStdDevice_UART_platformEnable(PikaObj* self) {
                           (int)obj_getInt(self, "id"));
         return;
     }
-    obj_setInt(self, "enabled", 1);
 }
 
 void PikaStdDevice_UART_platformRead(PikaObj* self) {
@@ -217,12 +186,7 @@ void PikaStdDevice_UART_platformDisable(PikaObj* self) {
                           (int)obj_getInt(self, "id"));
         return;
     }
-    if (0!= pika_hal_ioctl(dev, PIKA_HAL_IOCTL_DISABLE)){
-        __platform_printf("Error: disable UART '%d' failed.\r\n",
-                          (int)obj_getInt(self, "id"));
-        return;
-    }
-    obj_setInt(self, "enabled", 0);
+    pika_hal_ioctl(dev, PIKA_HAL_IOCTL_DISABLE);
 }
 
 void PikaStdDevice_UART_platformReadBytes(PikaObj* self) {
@@ -241,12 +205,12 @@ void PikaStdDevice_UART_platformWriteBytes(PikaObj* self) {
     pika_hal_write(dev, data, len);
 }
 
-void PikaStdDevice_UART_setCallBack(PikaObj* self,
+void PikaStdDevice_UART_setCallback(PikaObj* self,
                                     Arg* eventCallBack,
                                     int filter) {
 #if PIKA_EVENT_ENABLE
     pika_dev* dev = _get_dev(self);
-    _PikaStdDevice_setCallBack(self, eventCallBack, (uintptr_t)dev);
+    _PikaStdDevice_setCallback(self, eventCallBack, (uintptr_t)dev);
     /* regist event to pika_hal */
     pika_hal_UART_config cfg_cb = {0};
     cfg_cb.event_callback = (void*)_PikaStdDevice_event_handler;
@@ -257,6 +221,14 @@ void PikaStdDevice_UART_setCallBack(PikaObj* self,
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] PIKA_EVENT_ENABLE is disabled.");
 #endif
+}
+
+void PikaStdDevice_UART_setCallBack(PikaObj* self,
+                                    Arg* eventCallBack,
+                                    int filter) {
+    pika_platform_printf(
+        "Warning: setCallBack is deprecated, use setCallback instead.\r\n");
+    PikaStdDevice_UART_setCallback(self, eventCallBack, filter);
 }
 
 void PikaStdDevice_UART_close(PikaObj* self) {

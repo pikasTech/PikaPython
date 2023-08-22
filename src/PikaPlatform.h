@@ -1,28 +1,28 @@
-﻿/*
+/*
  * This file is part of the PikaPython project.
  * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2021 lyon liang6516@outlook.com
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
  */
 #ifdef __cplusplus
 extern "C" {
@@ -43,16 +43,37 @@ extern "C" {
 #include <unistd.h>
 #endif
 
+#define ANSI_COLOR_RED "\x1b[31m"
+#define ANSI_COLOR_GREEN "\x1b[32m"
+#define ANSI_COLOR_YELLOW "\x1b[33m"
+#define ANSI_COLOR_BLUE "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN "\x1b[36m"
+#define ANSI_COLOR_RESET "\x1b[0m"
+
+#define PIKA_ASSERT_2(expr, msg, ...)                                                                                                                            \
+    if (!(expr)) {                                                                                                                                               \
+        pika_platform_printf((char*)"Assertion \"%s\" failed, in function: %s(). \r\n  (at %s:%d)\n" msg, #expr, __FUNCTION__, __FILE__, __LINE__, __VA_ARGS__); \
+        pika_platform_abort_handler();                                                                                                                           \
+        abort();                                                                                                                                                 \
+    }
+
+#define PIKA_ASSERT_1(expr)                                                                                                                     \
+    if (!(expr)) {                                                                                                                              \
+        pika_platform_printf((char*)"Assertion \"%s\" failed, in function: %s(). \r\n  (at %s:%d)\n", #expr, __FUNCTION__, __FILE__, __LINE__); \
+        pika_platform_abort_handler();                                                                                                          \
+        abort();                                                                                                                                \
+    }
+
+#define GET_MACRO(_1, _2, NAME, ...) NAME
+
 /* clang-format off */
 #if PIKA_ASSERT_ENABLE
-    #define pika_assert(expr) \
-    if(!(expr)) { \
-        pika_platform_printf((char*)"Assertion \"%s\" failed, in function: %s(). \r\n  (at %s:%d)\n", #expr, __FUNCTION__, __FILE__, __LINE__); \
-        pika_platform_abort_handler(); \
-        abort(); \
-    }
+    #define pika_assert PIKA_ASSERT_1
+    #define pika_assert_msg PIKA_ASSERT_2
 #else
     #define pika_assert(...) (void)0;
+    #define pika_assert_msg(...) (void)0;
 #endif
 /* clang-format on */
 
@@ -80,7 +101,7 @@ extern "C" {
 #endif
 
 /* OS */
-#ifdef __RTTHREAD__
+#if defined(__RTTHREAD__) && PIKA_RTTHREAD_ENABLE
 #include <rtthread.h>
 #define pika_platform_printf(...) rt_kprintf(__VA_ARGS__)
 #endif
@@ -111,21 +132,19 @@ typedef enum {
 /* clang-format off */
 
 /* pikascript bool type */
-#define PIKA_BOOL int64_t
-#define PIKA_TRUE 1
-#define PIKA_FALSE 0
+#define pika_bool int64_t 
+#define pika_true 1
+#define pika_false 0 
 #define _PIKA_BOOL_ERR -1
 
 #define _PIKA_INT_ERR (-999999999)
 #define _PIKA_FLOAT_ERR (-999999999.0)
-
 /* clang-format on */
 
 /*
     [Note]:
-    Create a pika_config.c to override the following weak functions to config
-   PikaScript. [Example]:
-    1.
+    Create a pika_config.c to override the following weak functions to
+   config PikaScript. [Example]: 1.
    https://gitee.com/Lyon1998/pikascript/blob/master/package/STM32G030Booter/pika_config.c
     2.
    https://gitee.com/Lyon1998/pikascript/blob/master/package/pikaRTBooter/pika_config.c
@@ -143,6 +162,7 @@ void pika_platform_printf(char* fmt, ...);
 int pika_vprintf(char* fmt, va_list args);
 int pika_sprintf(char* buff, char* fmt, ...);
 int pika_vsprintf(char* buff, char* fmt, va_list args);
+int pika_putchar(char ch);
 int pika_platform_vsnprintf(char* buff,
                             size_t size,
                             const char* fmt,
@@ -167,6 +187,7 @@ void pika_platform_wait(void);
 /* support shell */
 char pika_platform_getchar(void);
 int pika_platform_putchar(char ch);
+int pika_platform_fflush(void* stream);
 
 /* file API */
 FILE* pika_platform_fopen(const char* filename, const char* modes);
@@ -218,6 +239,11 @@ typedef struct pika_platform_thread {
 #include "task.h"
 typedef struct pika_platform_thread {
     TaskHandle_t thread;
+#if PIKA_THREAD_MALLOC_STACK_ENABLE
+    uint32_t thread_stack_size;
+    uint8_t* thread_stack;
+    StaticTask_t task_buffer;
+#endif
 } pika_platform_thread_t;
 #else
 typedef struct pika_platform_thread {
@@ -232,7 +258,7 @@ pika_platform_thread_t* pika_platform_thread_init(const char* name,
                                                   unsigned int priority,
                                                   unsigned int tick);
 uint64_t pika_platform_thread_self(void);
-void pika_platform_thread_delay(void);
+void pika_platform_thread_yield(void);
 void pika_platform_thread_startup(pika_platform_thread_t* thread);
 void pika_platform_thread_stop(pika_platform_thread_t* thread);
 void pika_platform_thread_start(pika_platform_thread_t* thread);
@@ -255,6 +281,7 @@ typedef struct pika_platform_thread_mutex {
     volatile int is_init;
     volatile int is_first_lock;
     volatile int lock_times;
+    volatile int bare_lock;
 } pika_platform_thread_mutex_t;
 
 int pika_platform_thread_mutex_init(pika_platform_thread_mutex_t* m);
@@ -290,10 +317,25 @@ void pika_platform_thread_timer_usleep(unsigned long usec);
 void pika_platform_reboot(void);
 void pika_platform_clear(void);
 
-#define WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_)                               \
-    pika_platform_printf("Error: weak function `%s()` need override.\r\n", \
-                         __FUNCTION__);                                    \
+#define WEAK_FUNCTION_NEED_OVERRIDE_INFO(_)                                    \
+    pika_platform_printf(ANSI_COLOR_RED                                        \
+                         "Error: The function `%s()` has been invoked, but "   \
+                         "it is not implemented.\r\n" ANSI_COLOR_RESET,        \
+                         __FUNCTION__);                                        \
+    pika_platform_printf(                                                      \
+        ANSI_COLOR_CYAN                                                        \
+        "Info: The function `%s()` is defined as a weak function by default. " \
+        "It should be overridden on this platform.\r\n" ANSI_COLOR_RESET,      \
+        __FUNCTION__);
+
+#define WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_) \
+    WEAK_FUNCTION_NEED_OVERRIDE_INFO(_)      \
     pika_platform_panic_handle();
+
+#define WEAK_FUNCTION_NEED_OVERRIDE_ERROR_LOWLEVEL(_) \
+    WEAK_FUNCTION_NEED_OVERRIDE_INFO(_)               \
+    while (1) {                                       \
+    }
 
 #endif
 

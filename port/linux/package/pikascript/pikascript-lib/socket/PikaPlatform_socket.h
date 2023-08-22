@@ -6,6 +6,22 @@
 #include <netdb.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#elif _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <stdio.h>
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <iphlpapi.h>
+#define O_NONBLOCK 0x0004 /* non blocking I/O, from BSD */
+
+#define F_GETFL 3
+#define F_SETFL 4
+
+int pika_platform_init_winsock();
+int pika_platform_cleanup_winsock();
 #elif PIKA_LWIP_ENABLE
 #include <lwip/sockets.h>
 #include "lwip/api.h"
@@ -45,6 +61,9 @@ int pika_platform_setsockopt(int __fd,
                              int __optname,
                              const void* __optval,
                              socklen_t __optlen);
+int pika_platform_htons(int __hostshort);
+char* pika_platform_inet_ntoa(struct in_addr __addr);
+struct hostent* pika_platform_gethostbyname(const char* __name);
 
 /* os file API */
 int pika_platform_close(int fd);

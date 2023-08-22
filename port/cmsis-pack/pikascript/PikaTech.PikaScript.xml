@@ -144,7 +144,7 @@
   <components>
     <bundle Cbundle="PikaScript" Cclass="PikaScript" Cversion="@VERSION">
       <description>an ultra-lightweight Python engine</description>
-      <doc>https://pikadoc.readthedocs.io/en/latest/index.html</doc>
+      <doc>https://pikadoc-en.readthedocs.io/en/latest/index.html</doc>
 
       <component Cgroup="PikaScript" Csub="Core" Cversion="@VERSION">
         <description>PikaScript Kernel</description>

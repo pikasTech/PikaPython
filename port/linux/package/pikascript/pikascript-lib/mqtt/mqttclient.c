@@ -3,8 +3,8 @@
  * @Github: https://github.com/jiejieTop
  * @Date: 2019-12-09 21:31:25
  * @LastEditTime : 2022-06-12 17:39:43
- * @Description: the code belongs to jiejie, please keep the author information
- * and source code according to the license.
+ * @Description: the code belongs to jiejie, please keep the author
+ * information and source code according to the license.
  */
 #include "mqttclient.h"
 
@@ -165,7 +165,8 @@ static int mqtt_read_packet(mqtt_client_t* c,
         RETURN_ERROR(MQTT_NOTHING_TO_READ_ERROR);
 
     /* 2. read the remaining length.  This is variable in itself */
-    mqtt_decode_packet(c, &remain_len, pika_platform_thread_timer_remain(timer));
+    mqtt_decode_packet(c, &remain_len,
+                       pika_platform_thread_timer_remain(timer));
 
     /* put the original remaining length back into the buffer */
     len += MQTTPacket_encode(c->mqtt_read_buf + len, remain_len);
@@ -181,14 +182,15 @@ static int mqtt_read_packet(mqtt_client_t* c,
      * data */
     if ((remain_len > 0) &&
         ((rc = network_read(c->mqtt_network, c->mqtt_read_buf + len, remain_len,
-                            pika_platform_thread_timer_remain(timer))) != remain_len))
+                            pika_platform_thread_timer_remain(timer))) !=
+         remain_len))
         RETURN_ERROR(MQTT_NOTHING_TO_READ_ERROR);
 
     header.byte = c->mqtt_read_buf[0];
     *packet_type = header.bits.type;
 
     pika_platform_thread_timer_cutdown(&c->mqtt_last_received,
-                                (c->mqtt_keep_alive_interval * 1000));
+                                       (c->mqtt_keep_alive_interval * 1000));
 
     RETURN_ERROR(MQTT_SUCCESS_ERROR);
 }
@@ -212,8 +214,8 @@ static int mqtt_send_packet(mqtt_client_t* c,
     }
 
     if (sent == length) {
-        pika_platform_thread_timer_cutdown(&c->mqtt_last_sent,
-                                    (c->mqtt_keep_alive_interval * 1000));
+        pika_platform_thread_timer_cutdown(
+            &c->mqtt_last_sent, (c->mqtt_keep_alive_interval * 1000));
         RETURN_ERROR(MQTT_SUCCESS_ERROR);
     }
 
@@ -355,7 +357,7 @@ static ack_handlers_t* mqtt_ack_handler_create(mqtt_client_t* c,
 }
 
 static void mqtt_ack_handler_destroy(ack_handlers_t* ack_handler) {
-    if (NULL != &ack_handler->list) {
+    if (NULL != ack_handler) {
         mqtt_list_del(&ack_handler->list);
         platform_memory_free(ack_handler); /* delete ack handler from the list,
                                               and free memory */
@@ -367,8 +369,8 @@ static void mqtt_ack_handler_resend(mqtt_client_t* c,
     pika_platform_timer_t timer;
     pika_platform_thread_timer_init(&timer);
     pika_platform_thread_timer_cutdown(&timer, c->mqtt_cmd_timeout);
-    pika_platform_thread_timer_cutdown(&ack_handler->timer,
-                                c->mqtt_cmd_timeout); /* timeout, recutdown */
+    pika_platform_thread_timer_cutdown(
+        &ack_handler->timer, c->mqtt_cmd_timeout); /* timeout, recutdown */
 
     pika_platform_thread_mutex_lock(&c->mqtt_write_lock);
     memcpy(
@@ -477,7 +479,7 @@ static message_handlers_t* mqtt_msg_handler_create(const char* topic_filter,
 }
 
 static void mqtt_msg_handler_destory(message_handlers_t* msg_handler) {
-    if (NULL != &msg_handler->list) {
+    if (NULL != msg_handler) {
         mqtt_list_del(&msg_handler->list);
         platform_memory_free(msg_handler);
     }
@@ -1087,7 +1089,7 @@ static int mqtt_connect_with_results(mqtt_client_t* c) {
     }
 
     pika_platform_thread_timer_cutdown(&c->mqtt_last_received,
-                                (c->mqtt_keep_alive_interval * 1000));
+                                       (c->mqtt_keep_alive_interval * 1000));
 
     pika_platform_thread_mutex_lock(&c->mqtt_write_lock);
 
@@ -1170,7 +1172,7 @@ static uint32_t mqtt_read_buf_malloc(mqtt_client_t* c, uint32_t size) {
                    __LINE__, __FUNCTION__);
         RETURN_ERROR(MQTT_MEM_NOT_ENOUGH_ERROR);
     }
-    memset(c->mqtt_read_buf, 0, c->mqtt_read_buf_size);  // 清空申请的内存
+    memset(c->mqtt_read_buf, 0, c->mqtt_read_buf_size);
     return c->mqtt_read_buf_size;
 }
 
@@ -1334,8 +1336,8 @@ int mqtt_release(mqtt_client_t* c) {
 
     /* wait for the clean session to complete */
     while ((CLIENT_STATE_INVALID != mqtt_get_client_state(c))) {
-        // pika_platform_thread_timer_usleep(1000);            // 1ms avoid compiler
-        // optimization.
+        // pika_platform_thread_timer_usleep(1000);            // 1ms avoid
+        // compiler optimization.
         if (pika_platform_thread_timer_is_expired(&timer)) {
             MQTT_LOG_E("%s:%d %s()... mqtt release failed...", __FILE__,
                        __LINE__, __FUNCTION__);

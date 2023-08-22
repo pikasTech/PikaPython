@@ -4,27 +4,26 @@
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2021 lyon liang6516@outlook.com
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
  */
-
 #include "dataString.h"
 #include "PikaPlatform.h"
 #include "dataMemory.h"
@@ -94,10 +93,10 @@ const char bracketStart[] = {'(', '[', '{', '\'', '\"'};
 const char bracketEnd[] = {')', ']', '}', '\'', '\"'};
 #define BRACKET_TYPE_NUM (sizeof(bracketStart) / sizeof(char))
 
-int _strCountSign(char* strIn, char sign, PIKA_BOOL bracketDepth0) {
+int _strCountSign(char* strIn, char sign, pika_bool bracketDepth0) {
     int32_t iCount = 0;
     int32_t iTotalDepth = 0;
-    PIKA_BOOL bEscaped = PIKA_FALSE;
+    pika_bool bEscaped = pika_false;
     for (size_t i = 0; strIn[i] != '\0'; i++) {
         if (!bracketDepth0) {
             if (strIn[i] == sign) {
@@ -122,13 +121,17 @@ int _strCountSign(char* strIn, char sign, PIKA_BOOL bracketDepth0) {
         if (cCurrentChar == sign && iTotalDepth == 0) {
             iCount++;
         }
-        bEscaped = PIKA_FALSE;
+        bEscaped = pika_false;
     }
     return iCount;
 }
 
 int32_t strCountSign(char* strIn, char sign) {
     return _strCountSign(strIn, sign, 0);
+}
+
+int32_t strGetLineNum(char* strIn) {
+    return strCountSign(strIn, '\n') + 1;
 }
 
 char* strReplaceChar(char* strIn, char src, char dst) {
@@ -247,6 +250,10 @@ int32_t strEqu(char* str1, char* str2) {
     if (NULL == str1 || NULL == str2) {
         return 0;
     }
+    if (str1[0] != str2[0]) {
+        /* fast return */
+        return 0;
+    }
     return !strcmp(str1, str2);
 }
 
@@ -273,6 +280,9 @@ int32_t strIsContain(char* str, char ch) {
 }
 
 char* strCopy(char* strBuff, char* strIn) {
+    if ('\0' == strIn[0]) {
+        return strBuff;
+    }
     pika_platform_memcpy(strBuff, strIn, strGetSize(strIn) + 1);
     return strBuff;
 }

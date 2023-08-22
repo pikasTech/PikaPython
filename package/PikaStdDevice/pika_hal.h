@@ -32,6 +32,7 @@ typedef enum {
     PIKA_HAL_IOCTL_WIFI_DISCONNECT,
     PIKA_HAL_IOCTL_WIFI_SET_IFCONFIG,
     PIKA_HAL_IOCTL_WIFI_GET_IFCONFIG,
+    PIKA_HAL_IOCTL_CAM_CAPTURE,
     _ = 0xFFFFFFFF,  // make sure it is 4 byte width
 } PIKA_HAL_IOCTL_CMD;
 
@@ -479,6 +480,86 @@ typedef struct pika_hal_WIFI_scan_result {
     int count;
     pika_hal_WIFI_record records[];
 } pika_hal_WIFI_scan_result;
+
+typedef enum {
+    PIKA_HAL_TIM_PERIOD_1NS = 1,
+    PIKA_HAL_TIM_PERIOD_1US = 1000,
+    PIKA_HAL_TIM_PERIOD_1MS = 1000000,
+    PIKA_HAL_TIM_PERIOD_1S = 1000000000,
+} PIKA_HAL_TIM_PERIOD;
+
+typedef enum {
+    _PIKA_HAL_TIM_MODE_UNUSED = 0,
+    PIKA_HAL_TIM_MODE_ONESHOT,
+    PIKA_HAL_TIM_MODE_CONTINUOUS,
+} PIKA_HAL_TIM_MODE;
+
+typedef enum {
+    _PIKA_HAL_TIM_EVENT_SIGNAL_UNUSED = 0,
+    PIKA_HAL_TIM_EVENT_SIGNAL_TIMEOUT,
+    PIKA_HAL_TIM_EVENT_SIGNAL_ANY,
+} PIKA_HAL_TIM_EVENT_SIGNAL;
+
+typedef struct pika_hal_TIM_config {
+    PIKA_HAL_TIM_PERIOD period;
+    PIKA_HAL_TIM_MODE mode;
+    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;
+    PIKA_HAL_TIM_EVENT_SIGNAL event_callback_filter;
+    void (*event_callback)(pika_dev* dev, PIKA_HAL_TIM_EVENT_SIGNAL signal);
+} pika_hal_TIM_config;
+
+typedef struct pika_hal_SOFT_TIM_config {
+    PIKA_HAL_TIM_PERIOD period;
+    PIKA_HAL_TIM_MODE mode;
+    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;
+    PIKA_HAL_TIM_EVENT_SIGNAL event_callback_filter;
+    void (*event_callback)(pika_dev* dev, PIKA_HAL_TIM_EVENT_SIGNAL signal);
+} pika_hal_SOFT_TIM_config;
+
+typedef enum {
+    _PIKA_HAL_CAM_PIXFORMAT_UNUSED = 0,
+    PIKA_HAL_CAM_PIXFORMAT_RGB565,
+    PIKA_HAL_CAM_PIXFORMAT_YUV422,
+    PIKA_HAL_CAM_PIXFORMAT_YUV420,
+    PIKA_HAL_CAM_PIXFORMAT_GRAYSCALE,
+    PIKA_HAL_CAM_PIXFORMAT_JPEG,
+    PIKA_HAL_CAM_PIXFORMAT_RGB888,
+    PIKA_HAL_CAM_PIXFORMAT_RAW,
+    PIKA_HAL_CAM_PIXFORMAT_RGB444,
+    PIKA_HAL_CAM_PIXFORMAT_RGB555,
+} PIKA_HAL_CAM_PIXFORMAT;
+
+typedef enum {
+    _PIKA_HAL_CAM_FRAMESIZE_UNUSED = 0,
+    PIKA_HAL_CAM_FRAMESIZE_96X96,    // 96x96
+    PIKA_HAL_CAM_FRAMESIZE_QQVGA,    // 160x120
+    PIKA_HAL_CAM_FRAMESIZE_QCIF,     // 176x144
+    PIKA_HAL_CAM_FRAMESIZE_HQVGA,    // 240x176
+    PIKA_HAL_CAM_FRAMESIZE_240X240,  // 240x240
+    PIKA_HAL_CAM_FRAMESIZE_QVGA,     // 320x240
+    PIKA_HAL_CAM_FRAMESIZE_CIF,      // 400x296
+    PIKA_HAL_CAM_FRAMESIZE_HVGA,     // 480x320
+    PIKA_HAL_CAM_FRAMESIZE_VGA,      // 640x480
+    PIKA_HAL_CAM_FRAMESIZE_SVGA,     // 800x600
+    PIKA_HAL_CAM_FRAMESIZE_XGA,      // 1024x768
+    PIKA_HAL_CAM_FRAMESIZE_HD,       // 1280x720
+    PIKA_HAL_CAM_FRAMESIZE_SXGA,     // 1280x1024
+    PIKA_HAL_CAM_FRAMESIZE_UXGA,     // 1600x1200
+    PIKA_HAL_CAM_FRAMESIZE_FHD,      // 1920x1080
+    PIKA_HAL_CAM_FRAMESIZE_P_HD,     //  720x1280
+    PIKA_HAL_CAM_FRAMESIZE_P_3MP,    //  864x1536
+    PIKA_HAL_CAM_FRAMESIZE_QXGA,     // 2048x1536
+    PIKA_HAL_CAM_FRAMESIZE_QHD,      // 2560x1440
+    PIKA_HAL_CAM_FRAMESIZE_WQXGA,    // 2560x1600
+    PIKA_HAL_CAM_FRAMESIZE_P_FHD,    // 1080x1920
+    PIKA_HAL_CAM_FRAMESIZE_QSXGA,    // 2560x1920
+} PIKA_HAL_CAM_FRAMESIZE;
+
+typedef struct pika_hal_CAM_config {
+    PIKA_HAL_CAM_PIXFORMAT format;
+    PIKA_HAL_CAM_FRAMESIZE framesize;
+    int buff_len;
+} pika_hal_CAM_config;
 
 typedef struct pika_dev_impl {
     int (*open)(pika_dev* dev, char* name);

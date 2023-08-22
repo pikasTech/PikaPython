@@ -120,7 +120,7 @@
         "__instruction_table.h": "c",
         "assert.h": "c"
     },
-    "python.formatting.provider": "autopep8",
+    "python.formatting.provider": "none",
     "clangd.arguments": [
         "-compile-commands-dir=build",
         "-header-insertion=never"
@@ -129,6 +129,12 @@
         "editor.defaultFormatter": "tamasfe.even-better-toml"
     },
     "[python]": {
-        "editor.defaultFormatter": "ms-python.python"
+        "editor.defaultFormatter": "ms-python.autopep8"
+    },
+    "[c]": {
+        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
     }
 }

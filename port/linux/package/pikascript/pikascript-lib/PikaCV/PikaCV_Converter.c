@@ -2,8 +2,8 @@
 #include "PikaCV_Transforms.h"
 #include "PikaCV_common.h"
 
-/* Session identifier for input/output functions (name, members and usage are as
- user defined) */
+/* Session identifier for input/output functions (name, members and usage
+ are as user defined) */
 typedef struct {
     uint8_t* input_ptr;  /* Pointer to input data */
     size_t input_offset; /* Offset of input data */
@@ -339,7 +339,6 @@ void PikaCV_Converter_toBMP(PikaObj* self, PikaObj* image) {
     int width = img->width;
     int height = img->height;
 
-    // bmp的每行数据的长度要4字节对齐
     row_align = align(width * 3, 4);
 
     /* convert to BMP */
@@ -419,7 +418,7 @@ void PikaCV_Converter_toBGR888(PikaObj* self, PikaObj* image) {
     arg_deinit(arg_data_new);
 }
 
-void PikaCV_Converter_converter(PikaObj *self, PikaObj* image, int format){
+void PikaCV_Converter_converter(PikaObj* self, PikaObj* image, int format) {
     switch (format) {
         case PikaCV_ImageFormat_Type_RGB888:
             PikaCV_Converter_toRGB888(self, image);

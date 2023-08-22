@@ -22,7 +22,10 @@ RUN apt-get install -y \
     curl \
     python3 \
     pip \
-    cloc
+    cloc \
+    wget
+
+RUN apt install -y openssh-server
 
 RUN git clone --branch v1.6.1 https://gitee.com/mirrors/google-benchmark benchmark && \
         cd benchmark && \
@@ -38,9 +41,10 @@ RUN git clone --branch v1.6.1 https://gitee.com/mirrors/google-benchmark benchma
 ADD rust_config /root/.cargo/config
 ENV RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
 ENV RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
-RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
-
 ENV PATH="/root/.cargo/bin:${PATH}"
+RUN curl https://sh.rustup.rs -sSf | bash -s -- -y --default-toolchain='1.52.0' && \
+    rustup target add i686-pc-windows-gnu
+
 
 RUN apt-get install -y \
     ninja-build \
@@ -64,8 +68,7 @@ RUN git clone https://gitee.com/lyon1998/pikascript  root/pikascript
 RUN cd /root/pikascript && git pull
 
 RUN apt-get install -y upx
-RUN rustup target add i686-pc-windows-gnu
-RUN cd /root/pikascript/tools/pikaCompiler && sh build.sh
+RUN cd /root/pikascript/tools/pikaCompiler && cargo build
 
 ADD .vimrc /root/.vimrc
 
@@ -73,9 +76,17 @@ ADD bashrc /root/.bashrc
 RUN apt-get install -y liblua5.3-dev
 RUN apt-get install -y lcov
 
-RUN apt-get install -y wget
 RUN cd root/pikascript && git remote add github https://github.com/pikastech/pikascript
 RUN apt-get install clangd -y
 RUN apt-get install libmbedtls-dev -y
 RUN pip install -r /root/pikascript/docker/requirements.txt
 RUN apt-get install clang-format -y
+
+# install frps
+RUN cd /root && wget https://gitee.com/Lyon1998/pikapython/attach_files/1420660/download -O frp.tar.gz && \
+    tar -xzvf frp.tar.gz && \
+    mv frp_0.48.0_linux_amd64/frpc /usr/local/bin/frpc
+
+ADD sshd_config /etc/ssh/sshd_config
+COPY frpc.ini /etc/frpc.ini
+COPY frpc.sh /etc/frpc.sh

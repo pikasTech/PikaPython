@@ -10,7 +10,6 @@
  * All rights reserved.</center></h2>
  *
  */
-
 #ifndef __PKG_AGILE_MODBUS_RTU_H
 #define __PKG_AGILE_MODBUS_RTU_H
 
@@ -27,7 +26,7 @@ extern "C" {
 /** @defgroup RTU_Exported_Constants RTU Exported Constants
  * @{
  */
-#define AGILE_MODBUS_RTU_HEADER_LENGTH     1
+#define AGILE_MODBUS_RTU_HEADER_LENGTH 1
 #define AGILE_MODBUS_RTU_PRESET_REQ_LENGTH 6
 #define AGILE_MODBUS_RTU_PRESET_RSP_LENGTH 2
 
@@ -63,7 +62,11 @@ typedef struct agile_modbus_rtu {
 /** @addtogroup RTU_Exported_Functions
  * @{
  */
-int agile_modbus_rtu_init(agile_modbus_rtu_t *ctx, uint8_t *send_buf, int send_bufsz, uint8_t *read_buf, int read_bufsz);
+int agile_modbus_rtu_init(agile_modbus_rtu_t* ctx,
+                          uint8_t* send_buf,
+                          int send_bufsz,
+                          uint8_t* read_buf,
+                          int read_bufsz);
 /**
  * @}
  */

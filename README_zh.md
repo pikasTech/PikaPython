@@ -18,11 +18,11 @@
 	<a href="http://pikascript.com/doc" >文档中心</a> |
 	<a href="https://space.bilibili.com/5365336/channel/seriesdetail?sid=1034902">视频</a> |
         <a href="https://item.taobao.com/item.htm?spm=a21dvs.23580594.0.0.52de3d0dt7rqAx&ft=t&id=654947372034">开发板</a> |
-        <a href="https://pikadoc.readthedocs.io/zh/latest/%E4%BD%BF%E7%94%A8%20BSP%20%E5%B7%A5%E7%A8%8B.html">BSP</a> |
-	<a href="https://pikadoc.readthedocs.io/zh/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html">包管理器</a> |
-	<a href="https://pikadoc.readthedocs.io/zh/latest/%E4%BB%8E%20RT-Thread%20%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%BC%80%E5%A7%8B.html" >RT-Thread 软件包</a> |
-	<a href="https://pikadoc.readthedocs.io/zh/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7%A4%BE%E5%8C%BA%E8%B4%A1%E7%8C%AE.html" >参与贡献</a> |
-	<a href="https://pikadoc.readthedocs.io/zh/latest/%E5%95%86%E4%B8%9A%E5%90%88%E4%BD%9C%E6%96%B9%E5%BC%8F.html">商业合作</a> 
+        <a href="http://pikapython.com/doc/%E4%BD%BF%E7%94%A8%20BSP%20%E5%B7%A5%E7%A8%8B.html">BSP</a> |
+	<a href="http://pikapython.com/doc/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html">包管理器</a> |
+	<a href="http://pikapython.com/doc/%E4%BB%8E%20RT-Thread%20%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%BC%80%E5%A7%8B.html" >RT-Thread 软件包</a> |
+	<a href="http://pikapython.com/doc/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7%A4%BE%E5%8C%BA%E8%B4%A1%E7%8C%AE.html" >参与贡献</a> |
+	<a href="http://pikapython.com/doc/%E5%95%86%E4%B8%9A%E5%90%88%E4%BD%9C%E6%96%B9%E5%BC%8F.html">商业合作</a> 
 </p>
 
 [![image](document/image/147997370-ff37b6e7-25b2-4174-aa64-c1fb92cede04.png)](https://pikastech.github.io/PikaPython/dev/bench/)
@@ -38,15 +38,17 @@ PikaPython 也称 PikaScript、PikaPy。
 
 PikaPython 具有框架式 C 模块开发工具，只要用 Python 写好调用 API ，就能够自动连接到 C 模块，非常方便快捷。不用手动处理任何全局表、宏定义、等等。
 
-所有的工具也是全部开源的，在 tools 目录下。
-
-![image-20220520233540245](document/image/image-20220520233540245.png)
-
 PikaPython 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松地调试 C 模块。
 
 # 最新资讯
 
-- [PikaPython 开源赏金活动：挑战技术，实践成长，共创未来！](https://gitee.com/Lyon1998/pikapython/issues/I67WUQ)
+- [📢 发布公告：PikaPython v1.12.2 发布 🚀](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484789&idx=1&sn=bedfc580932a4bd286264110a065de2a&chksm=fdebd21cca9c5b0a4654a394f48fb3cb0e743b4ad72fef4d96e4cf28fa4357349b4862f0be7e&token=2116766907&lang=zh_CN#rd)
+
+- [万元结项奖金！学生报名开启！PikaPython 开源之夏 2023](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484785&idx=1&sn=1cf983057765198f53c4f6c8aa04e516&chksm=fdebd218ca9c5b0e3444112a5a033dc295c63482bcb8934422a199784e900c2cd95f633da5b4&token=2116766907&lang=zh_CN#rd)
+
+- [【喜报】PikaPython突破 1000+ Github Star，物联网与边缘AI领域的轻量级Python解释器再创新高！](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484773&idx=1&sn=e0273c1c55614ea11387d6f785c4bfb9&chksm=fdebd20cca9c5b1a14fef9c2cd90f01551ce0c04eac4de0759fdc8ba27ae4158a68ce1eb5a5f&token=2116766907&lang=zh_CN#rd)
+
+- [PikaPython项目入选中国开源创新大赛决赛，携手共建国内开源生态](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484762&idx=1&sn=2b3e570bbc7e98874b6773fe8e2678c7&chksm=fdebd233ca9c5b255296db6e9874035577a02b6b26354c4c2a2298696a02ec467149ca91a078&token=2116766907&lang=zh_CN#rd)
 
 - [轻量级Python解释器PikaPython成功入选开源之夏，探索无限可能！](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484738&idx=1&sn=7af1c9bb61e6decd5c155924cb7a05f8&chksm=fdebd22bca9c5b3d3f2fbd8742941e6c33e86cbcba88c329b0b9550b54b0291b6f50553d5eea&token=709915806&lang=zh_CN#rd)
 
@@ -62,11 +64,20 @@ http://pikascript.com
 
 [![](assets/1644129110261-049ad5bb-21af-40e2-9533-a1c8c86790f1.jpg)](http://pikascript.com)
 
-## 使用 Pika 包管理器[PikaPackage.exe](https://pikadoc.readthedocs.io/zh/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html)
+## 相关开源项目 
 
-1. 直接运行[PikaPackage.exe](https://pikadoc.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html), 自动下载并更新pikapython主仓库(文件在当前磁盘的/tmp/pikapython文件夹)
+- ▶️ [pikapython Binding For LVGL](https://github.com/lvgl/lv_binding_pikascript)
 
-2. 将[requestment.txt](/bsp/stm32g070cb/pikapython/requestment.txt)放在[PikaPackage.exe](https://pikadoc.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html)同一文件夹下, 运行[pikaPackage.exe](https://pikadoc.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html), 自动在当前目录下安装[内核](../../tree/master/src)、[预编译器](../../tree/master/tools/pikaCompiler)与[模块](../../tree/master/package)。
+- ⭐ [pikapython Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌](https://github.com/maxgerhardt/pikascript-pio-bluepill)
+
+- ⭐ [pikapython Bluepill Demo In GCC 🐍](https://github.com/Chandler-Kluser/pikascript_gcc_bluepill)
+
+- ⏩ [pika_startup_demo](https://gitee.com/kcfkwok/pika_startup_demo) This program demonstrate the 5 startup methods of pikapython.
+
+- 🎮 [PikaPython-OpenHardware](https://gitee.com/Lyon1998/pikapython_openhardware) PikaPython 开源硬件
+
+- 💻 [pikapython-msvc-qt](https://gitee.com/zuto360_460135301/pikapython-msvc-qt) 移植pikapython到windows平台，基于QT，采用MSVC编译器，移植pthread库，支持多线程。
+
 
 3. 已发布的模块列表：[packages.toml](/packages.toml)
 
@@ -74,7 +85,7 @@ http://pikascript.com
 
 可使用[仿真工程](document/1.三分钟快速上手.md)快速上手，无需硬件，也可以使用官方支持的开发板[Pika派—Zero](https://item.taobao.com/item.htm?spm=a2126o.success.result.1.76224831Y0X1gO&id=654947372034)，上手即玩。
 
-[Pika派python编程游玩指南](https://pikadoc.readthedocs.io/zh/latest/Pika%20%E6%B4%BE%E5%BC%80%E5%8F%91%E6%9D%BF%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B.html)
+[Pika派python编程游玩指南](http://pikapython.com/doc/Pika%20%E6%B4%BE%E5%BC%80%E5%8F%91%E6%9D%BF%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B.html)
 
 [![PikaPi-Zero](document/image/147940229-a6b8ebf5-41db-4614-a525-448f47de0a67.png)](https://item.taobao.com/item.htm?spm=a2126o.success.result.1.76224831Y0X1gO&id=654947372034)
 
@@ -143,6 +154,7 @@ http://pikascript.com
 |apm32e103vb       |√  |    |    |    |   |   |   |   |
 |bl-602            |√  |√   |    |    |√  |√  |   |√  |
 |bl-706            |√  |    |    |    |   |   |   |   |
+|[bl-618](https://verimake.com/d/285-bl618-pikapython-led)|√  | √ | √   |  √  |  √ |  √ |  √ |  √ |
 |Raspberry Pico    |√  |    |    |    |   |   |   |   |
 |ESP32C3           |√  |√   |√   |    |   |   |   |   |
 |TC264D            |√  |    |    |    |   |   |   |   |
@@ -180,14 +192,6 @@ http://pikascript.com
 |OS|port|Google Test|Benchmark|
 |---|---|---|---|
 |linux|√|√|√|
-
-## 相关开源项目 
-
-- ▶️ [pikapython Binding For LVGL](https://github.com/lvgl/lv_binding_pikascript)
-
-- ⭐ [pikapython Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌](https://github.com/maxgerhardt/pikascript-pio-bluepill)
-
-- ⭐ [pikapython Bluepill Demo In GCC 🐍](https://github.com/Chandler-Kluser/pikascript_gcc_bluepill)
 
 # 3.特性
 ### (1)运行环境
@@ -631,28 +635,10 @@ while True:
 # 6.内核测试与开发
 
 ## 在 Docker 中测试 (recommend)
-[ Docker 开发环境搭建指南 ](https://pikadoc.readthedocs.io/zh/latest/get-start_linux.html)
+[ Docker 开发环境搭建指南 ](http://pikapython.com/doc/get-start_linux.html)
 
 # 7.贡献者
-## [如何参与贡献](https://pikadoc.readthedocs.io/zh/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7%A4%BE%E5%8C%BA%E8%B4%A1%E7%8C%AE.html)
-
-| 贡献者 | [成就勋章](document/achivement_zh.md) |
-| ----------------------------------------------------- | :----------------------------------------------------------- |
-| [甜航](https://github.com/easyzoom)                   | <img src="assets/26.png" alt="26" width="80" /> |
-| 千帆(微信名)                                          | <img src="assets/26.png" alt="26" width="80" /> |
-| [ Meco Jianting Man](https://github.com/mysterywolf)  | <img src="assets/22.png" alt="12" width="80" /><img src="assets/26.png" alt="26" width="80" /><img src="assets/23.png" alt="23" width="80" /><img src="assets/15.png" alt="15" width="80" /><img src="assets/11.png" alt="15" width="80" /><img src="assets/41.png" alt="41" width="80" />|
-| [liuduanfei](https://github.com/liuduanfei)           | <img src="assets/26.png" alt="26" width="80" /> |
-| [ sjy](https://gitee.com/shanjiayang)                 | <img src="assets/26.png" alt="26" width="80" /><img src="assets/13.png" alt="13" width="80" /> |
-| 沧御                                                  | <img src="assets/26.png" alt="26" width="80" /> |
-| [versaloon](https://github.com/versaloon)             | <img src="assets/26.png" alt="26" width="80" /><img src="assets/13.png" alt="13" width="80" /> |
-| 刘延(微信名)                                          | <img src="assets/36.png" alt="36" width="80" /><img src="assets/41-16594077379821.png" alt="41" width="80" /> |
-| [GorgonMeducer](https://github.com/GorgonMeducer)     | <img src="assets/25.png" alt="25" width="80" /><img src="assets/22.png" alt="22" width="80" /><img src="assets/21.png" alt="21" width="80" /><img src="assets/33.png" alt="33" width="80" /><img src="assets/41-16594077379821.png" alt="41" width="80" /> |
-| [unsigned](https://gitee.com/unsigned0)               | <img src="assets/26.png" alt="26" width="80" /><img src="assets/23.png" alt="23" width="80" /> |
-| [梦程MI](https://gitee.com/dreamcmi)                  | <img src="assets/36.png" alt="36" width="80" /><img src="assets/23.png" alt="23" width="80" /><img src="assets/41-16594077379821.png" alt="41" width="80" /> |
-| [Maximilian Gerhardt](https://github.com/maxgerhardt) | <img src="assets/12.png" alt="12" width="80" /> |
-| [purewind7](https://gitee.com/purewind7)              | <img src="assets/24.png" alt="24" width="80" /><img src="assets/31.png" alt="31" width="80" /><img src="assets/33.png" alt="33" width="80" /><img src="assets/41-16594077379821.png" alt="41" width="80" /> |
-| [ onceday](https://gitee.com/onceday)                 | <img src="assets/24.png" alt="24" width="80" /><img src="assets/13.png" alt="13" width="80" /> |
-
+## [如何参与贡献](http://pikapython.com/doc/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7%A4%BE%E5%8C%BA%E8%B4%A1%E7%8C%AE.html)
 
 <div class="log"></div>
 
@@ -660,6 +646,24 @@ while True:
 
 | 贡献记录 | 贡献者 |
 | --- | --- |
+|fix REPL echo for '\b' and 0x7F|[versaloon](https://github.com/versaloon)|
+|pika_hal support for ESP32|[geekheart](https://gitee.com/geekheart)|
+|Driver Design for PIKA-OPEN-HARDWARE|[Kirin](https://gitee.com/ztqkirin)|
+|bsp support for `Makefile-win-mingw` |[unsigned_0](https://gitee.com/unsigned0)|
+|Fix bug for STM32F4 `delay_unit()`|[MrLeekon](https://gitee.com/MrLeekon)|
+|bsp support for `air780e`|[Kirin](https://gitee.com/ztqkirin)|
+|Component Selection, Schematic Diagram, PCB Design for PIKA-OPEN-HARDWARE| 冰点 (WeChat Name)|
+|Driver Design for PIKA-OPEN-HARDWARE|[Kirin](https://gitee.com/ztqkirin)|
+|Product Design, Component Selection for PIKA-OPEN-HARDWARE| 方海钰 |
+|Hardware Verification for PIKA-OPEN-HARDWARE|[HonestQiao](https://github.com/HonestQiao)|
+|support PIKA_UNBUFFERD_ENABLE config item|[Seny Lee](https://gitee.com/SenyLee)|
+|add `this` module|[blueloveTH](https://github.com/blueloveTH)|
+|Fix memory leak in event queue|[randyscott](https://github.com/randyscott)|
+|Fix a bug of _OP_POW|[blueloveTH](https://github.com/blueloveTH)|
+|fix bsp/esp32/README.md|[erzongxie](https://gitee.com/erzongxie)|
+|Fixed a bug where help("modules") crashed when no lib was loaded|[梦程MI](https://gitee.com/dreamcmi) |
+|support GPIO driver for rt-thread| [supperthomas](https://github.com/supperthomas) |
+|Fixed a typo|[J. Neuschäfer](https://github.com/neuschaefer)|
 |codecov CI support| [Renzhihan](https://github.com/Renzhihan) |
 |rt-thread build script fix and improve| [supperthomas](https://github.com/supperthomas) |
 |support pikafs pack and unpack to path|[sjy](https://gitee.com/shanjiayang)|
@@ -694,7 +698,7 @@ while True:
 | ESP32 package |沧御|
 | MM32F5277E9P package |[unsigned](https://gitee.com/unsigned0)|
 | mm32f5277e9p BSP |[unsigned](https://gitee.com/unsigned0)|
-| Add [CMSIS-PACK](https://pikadoc.readthedocs.io/en/latest/get-start_cmsis-pack.html) | [GorgonMeducer](https://github.com/GorgonMeducer) |
+| Add [CMSIS-PACK](https://pikadoc-en.readthedocs.io/en/latest/get-start_cmsis-pack.html) | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | donate: air32f103 board * 20 | 合宙 [xinxi204](https://gitee.com/xinxi204) |
 | contrubute to PikaMath.Math() | [onceday](https://gitee.com/onceday) |
 | add support for Unix Time | [onceday](https://gitee.com/onceday) |

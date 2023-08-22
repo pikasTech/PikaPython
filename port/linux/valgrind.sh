@@ -1,5 +1,5 @@
 #!/bin/sh
-sh only_make.sh
+sh make.sh
 
 # 初始化参数变量
 tool_option=""

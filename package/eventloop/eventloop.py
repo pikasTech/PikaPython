@@ -23,6 +23,9 @@ class EventTask:
         :param args: arguments of func
         :param period_ms: period of periodic task
         """
+        if period_ms != None:
+            self._is_periodic = True
+
         self._func = func
         self._callback = callback
         self._args = args
@@ -33,8 +36,12 @@ class EventTask:
                 period_ms = 0
             self._last_call_time = time.tick_ms() - period_ms + delay_ms
             _debug('last_call_time for delay:', self._last_call_time)
-        if period_ms != None:
-            self._is_periodic = True
+        _debug('func:', self._func)
+        _debug('callback:', self._callback)
+        _debug('args:', self._args)
+        _debug('period_ms:', self._period_ms)
+        _debug('delay_ms:', self._delay_ms)
+        _debug('is_periodic:', self._is_periodic)
 
 
 class EventLoop:
@@ -60,12 +67,7 @@ class EventLoop:
         if task_name == None:
             self._uuid += 1
             task_name = str(self._uuid)
-        _debug('add_task', task_name)
-        _debug('func', func)
-        _debug('callback', callback)
-        _debug('args', args)
-        _debug('period_ms', period_ms)
-        _debug('delay_ms', delay_ms)
+        _debug('create task:', task_name)
         new_task = EventTask(func, callback, args, period_ms, delay_ms)
         self._tasks[task_name] = new_task
 
@@ -123,6 +125,7 @@ class EventLoop:
         Remove a task from EventLoop
         :param task_name: name of task
         """
+        _debug('remove_task', task_name)
         self._tasks.remove(task_name)
 
     def _run_task(self, task: EventTask):
@@ -131,17 +134,28 @@ class EventLoop:
             task._callback(_res)
 
     def _run_thread(self):
+        task_last = None
         while not self._need_stop:
             tick = time.tick_ms()
             for task_name, task in self._tasks.items():
+                if task_last == task:
+                    # already run this task last time, run other task first
+                    task_last = None
+                    continue
+
                 if tick - task._last_call_time > task._period_ms:
                     _debug('run_task', task_name)
                     _debug('tick', tick)
                     _debug('last_call_time', task._last_call_time)
+                    task_last = task
                     self._run_task(task)
                     task._last_call_time = tick
+                    _debug('is_periodic', task._is_periodic)
                     if not task._is_periodic:
                         self.remove_task(task_name)
+                    # only run one task per loop
+                    # if the task are removed, the for loop will be broken
+                    break 
             if self._need_stop:
                 break
             time.sleep_ms(self._period_ms)

@@ -49,7 +49,7 @@ Arg* PikaStdData_String___next__(PikaObj* self) {
     char char_buff[5];
     int r = _utf8_get(str, len, __iter_i, char_buff);
     if (r < 0) {
-        return arg_newNull();
+        return arg_newNone();
     }
     args_setInt(self->list, "__iter_i", __iter_i + 1);
     return arg_newStr((char*)char_buff);
@@ -102,7 +102,7 @@ Arg* PikaStdData_String___getitem__(PikaObj* self, Arg* __key) {
     char char_buff[5] = {0};
     int r = _str_get(str, key_i, char_buff);
     if (r < 0) {
-        return arg_newNull();
+        return arg_newNone();
     }
     return arg_newStr((char*)char_buff);
 }
@@ -234,10 +234,14 @@ int PikaStdData_String_isspace(PikaObj* self) {
     return 1;
 }
 
-PikaObj* PikaStdData_String_split(PikaObj* self, char* s) {
-    /* 创建 list 对象 */
+PikaObj* PikaStdData_String_split(PikaObj* self, PikaTuple* s_) {
+    char* s = NULL;
+    if (pikaTuple_getSize(s_) == 0) {
+        s = " ";
+    } else {
+        s = pikaTuple_getStr(s_, 0);
+    }
     PikaObj* list = newNormalObj(New_PikaStdData_List);
-    /* 初始化 list */
     PikaStdData_List___init__(list);
 
     Args buffs = {0};
@@ -859,7 +863,7 @@ char* PikaStdData_String_join(PikaObj* self, Arg* val) {
     return sRes;
 }
 
-int PikaStdData_String_find(PikaObj *self, char* sub){
+int PikaStdData_String_find(PikaObj* self, char* sub) {
     char* str = obj_getStr(self, "str");
     char* res = strstr(str, sub);
     if (res == NULL) {

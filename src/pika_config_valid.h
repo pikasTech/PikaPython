@@ -4,25 +4,25 @@
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2021 lyon liang6516@outlook.com
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
  */
 #ifdef __cplusplus
 extern "C" {
@@ -38,7 +38,7 @@ extern "C" {
  * If you want to change the config, create "pika_config.h",
  * then #define PIKA_CONFIG_ENABLE in the Compiler Options.
  * To see more:
- * https://pikadoc.readthedocs.io/en/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html
+ * https://pikadoc-en.readthedocs.io/en/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html
  */
 
     /* optimize options */
@@ -419,6 +419,10 @@ extern "C" {
         #define PIKA_LINUX_COMPATIBLE 0
     #endif
 
+    #ifndef PIKA_LINUX_BASH_ENABLE
+        #define PIKA_LINUX_BASH_ENABLE 1
+    #endif
+
     #ifndef PIKA_LWIP_ENABLE
         #define PIKA_LWIP_ENABLE 0
     #endif
@@ -437,6 +441,14 @@ extern "C" {
 
     #ifndef PIKA_THREAD_STACK_SIZE
         #define PIKA_THREAD_STACK_SIZE 2048
+    #endif
+
+    #ifndef PIKA_EVENT_THREAD_STACK_SIZE
+        #define PIKA_EVENT_THREAD_STACK_SIZE PIKA_THREAD_STACK_SIZE
+    #endif
+
+    #ifndef PIKA_THREAD_MALLOC_STACK_ENABLE
+        #define PIKA_THREAD_MALLOC_STACK_ENABLE 0
     #endif
 
     #ifndef PIKA_THREAD_PRIO
@@ -473,6 +485,18 @@ extern "C" {
 
     #ifndef PIKA_SHELL_HISTORY_NUM
         #define PIKA_SHELL_HISTORY_NUM 5
+    #endif
+
+    #ifndef PIKA_UNBUFFERED_ENABLE
+        #define PIKA_UNBUFFERED_ENABLE 0
+    #endif
+
+    #ifndef PIKA_SHELL_NO_ECHO
+        #define PIKA_SHELL_NO_ECHO 0
+    #endif
+
+    #ifndef PIKA_PLATFORM_NO_WEAK
+        #define PIKA_PLATFORM_NO_WEAK 0
     #endif
 
     /* configuration validation */

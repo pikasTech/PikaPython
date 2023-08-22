@@ -17,6 +17,7 @@ pub struct ClassInfo {
     pub import_list: BTreeMap<String, ImportInfo>,
     pub script_list: Script,
     pub is_package: bool,
+    pub is_top: bool,
 }
 
 impl ClassInfo {
@@ -68,6 +69,7 @@ impl ClassInfo {
             import_list: BTreeMap::new(),
             script_list: Script::new(),
             is_package: is_package,
+            is_top: false,
         };
         return Some(new_class_info);
     }
@@ -142,25 +144,25 @@ impl ClassInfo {
 
     pub fn script_fn(&self, version_info: VersionInfo) -> String {
         let mut script_fn = String::new();
-        /* add pikaScriptInit function define */
+        /* add pikaPythonInit function define */
         script_fn.push_str("volatile PikaObj *__pikaMain;\r\n");
-        script_fn.push_str("PikaObj *pikaScriptInit(void){\r\n");
+        script_fn.push_str("PikaObj *pikaPythonInit(void){\r\n");
         /* print version info */
         script_fn.push_str(
-            "    __platform_printf(\"======[pikascript packages installed]======\\r\\n\");\r\n",
+            "    pika_platform_printf(\"======[pikapython packages installed]======\\r\\n\");\r\n",
         );
-        script_fn.push_str("    pks_printVersion();\r\n");
+        script_fn.push_str("    pika_printVersion();\r\n");
         for (package_name, package_version) in version_info.package_list {
             script_fn.push_str(
                 format!(
-                    "    __platform_printf(\"{}=={}\\r\\n\");\r\n",
+                    "    pika_platform_printf(\"{}=={}\\r\\n\");\r\n",
                     package_name, package_version
                 )
                 .as_str(),
             );
         }
         script_fn.push_str(
-            "    __platform_printf(\"===========================================\\r\\n\");\r\n",
+            "    pika_platform_printf(\"===========================================\\r\\n\");\r\n",
         );
         /* create the root object */
         script_fn.push_str("    PikaObj* pikaMain = newRootObj(\"pikaMain\", New_PikaMain);\r\n");

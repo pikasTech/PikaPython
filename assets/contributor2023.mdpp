@@ -1,3 +1,21 @@
+|fix REPL echo for '\b' and 0x7F|[versaloon](https://github.com/versaloon)|
+|pika_hal support for ESP32|[geekheart](https://gitee.com/geekheart)|
+|Driver Design for PIKA-OPEN-HARDWARE|[Kirin](https://gitee.com/ztqkirin)|
+|bsp support for `Makefile-win-mingw` |[unsigned_0](https://gitee.com/unsigned0)|
+|Fix bug for STM32F4 `delay_unit()`|[MrLeekon](https://gitee.com/MrLeekon)|
+|bsp support for `air780e`|[Kirin](https://gitee.com/ztqkirin)|
+|Component Selection, Schematic Diagram, PCB Design for PIKA-OPEN-HARDWARE| 冰点 (WeChat Name)|
+|Driver Design for PIKA-OPEN-HARDWARE|[Kirin](https://gitee.com/ztqkirin)|
+|Product Design, Component Selection for PIKA-OPEN-HARDWARE| 方海钰 |
+|Hardware Verification for PIKA-OPEN-HARDWARE|[HonestQiao](https://github.com/HonestQiao)|
+|support PIKA_UNBUFFERD_ENABLE config item|[Seny Lee](https://gitee.com/SenyLee)|
+|add `this` module|[blueloveTH](https://github.com/blueloveTH)|
+|Fix memory leak in event queue|[randyscott](https://github.com/randyscott)|
+|Fix a bug of _OP_POW|[blueloveTH](https://github.com/blueloveTH)|
+|fix bsp/esp32/README.md|[erzongxie](https://gitee.com/erzongxie)|
+|Fixed a bug where help("modules") crashed when no lib was loaded|[梦程MI](https://gitee.com/dreamcmi) |
+|support GPIO driver for rt-thread| [supperthomas](https://github.com/supperthomas) |
+|Fixed a typo|[J. Neuschäfer](https://github.com/neuschaefer)|
 |codecov CI support| [Renzhihan](https://github.com/Renzhihan) |
 |rt-thread build script fix and improve| [supperthomas](https://github.com/supperthomas) |
 |support pikafs pack and unpack to path|[sjy](https://gitee.com/shanjiayang)|

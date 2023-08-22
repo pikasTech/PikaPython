@@ -1,5 +1,4 @@
 #include "_base64.h"
-
 #include "mbedtls/base64.h"
 
 Arg* _base64_b64decode(PikaObj* self, Arg* s) {
