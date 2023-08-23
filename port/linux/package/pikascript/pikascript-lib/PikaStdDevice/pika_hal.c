@@ -48,7 +48,7 @@ pika_dev* pika_hal_open(PIKA_HAL_DEV_TYPE dev_type, char* name) {
         goto __exit;
     }
     memset(dev->ioctl_config, 0, _pika_hal_dev_config_size(dev_type));
-    ret = impl->open(dev, name);
+    ret = impl->open(dev, name); 
 __exit:
     if (0 == ret) {
         return dev;

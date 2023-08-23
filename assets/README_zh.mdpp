@@ -64,6 +64,12 @@ http://pikascript.com
 
 [![](assets/1644129110261-049ad5bb-21af-40e2-9533-a1c8c86790f1.jpg)](http://pikascript.com)
 
+## PikaPython Studio
+PikaPython 串口终端、脚本下载、模块管理工具。
+
+[![](assets/115.png)](https://gitee.com/Lyon1998/pikapython/attach_files/1285327/download)
+[下载PikaPython Studio](https://gitee.com/Lyon1998/pikapython/attach_files/1285327/download)
+
 ## 相关开源项目 
 
 - ▶️ [pikapython Binding For LVGL](https://github.com/lvgl/lv_binding_pikascript)

@@ -50,13 +50,10 @@ Note: You need the [Community Edition license (Now Free)](https://www.keil.com/p
 
 [![](assets/1644129110261-049ad5bb-21af-40e2-9533-a1c8c86790f1.jpg)](http://pikascript.com)
 
-## Use Pika package manager [PikaPackage.exe](https://pikadoc-en.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html)
+## PikaPython studio
+PikaPython serial terminal, script download and package menage tool.
 
-1. Run the [PikaPackage.exe](https://pikadoc-en.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html) directly, then the pikapython repo would be downloaded auto in the /tmp/pikascript folder of your current disc partition.
-
-2. Add [requestment.txt](/bsp/stm32g070cb/pikascript/requestment.txt) to the same folder of PikaPackage.exe then run [PikaPackage.exe](https://pikadoc-en.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html). The [run-time core](../../tree/master/src), [pre-compiler](../../tree/master/tools/pikaCompiler) and [moudles](../../tree/master/package) would be installed in the current folder.
-
-3. Released modules：[packages.toml](packages.toml)
+[![](assets/115.png)](https://gitee.com/Lyon1998/pikapython/attach_files/1285327/download)
 
 # Quick Start
 

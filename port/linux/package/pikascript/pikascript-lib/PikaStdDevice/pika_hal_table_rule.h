@@ -75,6 +75,7 @@
     },
 #endif
 
+
 #if defined(PIKA_HAL_TABLE_PLATFORM_API)
 #define pika_hal_table_add(dev_name)                                    \
     int pika_hal_platform_##dev_name##_open(pika_dev* dev, char* name); \
