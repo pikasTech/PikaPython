@@ -77,7 +77,7 @@ char* os_path_abspath(PikaObj* self, char* path) {
 
 PIKA_BOOL os_path_exists(PikaObj* self, char* path) {
 #ifdef _WIN32
-    DWORD attr = GetFileAttributesA(path);
+    DWORD attr = GetFileAttributesA((LPCWSTR)path);
     if (attr == INVALID_FILE_ATTRIBUTES) {
         return PIKA_FALSE;
     }
@@ -117,7 +117,7 @@ PIKA_BOOL os_path_isabs(PikaObj* self, char* path) {
 PIKA_BOOL os_path_isdir(PikaObj* self, char* path) {
     PIKA_BOOL is_dir = PIKA_FALSE;
 #ifdef _WIN32
-    DWORD attrs = GetFileAttributes(path);
+    DWORD attrs = GetFileAttributes((LPCWSTR)path);
     if (attrs != INVALID_FILE_ATTRIBUTES) {
         is_dir =
             (attrs & FILE_ATTRIBUTE_DIRECTORY) != 0 ? PIKA_TRUE : PIKA_FALSE;
