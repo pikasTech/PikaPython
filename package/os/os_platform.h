@@ -8,6 +8,7 @@
 #include "TinyObj.h"
 #ifdef _WIN32
 #include <io.h>
+#include <direct.h>
 #include <windows.h>
 #elif defined(__linux) || PIKA_LINUX_COMPATIBLE
 #include <dirent.h>

@@ -168,7 +168,12 @@ int os_mkdir_platform(int mode, char* path) {
     char dirpath[256] = {0};
     int ret = 0;
     memcpy(dirpath + strlen(dirpath), path, strlen(path));
+#ifdef _WIN32
+    (void)(mode);
+    ret = mkdir(dirpath);
+#elif defined(__linux) || PIKA_LINUX_COMPATIBLE
     ret = mkdir(dirpath, mode);
+#endif
     return ret;
 }
 
