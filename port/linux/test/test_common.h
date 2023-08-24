@@ -128,6 +128,26 @@ void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn);
         EXPECT_EQ(pikaMemNow(), 0);                                      \
     }
 
+#define TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT2(_test_suite_, _test_name_,     \
+                                            _file_name_, _except_output1_, \
+                                            _except_output2_)              \
+    TEST(_test_suite_, _test_name_) {                                      \
+        g_PikaMemInfo.heapUsedMax = 0;                                     \
+        PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);          \
+        extern unsigned char pikaModules_py_a[];                           \
+        obj_linkLibrary(pikaMain, pikaModules_py_a);                       \
+        /* run */                                                          \
+        __platform_printf("BEGIN\r\n");                                    \
+        pikaVM_runSingleFile(pikaMain, _file_name_);                       \
+        /* assert */                                                       \
+        EXPECT_STREQ(log_buff[0], (_except_output1_));                     \
+        EXPECT_STREQ(log_buff[1], (_except_output2_));                     \
+        EXPECT_STREQ(log_buff[2], "BEGIN\r\n");                            \
+        /* deinit */                                                       \
+        obj_deinit(pikaMain);                                              \
+        EXPECT_EQ(pikaMemNow(), 0);                                        \
+    }
+
 #define TEST_RUN_LINES(_test_suite_, _test_name_, _lines_)   \
     TEST(_test_suite_, _test_name_) {                        \
         PikaObj* self = newRootObj("root", New_PikaMain);    \
