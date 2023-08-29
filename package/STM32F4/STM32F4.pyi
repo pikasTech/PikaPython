@@ -29,14 +29,14 @@ class GPIO(PikaStdDevice.GPIO):
         pass
 
 
-class Time(PikaStdDevice.Time):
-    # override
-    def sleep_s(s: int):
-        pass
-
-    # override
-    def sleep_ms(ms: int):
-        pass
+# class Time(PikaStdDevice.Time):
+#     # override
+#     def sleep_s(s: int):
+#         pass
+# 
+#     # override
+#     def sleep_ms(ms: int):
+#         pass
 
 
 class ADC(PikaStdDevice.ADC):
