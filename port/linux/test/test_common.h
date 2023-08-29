@@ -54,6 +54,16 @@ static char _f_getchar(void) {
     pika_assert(0);
     return -1;
 }
+
+static char _fmem_getchar(void) {
+    char c = 0;
+    size_t n = fread(&c, 1, 1, (FILE*)_f_getchar_fp);
+    if (n > 0) {
+        return c;
+    }
+    return 0;
+}
+
 void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn);
 }
 
@@ -91,6 +101,28 @@ void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn);
         /* deinit */                                                      \
         obj_deinit(pikaMain);                                             \
         EXPECT_EQ(pikaMemNow(), 0);                                       \
+    }
+
+#define TEST_RUN_LINES_REPL(_test_suite_, _test_name_, _lines_)          \
+    TEST(_test_suite_, _test_name_) {                                    \
+        /* init */                                                       \
+        extern volatile pika_bool g_always_repl_mode;                    \
+        g_always_repl_mode = pika_false;                                 \
+        g_PikaMemInfo.heapUsedMax = 0;                                   \
+        PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);        \
+        extern unsigned char pikaModules_py_a[];                         \
+        obj_linkLibrary(pikaMain, pikaModules_py_a);                     \
+        /* run */                                                        \
+        __platform_printf("BEGIN\r\n");                                  \
+        _f_getchar_fp = fmemopen((void*)_lines_, strlen(_lines_), "rb"); \
+        pikaScriptShell_withGetchar(pikaMain, _fmem_getchar);            \
+        fclose((FILE*)_f_getchar_fp);                                    \
+        /* collect */                                                    \
+        /* assert */                                                     \
+        /* deinit */                                                     \
+        obj_deinit(pikaMain);                                            \
+        EXPECT_EQ(pikaMemNow(), 0);                                      \
+        g_always_repl_mode = pika_true;                                  \
     }
 
 #define TEST_RUN_SINGLE_FILE_ASSERT(_test_suite_, _test_name_, _file_name_, \
@@ -191,6 +223,19 @@ void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn);
         EXPECT_STREQ(log_buff[0], (_except_output_));                    \
         obj_deinit(self);                                                \
         EXPECT_EQ(pikaMemNow(), 0);                                      \
+    }
+
+#define TEST_RUN_LINES_EXCEPT_OUTPUT2(_test_suite_, _test_name_, _lines_, \
+                                      _except_output1_, _except_output2_) \
+    TEST(_test_suite_, _test_name_) {                                     \
+        PikaObj* self = newRootObj("root", New_PikaMain);                 \
+        extern unsigned char pikaModules_py_a[];                          \
+        obj_linkLibrary(self, pikaModules_py_a);                          \
+        obj_run(self, (_lines_)); /* collect */ /* assert */              \
+        EXPECT_STREQ(log_buff[0], (_except_output1_));                    \
+        EXPECT_STREQ(log_buff[1], (_except_output2_));                    \
+        obj_deinit(self);                                                 \
+        EXPECT_EQ(pikaMemNow(), 0);                                       \
     }
 
 #if USE_GOOGLE_TEST

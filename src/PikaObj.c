@@ -2023,7 +2023,7 @@ static enum shellCTRL __obj_shellLineHandler_REPL(PikaObj* self,
         return SHELL_CTRL_EXIT;
     }
     /* run single line */
-    obj_run(self, input_line);
+    _pikaVM_runPyLines(self, input_line, pika_true);
     return SHELL_CTRL_CONTINUE;
 }
 

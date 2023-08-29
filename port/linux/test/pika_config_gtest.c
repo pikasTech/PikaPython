@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "dataMemory.h"
+#include "PikaVM.h"
 
 char log_buff[LOG_BUFF_MAX][LOG_SIZE] = {0};
 uint32_t log_index = 0;
@@ -42,4 +43,11 @@ volatile hook_func g_hook_func = __gtest_hook_default;
 void __pks_hook_instruct(void) {
     g_hook_cnt++;
     g_hook_func();
+}
+
+volatile pika_bool g_always_repl_mode = pika_true;
+PIKA_WEAK void pika_hook_unused_stack_arg(VMState* vm, Arg* arg) {
+    if (vm->run_state->in_repl || g_always_repl_mode) {
+        arg_print(arg, pika_true, "\r\n");
+    }
 }

@@ -69,6 +69,7 @@ typedef struct RunState RunState;
 struct RunState {
     TRY_STATE try_state;
     TRY_RESULT try_result;
+    pika_bool in_repl;
 };
 
 typedef struct VMState VMState;
@@ -186,6 +187,9 @@ struct VMInstructionSet {
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
+VMParameters* _pikaVM_runByteCodeFrame(PikaObj* self,
+                                       ByteCodeFrame* byteCode_frame,
+                                       pika_bool in_repl);
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
                                       ByteCodeFrame* byteCode_frame);
 
@@ -385,6 +389,10 @@ int _VM_is_first_lock(void);
 typedef struct {
     PikaObj* lreg[PIKA_REGIST_SIZE];
 } VMLocals;
+
+VMParameters* _pikaVM_runPyLines(PikaObj* self,
+                                 char* py_lines,
+                                 pika_bool in_repl);
 
 #endif
 
