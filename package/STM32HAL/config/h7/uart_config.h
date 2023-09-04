@@ -26,6 +26,11 @@ extern "C" {
         .name = "uart1",                                            \
         .Instance = USART1,                                         \
         .irq_type = USART1_IRQn,                                    \
+        .GPIO_Alternate = GPIO_AF7_USART1,                           \
+        .GPIO_TX_Pin = GPIO_PIN_9,                                  \
+        .GPIO_TX_Port = GPIOA,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_10,                                 \
+        .GPIO_RX_Port = GPIOA                                      \
     }
 #endif /* UART1_CONFIG */
 #endif /* BSP_USING_UART1 */
@@ -49,6 +54,11 @@ extern "C" {
         .name = "uart2",                                            \
         .Instance = USART2,                                         \
         .irq_type = USART2_IRQn,                                    \
+        .GPIO_Alternate = GPIO_AF7_USART2,                           \
+        .GPIO_TX_Pin = GPIO_PIN_2,                                  \
+        .GPIO_TX_Port = GPIOA,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_3,                                  \
+        .GPIO_RX_Port = GPIOA                                      \
     }
 #endif /* UART2_CONFIG */
 #endif /* BSP_USING_UART2 */
@@ -83,6 +93,11 @@ extern "C" {
         .name = "uart3",                                            \
         .Instance = USART3,                                         \
         .irq_type = USART3_IRQn,                                    \
+        .GPIO_Alternate = GPIO_AF7_USART3,                           \
+        .GPIO_TX_Pin = GPIO_PIN_10,                                 \
+        .GPIO_TX_Port = GPIOB,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_11,                                 \
+        .GPIO_RX_Port = GPIOB                                      \
     }
 #endif /* UART3_CONFIG */
 #endif /* BSP_USING_UART3 */
@@ -106,6 +121,11 @@ extern "C" {
         .name = "uart4",                                            \
         .Instance = UART4,                                          \
         .irq_type = UART4_IRQn,                                     \
+        .GPIO_Alternate = GPIO_AF8_UART4,                            \
+        .GPIO_TX_Pin = GPIO_PIN_0,                                  \
+        .GPIO_TX_Port = GPIOA,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_1,                                  \
+        .GPIO_RX_Port = GPIOA                                      \
     }
 #endif /* UART4_CONFIG */
 #endif /* BSP_USING_UART4 */
@@ -129,6 +149,11 @@ extern "C" {
         .name = "uart5",                                            \
         .Instance = UART5,                                          \
         .irq_type = UART5_IRQn,                                     \
+        .GPIO_Alternate = GPIO_AF14_UART5,                           \
+        .GPIO_TX_Pin = GPIO_PIN_12,                                 \
+        .GPIO_TX_Port = GPIOB,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_13,                                 \
+        .GPIO_RX_Port = GPIOB                                      \
     }
 #endif /* UART5_CONFIG */
 #endif /* BSP_USING_UART5 */

@@ -164,6 +164,39 @@ extern "C" {
 #include "./config/wb/usbd_config.h"
 #endif
 
+
+#ifndef UART1_CONFIG
+#undef BSP_USING_UART1
+#endif
+
+#ifndef UART2_CONFIG
+#undef BSP_USING_UART2
+#endif
+
+#ifndef UART3_CONFIG
+#undef BSP_USING_UART3
+#endif
+
+#ifndef UART4_CONFIG
+#undef BSP_USING_UART4
+#endif
+
+#ifndef UART5_CONFIG
+#undef BSP_USING_UART5
+#endif
+
+#ifndef UART6_CONFIG
+#undef BSP_USING_UART6
+#endif
+
+#ifndef UART7_CONFIG
+#undef BSP_USING_UART7
+#endif
+
+#ifndef UART8_CONFIG
+#undef BSP_USING_UART8
+#endif
+
 #ifdef __cplusplus
 }
 #endif

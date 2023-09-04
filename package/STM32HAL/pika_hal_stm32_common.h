@@ -4,6 +4,11 @@
 #include "../PikaStdDevice/pika_hal.h"
 #include "pika_adapter_rtt.h"
 
+#ifndef rt_container_of
+#define rt_container_of(ptr, type, member) \
+    ((type *)((char *)(ptr) - (unsigned long)(&((type *)0)->member)))
+#endif
+    
 #define CHIP_FAMILY_STM32
 #define SOC_FAMILY_STM32
 #define RT_USING_DEVICE_OPS
@@ -84,6 +89,57 @@ struct rt_pin_ops
 #define PIN_IRQ_ENABLE                  0x01
 
 #define PIN_IRQ_PIN_NONE                PIN_NONE
+
+#define RT_DEVICE_CTRL_RESUME           0x01            /**< resume device */
+#define RT_DEVICE_CTRL_SUSPEND          0x02            /**< suspend device */
+#define RT_DEVICE_CTRL_CONFIG           0x03            /**< configure device */
+#define RT_DEVICE_CTRL_CLOSE            0x04            /**< close device */
+#define RT_DEVICE_CTRL_NOTIFY_SET       0x05            /**< set notify func */
+#define RT_DEVICE_CTRL_SET_INT          0x06            /**< set interrupt */
+#define RT_DEVICE_CTRL_CLR_INT          0x07            /**< clear interrupt */
+#define RT_DEVICE_CTRL_GET_INT          0x08            /**< get interrupt status */
+#define RT_DEVICE_CTRL_CONSOLE_OFLAG    0x09            /**< get console open flag */
+#define RT_DEVICE_CTRL_MASK             0x1f            /**< mask for contrl commands */
+
+#define RT_DEVICE_FLAG_DEACTIVATE       0x000           /**< device is not not initialized */
+
+#define RT_DEVICE_FLAG_RDONLY           0x001           /**< read only */
+#define RT_DEVICE_FLAG_WRONLY           0x002           /**< write only */
+#define RT_DEVICE_FLAG_RDWR             0x003           /**< read and write */
+
+#define RT_DEVICE_FLAG_REMOVABLE        0x004           /**< removable device */
+#define RT_DEVICE_FLAG_STANDALONE       0x008           /**< standalone device */
+#define RT_DEVICE_FLAG_ACTIVATED        0x010           /**< device is activated */
+#define RT_DEVICE_FLAG_SUSPENDED        0x020           /**< device is suspended */
+#define RT_DEVICE_FLAG_STREAM           0x040           /**< stream mode */
+
+#define RT_DEVICE_FLAG_INT_RX           0x100           /**< INT mode on Rx */
+#define RT_DEVICE_FLAG_DMA_RX           0x200           /**< DMA mode on Rx */
+#define RT_DEVICE_FLAG_INT_TX           0x400           /**< INT mode on Tx */
+#define RT_DEVICE_FLAG_DMA_TX           0x800           /**< DMA mode on Tx */
+
+#define RT_DEVICE_OFLAG_CLOSE           0x000           /**< device is closed */
+#define RT_DEVICE_OFLAG_RDONLY          0x001           /**< read only access */
+#define RT_DEVICE_OFLAG_WRONLY          0x002           /**< write only access */
+#define RT_DEVICE_OFLAG_RDWR            0x003           /**< read and write */
+#define RT_DEVICE_OFLAG_OPEN            0x008           /**< device is opened */
+#define RT_DEVICE_OFLAG_MASK            0xf0f           /**< mask of open flag */
+
+#ifdef RT_USING_DEVICE_OPS
+/**
+ * operations set for device object
+ */
+struct rt_device_ops
+{
+    /* common device interface */
+    rt_err_t  (*init)   (rt_device_t dev);
+    rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
+    rt_err_t  (*close)  (rt_device_t dev);
+    rt_ssize_t (*read)  (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+    rt_ssize_t (*write) (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+    rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
+};
+#endif /* RT_USING_DEVICE_OPS */
 
 static inline rt_base_t rt_hw_interrupt_disable(void){
     pika_platform_disable_irq_handle();
@@ -241,9 +297,69 @@ static inline rt_base_t _stm32_pin_get(const char *name)
 #define BSP_USING_GPIO
 #define RT_USING_PIN
 
+#ifdef ADC1
 #define BSP_USING_ADC1
-//#define BSP_USING_ADC2
-//#define BSP_USING_ADC3
+#endif
+
+#ifdef DAC1
+#define BSP_USING_DAC1
+#endif
+
+#if defined(USART1) || defined(UART1)
+#define BSP_USING_UART1
+#endif
+
+#if defined(USART2) || defined(UART2)
+#define BSP_USING_UART2
+#endif
+
+#if defined(USART3) || defined(UART3)
+#define BSP_USING_UART3
+#endif
+
+#if defined(USART4) || defined(UART4)
+#define BSP_USING_UART4
+#endif
+
+#if defined(USART5) || defined(UART5)
+#define BSP_USING_UART5
+#endif
+
+#if defined(USART6) || defined(UART6)
+#define BSP_USING_UART6
+#endif
+
+#if defined(USART7) || defined(UART7)
+#define BSP_USING_UART7
+#endif
+
+#if defined(USART8) || defined(UART8)
+#define BSP_USING_UART8
+#endif
+
+
+#if defined(BSP_USING_UART1) || defined(BSP_USING_UART2) || defined(BSP_USING_UART3) || \
+    defined(BSP_USING_UART4) || defined(BSP_USING_UART5) || defined(BSP_USING_UART6) || \
+    defined(BSP_USING_UART7) || defined(BSP_USING_UART8) || defined(BSP_USING_LPUART1)
+#define RT_USING_SERIAL
+#endif
+
+struct rt_dac_device;
+struct rt_dac_ops
+{
+    rt_err_t (*disabled)(struct rt_dac_device *device, rt_uint32_t channel);
+    rt_err_t (*enabled)(struct rt_dac_device *device, rt_uint32_t channel);
+    rt_err_t (*convert)(struct rt_dac_device *device, rt_uint32_t channel, rt_uint32_t *value);
+    rt_uint8_t (*get_resolution)(struct rt_dac_device *device);
+};
+
+struct rt_dac_device
+{
+    struct rt_device parent;
+    const struct rt_dac_ops *ops;
+};
+
+typedef struct rt_dac_device *rt_dac_device_t;
 
 #endif
 

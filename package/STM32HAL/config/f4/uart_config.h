@@ -25,6 +25,11 @@ extern "C" {
         .name = "uart1",                                            \
         .Instance = USART1,                                         \
         .irq_type = USART1_IRQn,                                    \
+        .GPIO_Alternate = GPIO_AF7_USART1,                          \
+        .GPIO_TX_Pin = GPIO_PIN_9,                                  \
+        .GPIO_TX_Port = GPIOA,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_10,                                 \
+        .GPIO_RX_Port = GPIOA,                                      \
     }
 #endif /* UART1_CONFIG */
 
@@ -60,6 +65,11 @@ extern "C" {
         .name = "uart2",                                            \
         .Instance = USART2,                                         \
         .irq_type = USART2_IRQn,                                    \
+        .GPIO_Alternate = GPIO_AF7_USART2,                          \
+        .GPIO_TX_Pin = GPIO_PIN_2,                                  \
+        .GPIO_TX_Port = GPIOA,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_3,                                  \
+        .GPIO_RX_Port = GPIOA,                                      \
     }
 #endif /* UART2_CONFIG */
 
@@ -95,6 +105,11 @@ extern "C" {
         .name = "uart3",                                            \
         .Instance = USART3,                                         \
         .irq_type = USART3_IRQn,                                    \
+        .GPIO_Alternate = GPIO_AF7_USART3,                          \
+        .GPIO_TX_Pin = GPIO_PIN_10,                                 \
+        .GPIO_TX_Port = GPIOB,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_11,                                 \
+        .GPIO_RX_Port = GPIOB                                       \
     }
 #endif /* UART3_CONFIG */
 
@@ -130,6 +145,11 @@ extern "C" {
         .name = "uart4",                                            \
         .Instance = UART4,                                          \
         .irq_type = UART4_IRQn,                                     \
+        .GPIO_Alternate = GPIO_AF8_UART4,                           \
+        .GPIO_TX_Pin = GPIO_PIN_0,                                  \
+        .GPIO_TX_Port = GPIOA,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_1,                                  \
+        .GPIO_RX_Port = GPIOA                                       \
     }
 #endif /* UART4_CONFIG */
 
@@ -165,6 +185,11 @@ extern "C" {
         .name = "uart5",                                            \
         .Instance = UART5,                                          \
         .irq_type = UART5_IRQn,                                     \
+        .GPIO_Alternate = GPIO_AF8_UART5,                           \
+        .GPIO_TX_Pin = GPIO_PIN_12,                                 \
+        .GPIO_TX_Port = GPIOC,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_2,                                  \
+        .GPIO_RX_Port = GPIOD                                       \
     }
 #endif /* UART5_CONFIG */
 
@@ -200,6 +225,11 @@ extern "C" {
         .name = "uart6",                                            \
         .Instance = USART6,                                         \
         .irq_type = USART6_IRQn,                                    \
+        .GPIO_Alternate = GPIO_AF8_USART6,                          \
+        .GPIO_TX_Pin = GPIO_PIN_6,                                  \
+        .GPIO_TX_Port = GPIOC,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_7,                                  \
+        .GPIO_RX_Port = GPIOC                                       \
     }
 #endif /* UART6_CONFIG */
 
@@ -235,6 +265,11 @@ extern "C" {
         .name = "uart7",                                            \
         .Instance = UART7,                                         \
         .irq_type = UART7_IRQn,                                    \
+        .GPIO_Alternate = GPIO_AF8_UART7,                          \
+        .GPIO_TX_Pin = GPIO_PIN_7,                                  \
+        .GPIO_TX_Port = GPIOE,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_8,                                  \
+        .GPIO_RX_Port = GPIOE                                       \
     }
 #endif /* UART7_CONFIG */
 
@@ -268,8 +303,13 @@ extern "C" {
 #define UART8_CONFIG                                                \
     {                                                               \
         .name = "uart8",                                            \
-        .Instance = UART8,                                         \
-        .irq_type = UART8_IRQn,                                    \
+        .Instance = UART8,                                          \
+        .irq_type = UART8_IRQn,                                     \
+        .GPIO_Alternate = GPIO_AF8_UART8,                           \
+        .GPIO_TX_Pin = GPIO_PIN_0,                                  \
+        .GPIO_TX_Port = GPIOE,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_1,                                  \
+        .GPIO_RX_Port = GPIOE                                       \
     }
 #endif /* UART8_CONFIG */
 

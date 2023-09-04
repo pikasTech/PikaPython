@@ -10,7 +10,7 @@
 #ifndef __USBD_CONFIG_H__
 #define __USBD_CONFIG_H__
 
-#include <rtconfig.h>
+#include "../../pika_hal_stm32_common.h"
 
 #ifdef BSP_USBD_TYPE_HS
 #define USBD_IRQ_TYPE     OTG_HS_IRQn

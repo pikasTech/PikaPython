@@ -24,6 +24,11 @@ extern "C" {
         .name = "lpuart1",                                          \
         .Instance = LPUART1,                                        \
         .irq_type = LPUART1_IRQn,                                   \
+        .GPIO_Alternate = GPIO_AF8_LPUART1,                         \
+        .GPIO_TX_Pin = GPIO_PIN_0,                                  \
+        .GPIO_TX_Port = GPIOC,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_1,                                  \
+        .GPIO_RX_Port = GPIOC,                                      \
     }
 #endif /* LPUART1_CONFIG */
 #if defined(BSP_LPUART1_RX_USING_DMA)
@@ -46,6 +51,11 @@ extern "C" {
         .name = "uart1",                                            \
         .Instance = USART1,                                         \
         .irq_type = USART1_IRQn,                                    \
+        .GPIO_Alternate = GPIO_AF7_USART1,                          \
+        .GPIO_TX_Pin = GPIO_PIN_9,                                  \
+        .GPIO_TX_Port = GPIOA,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_10,                                 \
+        .GPIO_RX_Port = GPIOA,                                      \
     }
 #endif /* UART1_CONFIG */
 #endif /* BSP_USING_UART1 */
@@ -81,6 +91,11 @@ extern "C" {
         .name = "uart2",                                            \
         .Instance = USART2,                                         \
         .irq_type = USART2_IRQn,                                    \
+        .GPIO_Alternate = GPIO_AF7_USART2,                          \
+        .GPIO_TX_Pin = GPIO_PIN_2,                                  \
+        .GPIO_TX_Port = GPIOA,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_3,                                  \
+        .GPIO_RX_Port = GPIOA,                                      \
     }
 #endif /* UART2_CONFIG */
 #endif /* BSP_USING_UART2 */
@@ -116,6 +131,11 @@ extern "C" {
         .name = "uart3",                                            \
         .Instance = USART3,                                         \
         .irq_type = USART3_IRQn,                                    \
+        .GPIO_Alternate = GPIO_AF7_USART3,                          \
+        .GPIO_TX_Pin = GPIO_PIN_4,                                  \
+        .GPIO_TX_Port = GPIOC,                                      \
+        .GPIO_RX_Pin = GPIO_PIN_11,                                 \
+        .GPIO_RX_Port = GPIOB                                       \
     }
 #endif /* UART3_CONFIG */
 #endif /* BSP_USING_UART3 */
