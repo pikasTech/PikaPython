@@ -432,6 +432,11 @@ PIKA_RES obj_setArg_noCopy(PikaObj* self, char* argPath, Arg* arg) {
     return _obj_setArg(self, argPath, arg, 0);
 }
 
+PIKA_RES obj_setObj(PikaObj* self, char* argPath, PikaObj* obj) {
+    Arg* arg = arg_newObj(obj);
+    return obj_setArg_noCopy(self, argPath, arg);
+}
+
 void* obj_getPtr(PikaObj* self, char* argPath) {
     PikaObj* obj = obj_getHostObj(self, argPath);
     if (NULL == obj) {

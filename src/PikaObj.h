@@ -215,6 +215,7 @@ int32_t obj_disable(PikaObj* self);
 
 // arg type operations
 PIKA_RES obj_setInt(PikaObj* self, char* argPath, int64_t val);
+PIKA_RES obj_setObj(PikaObj* self, char* argPath, PikaObj* obj);
 PIKA_RES obj_setRef(PikaObj* self, char* argPath, PikaObj* pointer);
 PIKA_RES obj_setPtr(PikaObj* self, char* argPath, void* pointer);
 PIKA_RES obj_setFloat(PikaObj* self, char* argPath, pika_float value);
