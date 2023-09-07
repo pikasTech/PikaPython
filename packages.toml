@@ -701,3 +701,11 @@ releases = [
 [[packages]]
 name = "pika_littlefs"
 releases = [ "v0.0.1 301105f2f3976d320c361aff4b2743cbbdeaa693" ]
+
+[[packages]]
+name = "fsm"
+releases = [ "v0.1.0 e131fc76e92835f979f4fc4b2d6960d4a4713945" ]
+
+[[packages]]
+name = "eventloop"
+releases = [ "v0.1.0 e131fc76e92835f979f4fc4b2d6960d4a4713945" ]
