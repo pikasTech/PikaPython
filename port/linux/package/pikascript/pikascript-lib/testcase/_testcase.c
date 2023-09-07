@@ -1,4 +1,5 @@
 #include "_testcase.h"
+#include "_testcase_test.h"
 
 void _testcase_test_tuple_nested(PikaObj* self, PikaObj* tuple_nasted) {
     size_t len = pikaTuple_getSize(tuple_nasted);
@@ -24,4 +25,13 @@ void _testcase_test_tuple_nested(PikaObj* self, PikaObj* tuple_nasted) {
             }
         }
     }
+}
+
+void _testcase_test___init__(PikaObj* self) {
+    PikaDict* dict = New_pikaDict();
+    pikaDict_setStr(dict, "PATH", "/usr/local/bin");
+    Arg* arg_dict = arg_newObj(dict);
+    obj_setArg(self, "environ", arg_dict);
+    arg_deinit(arg_dict);
+    return;
 }
