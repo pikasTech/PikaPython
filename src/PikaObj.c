@@ -3772,7 +3772,10 @@ extern volatile PikaObj* __pikaMain;
 void builtins_help(PikaObj* self, char* name) {
     if (strEqu(name, "modules")) {
         obj_printModules((PikaObj*)__pikaMain);
+        return;
     }
+    pika_platform_printf(
+        "Warning: help() only support help('modules') now.\r\n");
 }
 
 void builtins_reboot(PikaObj* self) {
