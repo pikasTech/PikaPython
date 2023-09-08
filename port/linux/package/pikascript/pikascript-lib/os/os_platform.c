@@ -62,6 +62,7 @@ char* os_read_platform(PikaObj* self, PikaObj* fd, int len) {
             free(buf);
             return obj_getStr(self, "os_file_read");
         }
+        free(buf);
     }
 
     return "";
