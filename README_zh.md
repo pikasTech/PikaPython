@@ -17,7 +17,7 @@
 	<a href="https://whycan.com/f_55.html" >论坛</a> |
 	<a href="http://pikascript.com/doc" >文档中心</a> |
 	<a href="https://space.bilibili.com/5365336/channel/seriesdetail?sid=1034902">视频</a> |
-        <a href="https://item.taobao.com/item.htm?spm=a21dvs.23580594.0.0.52de3d0dt7rqAx&ft=t&id=654947372034">开发板</a> |
+        <a href="https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.11.37216340XZtYt9&id=738387991209">开发板</a> |
         <a href="http://pikapython.com/doc/%E4%BD%BF%E7%94%A8%20BSP%20%E5%B7%A5%E7%A8%8B.html">BSP</a> |
 	<a href="http://pikapython.com/doc/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html">包管理器</a> |
 	<a href="http://pikapython.com/doc/%E4%BB%8E%20RT-Thread%20%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%BC%80%E5%A7%8B.html" >RT-Thread 软件包</a> |
@@ -89,13 +89,15 @@ PikaPython 串口终端、脚本下载、模块管理工具。
 
 # 快速上手
 
-可使用[仿真工程](document/1.三分钟快速上手.md)快速上手，无需硬件，也可以使用官方支持的开发板[Pika派—Zero](https://item.taobao.com/item.htm?spm=a2126o.success.result.1.76224831Y0X1gO&id=654947372034)，上手即玩。
+可使用[仿真工程](document/1.三分钟快速上手.md)快速上手，无需硬件，也可以使用官方支持的开发板[Pika派—Zero](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.11.37216340XZtYt9&id=738387991209)，上手即玩。
 
-[Pika派python编程游玩指南](http://pikapython.com/doc/Pika%20%E6%B4%BE%E5%BC%80%E5%8F%91%E6%9D%BF%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B.html)
+# 快速上手
 
-[![PikaPi-Zero](document/image/147940229-a6b8ebf5-41db-4614-a525-448f47de0a67.png)](https://item.taobao.com/item.htm?spm=a2126o.success.result.1.76224831Y0X1gO&id=654947372034)
+可使用[仿真工程](document/1.三分钟快速上手.md)快速上手，无需硬件，也可以使用官方支持的开发板[Pika派—Zero](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.11.37216340XZtYt9&id=738387991209)，上手即玩。
 
-开发板基于 STM32G030C8T6 小资源 MCU，仅 64kB Flash，8kB RAM 即可运行完整解释器，和完整的外设驱动（GPIO、TIME、IIC、UART、ADC、PWM、RGB、KEY、LCD）。板载 CH340 USB 转串口芯片，Type-C 接口，支持串口下载 python 脚本，板载4颗 RGB 灯，可选配[LCD屏幕](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.12.16f97c58fsLjVk&id=660745643102)。
+[![PikaPi-WIRELESS](document/image/147940229-a6b8ebf5-41db-4614-a525-448f47de0a67.png)](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.11.37216340XZtYt9&id=738387991209)
+
+开发板基于 ESP32S3 配套全流程移植、适配、模块开发课程。
 
 # 开发手册
 
