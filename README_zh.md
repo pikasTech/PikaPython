@@ -89,20 +89,15 @@ PikaPython 串口终端、脚本下载、模块管理工具。
 
 # 快速上手
 
-可使用[仿真工程](document/1.三分钟快速上手.md)快速上手，无需硬件，也可以使用官方支持的开发板[Pika派—Zero](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.11.37216340XZtYt9&id=738387991209)，上手即玩。
+可使用[仿真工程](document/1.三分钟快速上手.md)快速上手，无需硬件，也可以使用官方支持的开发板[Pika派—Wireless](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.11.37216340XZtYt9&id=738387991209)，上手即玩。
 
-# 快速上手
-
-可使用[仿真工程](document/1.三分钟快速上手.md)快速上手，无需硬件，也可以使用官方支持的开发板[Pika派—Zero](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.11.37216340XZtYt9&id=738387991209)，上手即玩。
-
-[![PikaPi-WIRELESS](document/image/147940229-a6b8ebf5-41db-4614-a525-448f47de0a67.png)](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.11.37216340XZtYt9&id=738387991209)
+[![PikaPi-WIRELESS](assets/%E5%B0%81%E9%9D%A2%E5%9B%BE.png)](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.11.37216340XZtYt9&id=738387991209)
 
 开发板基于 ESP32S3 配套全流程移植、适配、模块开发课程。
 
 # 开发手册
 
 ### [点此进入文档中心](http://pikascript.com/doc)
-
 ![image](document/image/144693400-99f9c038-76fd-4d95-b3d2-137bd972d580.png)
 
 # 视频教程
