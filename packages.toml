@@ -409,6 +409,12 @@ releases = [
 ]
 
 [[packages]]
+name = "STM32"
+releases = [
+    "v0.1.0 5ab725046d868d7a1fa14749c866d5378cdac706",
+]
+
+[[packages]]
 name = "STM32G0"
 releases = [
     "v1.0.2 0052a28582ac8a85cc48e1d676d9a3be5cb1b93f",
