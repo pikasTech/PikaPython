@@ -3,12 +3,10 @@ extern "C" {
 #endif
 
 #ifndef __PIKA_ADAPTER_RTT_H__
+#define __PIKA_ADAPTER_RTT_H__
 #include <stdint.h>
 #include "PikaPlatform.h"
-#define __PIKA_ADAPTER_RTT_H__
 
-typedef signed long
-    ssize_t; /* Used for a count of bytes or an error indication. */
 typedef int8_t rt_int8_t;     /**<  8bit integer type */
 typedef int16_t rt_int16_t;   /**< 16bit integer type */
 typedef int32_t rt_int32_t;   /**< 32bit integer type */
@@ -18,7 +16,7 @@ typedef uint32_t rt_uint32_t; /**< 32bit unsigned integer type */
 typedef int64_t rt_int64_t;   /**< 64bit integer type */
 typedef uint64_t rt_uint64_t; /**< 64bit unsigned integer type */
 typedef size_t rt_size_t;     /**< Type for size number */
-typedef ssize_t
+typedef signed long
     rt_ssize_t; /**< Used for a count of bytes or an error indication */
 
 /* RT-Thread basic data type definitions */
