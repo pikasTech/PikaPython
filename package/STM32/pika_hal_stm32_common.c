@@ -1,5 +1,8 @@
 #include "pika_hal_stm32_common.h"
 
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 12, 6)
+#error pikascript-core and PikaStdLib version 1.12.6 or later is required.
+#endif
 
 void mp_hal_gpio_clock_enable(GPIO_TypeDef *gpio) {
     #if defined(STM32L476xx) || defined(STM32L496xx)
