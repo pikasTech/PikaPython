@@ -189,16 +189,9 @@ int PikaStdData_dict_keys___len__(PikaObj* self) {
 }
 
 int dict_contains(PikaDict* dict, Arg* key) {
-    int i = 0;
-    while (PIKA_TRUE) {
-        Arg* item = args_getArgByIndex(_OBJ2KEYS(dict), i);
-        if (NULL == item) {
-            break;
-        }
-        if (arg_isEqual(item, key)) {
-            return PIKA_TRUE;
-        }
-        i++;
+    Hash hash = hash_time33(arg_getStr(key));
+    if (args_isArgExist_hash(_OBJ2DICT(dict), hash)) {
+        return pika_true;
     }
     return pika_false;
 }
