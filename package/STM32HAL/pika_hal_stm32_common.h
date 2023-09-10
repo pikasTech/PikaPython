@@ -252,42 +252,7 @@ static inline rt_uint32_t rt_adc_read(rt_adc_device_t dev, rt_int8_t channel)
 #define PIN_STPIN(pin) ((uint16_t)(1u << PIN_NO(pin)))
 
 /* e.g. PA7 */
-static inline rt_base_t _stm32_pin_get(const char *name)
-{
-    rt_base_t pin = 0;
-    int hw_port_num, hw_pin_num = 0;
-    int i, name_len;
-
-    name_len = rt_strlen(name);
-
-    if ((name_len < 3) || (name_len >= 5))
-    {
-        return -RT_EINVAL;
-    }
-    if ((name[0] != 'P'))
-    {
-        return -RT_EINVAL;
-    }
-
-    if ((name[1] >= 'A') && (name[1] <= 'Z'))
-    {
-        hw_port_num = (int)(name[1] - 'A');
-    }
-    else
-    {
-        return -RT_EINVAL;
-    }
-
-    for (i = 2; i < name_len; i++)
-    {
-        hw_pin_num *= 10;
-        hw_pin_num += name[i] - '0';
-    }
-
-    pin = PIN_NUM(hw_port_num, hw_pin_num);
-
-    return pin;
-}
+rt_base_t _stm32_pin_get(const char *name);
 
 #define RT_ADC_INTERN_CH_TEMPER     (-1)
 #define RT_ADC_INTERN_CH_VREF       (-2)
@@ -296,6 +261,7 @@ static inline rt_base_t _stm32_pin_get(const char *name)
 
 #define BSP_USING_GPIO
 #define RT_USING_PIN
+#define BSP_USING_PWM
 
 #ifdef ADC1
 #define BSP_USING_ADC1
@@ -342,6 +308,77 @@ static inline rt_base_t _stm32_pin_get(const char *name)
     defined(BSP_USING_UART4) || defined(BSP_USING_UART5) || defined(BSP_USING_UART6) || \
     defined(BSP_USING_UART7) || defined(BSP_USING_UART8) || defined(BSP_USING_LPUART1)
 #define RT_USING_SERIAL
+// #define RT_SERIAL_USING_DMA
+
+#endif
+
+
+#if defined(TIM1)
+#define BSP_USING_PWM1
+#endif
+
+#if defined(TIM2)
+#define BSP_USING_PWM2
+#endif
+
+#if defined(TIM3)
+#define BSP_USING_PWM3
+#endif
+
+#if defined(TIM4)
+#define BSP_USING_PWM4
+#endif
+
+#if defined(TIM5)
+#define BSP_USING_PWM5
+#endif
+
+#if defined(TIM6)
+#define BSP_USING_PWM6
+#endif
+
+#if defined(TIM7)
+#define BSP_USING_PWM7
+#endif
+
+#if defined(TIM8)
+#define BSP_USING_PWM8
+#endif
+
+#if defined(TIM9)
+#define BSP_USING_PWM9
+#endif
+
+#if defined(TIM10)
+#define BSP_USING_PWM10
+#endif
+
+#if defined(TIM11)
+#define BSP_USING_PWM11
+#endif
+
+#if defined(TIM12)
+#define BSP_USING_PWM12
+#endif
+
+#if defined(TIM13)
+#define BSP_USING_PWM13
+#endif
+
+#if defined(TIM14)
+#define BSP_USING_PWM14
+#endif
+
+#if defined(TIM15)
+#define BSP_USING_PWM15
+#endif
+
+#if defined(TIM16)
+#define BSP_USING_PWM16
+#endif
+
+#if defined(TIM17)
+#define BSP_USING_PWM17
 #endif
 
 struct rt_dac_device;
@@ -359,7 +396,131 @@ struct rt_dac_device
     const struct rt_dac_ops *ops;
 };
 
+struct rt_ringbuffer
+{
+    rt_uint8_t *buffer_ptr;
+    /* use the msb of the {read,write}_index as mirror bit. You can see this as
+     * if the buffer adds a virtual mirror and the pointers point either to the
+     * normal or to the mirrored buffer. If the write_index has the same value
+     * with the read_index, but in a different mirror, the buffer is full.
+     * While if the write_index and the read_index are the same and within the
+     * same mirror, the buffer is empty. The ASCII art of the ringbuffer is:
+     *
+     *          mirror = 0                    mirror = 1
+     * +---+---+---+---+---+---+---+|+~~~+~~~+~~~+~~~+~~~+~~~+~~~+
+     * | 0 | 1 | 2 | 3 | 4 | 5 | 6 ||| 0 | 1 | 2 | 3 | 4 | 5 | 6 | Full
+     * +---+---+---+---+---+---+---+|+~~~+~~~+~~~+~~~+~~~+~~~+~~~+
+     *  read_idx-^                   write_idx-^
+     *
+     * +---+---+---+---+---+---+---+|+~~~+~~~+~~~+~~~+~~~+~~~+~~~+
+     * | 0 | 1 | 2 | 3 | 4 | 5 | 6 ||| 0 | 1 | 2 | 3 | 4 | 5 | 6 | Empty
+     * +---+---+---+---+---+---+---+|+~~~+~~~+~~~+~~~+~~~+~~~+~~~+
+     * read_idx-^ ^-write_idx
+     */
+
+    rt_uint32_t read_mirror : 1;
+    rt_uint32_t read_index : 31;
+    rt_uint32_t write_mirror : 1;
+    rt_uint32_t write_index : 31;
+    /* as we use msb of index as mirror bit, the size should be signed and
+     * could only be positive. */
+    rt_int32_t buffer_size;
+};
+
+struct rt_serial_rx_fifo
+{
+    struct rt_ringbuffer rb;
+
+//    struct rt_completion rx_cpt;
+
+    rt_uint16_t rx_cpt_index;
+
+    /* software fifo */
+    rt_uint8_t buffer[];
+};
+
 typedef struct rt_dac_device *rt_dac_device_t;
+
+#define rt_interrupt_enter()
+#define rt_interrupt_leave()
+
+#define RT_ALIGN_DOWN(size, align)      ((size) & ~((align) - 1))
+#define RT_ALIGN_SIZE 8
+
+#define RT_SERIAL_RX_MINBUFSZ 64
+#define RT_SERIAL_TX_MINBUFSZ 64
+
+#define RT_DEVICE_FLAG_RX_BLOCKING      0x1000
+#define RT_DEVICE_FLAG_RX_NON_BLOCKING  0x2000
+
+#define RT_DEVICE_FLAG_TX_BLOCKING      0x4000
+#define RT_DEVICE_FLAG_TX_NON_BLOCKING  0x8000
+
+#define RT_SERIAL_RX_BLOCKING           RT_DEVICE_FLAG_RX_BLOCKING
+#define RT_SERIAL_RX_NON_BLOCKING       RT_DEVICE_FLAG_RX_NON_BLOCKING
+#define RT_SERIAL_TX_BLOCKING           RT_DEVICE_FLAG_TX_BLOCKING
+#define RT_SERIAL_TX_NON_BLOCKING       RT_DEVICE_FLAG_TX_NON_BLOCKING
+
+void mp_hal_gpio_clock_enable(GPIO_TypeDef *gpio);
+static void rt_ringbuffer_init(struct rt_ringbuffer *rb,
+                        rt_uint8_t           *pool,
+                        rt_int32_t            size)
+{
+    RT_ASSERT(rb != RT_NULL);
+    RT_ASSERT(size > 0);
+
+    /* initialize read and write index */
+    rb->read_mirror = rb->read_index = 0;
+    rb->write_mirror = rb->write_index = 0;
+
+    /* set buffer pool and size */
+    rb->buffer_ptr = pool;
+    rb->buffer_size = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
+}
+
+/** return the size of empty space in rb */
+#define rt_ringbuffer_space_len(rb) ((rb)->buffer_size - rt_ringbuffer_data_len(rb))
+
+enum rt_ringbuffer_state
+{
+    RT_RINGBUFFER_EMPTY,
+    RT_RINGBUFFER_FULL,
+    /* half full is neither full nor empty */
+    RT_RINGBUFFER_HALFFULL,
+};
+
+static inline enum rt_ringbuffer_state rt_ringbuffer_status(struct rt_ringbuffer *rb)
+{
+    if (rb->read_index == rb->write_index)
+    {
+        if (rb->read_mirror == rb->write_mirror)
+            return RT_RINGBUFFER_EMPTY;
+        else
+            return RT_RINGBUFFER_FULL;
+    }
+    return RT_RINGBUFFER_HALFFULL;
+}
+
+static rt_size_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb)
+{
+    switch (rt_ringbuffer_status(rb))
+    {
+    case RT_RINGBUFFER_EMPTY:
+        return 0;
+    case RT_RINGBUFFER_FULL:
+        return rb->buffer_size;
+    case RT_RINGBUFFER_HALFFULL:
+    default:
+    {
+        rt_size_t wi = rb->write_index, ri = rb->read_index;
+
+        if (wi > ri)
+            return wi - ri;
+        else
+            return rb->buffer_size - (ri - wi);
+    }
+    }
+}
 
 #endif
 

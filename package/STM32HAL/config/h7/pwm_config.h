@@ -23,7 +23,7 @@ extern "C" {
     {                                           \
        .tim_handle.Instance     = TIM1,         \
        .name                    = "pwm1",       \
-       .channel                 = RT_NULL       \
+       .channel                 = RT_NULL,      \
     }
 #endif /* BSP_USING_PWM1 */
 
@@ -32,7 +32,7 @@ extern "C" {
     {                                           \
        .tim_handle.Instance     = TIM2,         \
        .name                    = "pwm2",       \
-       .channel                 = RT_NULL       \
+       .channel                 = RT_NULL,      \
     }
 #endif /* BSP_USING_PWM2 */
 
@@ -41,7 +41,7 @@ extern "C" {
     {                                           \
        .tim_handle.Instance     = TIM3,         \
        .name                    = "pwm3",       \
-       .channel                 = RT_NULL       \
+       .channel                 = RT_NULL,      \
     }
 #endif /* BSP_USING_PWM3 */
 
@@ -50,7 +50,7 @@ extern "C" {
     {                                           \
        .tim_handle.Instance     = TIM4,         \
        .name                    = "pwm4",       \
-       .channel                 = RT_NULL       \
+       .channel                 = RT_NULL,      \
     }
 #endif /* BSP_USING_PWM4 */
 
@@ -59,12 +59,8 @@ extern "C" {
     {                                           \
        .tim_handle.Instance     = TIM5,         \
        .name                    = "pwm5",       \
-       .channel                 = RT_NULL       \
+       .channel                 = RT_NULL,      \
     }
 #endif /* BSP_USING_PWM5 */
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* __PWM_CONFIG_H__ */

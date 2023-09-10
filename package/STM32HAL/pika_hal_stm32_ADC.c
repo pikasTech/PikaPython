@@ -595,6 +595,7 @@ int pika_hal_platform_ADC_write(pika_dev* dev, void* buf, size_t count) {
 int pika_hal_platform_ADC_ioctl_enable(pika_dev* dev) {
     platform_data_ADC* data = dev->platform_data;
     
+    mp_hal_gpio_clock_enable(PIN_STPORT(data->pin));
     /* init GPIO */
     GPIO_InitTypeDef GPIO_InitStruct = {0};
     GPIO_InitStruct.Pin = PIN_STPIN(data->pin);

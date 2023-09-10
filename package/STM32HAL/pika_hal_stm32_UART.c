@@ -141,7 +141,8 @@ struct serial_configure
     rt_uint32_t parity                  :2;
     rt_uint32_t bit_order               :1;
     rt_uint32_t invert                  :1;
-    rt_uint32_t bufsz                   :16;
+    rt_uint32_t rx_bufsz                :16;
+    rt_uint32_t tx_bufsz                :16;
     rt_uint32_t flowcontrol             :1;
     rt_uint32_t reserved                :5;
 };
@@ -205,9 +206,8 @@ struct stm32_uart
 #endif
     rt_uint16_t uart_dma_flag;
     struct rt_serial_device serial;
+		void* user_data;
 };
-
-void rt_hw_serial_isr(struct rt_serial_device *serial, int event);
 
 enum
 {
@@ -319,43 +319,6 @@ static rt_uint32_t stm32_uart_get_mask(rt_uint32_t word_length, rt_uint32_t pari
 #endif
     return mask;
 }
-
-void mp_hal_gpio_clock_enable(GPIO_TypeDef *gpio) {
-    #if defined(STM32L476xx) || defined(STM32L496xx)
-    if (gpio == GPIOG) {
-        // Port G pins 2 thru 15 are powered using VddIO2 on these MCUs.
-        HAL_PWREx_EnableVddIO2();
-    }
-    #endif
-
-    // This logic assumes that all the GPIOx_EN bits are adjacent and ordered in one register
-
-    #if defined(STM32F0) || defined(STM32L1)
-    #define AHBxENR AHBENR
-    #define AHBxENR_GPIOAEN_Pos RCC_AHBENR_GPIOAEN_Pos
-    #elif defined(STM32F4) || defined(STM32F7)
-    #define AHBxENR AHB1ENR
-    #define AHBxENR_GPIOAEN_Pos RCC_AHB1ENR_GPIOAEN_Pos
-    #elif defined(STM32H7)
-    #define AHBxENR AHB4ENR
-    #define AHBxENR_GPIOAEN_Pos RCC_AHB4ENR_GPIOAEN_Pos
-    #elif defined(STM32L0)
-    #define AHBxENR IOPENR
-    #define AHBxENR_GPIOAEN_Pos RCC_IOPENR_IOPAEN_Pos
-    #elif defined(STM32G0)
-    #define AHBxENR IOPENR
-    #define AHBxENR_GPIOAEN_Pos RCC_IOPENR_GPIOAEN_Pos
-    #elif defined(STM32G4) || defined(STM32H5) || defined(STM32L4) || defined(STM32WB) || defined(STM32WL)
-    #define AHBxENR AHB2ENR
-    #define AHBxENR_GPIOAEN_Pos RCC_AHB2ENR_GPIOAEN_Pos
-    #endif
-
-    uint32_t gpio_idx = ((uint32_t)gpio - GPIOA_BASE) / (GPIOB_BASE - GPIOA_BASE);
-    RCC->AHBxENR |= 1 << (AHBxENR_GPIOAEN_Pos + gpio_idx);
-    volatile uint32_t tmp = RCC->AHBxENR; // Delay after enabling clock
-    (void)tmp;
-}
-
 
 static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
@@ -916,6 +879,172 @@ static void dma_recv_isr(struct rt_serial_device *serial, rt_uint8_t isr_flag)
 
 #endif
 
+static rt_ssize_t rt_serial_update_write_index(struct rt_ringbuffer  *rb,
+                                                     rt_uint16_t     write_size)
+{
+    rt_uint16_t size;
+    RT_ASSERT(rb != RT_NULL);
+
+    /* whether has enough space */
+    size = rt_ringbuffer_space_len(rb);
+
+    /* no space, drop some data */
+    if (size < write_size)
+    {
+        write_size = size;
+#if !defined(RT_USING_ULOG) || defined(ULOG_USING_ISR_LOG)
+        LOG_W("The serial buffer (len %d) is overflow.", rb->buffer_size);
+#endif
+    }
+
+    if (rb->buffer_size - rb->write_index > write_size)
+    {
+        /* this should not cause overflow because there is enough space for
+         * length of data in current mirror */
+        rb->write_index += write_size;
+        return write_size;
+    }
+
+    /* we are going into the other side of the mirror */
+    rb->write_mirror = ~rb->write_mirror;
+    rb->write_index = write_size - (rb->buffer_size - rb->write_index);
+
+    return write_size;
+}
+
+static void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
+{
+    RT_ASSERT(serial != RT_NULL);
+
+    switch (event & 0xff)
+    {
+        /* Interrupt receive event */
+        case RT_SERIAL_EVENT_RX_IND:
+        case RT_SERIAL_EVENT_RX_DMADONE:
+        {
+            struct rt_serial_rx_fifo *rx_fifo;
+            rt_size_t rx_length = 0;
+            rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
+            rt_base_t level;
+            RT_ASSERT(rx_fifo != RT_NULL);
+
+            /* If the event is RT_SERIAL_EVENT_RX_IND, rx_length is equal to 0 */
+            rx_length = (event & (~0xff)) >> 8;
+
+            if (rx_length)
+            { /* RT_SERIAL_EVENT_RX_DMADONE MODE */
+                level = rt_hw_interrupt_disable();
+                rt_serial_update_write_index(&(rx_fifo->rb), rx_length);
+                rt_hw_interrupt_enable(level);
+            }
+
+            /* Get the length of the data from the ringbuffer */
+            rx_length = rt_ringbuffer_data_len(&rx_fifo->rb);
+            if (rx_length == 0) break;
+
+            if (serial->parent.open_flag & RT_SERIAL_RX_BLOCKING)
+            {
+                if (rx_fifo->rx_cpt_index && rx_length >= rx_fifo->rx_cpt_index )
+                {
+                    rx_fifo->rx_cpt_index = 0;
+#ifndef PIKA_HAL
+                    rt_completion_done(&(rx_fifo->rx_cpt));
+#endif
+                }
+            }
+            /* Trigger the receiving completion callback */
+            if (serial->parent.rx_indicate != RT_NULL)
+                serial->parent.rx_indicate(&(serial->parent), rx_length);
+
+            if (serial->rx_notify.notify)
+            {
+                serial->rx_notify.notify(serial->rx_notify.dev);
+            }
+            break;
+        }
+
+#ifndef PIKA_HAL
+        /* Interrupt transmit event */
+        case RT_SERIAL_EVENT_TX_DONE:
+        {
+            struct rt_serial_tx_fifo *tx_fifo;
+            rt_size_t tx_length = 0;
+            tx_fifo = (struct rt_serial_tx_fifo *)serial->serial_tx;
+            RT_ASSERT(tx_fifo != RT_NULL);
+
+            /* Get the length of the data from the ringbuffer */
+            tx_length = rt_ringbuffer_data_len(&tx_fifo->rb);
+            /* If there is no data in tx_ringbuffer,
+             * then the transmit completion callback is triggered*/
+            if (tx_length == 0)
+            {
+                tx_fifo->activated = RT_FALSE;
+                /* Trigger the transmit completion callback */
+                if (serial->parent.tx_complete != RT_NULL)
+                    serial->parent.tx_complete(&serial->parent, RT_NULL);
+
+                if (serial->parent.open_flag & RT_SERIAL_TX_BLOCKING)
+                    rt_completion_done(&(tx_fifo->tx_cpt));
+
+                break;
+            }
+
+            /* Call the transmit interface for transmission again */
+            /* Note that in interrupt mode, tx_fifo->buffer and tx_length
+             * are inactive parameters */
+            serial->ops->transmit(serial,
+                                tx_fifo->buffer,
+                                tx_length,
+                                serial->parent.open_flag & ( \
+                                RT_SERIAL_TX_BLOCKING | \
+                                RT_SERIAL_TX_NON_BLOCKING));
+            break;
+        }
+
+        case RT_SERIAL_EVENT_TX_DMADONE:
+        {
+            struct rt_serial_tx_fifo *tx_fifo;
+            tx_fifo = (struct rt_serial_tx_fifo *)serial->serial_tx;
+            RT_ASSERT(tx_fifo != RT_NULL);
+
+            tx_fifo->activated = RT_FALSE;
+
+            /* Trigger the transmit completion callback */
+            if (serial->parent.tx_complete != RT_NULL)
+                serial->parent.tx_complete(&serial->parent, RT_NULL);
+
+            if (serial->parent.open_flag & RT_SERIAL_TX_BLOCKING)
+            {
+                rt_completion_done(&(tx_fifo->tx_cpt));
+                break;
+            }
+
+            rt_serial_update_read_index(&tx_fifo->rb, tx_fifo->put_size);
+            /* Get the length of the data from the ringbuffer.
+             * If there is some data in tx_ringbuffer,
+             * then call the transmit interface for transmission again */
+            if (rt_ringbuffer_data_len(&tx_fifo->rb))
+            {
+                tx_fifo->activated = RT_TRUE;
+
+                rt_uint8_t *put_ptr  = RT_NULL;
+                /* Get the linear length buffer from rinbuffer */
+                tx_fifo->put_size = rt_serial_get_linear_buffer(&(tx_fifo->rb), &put_ptr);
+                /* Call the transmit interface for transmission again */
+                serial->ops->transmit(serial,
+                                    put_ptr,
+                                    tx_fifo->put_size,
+                                    RT_SERIAL_TX_NON_BLOCKING);
+            }
+
+            break;
+        }
+#endif
+        default:
+            break;
+    }
+}
+
 /**
  * Uart common interrupt process. This need add to uart ISR.
  *
@@ -928,6 +1057,10 @@ static void uart_isr(struct rt_serial_device *serial)
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct stm32_uart, serial);
 
+#ifdef PIKA_HAL
+    HAL_UART_IRQHandler(&(uart->handle));
+    return;
+#else
     /* UART in mode Receiver -------------------------------------------------*/
     if ((__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE) != RESET) &&
             (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_RXNE) != RESET))
@@ -998,9 +1131,8 @@ static void uart_isr(struct rt_serial_device *serial)
             UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_RXNE);
         }
     }
+#endif
 }
-
-#ifndef PIKA_HAL
 
 #if defined(BSP_USING_UART1)
 void USART1_IRQHandler(void)
@@ -1323,8 +1455,6 @@ void LPUART1_DMA_RX_IRQHandler(void)
 }
 #endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_LPUART1_RX_USING_DMA) */
 #endif /* BSP_USING_LPUART1*/
-
-#endif
 
 static void stm32_uart_get_dma_config(void)
 {
@@ -1775,8 +1905,12 @@ static int rt_hw_usart_init(void)
     return result;
 }
 
+#define RX_BUFF_LENGTH 256
 typedef struct platform_UART {
     struct stm32_uart* rt_uart;
+    struct serial_configure config;
+    uint8_t rxBuff[RX_BUFF_LENGTH];
+    size_t rxBuffOffset;
 } platform_UART;
 
 int pika_hal_platform_UART_open(pika_dev* dev, char* name) {
@@ -1787,10 +1921,12 @@ int pika_hal_platform_UART_open(pika_dev* dev, char* name) {
     for (rt_size_t i = 0; i < sizeof(uart_obj) / sizeof(struct stm32_uart); i++){
         if (0 == stricmp(name, uart_obj[i].config->name)){
             platform_UART* uart = (platform_UART*)pikaMalloc(sizeof(platform_UART));
+						pika_platform_memset(uart, 0, sizeof(platform_UART));
             if (NULL == uart){
                 return -1;
             }
             uart->rt_uart = &uart_obj[i];
+            uart->rt_uart->user_data = dev;
             dev->platform_data = uart;
             return 0;
         }
@@ -1813,68 +1949,75 @@ int pika_hal_platform_UART_close(pika_dev* dev) {
 
 int pika_hal_platform_UART_ioctl_config(pika_dev* dev,
                                         pika_hal_UART_config* cfg) {
-    return 0;
+    platform_UART* uart = (platform_UART*)dev->platform_data;
+    if( !dev->is_enabled ){
+        const struct serial_configure default_config = RT_SERIAL_CONFIG_DEFAULT;
+        pika_platform_memcpy(&uart->config, &default_config, sizeof(struct serial_configure));
+        switch(cfg->data_bits){
+            case PIKA_HAL_UART_DATA_BITS_8:
+                uart->config.data_bits = DATA_BITS_8;
+                break;
+            case PIKA_HAL_UART_DATA_BITS_7:
+                uart->config.data_bits = DATA_BITS_7;
+                break;
+            case PIKA_HAL_UART_DATA_BITS_6:
+                uart->config.data_bits = DATA_BITS_6;
+                break;
+            case PIKA_HAL_UART_DATA_BITS_5:
+                uart->config.data_bits = DATA_BITS_5;
+                break;
+            default:
+                pika_platform_printf("Error: invalid data bits %d\r\n", cfg->data_bits);
+                return -1;
+        }
+        switch(cfg->flow_control){
+            case PIKA_HAL_UART_FLOW_CONTROL_NONE:
+                uart->config.flowcontrol = RT_SERIAL_FLOWCONTROL_NONE;
+                break;
+            case PIKA_HAL_UART_FLOW_CONTROL_RTS_CTS:
+                uart->config.flowcontrol = RT_SERIAL_FLOWCONTROL_CTSRTS;
+                break;
+            default:
+                pika_platform_printf("Error: invalid flow control %d\r\n", cfg->flow_control);
+                return -1;
+        }
+        switch(cfg->parity){
+            case PIKA_HAL_UART_PARITY_NONE:
+                uart->config.parity = PARITY_NONE;
+                break;
+            case PIKA_HAL_UART_PARITY_EVEN:
+                uart->config.parity = PARITY_EVEN;
+                break;
+            case PIKA_HAL_UART_PARITY_ODD:
+                uart->config.parity = PARITY_ODD;
+                break;
+            default:
+                pika_platform_printf("Error: invalid parity %d\r\n", cfg->parity);
+                return -1;
+        }
+        switch(cfg->stop_bits){
+            case PIKA_HAL_UART_STOP_BITS_1:
+                uart->config.stop_bits = STOP_BITS_1;
+                break;
+            case PIKA_HAL_UART_STOP_BITS_2:
+                uart->config.stop_bits = STOP_BITS_2;
+                break;
+            default:
+                pika_platform_printf("Error: invalid stop bits %d\r\n", cfg->stop_bits);
+                return -1;
+        }
+        uart->config.baud_rate = cfg->baudrate;
+        return 0;
+    }
+    /* unsupported */
+    return -1;
 }
 
 int pika_hal_platform_UART_ioctl_enable(pika_dev* dev) {
     platform_UART* uart = (platform_UART*)dev->platform_data;
-    pika_hal_UART_config* cfg = (pika_hal_UART_config*)dev->ioctl_config;
-    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
-    switch(cfg->data_bits){
-        case PIKA_HAL_UART_DATA_BITS_8:
-            config.data_bits = DATA_BITS_8;
-            break;
-        case PIKA_HAL_UART_DATA_BITS_7:
-            config.data_bits = DATA_BITS_7;
-            break;
-        case PIKA_HAL_UART_DATA_BITS_6:
-            config.data_bits = DATA_BITS_6;
-            break;
-        case PIKA_HAL_UART_DATA_BITS_5:
-            config.data_bits = DATA_BITS_5;
-            break;
-        default:
-            pika_platform_printf("Error: invalid data bits %d\r\n", cfg->data_bits);
-            return -1;
-    }
-    switch(cfg->flow_control){
-        case PIKA_HAL_UART_FLOW_CONTROL_NONE:
-            config.flowcontrol = RT_SERIAL_FLOWCONTROL_NONE;
-            break;
-        case PIKA_HAL_UART_FLOW_CONTROL_RTS_CTS:
-            config.flowcontrol = RT_SERIAL_FLOWCONTROL_CTSRTS;
-            break;
-        default:
-            pika_platform_printf("Error: invalid flow control %d\r\n", cfg->flow_control);
-            return -1;
-    }
-    switch(cfg->parity){
-        case PIKA_HAL_UART_PARITY_NONE:
-            config.parity = PARITY_NONE;
-            break;
-        case PIKA_HAL_UART_PARITY_EVEN:
-            config.parity = PARITY_EVEN;
-            break;
-        case PIKA_HAL_UART_PARITY_ODD:
-            config.parity = PARITY_ODD;
-            break;
-        default:
-            pika_platform_printf("Error: invalid parity %d\r\n", cfg->parity);
-            return -1;
-    }
-    switch(cfg->stop_bits){
-        case PIKA_HAL_UART_STOP_BITS_1:
-            config.stop_bits = STOP_BITS_1;
-            break;
-        case PIKA_HAL_UART_STOP_BITS_2:
-            config.stop_bits = STOP_BITS_2;
-            break;
-        default:
-            pika_platform_printf("Error: invalid stop bits %d\r\n", cfg->stop_bits);
-            return -1;
-    }
-    config.baud_rate = cfg->baudrate;
-    stm32_configure(&uart->rt_uart->serial, &config);
+    stm32_configure(&uart->rt_uart->serial, &uart->config);
+    stm32_control(&uart->rt_uart->serial, RT_DEVICE_CTRL_SET_INT, NULL);
+    HAL_UART_Receive_IT(&uart->rt_uart->handle, uart->rxBuff, 1);
     return 0;
 }
 
@@ -1882,12 +2025,54 @@ int pika_hal_platform_UART_ioctl_disable(pika_dev* dev) {
     return -1;
 }
 
-int pika_hal_platform_UART_read(pika_dev* dev, void* buf, size_t count) {
-    platform_UART* uart = (platform_UART*)dev->platform_data;
-    for (size_t i = 0; i < count; i++){
-        ((char*)buf)[i] = stm32_getc(&uart->rt_uart->serial);
+static pika_dev* find_uart_from_handle(UART_HandleTypeDef* handle){
+    for (rt_size_t i = 0; i < sizeof(uart_obj) / sizeof(struct stm32_uart); i++){
+        if (handle == &uart_obj[i].handle){
+            return uart_obj[i].user_data;
+        }
     }
-    return 0;
+    return NULL;
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
+		pika_dev* uart = find_uart_from_handle(huart);
+		platform_UART* pika_uart = uart->platform_data;
+    char inputChar = pika_uart->rxBuff[pika_uart->rxBuffOffset];
+    /* avoid recive buff overflow */
+    if (pika_uart->rxBuffOffset + 2 > RX_BUFF_LENGTH) {
+        memmove(pika_uart->rxBuff, pika_uart->rxBuff + 1, RX_BUFF_LENGTH);
+        UART_Start_Receive_IT(
+            huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
+        return;
+    }
+
+    /* recive next char */
+    pika_uart->rxBuffOffset++;
+    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
+    UART_Start_Receive_IT(
+        huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
+    return;
+}
+
+int pika_hal_platform_UART_read(pika_dev* dev, void* buf, size_t count) {
+    platform_UART* pika_uart = (platform_UART*)dev->platform_data;
+		size_t length = count;
+    if (length >= pika_uart->rxBuffOffset) {
+        /* not enough str */
+        length = pika_uart->rxBuffOffset;
+    }
+		memcpy(buf, pika_uart->rxBuff, length);
+
+    /* update rxBuff */
+    memmove(pika_uart->rxBuff, pika_uart->rxBuff + length,
+           pika_uart->rxBuffOffset - length);
+    pika_uart->rxBuffOffset -= length;
+    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
+
+    UART_Start_Receive_IT(
+        &pika_uart->rt_uart->handle,
+        (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
+    return length;
 }
 
 int pika_hal_platform_UART_write(pika_dev* dev, void* buf, size_t count) {
