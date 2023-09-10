@@ -35,3 +35,10 @@ void _testcase_test___init__(PikaObj* self) {
     arg_deinit(arg_dict);
     return;
 }
+
+void _testcase_bytes_test(PikaObj* self, uint8_t* bytes, int len) {
+    for (int i = 0; i < len; i++) {
+        pika_platform_printf("%d ", bytes[i]);
+    }
+    pika_platform_printf("\n");
+}
