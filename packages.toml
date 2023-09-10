@@ -249,6 +249,14 @@ releases = [
     "v0.1.5 5a796dd852b2053a396386e1083099c181f36393",
 ]
 
+
+[[packages]]
+name = "struct"
+releases = [
+    "v0.1.0 c3b395c5f0f5ad899695ac332089636820ba7359",
+]
+
+
 [[packages]]
 name = "socket"
 releases = [
