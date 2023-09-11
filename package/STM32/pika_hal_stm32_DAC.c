@@ -24,6 +24,16 @@
 //#define LOG_TAG             "drv.dac"
 //#include <drv_log.h>
 
+#ifndef DAC1_CONFIG
+#undef BSP_USING_DAC1
+#endif
+
+#ifndef DAC2_CONFIG
+#undef BSP_USING_DAC2
+#endif
+
+#if defined(BSP_USING_DAC1) || defined(BSP_USING_DAC2)
+
 static DAC_HandleTypeDef dac_config[] =
 {
 #ifdef BSP_USING_DAC1
@@ -385,5 +395,7 @@ int pika_hal_platform_DAC_write(pika_dev* dev, void* buf, size_t count) {
 int pika_hal_platform_DAC_ioctl_disable(pika_dev* dev) {
     return -1;
 }
+
+#endif
 
 #endif /* BSP_USING_DAC */

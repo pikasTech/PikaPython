@@ -12,35 +12,53 @@
 #define CHIP_FAMILY_STM32
 #define SOC_FAMILY_STM32
 #define RT_USING_DEVICE_OPS
+    
+#define SERIES_OF(_start) (defined(_start##xx) || defined(_start##x8) || \
+                          defined(_start##xB) || defined(_start##xC) || \
+                          defined(_start##xD) || defined(_start##xE) || defined(_start##xG))
 
-#if defined(STM32H750xx) || defined(STM32H743xx) || defined(STM32H753xx) || defined(STM32H755xx) || defined(STM32H757xx)
+/* auto select HAL header */
+#if SERIES_OF(STM32H750) || SERIES_OF(STM32H743) || SERIES_OF(STM32H753) || \
+    SERIES_OF(STM32H755) || SERIES_OF(STM32H757)
 #define SOC_SERIES_STM32H7
 #define CHIP_SERIES_STM32H7
 #include "stm32h7xx_hal.h"
-#elif defined(STM32F103xx) || defined(STM32F101xx) || defined(STM32F102xx)
+
+#elif SERIES_OF(STM32F103) || SERIES_OF(STM32F102) || SERIES_OF(STM32F101)
 #define SOC_SERIES_STM32F1
 #define CHIP_SERIES_STM32F1
 #include "stm32f1xx_hal.h"
-#elif defined(STM32G030xx) || defined(STM32G031xx) || defined(STM32G041xx) || defined(STM32G070xx) || defined(STM32G071xx) || defined(STM32G081xx)
+
+#elif SERIES_OF(STM32G030) || SERIES_OF(STM32G031) || SERIES_OF(STM32G041) || \
+      SERIES_OF(STM32G070) || SERIES_OF(STM32G071) || SERIES_OF(STM32G081)
 #define SOC_SERIES_STM32G0
 #define CHIP_SERIES_STM32G0
 #include "stm32g0xx_hal.h"
-#elif defined(STM32F030xx) || defined(STM32F031xx) || defined(STM32F051xx) || defined(STM32F070xx) || defined(STM32F042xx)
+
+#elif SERIES_OF(STM32F030) || SERIES_OF(STM32F031) || SERIES_OF(STM32F051) || \
+      SERIES_OF(STM32F070) || SERIES_OF(STM32F042)
 #define SOC_SERIES_STM32F0
 #define CHIP_SERIES_STM32F0
 #include "stm32f0xx_hal.h"
-#elif defined(STM32F401xx) || defined(STM32F405xx) || defined(STM32F407xx) || defined(STM32F411xx)
+
+#elif SERIES_OF(STM32F401) || SERIES_OF(STM32F405) || SERIES_OF(STM32F407) || \
+      SERIES_OF(STM32F411)
 #define SOC_SERIES_STM32F4
 #define CHIP_SERIES_STM32F4
 #include "stm32f4xx_hal.h"
-#elif defined(STM32U585xx) || defined(STM32U575xx)
+
+#elif SERIES_OF(STM32U585) || SERIES_OF(STM32U575)
 #define SOC_SERIES_STM32U5
 #define CHIP_SERIES_STM32U5
 #include "stm32u5xx_hal.h"
-#elif defined(STM32L451xx) || defined(STM32L452xx) || defined(STM32L462xx) || defined(STM32L471xx) || defined(STM32L475xx) || defined(STM32L476xx) || defined(STM32L485xx) || defined(STM32L486xx)
+
+#elif SERIES_OF(STM32L451) || SERIES_OF(STM32L452) || SERIES_OF(STM32L462) || \
+      SERIES_OF(STM32L471) || SERIES_OF(STM32L475) || SERIES_OF(STM32L476) || \
+      SERIES_OF(STM32L485) || SERIES_OF(STM32L486)
 #define SOC_SERIES_STM32L4
 #define CHIP_SERIES_STM32L4
 #include "stm32l4xx_hal.h"
+
 #else
 #error "Unsupported STM32 series"
 #endif

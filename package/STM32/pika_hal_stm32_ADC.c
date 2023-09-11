@@ -152,7 +152,7 @@ static rt_err_t stm32_adc_get_channel(rt_int8_t rt_channel, uint32_t *stm32_chan
 #define ADCx_CLK_ENABLE         __HAL_RCC_ADC1_CLK_ENABLE
 
 static void adcx_clock_enable(ADC_HandleTypeDef *adch) {
-    #if defined(STM32F0) || defined(STM32F4) || defined(STM32F7) || defined(STM32L1)
+    #if defined(STM32F0) || defined(STM32F1) || defined(STM32F4) || defined(STM32F7) || defined(STM32L1)
     ADCx_CLK_ENABLE();
     #elif defined(STM32H7A3xx) || defined(STM32H7A3xxQ) || defined(STM32H7B3xx) || defined(STM32H7B3xxQ)
     __HAL_RCC_ADC12_CLK_ENABLE();
@@ -340,7 +340,7 @@ static rt_int16_t stm32_adc_get_vref (struct rt_adc_device *device)
 
 static  void adc_wait_for_eoc_or_timeout(ADC_HandleTypeDef *adcHandle, int32_t timeout) {
     uint32_t tickstart = HAL_GetTick();
-    #if defined(STM32F4) || defined(STM32F7) || defined(STM32L1)
+    #if defined(STM32F4) || defined(STM32F1) || defined(STM32F7) || defined(STM32L1)
     while ((adcHandle->Instance->SR & ADC_FLAG_EOC) != ADC_FLAG_EOC) {
     #elif defined(STM32F0) || defined(STM32G0) || defined(STM32G4) || defined(STM32H5) || defined(STM32H7) || defined(STM32L4) || defined(STM32WB)
     while (READ_BIT(adcHandle->Instance->ISR, ADC_FLAG_EOC) != ADC_FLAG_EOC) {
