@@ -1910,7 +1910,8 @@ typedef struct platform_UART {
     struct stm32_uart* rt_uart;
     struct serial_configure config;
     uint8_t rxBuff[RX_BUFF_LENGTH];
-    size_t rxBuffOffset;
+    size_t writePointer;
+    size_t readPointer;
 } platform_UART;
 
 int pika_hal_platform_UART_open(pika_dev* dev, char* name) {
@@ -2035,43 +2036,29 @@ static pika_dev* find_uart_from_handle(UART_HandleTypeDef* handle){
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
-		pika_dev* uart = find_uart_from_handle(huart);
-		platform_UART* pika_uart = uart->platform_data;
-    char inputChar = pika_uart->rxBuff[pika_uart->rxBuffOffset];
-    /* avoid recive buff overflow */
-    if (pika_uart->rxBuffOffset + 2 > RX_BUFF_LENGTH) {
-        memmove(pika_uart->rxBuff, pika_uart->rxBuff + 1, RX_BUFF_LENGTH);
-        UART_Start_Receive_IT(
-            huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
-        return;
-    }
+    pika_dev* uart = find_uart_from_handle(huart);
+    platform_UART* pika_uart = uart->platform_data;
 
-    /* recive next char */
-    pika_uart->rxBuffOffset++;
-    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
-    UART_Start_Receive_IT(
-        huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
-    return;
+    // Increment writePointer, wrap around if needed
+    pika_uart->writePointer = (pika_uart->writePointer + 1) % RX_BUFF_LENGTH;
+
+    // Start receiving next character
+    UART_Start_Receive_IT(huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->writePointer), 1);
 }
 
 int pika_hal_platform_UART_read(pika_dev* dev, void* buf, size_t count) {
     platform_UART* pika_uart = (platform_UART*)dev->platform_data;
-		size_t length = count;
-    if (length >= pika_uart->rxBuffOffset) {
-        /* not enough str */
-        length = pika_uart->rxBuffOffset;
+    size_t dataAvailable = (pika_uart->writePointer + RX_BUFF_LENGTH - pika_uart->readPointer) % RX_BUFF_LENGTH;
+
+    size_t length = count < dataAvailable ? count : dataAvailable;
+
+    for (size_t i = 0; i < length; i++) {
+        ((char*)buf)[i] = pika_uart->rxBuff[pika_uart->readPointer];
+        pika_uart->readPointer = (pika_uart->readPointer + 1) % RX_BUFF_LENGTH;
     }
-		memcpy(buf, pika_uart->rxBuff, length);
 
-    /* update rxBuff */
-    memmove(pika_uart->rxBuff, pika_uart->rxBuff + length,
-           pika_uart->rxBuffOffset - length);
-    pika_uart->rxBuffOffset -= length;
-    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
+    UART_Start_Receive_IT(&pika_uart->rt_uart->handle, (uint8_t*)(pika_uart->rxBuff + pika_uart->writePointer), 1);
 
-    UART_Start_Receive_IT(
-        &pika_uart->rt_uart->handle,
-        (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
     return length;
 }
 
