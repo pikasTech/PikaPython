@@ -145,6 +145,8 @@ class bytearray:
 
     def __len__(self) -> int: ...
 
+    def __contains__(self, others: any) -> int: ...
+
 
 class BaseException:
     pass

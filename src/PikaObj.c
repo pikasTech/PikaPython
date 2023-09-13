@@ -3116,6 +3116,7 @@ Arg* builtins_iter(PikaObj* self, Arg* arg) {
     /* object */
     pika_bool bIsTemp = pika_false;
     PikaObj* oArg = _arg_to_obj(arg, &bIsTemp);
+    pika_assert(NULL != oArg);
     NewFun _clsptr = (NewFun)oArg->constructor;
     if (_clsptr == New_builtins_RangeObj) {
         /* found RangeObj, return directly */
@@ -3967,6 +3968,42 @@ int builtins_bytearray___getitem__(PikaObj* self, int __key) {
     } else {
         return 0;
     }
+}
+
+pika_bool _bytes_contains(Arg* self, Arg* others) {
+    ArgType type = arg_getType(others);
+    if (type == ARG_TYPE_BYTES) {
+        if (arg_getBytesSize(self) > arg_getBytesSize(others)) {
+            return pika_false;
+        }
+        uint8_t* bytes1 = arg_getBytes(self);
+        uint8_t* bytes2 = arg_getBytes(others);
+        size_t size1 = arg_getBytesSize(self);
+        size_t size2 = arg_getBytesSize(others);
+        size_t i = 0;
+        size_t j = 0;
+        while (i < size1 && j < size2) {
+            if (bytes1[i] == bytes2[j]) {
+                i++;
+                j++;
+            } else {
+                j++;
+            }
+        }
+        if (i == size1) {
+            return pika_true;
+        } else {
+            return pika_false;
+        }
+    }
+    return pika_false;
+}
+
+int builtins_bytearray___contains__(PikaObj* self, Arg* others) {
+    if (arg_isObject(others)) {
+        others = obj_getArg(arg_getObj(others), "raw");
+    }
+    return _bytes_contains(others, obj_getArg(self, "raw"));
 }
 
 void builtins_bytearray___setitem__(PikaObj* self, int __key, int __val) {

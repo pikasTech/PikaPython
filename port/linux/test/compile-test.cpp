@@ -786,4 +786,15 @@ TEST(compiler, min) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(compiler, contains) {
+    char* lines =
+        "@res_contains = 0\n"
+        "for @item in @list:\n"
+        "    if @item == @val:\n"
+        "        @res_contains = 1\n"
+        "        break\n";
+    pika_lines2Array(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END

@@ -24,9 +24,6 @@ class Tuple:
     def __str__(self) -> str: ...
     def __len__(self) -> int: ...
 
-    def __contains__(self, val: any) -> int:
-        """ support val in list """
-
     def __eq__(self, other: any) -> int:
         """ support list == list """
 

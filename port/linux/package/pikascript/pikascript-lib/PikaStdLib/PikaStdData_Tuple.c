@@ -97,16 +97,6 @@ int PikaStdData_Tuple___len__(PikaObj* self) {
     return PikaStdData_Tuple_len(self);
 }
 
-int PikaStdData_Tuple___contains__(PikaObj* self, Arg* val) {
-    for (size_t i = 0; i < pikaList_getSize(self); i++) {
-        Arg* arg = pikaList_get(self, i);
-        if (arg_isEqual(arg, val)) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
 int PikaStdData_Tuple___eq__(PikaObj* self, Arg* other) {
     if (!arg_isObject(other)) {
         return 0;

@@ -759,6 +759,8 @@ typedef PikaObj PikaDict;
 pika_bool pika_GIL_isInit(void);
 int pika_GIL_deinit(void);
 
+pika_bool _bytes_contains(Arg* self, Arg* others);
+
 /* builtins */
 PikaObj* New_builtins(Args* args);
 
