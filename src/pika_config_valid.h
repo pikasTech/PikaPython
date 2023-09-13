@@ -279,7 +279,7 @@ extern "C" {
     #endif
 
     #ifndef PIKA_ASSERT_ENABLE
-        #define PIKA_ASSERT_ENABLE 0
+        #define PIKA_ASSERT_ENABLE 1
     #endif
 
     #ifndef PIKA_EVENT_ENABLE
