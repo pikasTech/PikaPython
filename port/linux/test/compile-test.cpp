@@ -797,4 +797,10 @@ TEST(compiler, contains) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(compiler, fn1) {
+    char* lines = "@r = @f(@d)\n";
+    pika_lines2Array(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END

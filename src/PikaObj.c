@@ -2767,6 +2767,30 @@ void pika_eventListener_deinit(PikaEventListener** p_self) {
     }
 }
 
+Arg* pika_runFunction1(Arg* functionArg, Arg* arg1) {
+    PikaObj* locals = New_TinyObj(NULL);
+    obj_setArg(locals, "@d", arg1);
+    obj_setArg(locals, "@f", functionArg);
+    /* clang-format off */
+    PIKA_PYTHON(
+    @r = @f(@d)
+    )
+    /* clang-format on */
+    const uint8_t bytes[] = {
+        0x0c, 0x00, 0x00, 0x00, /* instruct array size */
+        0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x04, 0x00, 0x00, 0x04, 0x07, 0x00,
+        /* instruct array */
+        0x0a, 0x00, 0x00, 0x00, /* const pool size */
+        0x00, 0x40, 0x64, 0x00, 0x40, 0x66, 0x00, 0x40, 0x72,
+        0x00, /* const pool */
+    };
+    pikaVM_runByteCode(locals, (uint8_t*)bytes);
+    Arg* res = obj_getArg(locals, "@r");
+    res = arg_copy(res);
+    obj_deinit(locals);
+    return res;
+}
+
 Arg* __eventListener_runEvent(PikaEventListener* lisener,
                               uint32_t eventId,
                               Arg* eventData) {
@@ -2777,26 +2801,9 @@ Arg* __eventListener_runEvent(PikaEventListener* lisener,
             "Error: can not find event handler by id: [0x%02x]\r\n", eventId);
         return NULL;
     }
-    obj_setArg(handler, "eventData", eventData);
-    /* clang-format off */
-    PIKA_PYTHON(
-    _res = eventCallBack(eventData)
-    )
-    /* clang-format on */
-    const uint8_t bytes[] = {
-        0x0c, 0x00, 0x00, 0x00, /* instruct array size */
-        0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0b, 0x00, 0x00, 0x04, 0x19, 0x00,
-        /* instruct array */
-        0x1e, 0x00, 0x00, 0x00, /* const pool size */
-        0x00, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x44, 0x61, 0x74, 0x61, 0x00, 0x65,
-        0x76, 0x65, 0x6e, 0x74, 0x43, 0x61, 0x6c, 0x6c, 0x42, 0x61, 0x63, 0x6b,
-        0x00, 0x5f, 0x72, 0x65, 0x73, 0x00, /* const pool */
-    };
+    Arg* eventCallBack = obj_getArg(handler, "eventCallBack");
     pika_debug("run event handler: %p", handler);
-    pikaVM_runByteCode(handler, (uint8_t*)bytes);
-    Arg* res = obj_getArg(handler, "_res");
-    res = arg_copy(res);
-    obj_removeArg(handler, "_res");
+    Arg* res = pika_runFunction1(eventCallBack, eventData);
     return res;
 }
 
