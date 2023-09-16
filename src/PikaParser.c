@@ -849,14 +849,13 @@ static const char operators[][9] = {
 char* Lexer_getOperator(Args* outBuffs, char* sStmt) {
     Args buffs = {0};
     char* sOperator = NULL;
-    char* sTokenStream = Lexer_getTokenStream(&buffs, sStmt);
 
     // use parse state foreach to get operator
     for (uint32_t i = 0; i < sizeof(operators) / 9; i++) {
-        Cursor_forEach(cs, sTokenStream) {
+        Cursor_forEach(cs, sStmt) {
             Cursor_iterStart(&cs);
             // get operator
-            if (strEqu(cs.token2.pyload, (char*)operators[i])) {
+            if (strEqu(cs.token1.pyload, (char*)operators[i])) {
                 // solve the iuuse of "~-1"
                 sOperator = strsCopy(&buffs, (char*)operators[i]);
                 Cursor_iterEnd(&cs);
