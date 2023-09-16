@@ -274,16 +274,16 @@ TEST(socket, json_issue) {
     /* assert */
     EXPECT_STREQ(log_buff[2],
                  "client recv: "
-                 "{\n\t\"code\":\t0,\n\t\"result\":\t{\n\t\t\"a_a\":\t{"
+                 "{\n\t\"result\":\t{\n\t\t\"a_a\":\t{\n\t\t\t\"value\":\t0.29,"
                  "\n\t\t\t\"desc\":\t\"A "
-                 "\347\233\270\347\224\265\346\265\201\",\n\t\t\t\"value\":\t0."
-                 "29\n\t\t}\n\t}\n}\r\n");
+                 "\347\233\270\347\224\265\346\265\201\"\n\t\t}\n\t},"
+                 "\n\t\"code\":\t0\n}\r\n");
     EXPECT_STREQ(log_buff[4],
                  "client recv: "
-                 "{\n\t\"code\":\t0,\n\t\"result\":\t{\n\t\t\"a_a\":\t{"
+                 "{\n\t\"result\":\t{\n\t\t\"a_a\":\t{\n\t\t\t\"value\":\t0.29,"
                  "\n\t\t\t\"desc\":\t\"A "
-                 "\347\233\270\347\224\265\346\265\201\",\n\t\t\t\"value\":\t0."
-                 "29\n\t\t}\n\t}\n}\r\n");
+                 "\347\233\270\347\224\265\346\265\201\"\n\t\t}\n\t},"
+                 "\n\t\"code\":\t0\n}\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

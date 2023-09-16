@@ -824,6 +824,7 @@ PIKA_RES pikaDict_setPtr(PikaDict* self, char* name, void* val);
 PIKA_RES pikaDict_set(PikaDict* self, char* name, Arg* val);
 #define pikaDict_setArg pikaDict_set
 PIKA_RES pikaDict_removeArg(PikaDict* self, Arg* val);
+PIKA_RES pikaDict_reverse(PikaDict* self);
 PIKA_RES pikaDict_setBytes(PikaDict* self,
                            char* name,
                            uint8_t* val,

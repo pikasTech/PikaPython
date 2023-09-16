@@ -113,6 +113,8 @@ PIKA_RES args_foreach(Args* self,
                       int32_t (*eachHandle)(Arg* argEach, void* context),
                       void* context);
 
+PIKA_RES args_reverse(Args* self);
+
 char* args_getBuff(Args* self, int32_t size);
 PIKA_RES args_pushArg(Args* self, Arg* arg);
 PIKA_RES args_pushArg_name(Args* self, char* name, Arg* arg);

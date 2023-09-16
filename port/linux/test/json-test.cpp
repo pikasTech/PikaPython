@@ -14,19 +14,19 @@ TEST(json, dumps) {
     pikaVM_runSingleFile(pikaMain, "test/python/json/json_dumps.py");
     /* assert */
     EXPECT_STREQ(obj_getStr(pikaMain, "s1"),
-                 "{\n\t\"c\":\t3,\n\t\"b\":\t2,\n\t\"a\":\t1\n}");
+                 "{\n\t\"a\":\t1,\n\t\"b\":\t2,\n\t\"c\":\t3\n}");
     EXPECT_STREQ(obj_getStr(pikaMain, "s2"),
-                 "{\n\t\"d\":\t{\n\t\t\"f\":\t5,\n\t\t\"e\":\t4\n\t},\n\t\"c\":"
-                 "\t3,\n\t\"b\":\t2,\n\t\"a\":\t1\n}");
-    EXPECT_STREQ(obj_getStr(pikaMain, "s3"),
-                 "{\n\t\"g\":\t[6, 7, "
-                 "8],\n\t\"d\":\t{\n\t\t\"f\":\t5,\n\t\t\"e\":\t4\n\t},"
-                 "\n\t\"c\":\t3,\n\t\"b\":\t2,\n\t\"a\":\t1\n}");
+                 "{\n\t\"a\":\t1,\n\t\"b\":\t2,\n\t\"c\":\t3,\n\t\"d\":\t{"
+                 "\n\t\t\"e\":\t4,\n\t\t\"f\":\t5\n\t}\n}");
+    EXPECT_STREQ(
+        obj_getStr(pikaMain, "s3"),
+        "{\n\t\"a\":\t1,\n\t\"b\":\t2,\n\t\"c\":\t3,\n\t\"d\":\t{\n\t\t\"e\":"
+        "\t4,\n\t\t\"f\":\t5\n\t},\n\t\"g\":\t[6, 7, 8]\n}");
     EXPECT_STREQ(obj_getStr(pikaMain, "s4"),
-                 "{\n\t\"l\":\t1.234,\n\t\"k\":\t\"string\",\n\t\"j\":\ttrue,"
-                 "\n\t\"i\":\tfalse,\n\t\"h\":\tnull,\n\t\"g\":\t[6, 7, "
-                 "8],\n\t\"d\":\t{\n\t\t\"f\":\t5,\n\t\t\"e\":\t4\n\t},"
-                 "\n\t\"c\":\t3,\n\t\"b\":\t2,\n\t\"a\":\t1\n}");
+                 "{\n\t\"a\":\t1,\n\t\"b\":\t2,\n\t\"c\":\t3,\n\t\"d\":\t{"
+                 "\n\t\t\"e\":\t4,\n\t\t\"f\":\t5\n\t},\n\t\"g\":\t[6, 7, "
+                 "8],\n\t\"h\":\tnull,\n\t\"i\":\tfalse,\n\t\"j\":\ttrue,"
+                 "\n\t\"k\":\t\"string\",\n\t\"l\":\t1.234\n}");
 
     /* deinit */
     obj_deinit(pikaMain);

@@ -10,15 +10,15 @@ TEST(stddata, test1) {
     pikaVM_runSingleFile(pikaMain, "test/python/builtins/dict.py");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "{'len': 3, 'list': [1, 2, 3]}\r\n");
-    EXPECT_STREQ(log_buff[1], "dict_keys(['c', 'b', 'a'])\r\n");
-    EXPECT_STREQ(log_buff[2], "a\r\n");
+    EXPECT_STREQ(log_buff[0], "{'list': [1, 2, 3], 'len': 3}\r\n");
+    EXPECT_STREQ(log_buff[1], "dict_keys(['a', 'b', 'c'])\r\n");
+    EXPECT_STREQ(log_buff[2], "c\r\n");
     EXPECT_STREQ(log_buff[3], "b\r\n");
-    EXPECT_STREQ(log_buff[4], "c\r\n");
-    EXPECT_STREQ(log_buff[5], "a\r\n");
+    EXPECT_STREQ(log_buff[4], "a\r\n");
+    EXPECT_STREQ(log_buff[5], "c\r\n");
     EXPECT_STREQ(log_buff[6], "b\r\n");
-    EXPECT_STREQ(log_buff[7], "c\r\n");
-    EXPECT_STREQ(log_buff[8], "{'c': 'test', 'b': 2, 'a': 1}\r\n");
+    EXPECT_STREQ(log_buff[7], "a\r\n");
+    EXPECT_STREQ(log_buff[8], "{'a': 1, 'b': 2, 'c': 'test'}\r\n");
     EXPECT_STREQ(log_buff[9], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -205,7 +205,7 @@ TEST(dict, cmodule) {
             "print(s)");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "{'para2': 2, 'para1': 1}\r\n");
+    EXPECT_STREQ(log_buff[0], "{'para1': 1, 'para2': 2}\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -222,7 +222,7 @@ TEST(dict, items) {
             "print(d.items())\n");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "dict_items([('b', 2), ('a', 1)])\r\n");
+    EXPECT_STREQ(log_buff[0], "dict_items([('a', 1), ('b', 2)])\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -241,8 +241,8 @@ TEST(dict, items2) {
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
-    EXPECT_STREQ(log_buff[1], "('b', 2)\r\n");
-    EXPECT_STREQ(log_buff[0], "('a', 1)\r\n");
+    EXPECT_STREQ(log_buff[1], "('a', 1)\r\n");
+    EXPECT_STREQ(log_buff[0], "('b', 2)\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -260,8 +260,8 @@ TEST(dict, items_kv) {
             "    print(k, v)\n");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "a 1\r\n");
-    EXPECT_STREQ(log_buff[1], "b 2\r\n");
+    EXPECT_STREQ(log_buff[0], "b 2\r\n");
+    EXPECT_STREQ(log_buff[1], "a 1\r\n");
     EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);

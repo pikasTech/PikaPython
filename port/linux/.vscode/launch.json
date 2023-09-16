@@ -13,7 +13,7 @@
             "args": [
                 // "--gtest_filter=vm.keyword_2"
                 // "--gtest_filter=builtin.contains"
-                "--gtest_filter=parser.signed_num"
+                "--gtest_filter=stddata.kw_fun"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

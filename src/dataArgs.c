@@ -211,6 +211,7 @@ pika_bool args_getBool(Args* self, char* name) {
 }
 
 int32_t args_getSize(Args* self) {
+    pika_assert(NULL != self);
     return link_getSize(self);
 }
 
@@ -459,6 +460,21 @@ PIKA_RES args_foreach(Args* self,
         }
         nodeNow = nextNode;
     }
+    return PIKA_RES_OK;
+}
+
+PIKA_RES args_reverse(Args* self) {
+    pika_assert(NULL != self);
+    LinkNode* nodeNow = self->firstNode;
+    LinkNode* nodeNext = NULL;
+    LinkNode* nodePrior = NULL;
+    while (NULL != nodeNow) {
+        nodeNext = (LinkNode*)arg_getNext((Arg*)nodeNow);
+        arg_setNext((Arg*)nodeNow, (Arg*)nodePrior);
+        nodePrior = nodeNow;
+        nodeNow = nodeNext;
+    }
+    self->firstNode = nodePrior;
     return PIKA_RES_OK;
 }
 

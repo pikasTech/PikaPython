@@ -4058,19 +4058,15 @@ int32_t pikaDict_forEach(PikaObj* self,
     Args* dict = _OBJ2DICT(self);
     pika_assert(NULL != dict);
     pika_assert(NULL != keys);
-    int i = 0;
-    while (1) {
+    size_t size = args_getSize(keys);
+    for (int i = size - 1; i >= 0; i--) {
         Arg* item_key = args_getArgByIndex(keys, i);
         Arg* item_val = args_getArgByIndex(dict, i);
-        if (NULL == item_val) {
-            break;
-        }
         pika_assert(NULL != item_key);
         // Call the handle function on each key-value pair
         if (eachHandle(self, item_key, item_val, context) != 0) {
             return -1;
         }
-        i++;
     }
     return 0;
 }
@@ -4368,6 +4364,12 @@ PIKA_RES pikaDict_set(PikaDict* self, char* name, Arg* val) {
 PIKA_RES pikaDict_removeArg(PikaDict* self, Arg* val) {
     // args_removeArg(_OBJ2KEYS(self), (val));
     return args_removeArg(_OBJ2DICT(self), (val));
+}
+
+PIKA_RES pikaDict_reverse(PikaDict* self) {
+    args_reverse(_OBJ2KEYS(self));
+    args_reverse(_OBJ2DICT(self));
+    return PIKA_RES_OK;
 }
 
 PIKA_RES pikaDict_setBytes(PikaDict* self,

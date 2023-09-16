@@ -1300,6 +1300,7 @@ static void _kw_push(FunctionArgsInfo* f, Arg* call_arg, int i) {
     _pikaDict_setVal(f->kw, call_arg);
     char* sHash = fast_itoa(buff, kw_hash);
     args_setStr(_OBJ2KEYS(f->kw), sHash, sHash);
+    pikaDict_reverse(f->kw);
 }
 
 static void _load_call_arg(VMState* vm,
@@ -1408,16 +1409,16 @@ static uint32_t _get_n_input_with_unpack(VMState* vm, int n_used) {
             PikaObj* obj = arg_getPtr(call_arg);
             pika_assert(obj->constructor == New_PikaStdData_Dict);
             Args* dict = _OBJ2DICT(obj);
-            int i_item = 0;
+            int i_item = args_getSize(dict);
             while (pika_true) {
-                Arg* item_val = args_getArgByIndex(dict, i_item);
-                if (NULL == item_val) {
+                i_item--;
+                if (i_item < 0) {
                     break;
                 }
+                Arg* item_val = args_getArgByIndex(dict, i_item);
                 /* unpack as keyword arg */
                 arg_setIsKeyword(item_val, pika_true);
                 stack_pushArg(&stack_tmp, arg_copy(item_val));
-                i_item++;
             }
             goto __continue;
         }
