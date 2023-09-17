@@ -431,7 +431,7 @@ impl Compiler {
             return Compiler::analyse_c_package_inner(compiler, file.to_string());
         }
 
-        if line.starts_with("#") {
+        if line.trim_start().starts_with("#") {
             return compiler;
         }
 

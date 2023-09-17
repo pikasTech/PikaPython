@@ -68,11 +68,12 @@ impl ArgList {
                 Some(name) => name,
                 /* if not get ':', ignore the arg */
                 None => {
-                    if arg_define.starts_with("*") && arg_define.chars().nth(1).unwrap() != '*' {
-                        /* is the tuple variable parameter */
-                        String::from("@tupleVarPar")
-                    } else if arg_define.starts_with("*") {
-                        String::from("@dictVarPar")
+                    if arg_define.starts_with("*") {
+                        match arg_define.chars().nth(1) {
+                            Some('*') => String::from("@dictVarPar"),
+                            Some(_) => String::from("@tupleVarPar"),
+                            None => panic!("Unexpected end of string after '*' in arg_define!"), // Or handle this differently based on your use-case
+                        }
                     } else {
                         String::from("")
                     }
