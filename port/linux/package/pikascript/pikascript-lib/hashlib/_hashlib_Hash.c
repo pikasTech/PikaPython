@@ -38,54 +38,54 @@ void _hashlib_Hash_new(PikaObj* self, char* mode, Arg* data) {
     if (strcmp(mode, "md5") == 0 || strcmp(mode, "MD5") == 0) {
         mbedtls_md5_context context;
         mbedtls_md5_init(&context);
-        mbedtls_md5_starts(&context);
+        mbedtls_md5_starts_ret(&context);
         if (data_len > 0) {
-            mbedtls_md5_update(&context, data_h, data_len);
+            mbedtls_md5_update_ret(&context, data_h, data_len);
         }
         obj_setStruct(self, "context", context);
         obj_setInt(self, "mode", PIKA_HASHLIB_MD5);
     } else if (strcmp(mode, "sha1") == 0 || strcmp(mode, "SHA1") == 0) {
         mbedtls_sha1_context context;
         mbedtls_sha1_init(&context);
-        mbedtls_sha1_starts(&context);
+        mbedtls_sha1_starts_ret(&context);
         if (data_len > 0) {
-            mbedtls_sha1_update(&context, data_h, data_len);
+            mbedtls_sha1_update_ret(&context, data_h, data_len);
         }
         obj_setStruct(self, "context", context);
         obj_setInt(self, "mode", PIKA_HASHLIB_SHA1);
     } else if (strcmp(mode, "sha224") == 0 || strcmp(mode, "SHA224") == 0) {
         mbedtls_sha256_context context;
         mbedtls_sha256_init(&context);
-        mbedtls_sha256_starts(&context, 1);
+        mbedtls_sha256_starts_ret(&context, 1);
         if (data_len > 0) {
-            mbedtls_sha256_update(&context, data_h, data_len);
+            mbedtls_sha256_update_ret(&context, data_h, data_len);
         }
         obj_setStruct(self, "context", context);
         obj_setInt(self, "mode", PIKA_HASHLIB_SHA224);
     } else if (strcmp(mode, "sha256") == 0 || strcmp(mode, "SHA256") == 0) {
         mbedtls_sha256_context context;
         mbedtls_sha256_init(&context);
-        mbedtls_sha256_starts(&context, 0);
+        mbedtls_sha256_starts_ret(&context, 0);
         if (data_len > 0) {
-            mbedtls_sha256_update(&context, data_h, data_len);
+            mbedtls_sha256_update_ret(&context, data_h, data_len);
         }
         obj_setStruct(self, "context", context);
         obj_setInt(self, "mode", PIKA_HASHLIB_SHA256);
     } else if (strcmp(mode, "sha384") == 0 || strcmp(mode, "SHA384") == 0) {
         mbedtls_sha512_context context;
         mbedtls_sha512_init(&context);
-        mbedtls_sha512_starts(&context, 1);
+        mbedtls_sha512_starts_ret(&context, 1);
         if (data_len > 0) {
-            mbedtls_sha512_update(&context, data_h, data_len);
+            mbedtls_sha512_update_ret(&context, data_h, data_len);
         }
         obj_setStruct(self, "context", context);
         obj_setInt(self, "mode", PIKA_HASHLIB_SHA384);
     } else if (strcmp(mode, "sha512") == 0 || strcmp(mode, "SHA512") == 0) {
         mbedtls_sha512_context context;
         mbedtls_sha512_init(&context);
-        mbedtls_sha512_starts(&context, 0);
+        mbedtls_sha512_starts_ret(&context, 0);
         if (data_len > 0) {
-            mbedtls_sha512_update(&context, data_h, data_len);
+            mbedtls_sha512_update_ret(&context, data_h, data_len);
         }
         obj_setStruct(self, "context", context);
         obj_setInt(self, "mode", PIKA_HASHLIB_SHA512);
@@ -106,27 +106,27 @@ void _hashlib_Hash_update(PikaObj* self, Arg* data) {
     if (data_len > 0) {
         switch (obj_getInt(self, "mode")) {
             case PIKA_HASHLIB_MD5:
-                mbedtls_md5_update((mbedtls_md5_context*)context, data_h,
+                mbedtls_md5_update_ret((mbedtls_md5_context*)context, data_h,
                                    data_len);
                 break;
             case PIKA_HASHLIB_SHA1:
-                mbedtls_sha1_update((mbedtls_sha1_context*)context, data_h,
+                mbedtls_sha1_update_ret((mbedtls_sha1_context*)context, data_h,
                                     data_len);
                 break;
             case PIKA_HASHLIB_SHA224:
             case PIKA_HASHLIB_SHA256:
-                mbedtls_sha256_update((mbedtls_sha256_context*)context, data_h,
+                mbedtls_sha256_update_ret((mbedtls_sha256_context*)context, data_h,
                                       data_len);
                 break;
             case PIKA_HASHLIB_SHA384:
             case PIKA_HASHLIB_SHA512:
-                mbedtls_sha512_update((mbedtls_sha512_context*)context, data_h,
+                mbedtls_sha512_update_ret((mbedtls_sha512_context*)context, data_h,
                                       data_len);
                 break;
             default:
                 obj_setErrorCode(self, -1);  // not support mode
                 break;
-        }
+       }
     } else {
         obj_setErrorCode(self, -2);  // io error
     }
@@ -145,22 +145,22 @@ Arg* _hashlib_Hash_digest(PikaObj* self) {
 
         switch (mode) {
             case PIKA_HASHLIB_MD5:
-                mbedtls_md5_finish((mbedtls_md5_context*)context, buff);
+                mbedtls_md5_finish_ret((mbedtls_md5_context*)context, buff);
                 break;
             case PIKA_HASHLIB_SHA1:
-                mbedtls_sha1_finish((mbedtls_sha1_context*)context, buff);
+                mbedtls_sha1_finish_ret((mbedtls_sha1_context*)context, buff);
                 break;
             case PIKA_HASHLIB_SHA224:
-                mbedtls_sha256_finish((mbedtls_sha256_context*)context, buff);
+                mbedtls_sha256_finish_ret((mbedtls_sha256_context*)context, buff);
                 break;
             case PIKA_HASHLIB_SHA256:
-                mbedtls_sha256_finish((mbedtls_sha256_context*)context, buff);
+                mbedtls_sha256_finish_ret((mbedtls_sha256_context*)context, buff);
                 break;
             case PIKA_HASHLIB_SHA384:
-                mbedtls_sha512_finish((mbedtls_sha512_context*)context, buff);
+                mbedtls_sha512_finish_ret((mbedtls_sha512_context*)context, buff);
                 break;
             case PIKA_HASHLIB_SHA512:
-                mbedtls_sha512_finish((mbedtls_sha512_context*)context, buff);
+                mbedtls_sha512_finish_ret((mbedtls_sha512_context*)context, buff);
                 break;
             default:
                 obj_setErrorCode(self, -1);  // not support mode
@@ -186,22 +186,22 @@ char* _hashlib_Hash_hexdigest(PikaObj* self) {
         void* context = obj_getStruct(self, "context");
         switch (obj_getInt(self, "mode")) {
             case PIKA_HASHLIB_MD5:
-                mbedtls_md5_finish((mbedtls_md5_context*)context, buff);
+                mbedtls_md5_finish_ret((mbedtls_md5_context*)context, buff);
                 break;
             case PIKA_HASHLIB_SHA1:
-                mbedtls_sha1_finish((mbedtls_sha1_context*)context, buff);
+                mbedtls_sha1_finish_ret((mbedtls_sha1_context*)context, buff);
                 break;
             case PIKA_HASHLIB_SHA224:
-                mbedtls_sha256_finish((mbedtls_sha256_context*)context, buff);
+                mbedtls_sha256_finish_ret((mbedtls_sha256_context*)context, buff);
                 break;
             case PIKA_HASHLIB_SHA256:
-                mbedtls_sha256_finish((mbedtls_sha256_context*)context, buff);
+                mbedtls_sha256_finish_ret((mbedtls_sha256_context*)context, buff);
                 break;
             case PIKA_HASHLIB_SHA384:
-                mbedtls_sha512_finish((mbedtls_sha512_context*)context, buff);
+                mbedtls_sha512_finish_ret((mbedtls_sha512_context*)context, buff);
                 break;
             case PIKA_HASHLIB_SHA512:
-                mbedtls_sha512_finish((mbedtls_sha512_context*)context, buff);
+                mbedtls_sha512_finish_ret((mbedtls_sha512_context*)context, buff);
                 break;
             default:
                 obj_setErrorCode(self, -1);  // not support mode
