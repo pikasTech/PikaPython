@@ -21,6 +21,7 @@ jobs:
 
     - name: INSTALL_PACKAGE
       run: |
+        sudo apt update
         sudo apt install ninja-build
         sudo apt install liblua5.3-dev
         sudo apt install valgrind
