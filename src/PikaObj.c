@@ -4169,6 +4169,11 @@ int pikaList_getInt(PikaList* self, int index) {
     return arg_getInt(arg);
 }
 
+pika_bool pikaList_getBool(PikaList* self, int index) {
+    Arg* arg = pikaList_get(self, index);
+    return arg_getBool(arg);
+}
+
 pika_float pikaList_getFloat(PikaList* self, int index) {
     Arg* arg = pikaList_get(self, index);
     return arg_getFloat(arg);
@@ -4320,6 +4325,10 @@ int64_t pikaTuple_getInt(PikaTuple* self, int index) {
     return pikaList_getInt(self, (index));
 }
 
+pika_bool pikaTuple_getBool(PikaTuple* self, int index) {
+    return pikaList_getBool(self, (index));
+}
+
 pika_float pikaTuple_getFloat(PikaTuple* self, int index) {
     return pikaList_getFloat(self, (index));
 }
@@ -4339,6 +4348,11 @@ ArgType pikaTuple_getType(PikaTuple* self, int index) {
 PIKA_RES pikaDict_setInt(PikaDict* self, char* name, int64_t val) {
     return pikaDict_set(self, name, arg_newInt(val));
 }
+
+pika_bool pikaDict_setBool(PikaDict* self, char* name, pika_bool val) {
+    return pikaDict_set(self, name, arg_newBool(val));
+}
+
 PIKA_RES pikaDict_setFloat(PikaDict* self, char* name, pika_float val) {
     return pikaDict_set(self, name, arg_newFloat(val));
 }
@@ -4381,6 +4395,10 @@ PIKA_RES pikaDict_setBytes(PikaDict* self,
 
 int64_t pikaDict_getInt(PikaDict* self, char* name) {
     return args_getInt(_OBJ2DICT(self), (name));
+}
+
+pika_bool pikaDict_getBool(PikaDict* self, char* name) {
+    return args_getBool(_OBJ2DICT(self), (name));
 }
 
 pika_float pikaDict_getFloat(PikaDict* self, char* name) {
