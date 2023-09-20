@@ -372,10 +372,9 @@ static rt_err_t stm32_adc_get_value(struct rt_adc_device *device, rt_int8_t chan
     #endif
     {
         HAL_ADC_Start(stm32_adc_handler);
-        adc_wait_for_eoc_or_timeout(stm32_adc_handler, 10);
-        value = stm32_adc_handler->Instance->DR;
+        HAL_ADC_PollForConversion(stm32_adc_handler, 10);
+        value = (uint16_t)HAL_ADC_GetValue(stm32_adc_handler);
     }
-    HAL_ADC_Stop(stm32_adc_handler);
     /* get ADC value */
     *value_ = value;
     return RT_EOK;
@@ -493,25 +492,45 @@ int pika_hal_platform_ADC_open(pika_dev* dev, char* name) {
         case (uintptr_t)GPIOA:
             switch(PIN_NO(data->pin)){
                 case 0:
+                    #ifdef SOC_SERIES_STM32H7
+                    data->rt_channel = 16;
+                    #else
                     data->rt_channel = 0;
+                    #endif
                     break;
                 case 1:
+                    #ifdef SOC_SERIES_STM32H7
+                    data->rt_channel = 17;
+                    #else
                     data->rt_channel = 1;
+                    #endif
                     break;
                 case 2:
-                    data->rt_channel = 2;
+                    data->rt_channel = 14;
                     break;
                 case 3:
-                    data->rt_channel = 3;
+                    data->rt_channel = 15;
                     break;
                 case 4:
+                    #ifdef SOC_SERIES_STM32H7
+                    data->rt_channel = 18;
+                    #else
                     data->rt_channel = 4;
+                    #endif
                     break;
                 case 5:
+                    #ifdef SOC_SERIES_STM32H7
+                    data->rt_channel = 19;
+                    #else
                     data->rt_channel = 5;
+                    #endif
                     break;
                 case 6:
+                    #ifdef SOC_SERIES_STM32H7
+                    data->rt_channel = 3;
+                    #else
                     data->rt_channel = 6;
+                    #endif
                     break;
                 case 7:
                     data->rt_channel = 7;
@@ -522,7 +541,11 @@ int pika_hal_platform_ADC_open(pika_dev* dev, char* name) {
             }
             break;
         case (uintptr_t)GPIOB:
-            switch(PIN_NO(data->pin)){
+            #ifdef SOC_SERIES_STM32H7
+            pika_platform_printf("Error: pin: %s not support\r\n", name);
+            return -1;
+            #else
+            switch(PIN_NO(data->pin)){              
                 case 0:
                     data->rt_channel = 8;
                     break;
@@ -534,6 +557,7 @@ int pika_hal_platform_ADC_open(pika_dev* dev, char* name) {
                     return -1;
             }
             break;
+            #endif
         case (uintptr_t)GPIOC:
             switch(PIN_NO(data->pin)){
                 case 0:
@@ -549,10 +573,18 @@ int pika_hal_platform_ADC_open(pika_dev* dev, char* name) {
                     data->rt_channel = 13;
                     break;
                 case 4:
+                    #ifdef SOC_SERIES_STM32H7
+                    data->rt_channel = 4;
+                    #else
                     data->rt_channel = 14;
+                    #endif
                     break;
                 case 5:
+                    #ifdef SOC_SERIES_STM32H7
+                    data->rt_channel = 8;
+                    #else
                     data->rt_channel = 15;
+                    #endif
                     break;
                 default:
                     pika_platform_printf("Error: pin: %s not support\r\n", name);
@@ -582,7 +614,8 @@ int pika_hal_platform_ADC_ioctl_config(pika_dev* dev,
 
 int pika_hal_platform_ADC_read(pika_dev* dev, void* buf, size_t count) {
     platform_data_ADC* data = dev->platform_data;
-    rt_uint32_t raw_value = rt_adc_read(rt_adc_device_adc1, data->rt_channel);
+    rt_uint32_t raw_value;
+    stm32_adc_get_value(rt_adc_device_adc1, data->rt_channel, &raw_value);
     *((uint32_t*)buf) = raw_value;
     return 0;
 }

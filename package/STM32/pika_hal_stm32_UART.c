@@ -206,7 +206,7 @@ struct stm32_uart
 #endif
     rt_uint16_t uart_dma_flag;
     struct rt_serial_device serial;
-		void* user_data;
+    void* user_data;
 };
 
 enum
@@ -1922,7 +1922,7 @@ int pika_hal_platform_UART_open(pika_dev* dev, char* name) {
     for (rt_size_t i = 0; i < sizeof(uart_obj) / sizeof(struct stm32_uart); i++){
         if (0 == stricmp(name, uart_obj[i].config->name)){
             platform_UART* uart = (platform_UART*)pikaMalloc(sizeof(platform_UART));
-						pika_platform_memset(uart, 0, sizeof(platform_UART));
+            pika_platform_memset(uart, 0, sizeof(platform_UART));
             if (NULL == uart){
                 return -1;
             }
