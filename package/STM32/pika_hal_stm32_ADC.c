@@ -358,7 +358,7 @@ static rt_err_t stm32_adc_get_value(struct rt_adc_device *device, rt_int8_t chan
     ADC_HandleTypeDef *stm32_adc_handler;
 
     RT_ASSERT(device != RT_NULL);
-    RT_ASSERT(value != RT_NULL);
+    RT_ASSERT(value_ != RT_NULL);
 
     stm32_adc_handler = device->parent.user_data;
 
