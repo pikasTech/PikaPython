@@ -37,6 +37,7 @@ extern "C" {
 #include "dataLink.h"
 #include "dataMemory.h"
 #include "dataQueue.h"
+#include "dataStack.h"
 #include "dataStrs.h"
 
 typedef struct InstructUnit InstructUnit;
@@ -79,6 +80,61 @@ struct NativeProperty {
     uint32_t methodGroupCount;
 };
 
+enum InstructIndex {
+#define __INS_ENUM
+#include "__instruction_table.h"
+    __INSTRUCTION_CNT,
+    __INSTRUCTION_INDEX_MAX = 0xFFFF,
+    __INSTRUCTION_UNKNOWN = 0xFFFF,
+};
+
+typedef enum {
+    VM_JMP_EXIT = -999,
+    VM_JMP_CONTINUE = -997,
+    VM_JMP_BREAK = -998,
+    VM_JMP_RAISE = -996,
+} VM_JMP;
+
+#define VM_PC_EXIT (-99999)
+
+typedef enum {
+    TRY_STATE_NONE = 0,
+    TRY_STATE_INNER,
+} TRY_STATE;
+
+typedef enum {
+    TRY_RESULT_NONE = 0,
+    TRY_RESULT_RAISE,
+} TRY_RESULT;
+
+typedef struct PikaThreadState PikaVMThread;
+struct PikaThreadState {
+    TRY_STATE try_state;
+    TRY_RESULT try_result;
+    int8_t error_code;
+    uint8_t line_error_code;
+    uint8_t try_error_code;
+};
+
+typedef PikaObj VMParameters;
+typedef struct PikaVMFrame PikaVMFrame;
+struct PikaVMFrame {
+    VMParameters* locals;
+    VMParameters* globals;
+    Stack stack;
+    int32_t jmp;
+    int32_t pc;
+    ByteCodeFrame* bytecode_frame;
+    uint8_t loop_deepth;
+    uint32_t ins_cnt;
+    pika_bool in_super;
+    uint8_t super_invoke_deepth;
+    PikaVMThread* vm_thread;
+    pika_bool ireg[PIKA_REGIST_SIZE];
+    PikaObj* oreg[16];
+    pika_bool in_repl;
+};
+
 struct PikaObj {
     Args* list;
     void* constructor;
@@ -97,6 +153,7 @@ struct PikaObj {
 #endif
     uint8_t refcnt;
     uint16_t flag;
+    PikaVMFrame* vmFrame;
 };
 
 typedef struct PikaGC PikaGC;
@@ -170,7 +227,6 @@ static inline void obj_clearFlag(PikaObj* self, uint16_t flag) {
 
 typedef PikaObj* (*NewFun)(Args* args);
 typedef PikaObj* (*InitFun)(PikaObj* self, Args* args);
-typedef PikaObj VMParameters;
 typedef void (*Method)(PikaObj* self, Args* args);
 
 typedef struct MethodInfo MethodInfo;
@@ -298,14 +354,22 @@ Arg* obj_getMethodArgWithFullPath_noalloc(PikaObj* obj,
                                           Arg* arg_reg);
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode);
-int32_t obj_getErrorCode(PikaObj* self);
-void obj_setSysOut(PikaObj* self, char* str);
-char* args_getSysOut(Args* args);
-void args_setErrorCode(Args* args, int32_t errCode);
-int32_t args_getErrorCode(Args* args);
-void args_setSysOut(Args* args, char* str);
-char* obj_getSysOut(PikaObj* self);
-void obj_sysPrintf(PikaObj* self, char* fmt, ...);
+
+#define obj_setSysOut(PikaObj_self, char_p_fmt, ...)                          \
+    do {                                                                      \
+        pika_assert(NULL != PikaObj_self);                                    \
+        pika_assert(NULL != PikaObj_self->vmFrame);                           \
+        if (PikaObj_self->vmFrame->vm_thread->error_code == 0) {              \
+            PikaObj_self->vmFrame->vm_thread->error_code =                    \
+                PIKA_RES_ERR_RUNTIME_ERROR;                                   \
+        }                                                                     \
+        if (PikaObj_self->vmFrame->vm_thread->try_state == TRY_STATE_INNER) { \
+            break;                                                            \
+        }                                                                     \
+        pika_platform_printf(char_p_fmt, ##__VA_ARGS__);                      \
+        pika_platform_printf("\n");                                           \
+    } while (0)
+
 uint8_t obj_getAnyArg(PikaObj* self,
                       char* targetArgName,
                       char* sourceArgPath,
@@ -321,6 +385,7 @@ int64_t method_getInt(Args* args, char* argName);
 pika_float method_getFloat(Args* args, char* argName);
 char* method_getStr(Args* args, char* argName);
 void method_returnArg(Args* args, Arg* arg);
+MethodProp* methodArg_getProp(Arg* method_arg);
 char* methodArg_getDec(Arg* method_arg);
 char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size);
 char* methodArg_getName(Arg* method_arg, char* buffs, size_t size);
@@ -579,7 +644,8 @@ static inline uint8_t obj_refcntNow(PikaObj* self) {
 
 #define ABSTRACT_METHOD_NEED_OVERRIDE_ERROR(_)                               \
     obj_setErrorCode(self, 1);                                               \
-    pika_platform_printf(                                                    \
+    obj_setSysOut(                                                           \
+        self,                                                                \
         ANSI_COLOR_RED                                                       \
         "Error: abstract method `%s()` need override.\r\n" ANSI_COLOR_RESET, \
         __FUNCTION__)

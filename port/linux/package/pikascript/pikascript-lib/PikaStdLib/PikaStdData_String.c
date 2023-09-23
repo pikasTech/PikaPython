@@ -18,7 +18,7 @@ void PikaStdData_String_set(PikaObj* self, char* s) {
     int r = _valid_utf8(s, -1);
     if (r >= 0) {
         obj_setErrorCode(self, __LINE__);
-        __platform_printf("Error invaliad character %x\r\n", s[r]);
+        obj_setSysOut(self, "Error invaliad character %x\r\n", s[r]);
         return;
     }
 #endif
@@ -30,7 +30,7 @@ void PikaStdData_String___init__(PikaObj* self, char* s) {
     int r = _valid_utf8(s, -1);
     if (r >= 0) {
         obj_setErrorCode(self, __LINE__);
-        __platform_printf("Error invaliad character %x\r\n", s[r]);
+        obj_setSysOut(self, "Error invaliad character %x\r\n", s[r]);
         return;
     }
 #endif
@@ -117,32 +117,32 @@ void PikaStdData_String___setitem__(PikaObj* self, Arg* __key, Arg* __val) {
     int is_invalid = _valid_utf8(val, len2);
     if (is_invalid >= 0) {
         obj_setErrorCode(self, __LINE__);
-        __platform_printf("Error String invalid\r\n");
+        obj_setSysOut(self, "Error String invalid\r\n");
         return;
     }
     int ulen_val = _utf8_strlen(val, len2);
     if (ulen_val != 1) {
         obj_setErrorCode(self, __LINE__);
-        __platform_printf("Error String invalid char\r\n");
+        obj_setSysOut(self, "Error String invalid char\r\n");
         return;
     }
     int char_len;
     int repl_at = _utf8_get_offset(str, len, key_i, &char_len);
     if (repl_at < 0) {
         obj_setErrorCode(self, __LINE__);
-        __platform_printf("Error String Overflow\r\n");
+        obj_setSysOut(self, "Error String Overflow\r\n");
         return;
     }
     int ok = __str_repl(self, str, len, repl_at, char_len, val, len2);
     if (ok < 0) {
         obj_setErrorCode(self, __LINE__);
-        __platform_printf("Error. Internal error(-%d)\r\n", __LINE__);
+        obj_setSysOut(self, "Error. Internal error(-%d)\r\n", __LINE__);
         return;
     }
 #else
     if (key_i >= len) {
         obj_setErrorCode(self, 1);
-        __platform_printf("Error String Overflow\r\n");
+        obj_setSysOut(self, "Error String Overflow\r\n");
         return;
     }
     str[key_i] = val[0];
@@ -285,7 +285,7 @@ int PikaStdData_String___len__(PikaObj* self) {
     int n = strGetSizeUtf8(str);
     if (n < 0) {
         obj_setErrorCode(self, __LINE__);
-        __platform_printf("Error. Internal error(%d)\r\n", __LINE__);
+        obj_setSysOut(self, "Error. Internal error(%d)\r\n", __LINE__);
     }
     return n;
 }
@@ -346,7 +346,7 @@ Arg* PikaStdData_String_encode(PikaObj* self, PikaTuple* encoding) {
     Arg* arg_i = pikaTuple_getArg(encoding, 0);
     if (arg_getType(arg_i) != ARG_TYPE_STRING) {
         obj_setErrorCode(self, __LINE__);
-        __platform_printf("Error invaliad arguments\r\n");
+        obj_setSysOut(self, "Error invaliad arguments\r\n");
         return NULL;
     }
     to_code = arg_getStr(arg_i);
@@ -354,7 +354,7 @@ Arg* PikaStdData_String_encode(PikaObj* self, PikaTuple* encoding) {
     Arg* res = _str_encode(str, to_code);
     if (!res) {
         obj_setErrorCode(self, __LINE__);
-        __platform_printf("Error internal error\r\n");
+        obj_setSysOut(self, "Error internal error\r\n");
         return NULL;
     }
     return res;

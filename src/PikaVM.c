@@ -351,6 +351,20 @@ static void PikaVMFrame_setErrorCode(PikaVMFrame* vm, int8_t error_code) {
     vm->vm_thread->error_code = error_code;
 }
 
+#define PikaVMFrame_setSysOut(PikaVMFrame_vm, char_p_fmt, ...)         \
+    do {                                                               \
+        pika_assert(NULL != PikaVMFrame_vm);                           \
+        if (PikaVMFrame_vm->vm_thread->error_code == 0) {              \
+            PikaVMFrame_vm->vm_thread->error_code =                    \
+                PIKA_RES_ERR_RUNTIME_ERROR;                            \
+        }                                                              \
+        if (PikaVMFrame_vm->vm_thread->try_state == TRY_STATE_INNER) { \
+            break;                                                     \
+        }                                                              \
+        pika_platform_printf(char_p_fmt, ##__VA_ARGS__);               \
+        pika_platform_printf("\n");                                    \
+    } while (0)
+
 static enum InstructIndex PikaVMFrame_getInstructWithOffset(PikaVMFrame* vm,
                                                             int32_t offset) {
     return instructUnit_getInstructIndex(
@@ -1108,8 +1122,6 @@ Arg* _obj_runMethodArgWithState(PikaObj* self,
     if (!argType_isNative(methodType)) {
         self = methodArg_getDefContext(aMethod);
     }
-
-    obj_setErrorCode(self, PIKA_RES_OK);
 
     /* run method */
     if (argType_isNative(methodType)) {
@@ -1896,7 +1908,6 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     pika_bool bIsTemp = pika_false;
     pika_bool bSkipInit = pika_false;
     pika_bool bIsEval = pika_false;
-    char* sSysOut;
     int iNumUsed = 0;
     PikaObj* oBuiltin = NULL;
     arg_newReg(arg_reg1, 32);
@@ -2091,6 +2102,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
 
     /* create sub local scope */
     oSublocals = New_Locals(NULL);
+    oThis->vmFrame = vm;
 
     /* load args from PikaVMFrame to sub_local->list */
     iNumUsed += PikaVMFrame_loadArgsFromMethodArg(
@@ -2149,18 +2161,6 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         if (NULL != aMethod) {
             arg_deinit(aMethod);
         }
-    }
-
-    /* transfer sysOut */
-    sSysOut = obj_getSysOut(oThis);
-    if (NULL != sSysOut) {
-        args_setSysOut(vm->locals->list, sSysOut);
-    }
-
-    /* transfer errCode */
-    if (0 != obj_getErrorCode(oThis)) {
-        /* method error */
-        PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_RUNTIME_ERROR);
     }
 
     goto __exit;
@@ -2895,8 +2895,8 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             case '/':
                 if (0 == op.f2) {
                     PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-                    args_setSysOut(vm->locals->list,
-                                   "ZeroDivisionError: division by zero");
+                    obj_setSysOut(vm->locals,
+                                  "ZeroDivisionError: division by zero");
                     op.res = NULL;
                     goto __exit;
                 }
@@ -3001,9 +3001,9 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
 #endif
 
         PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-        args_setSysOut(vm->locals->list,
-                       "Operation 'in' is not supported for this "
-                       "type\n");
+        obj_setSysOut(vm->locals,
+                      "Operation 'in' is not supported for this "
+                      "type\n");
         op.res = NULL;
         goto __exit;
     }
@@ -3184,8 +3184,22 @@ static Arg* VM_instruction_handler_RIS(PikaObj* self,
     return NULL;
 #endif
     Arg* err_arg = stack_popArg_alloc(&(vm->stack));
-    PIKA_RES err = (PIKA_RES)arg_getInt(err_arg);
-    PikaVMFrame_setErrorCode(vm, err);
+    if (ARG_TYPE_INT == arg_getType(err_arg)) {
+        PIKA_RES err = (PIKA_RES)arg_getInt(err_arg);
+        if (PIKA_RES_ERR_RUNTIME_ERROR != err) {
+            PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
+            PikaVMFrame_setSysOut(
+                vm, "TypeError: exceptions must derive from BaseException");
+            goto __exit;
+        }
+        PikaVMFrame_setErrorCode(vm, err);
+    }
+    if (arg_isConstructor(err_arg)) {
+        MethodProp* method_prop = methodArg_getProp(err_arg);
+        PikaVMFrame_setErrorCode(vm, (uintptr_t)method_prop->ptr);
+        goto __exit;
+    }
+__exit:
     arg_deinit(err_arg);
     return NULL;
 }

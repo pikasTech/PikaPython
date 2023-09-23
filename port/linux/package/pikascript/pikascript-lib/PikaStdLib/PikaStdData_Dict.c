@@ -11,7 +11,7 @@ Arg* PikaStdData_Dict_get(PikaObj* self, char* key) {
     Arg* aRet = pikaDict_get(self, key);
     if (NULL == aRet) {
         obj_setErrorCode(self, PIKA_RES_ERR_ARG_NO_FOUND);
-        pika_platform_printf("KeyError: %s\n", key);
+        obj_setSysOut(self, "KeyError: %s", key);
         return NULL;
     }
     return arg_copy(pikaDict_get(self, key));

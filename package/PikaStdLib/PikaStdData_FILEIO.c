@@ -99,13 +99,14 @@ int PikaStdData_FILEIO_write(PikaObj* self, Arg* s) {
     int res = -1;
     if (f == NULL) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO);
-        __platform_printf("Error: can't write to file\n");
+        obj_setSysOut(self, "Error: can't write to file\n");
         return res;
     }
     char* mode = obj_getStr(self, "_mode");
     if (strIsContain(mode, 'b')) {
         if (arg_getType(s) != ARG_TYPE_BYTES) {
-            __platform_printf(
+            obj_setSysOut(
+                self,
                 "TypeError: a bytes-like object is required, not 'str'\r\n");
             obj_setErrorCode(self, PIKA_RES_ERR_INVALID_PARAM);
             return -1;
@@ -124,7 +125,7 @@ int PikaStdData_FILEIO_seek(PikaObj* self, int offset, PikaTuple* fromwhere) {
     FILE* f = obj_getPtr(self, "_f");
     if (f == NULL) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO);
-        __platform_printf("Error: can't seek in file\n");
+        obj_setSysOut(self, "Error: can't seek in file\n");
         return -1;
     }
     if (pikaTuple_getSize(fromwhere) == 1) {
@@ -140,7 +141,7 @@ int PikaStdData_FILEIO_tell(PikaObj* self) {
     FILE* f = obj_getPtr(self, "_f");
     if (f == NULL) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO);
-        __platform_printf("Error: can't tell in file\n");
+        obj_setSysOut(self, "Error: can't tell in file\n");
         return -1;
     }
     return __platform_ftell(f);
@@ -150,7 +151,7 @@ char* PikaStdData_FILEIO_readline(PikaObj* self) {
     FILE* f = obj_getPtr(self, "_f");
     if (f == NULL) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO);
-        __platform_printf("Error: can't read line from file\n");
+        obj_setSysOut(self, "Error: can't read line from file\n");
         return NULL;
     }
     int line_buff_size = 16;
@@ -193,7 +194,7 @@ PikaObj* PikaStdData_FILEIO_readlines(PikaObj* self) {
     FILE* f = obj_getPtr(self, "_f");
     if (f == NULL) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO);
-        __platform_printf("Error: can't read lines from file\n");
+        obj_setSysOut(self, "Error: can't read lines from file\n");
         return NULL;
     }
     PikaObj* line_list = newNormalObj(New_PikaStdData_List);
@@ -214,7 +215,7 @@ void PikaStdData_FILEIO_writelines(PikaObj* self, PikaObj* lines) {
     FILE* f = obj_getPtr(self, "_f");
     if (f == NULL) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO);
-        __platform_printf("Error: can't write lines to file\n");
+        obj_setSysOut(self, "Error: can't write lines to file\n");
         return;
     }
     for (size_t i = 0; i < pikaList_getSize(lines); i++) {

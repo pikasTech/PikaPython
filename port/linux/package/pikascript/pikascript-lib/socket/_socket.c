@@ -16,7 +16,7 @@ void _socket_socket__init(PikaObj* self) {
     sockfd = __platform_socket(family, type, protocol);
     if (sockfd < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-        __platform_printf("socket error\n");
+        obj_setSysOut(self, "socket error\n");
         return;
     }
     obj_setInt(self, "sockfd", sockfd);
@@ -49,7 +49,7 @@ void _socket_socket__send(PikaObj* self, Arg* data) {
     ret = __platform_send(sockfd, data_send, len, 0);
     if (ret < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-        __platform_printf("send error\n");
+        obj_setSysOut(self, "send error\n");
         return;
     }
 }
@@ -65,7 +65,7 @@ void _socket_socket__accept(PikaObj* self) {
     pika_GIL_ENTER();
     if (client_sockfd < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-        __platform_printf("accept error\n");
+        obj_setSysOut(self, "accept error\n");
         return;
     }
 #ifdef _WIN32
@@ -88,9 +88,9 @@ Arg* _socket_socket__recv(PikaObj* self, int num) {
         if (obj_getInt(self, "blocking")) {
             obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
             if (ret == 0) {
-                // __platform_printf("connect closed\n");
+                obj_setSysOut(self, "connect closed\n");
             } else {
-                __platform_printf("recv error: %d\n", ret);
+                obj_setSysOut(self, "recv error: %d\n", ret);
             }
             arg_deinit(res);
             return NULL;
@@ -125,7 +125,7 @@ void _socket_socket__connect(PikaObj* self, char* host, int port) {
 
     if (__platform_getaddrinfo(host, NULL, &hints, &res) != 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-        pika_platform_printf("Failed to resolve domain name\n");
+        obj_setSysOut(self, "Failed to resolve domain name\n");
         return;
     }
 
@@ -138,14 +138,14 @@ void _socket_socket__connect(PikaObj* self, char* host, int port) {
     pika_GIL_ENTER();
     if (0 != err) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-        pika_platform_printf("connect error, err = %d\n", err);
+        obj_setSysOut(self, "connect error, err = %d\n", err);
         return;
     }
     if (obj_getInt(self, "blocking") == 0) {
         int flags = pika_platform_fcntl(sockfd, F_GETFL, 0);
         if (__platform_fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
             obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-            pika_platform_printf("Unable to set socket non blocking\n");
+            obj_setSysOut(self, "Unable to set socket non blocking\n");
             return;
         }
     }
@@ -162,7 +162,7 @@ void _socket_socket__bind(PikaObj* self, char* host, int port) {
                               sizeof(server_addr));
     if (res < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-        __platform_printf("bind error\n");
+        obj_setSysOut(self, "bind error\n");
         return;
     }
 }
@@ -189,7 +189,7 @@ char* _socket__gethostbyname(PikaObj* self, char* host) {
     host_entry = pika_platform_gethostbyname(host);
     if (host_entry == NULL) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-        __platform_printf("gethostbyname error\n");
+        obj_setSysOut(self, "gethostbyname error\n");
         return NULL;
     }
     ip =

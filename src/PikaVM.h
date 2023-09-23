@@ -38,60 +38,6 @@ extern "C" {
 #include <setjmp.h>
 #endif
 
-enum InstructIndex {
-#define __INS_ENUM
-#include "__instruction_table.h"
-    __INSTRUCTION_CNT,
-    __INSTRUCTION_INDEX_MAX = 0xFFFF,
-    __INSTRUCTION_UNKNOWN = 0xFFFF,
-};
-
-typedef enum {
-    VM_JMP_EXIT = -999,
-    VM_JMP_CONTINUE = -997,
-    VM_JMP_BREAK = -998,
-    VM_JMP_RAISE = -996,
-} VM_JMP;
-
-#define VM_PC_EXIT (-99999)
-
-typedef enum {
-    TRY_STATE_NONE = 0,
-    TRY_STATE_INNER,
-} TRY_STATE;
-
-typedef enum {
-    TRY_RESULT_NONE = 0,
-    TRY_RESULT_RAISE,
-} TRY_RESULT;
-
-typedef struct PikaThreadState PikaVMThread;
-struct PikaThreadState {
-    TRY_STATE try_state;
-    TRY_RESULT try_result;
-    int8_t error_code;
-    uint8_t line_error_code;
-    uint8_t try_error_code;
-};
-
-typedef struct PikaVMFrame PikaVMFrame;
-struct PikaVMFrame {
-    VMParameters* locals;
-    VMParameters* globals;
-    Stack stack;
-    int32_t jmp;
-    int32_t pc;
-    ByteCodeFrame* bytecode_frame;
-    uint8_t loop_deepth;
-    uint32_t ins_cnt;
-    pika_bool in_super;
-    uint8_t super_invoke_deepth;
-    PikaVMThread* vm_thread;
-    pika_bool ireg[PIKA_REGIST_SIZE];
-    PikaObj* oreg[16];
-    pika_bool in_repl;
-};
-
 typedef struct {
     int8_t n_positional;
     int8_t n_positional_got;

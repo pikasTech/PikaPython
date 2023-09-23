@@ -982,6 +982,10 @@ char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
     return res;
 }
 
+MethodProp* methodArg_getProp(Arg* method_arg) {
+    return (MethodProp*)arg_getContent(method_arg);
+}
+
 PikaObj* methodArg_getHostObj(Arg* method_arg) {
     pika_assert(argType_isObjectMethodActive(arg_getType(method_arg)));
     MethodProp* prop = (MethodProp*)arg_getContent(method_arg);
@@ -2070,40 +2074,8 @@ void pikaShellSetEcho(pika_bool enable_echo) {
 }
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode) {
-    obj_setInt(self, "__errCode", errCode);
-}
-
-int32_t obj_getErrorCode(PikaObj* self) {
-    if (!obj_isArgExist(self, "__errCode")) {
-        return 0;
-    }
-    return obj_getInt(self, "__errCode");
-}
-
-int32_t args_getErrorCode(Args* args) {
-    if (!args_isArgExist(args, "__errCode")) {
-        return 0;
-    }
-    return args_getInt(args, "__errCode");
-}
-
-void obj_setSysOut(PikaObj* self, char* str) {
-    args_setSysOut(self->list, str);
-}
-
-char* obj_getSysOut(PikaObj* self) {
-    return obj_getStr(self, "__sysOut");
-}
-
-void args_setSysOut(Args* args, char* str) {
-    // args_setStr(args, "__sysOut", str);
-    if (NULL == str) {
-        return;
-    }
-    if (strEqu("", str)) {
-        return;
-    }
-    pika_platform_printf("%s\r\n", str);
+    pika_assert(NULL != self->vmFrame);
+    self->vmFrame->vm_thread->error_code = errCode;
 }
 
 void method_returnBytes(Args* args, uint8_t* val) {
@@ -2487,6 +2459,7 @@ PikaObj* New_PikaObj(void) {
     self->refcnt = 0;
     self->constructor = New_PikaObj;
     self->flag = 0;
+    self->vmFrame = NULL;
 #if PIKA_GC_MARK_SWEEP_ENABLE
     self->gcNext = NULL;
     obj_setFlag(self, OBJ_FLAG_GC_ROOT);
@@ -3338,7 +3311,7 @@ Arg* builtins_list(PikaObj* self, PikaTuple* val) {
     return arg_newObj(New_pikaListFrom(NULL));
 #else
     obj_setErrorCode(self, 1);
-    __platform_printf("[Error] built-in list is not enabled.\r\n");
+    obj_setSysOut(self, "[Error] built-in list is not enabled.\r\n");
     return arg_newNull();
 #endif
 }
@@ -3348,7 +3321,7 @@ Arg* builtins_dict(PikaObj* self, PikaTuple* val) {
     return arg_newObj(New_PikaDict());
 #else
     obj_setErrorCode(self, 1);
-    __platform_printf("[Error] built-in dist is not enabled.\r\n");
+    obj_setSysOut(self, "[Error] built-in dist is not enabled.\r\n");
     return arg_newNull();
 #endif
 }
@@ -3364,7 +3337,7 @@ Arg* builtins_tuple(PikaObj* self, PikaTuple* val) {
     return tuple;
 #else
     obj_setErrorCode(self, 1);
-    __platform_printf("[Error] built-in tuple is not enabled.\r\n");
+    obj_setSysOut(self, "[Error] built-in tuple is not enabled.\r\n");
     return arg_newNull();
 #endif
 }
@@ -3428,7 +3401,7 @@ Arg* builtins_bytes(PikaObj* self, Arg* val) {
     }
 #endif
     obj_setErrorCode(self, 1);
-    __platform_printf("Error: input arg type not supported.\r\n");
+    obj_setSysOut(self, "Error: input arg type not supported.\r\n");
     return arg_newNone();
 }
 
@@ -3481,7 +3454,8 @@ char* builtins_cformat(PikaObj* self, char* fmt, PikaTuple* var) {
     return res;
 #else
     obj_setErrorCode(self, 1);
-    __platform_printf("[Error] PIKA_SYNTAX_FORMAT_ENABLE is not enabled.\r\n");
+    obj_setSysOut(self,
+                  "[Error] PIKA_SYNTAX_FORMAT_ENABLE is not enabled.\r\n");
     return NULL;
 #endif
 }
@@ -3503,14 +3477,14 @@ PikaObj* builtins_open(PikaObj* self, char* path, char* mode) {
     PikaObj* file = newNormalObj(New_PikaStdData_FILEIO);
     if (0 != PikaStdData_FILEIO_init(file, path, mode)) {
         obj_setErrorCode(self, 1);
-        __platform_printf("[Error] open: can not open file.\r\n");
+        obj_setSysOut(self, "[Error] open: can not open file.\r\n");
         obj_deinit(file);
         return NULL;
     }
     return file;
 #else
     obj_setErrorCode(self, 1);
-    __platform_printf("[Error] PIKA_FILEIO_ENABLE is not enabled.\r\n");
+    obj_setSysOut(self, "[Error] PIKA_FILEIO_ENABLE is not enabled.\r\n");
     return NULL;
 #endif
 }
@@ -3531,7 +3505,7 @@ int32_t __dir_each(Arg* argEach, void* context) {
 PikaObj* builtins_dir(PikaObj* self, Arg* arg) {
     if (!arg_isObject(arg)) {
         obj_setErrorCode(self, 1);
-        __platform_printf("[Error] dir: not support type.\r\n");
+        obj_setSysOut(self, "[Error] dir: not support type.\r\n");
         return NULL;
     }
     PikaObj* obj = arg_getPtr(arg);
@@ -3549,14 +3523,14 @@ void builtins_exec(PikaObj* self, char* code) {
     obj_run(self, code);
 #else
     obj_setErrorCode(self, 1);
-    __platform_printf("[Error] PIKA_EXEC_ENABLE is not enabled.\r\n");
+    obj_setSysOut(self, "[Error] PIKA_EXEC_ENABLE is not enabled.\r\n");
 #endif
 }
 
 Arg* builtins_getattr(PikaObj* self, PikaObj* obj, char* name) {
     if (NULL == obj) {
         obj_setErrorCode(self, 1);
-        __platform_printf("[Error] getattr: can not get attr of NULL.\r\n");
+        obj_setSysOut(self, "[Error] getattr: can not get attr of NULL.\r\n");
         return NULL;
     }
     Arg* aRes = obj_getArg(obj, name);
@@ -3575,7 +3549,7 @@ Arg* builtins_getattr(PikaObj* self, PikaObj* obj, char* name) {
 void builtins_setattr(PikaObj* self, PikaObj* obj, char* name, Arg* val) {
     if (NULL == obj) {
         obj_setErrorCode(self, 1);
-        __platform_printf("[Error] setattr: obj is null.\r\n");
+        obj_setSysOut(self, "[Error] setattr: obj is null.\r\n");
         goto __exit;
     }
     obj_setArg(obj, name, val);
@@ -3590,7 +3564,7 @@ void builtins_exit(PikaObj* self) {
 int builtins_hasattr(PikaObj* self, PikaObj* obj, char* name) {
     if (NULL == obj) {
         obj_setErrorCode(self, 1);
-        __platform_printf("[Error] hasattr: obj is null.\r\n");
+        obj_setSysOut(self, "[Error] hasattr: obj is null.\r\n");
         return 0;
     }
     if (obj_isArgExist(obj, name)) {
@@ -3910,7 +3884,7 @@ pika_bool builtins_isinstance(PikaObj* self, Arg* object, Arg* classinfo) {
     if (!argType_isConstructor(arg_getType(classinfo)) &&
         !argType_isCallable(arg_getType(classinfo))) {
         obj_setErrorCode(self, 1);
-        __platform_printf("TypeError: isinstance() arg 2 must be a type\r\n");
+        obj_setSysOut(self, "TypeError: isinstance() arg 2 must be a type\r\n");
         return pika_false;
     }
     return _isinstance(object, classinfo);
