@@ -46,8 +46,8 @@ void __pks_hook_instruct(void) {
 }
 
 volatile pika_bool g_always_repl_mode = pika_true;
-PIKA_WEAK void pika_hook_unused_stack_arg(VMState* vm, Arg* arg) {
-    if (vm->run_state->in_repl || g_always_repl_mode) {
+PIKA_WEAK void pika_hook_unused_stack_arg(PikaVMFrame* vm, Arg* arg) {
+    if (vm->in_repl || g_always_repl_mode) {
         arg_print(arg, pika_true, "\r\n");
     }
 }

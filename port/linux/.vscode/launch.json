@@ -12,8 +12,7 @@
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
                 // "--gtest_filter=vm.keyword_2"
-                // "--gtest_filter=builtin.contains"
-                "--gtest_filter=stddata.kw_fun"
+                "--gtest_filter=builtin.init_raise"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

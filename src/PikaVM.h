@@ -65,15 +65,17 @@ typedef enum {
     TRY_RESULT_RAISE,
 } TRY_RESULT;
 
-typedef struct RunState RunState;
-struct RunState {
+typedef struct PikaThreadState PikaVMThread;
+struct PikaThreadState {
     TRY_STATE try_state;
     TRY_RESULT try_result;
-    pika_bool in_repl;
+    int8_t error_code;
+    uint8_t line_error_code;
+    uint8_t try_error_code;
 };
 
-typedef struct VMState VMState;
-struct VMState {
+typedef struct PikaVMFrame PikaVMFrame;
+struct PikaVMFrame {
     VMParameters* locals;
     VMParameters* globals;
     Stack stack;
@@ -81,15 +83,13 @@ struct VMState {
     int32_t pc;
     ByteCodeFrame* bytecode_frame;
     uint8_t loop_deepth;
-    int8_t error_code;
-    uint8_t line_error_code;
-    uint8_t try_error_code;
     uint32_t ins_cnt;
     pika_bool in_super;
     uint8_t super_invoke_deepth;
-    RunState* run_state;
+    PikaVMThread* vm_thread;
     pika_bool ireg[PIKA_REGIST_SIZE];
     PikaObj* oreg[16];
+    pika_bool in_repl;
 };
 
 typedef struct {
@@ -124,7 +124,7 @@ struct OperatorInfo {
     int64_t i2;
     Arg* res;
     uint32_t num;
-    VMState* vm;
+    PikaVMFrame* vm;
 };
 
 typedef enum VM_SIGNAL_CTRL {
@@ -163,7 +163,7 @@ struct VMSignal {
 };
 
 typedef Arg* (*VM_instruct_handler)(PikaObj* self,
-                                    VMState* vm,
+                                    PikaVMFrame* vm,
                                     char* data,
                                     Arg* arg_ret_reg);
 
@@ -255,8 +255,9 @@ static inline char* constPool_getByOffset(ConstPool* self, int offset) {
     return (char*)((uintptr_t)constPool_getStart(self) + (uintptr_t)offset);
 }
 
-static inline char* VMState_getConstWithInstructUnit(VMState* vm,
-                                                     InstructUnit* ins_unit) {
+static inline char* PikaVMFrame_getConstWithInstructUnit(
+    PikaVMFrame* vm,
+    InstructUnit* ins_unit) {
     return constPool_getByOffset(&(vm->bytecode_frame->const_pool),
                                  instructUnit_getConstPoolIndex(ins_unit));
 }
@@ -297,7 +298,7 @@ static inline size_t instructArray_getSize(InstructArray* self) {
     return (size_t)self->size;
 }
 
-static inline int VMState_getInstructArraySize(VMState* vm) {
+static inline int PikaVMFrame_getInstructArraySize(PikaVMFrame* vm) {
     return instructArray_getSize(&(vm->bytecode_frame->instruct_array));
 }
 
@@ -307,13 +308,14 @@ static inline InstructUnit* instructArray_getByOffset(InstructArray* self,
                            (uintptr_t)offset);
 }
 
-static inline InstructUnit* VMState_getInstructUnitWithOffset(VMState* vm,
-                                                              int offset) {
+static inline InstructUnit* PikaVMFrame_getInstructUnitWithOffset(
+    PikaVMFrame* vm,
+    int offset) {
     return instructArray_getByOffset(&(vm->bytecode_frame->instruct_array),
                                      vm->pc + offset);
 }
 
-static inline InstructUnit* VMState_getInstructNow(VMState* vm) {
+static inline InstructUnit* PikaVMFrame_getInstructNow(PikaVMFrame* vm) {
     return instructArray_getByOffset(&(vm->bytecode_frame->instruct_array),
                                      vm->pc);
 }
@@ -343,7 +345,7 @@ Arg* _do_pikaVM_runByteCodeReturn(PikaObj* self,
                                   VMParameters* locals,
                                   VMParameters* globals,
                                   uint8_t* bytecode,
-                                  RunState* run_state,
+                                  PikaVMThread* vm_thread,
                                   pika_bool is_const_bytecode,
                                   char* return_name);
 InstructUnit* instructArray_getNow(InstructArray* self);
@@ -352,7 +354,7 @@ VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename);
 VMParameters* pikaVM_runByteCodeFile(PikaObj* self, char* filename);
 Arg* obj_runMethodArg(PikaObj* self, PikaObj* method_args_obj, Arg* method_arg);
 PikaObj* pikaVM_runFile(PikaObj* self, char* file_name);
-Arg* _vm_slice(VMState* vm,
+Arg* _vm_slice(PikaVMFrame* vm,
                PikaObj* self,
                Arg* end,
                Arg* obj,
@@ -362,12 +364,12 @@ VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
                                      VMParameters* locals,
                                      VMParameters* globals,
                                      uint8_t* bytecode,
-                                     RunState* run_state,
+                                     PikaVMThread* vm_thread,
                                      pika_bool is_const_bytecode);
 void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
                                     uint8_t* bytes,
                                     pika_bool is_const);
-Arg* _vm_get(VMState* vm, PikaObj* self, Arg* key, Arg* obj);
+Arg* _vm_get(PikaVMFrame* vm, PikaObj* self, Arg* key, Arg* obj);
 VM_SIGNAL_CTRL VMSignal_getCtrl(void);
 void pika_vm_exit(void);
 void pika_vmSignal_setCtrlClear(void);
