@@ -3374,6 +3374,13 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self,
     return NULL;
 }
 
+static Arg* VM_instruction_handler_INH(PikaObj* self,
+                                       PikaVMFrame* vm,
+                                       char* data,
+                                       Arg* arg_ret_reg) {
+    return NULL;
+}
+
 #if PIKA_INSTRUCT_EXTENSION_ENABLE
 const VMInstructionSet VM_default_instruction_set = {
 #define __INS_OPCODE

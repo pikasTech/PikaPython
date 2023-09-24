@@ -189,12 +189,17 @@ static enum StmtType Lexer_matchStmtType(char* right) {
     pika_bool bSlice = pika_false;
     pika_bool bDict = pika_false;
     pika_bool bImport = pika_false;
+    pika_bool bInhert = pika_false;
     pika_bool bChain = pika_false;
     Cursor_forEach(cs, sTopStmt) {
         Cursor_iterStart(&cs);
         /* collect type */
         if (strEqu(cs.token1.pyload, " import ")) {
             bImport = pika_true;
+            goto __iter_continue;
+        }
+        if (strEqu(cs.token1.pyload, "@inh ")) {
+            bInhert = pika_true;
             goto __iter_continue;
         }
         if (strEqu(cs.token2.pyload, "[")) {
@@ -267,6 +272,10 @@ static enum StmtType Lexer_matchStmtType(char* right) {
         }
     __iter_continue:
         Cursor_iterEnd(&cs);
+    }
+    if (bInhert) {
+        eStmtType = STMT_inhert;
+        goto __exit;
     }
     if (bImport) {
         eStmtType = STMT_import;
@@ -748,6 +757,17 @@ char* Lexer_getTokenStream(Args* outBuffs, char* sStmt) {
                 aTokenStream =
                     Lexer_setToken(aTokenStream, TOKEN_operator, " import ");
                 i = i + 5;
+                continue;
+            }
+        }
+        /* @inh */
+        if ('@' == c0) {
+            if (('i' == c1) && ('n' == c2) && ('h' == c3) && (' ' == c4)) {
+                aTokenStream =
+                    Lexer_setSymbel(aTokenStream, sStmt, i, &iSymbolStartIndex);
+                aTokenStream =
+                    Lexer_setToken(aTokenStream, TOKEN_operator, "@inh ");
+                i = i + 3;
                 continue;
             }
         }
@@ -1757,6 +1777,7 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
     char* sLeft = NULL;
     char* sRight = NULL;
     char* sImport = NULL;
+    char* sInhert = NULL;
     PIKA_RES eResult = PIKA_RES_OK;
 
     sRight = sStmt;
@@ -1928,6 +1949,12 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
     if (STMT_import == eStmtType) {
         sImport = strsGetLastToken(&buffs, sRight, ' ');
         AST_setNodeAttr(ast, (char*)"import", sImport);
+        goto __exit;
+    }
+    /* solve @inh stmt (from <module> import *) */
+    if (STMT_inhert == eStmtType) {
+        sInhert = strsGetLastToken(&buffs, sRight, ' ');
+        AST_setNodeAttr(ast, (char*)"inhert", sInhert);
         goto __exit;
     }
     /* solve str/bytes stmt */
@@ -2591,6 +2618,14 @@ static char* Suger_from_import_as(Args* buffs_p, char* sLine) {
         goto __exit;
     }
 
+    /* solve from module import * */
+    if (strEqu(sClass, "*")) {
+        sLineOut =
+            strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "@inh %s\n", sModule);
+        sLineOut = strsCopy(buffs_p, sLineOut);
+        goto __exit;
+    }
+
     while (1) {
         char* sClassItem = Cursor_popToken(&buffs, &sClass, ",");
         if (sClassItem[0] == '\0') {
@@ -3124,6 +3159,7 @@ char* AST_genAsm(AST* oAST, AST* subAst, Args* outBuffs, char* sPikaAsm) {
         {.ins = "BYT", .type = VAL_DYNAMIC, .ast = "bytes"},
         {.ins = "NUM", .type = VAL_DYNAMIC, .ast = "num"},
         {.ins = "IMP", .type = VAL_DYNAMIC, .ast = "import"},
+        {.ins = "INH", .type = VAL_DYNAMIC, .ast = "inhert"},
         {.ins = "REF", .type = VAL_DYNAMIC, .ast = "ref"},
         {.ins = "STR", .type = VAL_DYNAMIC, .ast = "string"},
         {.ins = "SLC", .type = VAL_NONEVAL, .ast = "slice"},
