@@ -544,6 +544,8 @@ static inline Arg* arg_newRef(PikaObj* obj) {
     return arg_setRef(NULL, (char*)"", (obj));
 }
 
+uint8_t* pika_getByteCodeFromModule(char* module_name);
+
 PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
                                            char* name,
                                            ByteCodeFrame* bytecode_frame);

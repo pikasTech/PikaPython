@@ -2536,10 +2536,10 @@ int32_t obj_newObj(PikaObj* self,
 PikaObj* obj_importModuleWithByteCode(PikaObj* self,
                                       char* name,
                                       uint8_t* byteCode) {
-    PikaObj* New_PikaStdLib_SysObj(Args * args);
     if (!obj_isArgExist((PikaObj*)__pikaMain, name)) {
         /* import to main module context */
-        obj_newDirectObj((PikaObj*)__pikaMain, name, New_PikaStdLib_SysObj);
+        obj_newDirectObj((PikaObj*)__pikaMain, name, New_TinyObj);
+
         pikaVM_runByteCode(obj_getObj((PikaObj*)__pikaMain, name),
                            (uint8_t*)byteCode);
     }
@@ -2595,8 +2595,9 @@ PikaObj* obj_linkLibObj(PikaObj* self, LibObj* library) {
     return self;
 }
 
-uint8_t* obj_getByteCodeFromModule(PikaObj* self, char* module_name) {
+uint8_t* pika_getByteCodeFromModule(char* module_name) {
     pika_assert(NULL != module_name);
+    PikaObj* self = (PikaObj*)__pikaMain;
     /* exit when no found '@lib' */
     if (!obj_isArgExist(self, "@lib")) {
         return NULL;
@@ -2612,7 +2613,7 @@ uint8_t* obj_getByteCodeFromModule(PikaObj* self, char* module_name) {
 }
 
 int obj_runModule(PikaObj* self, char* module_name) {
-    uint8_t* bytecode = obj_getByteCodeFromModule(self, module_name);
+    uint8_t* bytecode = pika_getByteCodeFromModule(module_name);
     if (NULL == bytecode) {
         return 1;
     }
@@ -2633,8 +2634,7 @@ int obj_importModule(PikaObj* self, char* module_name) {
         return -1;
     }
     /* import bytecode of the module */
-    uint8_t* bytecode =
-        obj_getByteCodeFromModule((PikaObj*)__pikaMain, module_name);
+    uint8_t* bytecode = pika_getByteCodeFromModule(module_name);
     if (NULL == bytecode) {
         return -1;
     }

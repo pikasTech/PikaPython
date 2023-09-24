@@ -5,6 +5,7 @@ import GTestTask, TempDevTest
 import cb_test
 import configparser, network, math, struct
 import test_module1, test_cmodule, test_module4, import_test, testcase
+import test_module5
 import hashlib, hmac, aes, base64, time, os, zlib
 import _thread, weakref, eventloop
 import this

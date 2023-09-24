@@ -1,0 +1,1 @@
+from test_module6 import *

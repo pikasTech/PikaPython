@@ -3378,6 +3378,15 @@ static Arg* VM_instruction_handler_INH(PikaObj* self,
                                        PikaVMFrame* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
+    /* find module bytecode */
+    uint8_t* bytecode = pika_getByteCodeFromModule(data);
+    if (NULL == bytecode) {
+        PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
+        PikaVMFrame_setSysOut(vm, "ModuleNotFoundError: No module named '%s'",
+                              data);
+        return NULL;
+    }
+    pikaVM_runByteCode(self, bytecode);
     return NULL;
 }
 
