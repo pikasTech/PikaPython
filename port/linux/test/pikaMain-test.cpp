@@ -706,7 +706,7 @@ TEST(pikaMain, string_no_init_arg) {
     EXPECT_STREQ(log_buff[3], "BEGIN\r\n");
     EXPECT_STREQ(log_buff[2],
                  "TypeError: __init__() takes 1 positional argument but 0 were "
-                 "given\r\n");
+                 "given\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -1748,8 +1748,7 @@ TEST(pikaMain, import_err) {
     /* as run in shell */
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[2],
-                 "ModuleNotFoundError: No module named 'qqpe'\r\n");
+    EXPECT_STREQ(log_buff[2], "ModuleNotFoundError: No module named 'qqpe'\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -3036,7 +3035,7 @@ TEST(pikaMain, obj_setStr_NULL) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     obj_setStr(pikaMain, "n", NULL);
     obj_run(pikaMain, "print(n)");
-    EXPECT_STREQ(log_buff[2], "NameError: name 'n' is not defined\r\n");
+    EXPECT_STREQ(log_buff[2], "NameError: name 'n' is not defined\n");
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }

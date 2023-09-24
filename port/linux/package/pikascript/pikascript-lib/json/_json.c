@@ -208,7 +208,7 @@ __exit:
 #else
     cJSON* cjson = pika_cJSON_Parse(json_str);
     if (cjson == NULL) {
-        obj_setSysOut(self, "JSONDecodeError: at \'%s\'\r\n",
+        obj_setSysOut(self, "JSONDecodeError: at \'%s\'",
                       pika_cJSON_GetErrorPtr());
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
         return NULL;

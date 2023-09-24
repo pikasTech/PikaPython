@@ -25,7 +25,7 @@ void GTestTask___init__(PikaObj* self) {
 
 char* GTestTask_Task_returnNullString(PikaObj* self) {
     obj_setErrorCode(self, 3);
-    obj_setSysOut(self, "returnNullString\n");
+    obj_setSysOut(self, "returnNullString");
     return NULL;
 }
 

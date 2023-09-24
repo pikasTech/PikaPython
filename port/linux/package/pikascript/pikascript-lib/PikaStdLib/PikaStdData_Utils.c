@@ -6,7 +6,7 @@ Arg* PikaStdData_Utils_int_to_bytes(PikaObj* self, int val) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self,
                       "OverflowError: cannot convert value larger than 0xFF to "
-                      "bytes\r\n");
+                      "bytes");
         return arg_newNone();
     }
     uint8_t val_bytes = (uint8_t)val;

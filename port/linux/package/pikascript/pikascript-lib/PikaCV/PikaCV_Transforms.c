@@ -13,7 +13,7 @@ void PikaCV_Transforms_rotateDown(PikaObj* self, PikaObj* image) {
     if ((img->format != PikaCV_ImageFormat_Type_BGR888) &&
         (img->format != PikaCV_ImageFormat_Type_RGB888)) {
         obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
-        obj_setSysOut(self, "unsupported image format\n");
+        obj_setSysOut(self, "unsupported image format");
         return;
     }
     int width = img->width;

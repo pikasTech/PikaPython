@@ -3311,7 +3311,7 @@ Arg* builtins_list(PikaObj* self, PikaTuple* val) {
     return arg_newObj(New_pikaListFrom(NULL));
 #else
     obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[Error] built-in list is not enabled.\r\n");
+    obj_setSysOut(self, "[Error] built-in list is not enabled.");
     return arg_newNull();
 #endif
 }
@@ -3321,7 +3321,7 @@ Arg* builtins_dict(PikaObj* self, PikaTuple* val) {
     return arg_newObj(New_PikaDict());
 #else
     obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[Error] built-in dist is not enabled.\r\n");
+    obj_setSysOut(self, "[Error] built-in dist is not enabled.");
     return arg_newNull();
 #endif
 }
@@ -3337,7 +3337,7 @@ Arg* builtins_tuple(PikaObj* self, PikaTuple* val) {
     return tuple;
 #else
     obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[Error] built-in tuple is not enabled.\r\n");
+    obj_setSysOut(self, "[Error] built-in tuple is not enabled.");
     return arg_newNull();
 #endif
 }
@@ -3401,7 +3401,7 @@ Arg* builtins_bytes(PikaObj* self, Arg* val) {
     }
 #endif
     obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "Error: input arg type not supported.\r\n");
+    obj_setSysOut(self, "Error: input arg type not supported.");
     return arg_newNone();
 }
 
@@ -3454,8 +3454,7 @@ char* builtins_cformat(PikaObj* self, char* fmt, PikaTuple* var) {
     return res;
 #else
     obj_setErrorCode(self, 1);
-    obj_setSysOut(self,
-                  "[Error] PIKA_SYNTAX_FORMAT_ENABLE is not enabled.\r\n");
+    obj_setSysOut(self, "[Error] PIKA_SYNTAX_FORMAT_ENABLE is not enabled.");
     return NULL;
 #endif
 }
@@ -3477,14 +3476,14 @@ PikaObj* builtins_open(PikaObj* self, char* path, char* mode) {
     PikaObj* file = newNormalObj(New_PikaStdData_FILEIO);
     if (0 != PikaStdData_FILEIO_init(file, path, mode)) {
         obj_setErrorCode(self, 1);
-        obj_setSysOut(self, "[Error] open: can not open file.\r\n");
+        obj_setSysOut(self, "[Error] open: can not open file.");
         obj_deinit(file);
         return NULL;
     }
     return file;
 #else
     obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[Error] PIKA_FILEIO_ENABLE is not enabled.\r\n");
+    obj_setSysOut(self, "[Error] PIKA_FILEIO_ENABLE is not enabled.");
     return NULL;
 #endif
 }
@@ -3505,7 +3504,7 @@ int32_t __dir_each(Arg* argEach, void* context) {
 PikaObj* builtins_dir(PikaObj* self, Arg* arg) {
     if (!arg_isObject(arg)) {
         obj_setErrorCode(self, 1);
-        obj_setSysOut(self, "[Error] dir: not support type.\r\n");
+        obj_setSysOut(self, "[Error] dir: not support type.");
         return NULL;
     }
     PikaObj* obj = arg_getPtr(arg);
@@ -3523,14 +3522,14 @@ void builtins_exec(PikaObj* self, char* code) {
     obj_run(self, code);
 #else
     obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[Error] PIKA_EXEC_ENABLE is not enabled.\r\n");
+    obj_setSysOut(self, "[Error] PIKA_EXEC_ENABLE is not enabled.");
 #endif
 }
 
 Arg* builtins_getattr(PikaObj* self, PikaObj* obj, char* name) {
     if (NULL == obj) {
         obj_setErrorCode(self, 1);
-        obj_setSysOut(self, "[Error] getattr: can not get attr of NULL.\r\n");
+        obj_setSysOut(self, "[Error] getattr: can not get attr of NULL.");
         return NULL;
     }
     Arg* aRes = obj_getArg(obj, name);
@@ -3549,7 +3548,7 @@ Arg* builtins_getattr(PikaObj* self, PikaObj* obj, char* name) {
 void builtins_setattr(PikaObj* self, PikaObj* obj, char* name, Arg* val) {
     if (NULL == obj) {
         obj_setErrorCode(self, 1);
-        obj_setSysOut(self, "[Error] setattr: obj is null.\r\n");
+        obj_setSysOut(self, "[Error] setattr: obj is null.");
         goto __exit;
     }
     obj_setArg(obj, name, val);
@@ -3564,7 +3563,7 @@ void builtins_exit(PikaObj* self) {
 int builtins_hasattr(PikaObj* self, PikaObj* obj, char* name) {
     if (NULL == obj) {
         obj_setErrorCode(self, 1);
-        obj_setSysOut(self, "[Error] hasattr: obj is null.\r\n");
+        obj_setSysOut(self, "[Error] hasattr: obj is null.");
         return 0;
     }
     if (obj_isArgExist(obj, name)) {
@@ -3880,11 +3879,37 @@ Arg* builtins_min(PikaObj* self, PikaTuple* val) {
     return _max_min(self, val, (uint8_t*)bc_min);
 }
 
+void _do_vsysOut(char* fmt, va_list args) {
+    char* fmt_buff = pikaMalloc(strGetSize(fmt) + 2);
+    pika_platform_memcpy(fmt_buff, fmt, strGetSize(fmt));
+    fmt_buff[strGetSize(fmt)] = '\n';
+    fmt_buff[strGetSize(fmt) + 1] = '\0';
+    char* out_buff = pikaMalloc(PIKA_SPRINTF_BUFF_SIZE);
+    pika_platform_vsnprintf(out_buff, PIKA_SPRINTF_BUFF_SIZE, fmt_buff, args);
+    pika_platform_printf("%s", out_buff);
+    pikaFree(out_buff, PIKA_SPRINTF_BUFF_SIZE);
+    pikaFree(fmt_buff, strGetSize(fmt) + 2);
+}
+
+void obj_setSysOut(PikaObj* self, char* fmt, ...) {
+    pika_assert(NULL != self->vmFrame);
+    if (self->vmFrame->vm_thread->error_code == 0) {
+        self->vmFrame->vm_thread->error_code = PIKA_RES_ERR_RUNTIME_ERROR;
+    }
+    if (self->vmFrame->vm_thread->try_state == TRY_STATE_INNER) {
+        return;
+    }
+    va_list args;
+    va_start(args, fmt);
+    _do_vsysOut(fmt, args);
+    va_end(args);
+}
+
 pika_bool builtins_isinstance(PikaObj* self, Arg* object, Arg* classinfo) {
     if (!argType_isConstructor(arg_getType(classinfo)) &&
         !argType_isCallable(arg_getType(classinfo))) {
         obj_setErrorCode(self, 1);
-        obj_setSysOut(self, "TypeError: isinstance() arg 2 must be a type\r\n");
+        obj_setSysOut(self, "TypeError: isinstance() arg 2 must be a type");
         return pika_false;
     }
     return _isinstance(object, classinfo);

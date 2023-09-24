@@ -355,20 +355,7 @@ Arg* obj_getMethodArgWithFullPath_noalloc(PikaObj* obj,
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode);
 
-#define obj_setSysOut(PikaObj_self, char_p_fmt, ...)                          \
-    do {                                                                      \
-        pika_assert(NULL != PikaObj_self);                                    \
-        pika_assert(NULL != PikaObj_self->vmFrame);                           \
-        if (PikaObj_self->vmFrame->vm_thread->error_code == 0) {              \
-            PikaObj_self->vmFrame->vm_thread->error_code =                    \
-                PIKA_RES_ERR_RUNTIME_ERROR;                                   \
-        }                                                                     \
-        if (PikaObj_self->vmFrame->vm_thread->try_state == TRY_STATE_INNER) { \
-            break;                                                            \
-        }                                                                     \
-        pika_platform_printf(char_p_fmt, ##__VA_ARGS__);                      \
-        pika_platform_printf("\n");                                           \
-    } while (0)
+void obj_setSysOut(PikaObj* self, char* fmt, ...);
 
 uint8_t obj_getAnyArg(PikaObj* self,
                       char* targetArgName,
@@ -640,14 +627,14 @@ static inline uint8_t obj_refcntNow(PikaObj* self) {
     args_setStruct(((PikaObj_p_self)->list), char_p_name, struct_)
 
 #define PIKA_ERR_STRING_SYNTAX_ERROR \
-    ANSI_COLOR_RED "SyntaxError: invalid syntax\r\n" ANSI_COLOR_RESET
+    ANSI_COLOR_RED "SyntaxError: invalid syntax" ANSI_COLOR_RESET
 
-#define ABSTRACT_METHOD_NEED_OVERRIDE_ERROR(_)                               \
-    obj_setErrorCode(self, 1);                                               \
-    obj_setSysOut(                                                           \
-        self,                                                                \
-        ANSI_COLOR_RED                                                       \
-        "Error: abstract method `%s()` need override.\r\n" ANSI_COLOR_RESET, \
+#define ABSTRACT_METHOD_NEED_OVERRIDE_ERROR(_)                           \
+    obj_setErrorCode(self, 1);                                           \
+    obj_setSysOut(                                                       \
+        self,                                                            \
+        ANSI_COLOR_RED                                                   \
+        "Error: abstract method `%s()` need override." ANSI_COLOR_RESET, \
         __FUNCTION__)
 
 char* obj_cacheStr(PikaObj* self, char* str);

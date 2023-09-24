@@ -21,7 +21,7 @@ Arg* binascii_a2b_hex(PikaObj* self, char* val) {
             obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
             obj_setSysOut(self,
                           "TypeError: non-hexadecimal number found in "
-                          "fromhex() arg at position %d\r\n",
+                          "fromhex() arg at position %d",
                           i + 1);
         } else {
             res_hex[i / 2] = (hex_val << 4) | hex2int(val[i + 1]);
@@ -34,7 +34,7 @@ Arg* binascii_b2a_hex(PikaObj* self, Arg* val) {
     /* assert val is bytes */
     if (arg_getType(val) != ARG_TYPE_BYTES) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-        obj_setSysOut(self, "TypeError: cannot convert value to bytes\r\n");
+        obj_setSysOut(self, "TypeError: cannot convert value to bytes");
         return arg_newNone();
     }
 

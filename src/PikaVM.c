@@ -351,19 +351,20 @@ static void PikaVMFrame_setErrorCode(PikaVMFrame* vm, int8_t error_code) {
     vm->vm_thread->error_code = error_code;
 }
 
-#define PikaVMFrame_setSysOut(PikaVMFrame_vm, char_p_fmt, ...)         \
-    do {                                                               \
-        pika_assert(NULL != PikaVMFrame_vm);                           \
-        if (PikaVMFrame_vm->vm_thread->error_code == 0) {              \
-            PikaVMFrame_vm->vm_thread->error_code =                    \
-                PIKA_RES_ERR_RUNTIME_ERROR;                            \
-        }                                                              \
-        if (PikaVMFrame_vm->vm_thread->try_state == TRY_STATE_INNER) { \
-            break;                                                     \
-        }                                                              \
-        pika_platform_printf(char_p_fmt, ##__VA_ARGS__);               \
-        pika_platform_printf("\n");                                    \
-    } while (0)
+void _do_vsysOut(char* fmt, va_list args);
+void PikaVMFrame_setSysOut(PikaVMFrame* vm, char* fmt, ...) {
+    pika_assert(NULL != vm);
+    if (vm->vm_thread->error_code == 0) {
+        vm->vm_thread->error_code = PIKA_RES_ERR_RUNTIME_ERROR;
+    }
+    if (vm->vm_thread->try_state == TRY_STATE_INNER) {
+        return;
+    }
+    va_list args;
+    va_start(args, fmt);
+    _do_vsysOut(fmt, args);
+    va_end(args);
+}
 
 static enum InstructIndex PikaVMFrame_getInstructWithOffset(PikaVMFrame* vm,
                                                             int32_t offset) {
@@ -669,7 +670,7 @@ Arg* _vm_get(PikaVMFrame* vm, PikaObj* self, Arg* aKey, Arg* aObj) {
 
         if (iIndex >= iLen) {
             PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OUT_OF_RANGE);
-            pika_platform_printf("IndexError: index out of range\r\n");
+            PikaVMFrame_setSysOut(vm, "IndexError: index out of range");
             return arg_newNone();
         }
     }
@@ -849,7 +850,8 @@ static Arg* VM_instruction_handler_SLC(PikaObj* self,
         if (arg_getType(start) != ARG_TYPE_INT ||
             arg_getType(end) != ARG_TYPE_INT) {
             PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
-            pika_platform_printf("TypeError: slice indices must be integers\n");
+            PikaVMFrame_setSysOut(vm,
+                                  "TypeError: slice indices must be integers");
             arg_deinit(end);
             arg_deinit(start);
             return arg_newNone();
@@ -1072,8 +1074,8 @@ __exit:
     }
     if (NULL == aRes) {
         PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
-        pika_platform_printf("NameError: name '%s' is not defined\r\n",
-                             arg_path);
+        PikaVMFrame_setSysOut(vm, "NameError: name '%s' is not defined",
+                              arg_path);
     } else {
         aRes = methodArg_setHostObj(aRes, oHost);
         if (arg_getType(aRes) != ARG_TYPE_METHOD_NATIVE_ACTIVE) {
@@ -1512,10 +1514,11 @@ static int PikaVMFrame_loadArgsFromMethodArg(PikaVMFrame* vm,
         if (!vars_or_keys_or_default) {
             if (f.n_positional != f.n_input) {
                 PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
-                pika_platform_printf(
+                PikaVMFrame_setSysOut(
+                    vm,
                     "TypeError: %s() takes %d positional argument but %d "
                     "were "
-                    "given\r\n",
+                    "given",
                     sMethodName, f.n_positional, f.n_input);
                 goto __exit;
             }
@@ -1528,11 +1531,12 @@ static int PikaVMFrame_loadArgsFromMethodArg(PikaVMFrame* vm,
         if (f.is_vars) {
             if (f.n_input < f.n_positional) {
                 PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
-                pika_platform_printf(
+                PikaVMFrame_setSysOut(
+                    vm,
                     "TypeError: %s() takes %d positional argument but "
                     "%d "
                     "were "
-                    "given\r\n",
+                    "given",
                     sMethodName, f.n_positional, f.n_input);
                 goto __exit;
             }
@@ -1543,10 +1547,11 @@ static int PikaVMFrame_loadArgsFromMethodArg(PikaVMFrame* vm,
             int8_t n_max = f.n_positional + f.n_default;
             if (f.n_input < n_min || f.n_input > n_max) {
                 PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
-                pika_platform_printf(
+                PikaVMFrame_setSysOut(
+                    vm,
                     "TypeError: %s() takes from %d to %d positional "
                     "arguments "
-                    "but %d were given\r\n",
+                    "but %d were given",
                     sMethodName, n_min, n_max, f.n_input);
                 goto __exit;
             }
@@ -2022,7 +2027,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     if (NULL == oMethodHost) {
         /* error, not found object */
         PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
-        pika_platform_printf("Error: method '%s' no found.\r\n", sRunPath);
+        PikaVMFrame_setSysOut(vm, "Error: method '%s' no found.", sRunPath);
         goto __exit;
     }
 
@@ -2086,8 +2091,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     if (NULL == aMethod || ARG_TYPE_NONE == arg_getType(aMethod)) {
         /* error, method no found */
         PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
-        pika_platform_printf("NameError: name '%s' is not defined\r\n",
-                             sRunPath);
+        PikaVMFrame_setSysOut(vm, "NameError: name '%s' is not defined",
+                              sRunPath);
         goto __exit;
     }
 
@@ -2095,8 +2100,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     if (!argType_isCallable(arg_getType(aMethod))) {
         /* error, method no found */
         PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
-        pika_platform_printf("TypeError: '%s' object is not callable\r\n",
-                             sRunPath);
+        PikaVMFrame_setSysOut(vm, "TypeError: '%s' object is not callable",
+                              sRunPath);
         goto __exit;
     }
 
@@ -2528,7 +2533,7 @@ static void _OPT_ADD(OperatorInfo* op) {
     if (argType_isObject(op->t1)) {
         if (!argType_isObject(op->t2)) {
             PikaVMFrame_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
-            pika_platform_printf("TypeError: unsupported operand +\n");
+            PikaVMFrame_setSysOut(op->vm, "TypeError: unsupported operand +");
             op->res = NULL;
             return;
         }
@@ -2536,7 +2541,7 @@ static void _OPT_ADD(OperatorInfo* op) {
         Arg* method_add = obj_getMethodArgWithFullPath(obj1, "__add__");
         if (NULL == method_add) {
             PikaVMFrame_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
-            pika_platform_printf("TypeError: unsupported operand +\n");
+            PikaVMFrame_setSysOut(op->vm, "TypeError: unsupported operand +");
             op->res = NULL;
             return;
         }
@@ -2605,7 +2610,7 @@ static void _OPT_SUB(OperatorInfo* op) {
     if (argType_isObject(op->t1)) {
         if (!argType_isObject(op->t2)) {
             PikaVMFrame_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
-            pika_platform_printf("TypeError: unsupported operand +\n");
+            PikaVMFrame_setSysOut(op->vm, "TypeError: unsupported operand +");
             op->res = NULL;
             return;
         }
@@ -2613,7 +2618,7 @@ static void _OPT_SUB(OperatorInfo* op) {
         Arg* method_sub = obj_getMethodArgWithFullPath(obj1, "__sub__");
         if (NULL == method_sub) {
             PikaVMFrame_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
-            pika_platform_printf("TypeError: unsupported operand +\n");
+            PikaVMFrame_setSysOut(op->vm, "TypeError: unsupported operand +");
             op->res = NULL;
             return;
         }
@@ -2786,9 +2791,10 @@ static void _OPT_POW(OperatorInfo* op) {
         return;
 #else
         PikaVMFrame_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
-        pika_platform_printf(
+        PikaVMFrame_setSysOut(
+            op->vm,
             "Operation float ** float is not enabled, please set "
-            "PIKA_MATH_ENABLE\n");
+            "PIKA_MATH_ENABLE");
 #endif
     }
 }
@@ -2813,7 +2819,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
     /* init operator info */
     int ret = operatorInfo_init(&op, self, vm, data, arg_ret_reg);
     if (0 != ret) {
-        pika_platform_printf(PIKA_ERR_STRING_SYNTAX_ERROR);
+        PikaVMFrame_setSysOut(vm, PIKA_ERR_STRING_SYNTAX_ERROR);
         PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_SYNTAX_ERROR);
         return NULL;
     }
@@ -2868,8 +2874,9 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                     goto __exit;
                 }
                 PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-                pika_platform_printf(
-                    "TypeError: unsupported operand type(s) for &: 'float'\n");
+                PikaVMFrame_setSysOut(
+                    vm,
+                    "TypeError: unsupported operand type(s) for &: 'float'");
                 op.res = NULL;
                 goto __exit;
             case '|':
@@ -2878,8 +2885,9 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                     goto __exit;
                 }
                 PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-                pika_platform_printf(
-                    "TypeError: unsupported operand type(s) for |: 'float'\n");
+                PikaVMFrame_setSysOut(
+                    vm,
+                    "TypeError: unsupported operand type(s) for |: 'float'");
                 op.res = NULL;
                 goto __exit;
             case '~':
@@ -2888,15 +2896,16 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                     goto __exit;
                 }
                 PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-                pika_platform_printf(
-                    "TypeError: unsupported operand type(s) for ~: 'float'\n");
+                PikaVMFrame_setSysOut(
+                    vm,
+                    "TypeError: unsupported operand type(s) for ~: 'float'");
                 op.res = NULL;
                 goto __exit;
             case '/':
                 if (0 == op.f2) {
                     PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-                    obj_setSysOut(vm->locals,
-                                  "ZeroDivisionError: division by zero");
+                    PikaVMFrame_setSysOut(
+                        vm, "ZeroDivisionError: division by zero");
                     op.res = NULL;
                     goto __exit;
                 }
@@ -2911,8 +2920,9 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                     goto __exit;
                 }
                 PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-                pika_platform_printf(
-                    "TypeError: unsupported operand type(s) for ^: 'float'\n");
+                PikaVMFrame_setSysOut(
+                    vm,
+                    "TypeError: unsupported operand type(s) for ^: 'float'");
                 op.res = NULL;
                 goto __exit;
         }
@@ -3001,9 +3011,9 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
 #endif
 
         PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-        obj_setSysOut(vm->locals,
-                      "Operation 'in' is not supported for this "
-                      "type\n");
+        PikaVMFrame_setSysOut(vm,
+                              "Operation 'in' is not supported for this "
+                              "type");
         op.res = NULL;
         goto __exit;
     }
@@ -3023,9 +3033,10 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         }
 #endif
         PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-        pika_platform_printf(
+        PikaVMFrame_setSysOut(
+            vm,
             "Operation float \\\\ float is not enabled, please set "
-            "PIKA_MATH_ENABLE\n");
+            "PIKA_MATH_ENABLE");
         op.res = NULL;
         goto __exit;
     }
@@ -3069,8 +3080,8 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             goto __exit;
         }
         PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-        pika_platform_printf(
-            "TypeError: unsupported operand type(s) for >>: 'float'\n");
+        PikaVMFrame_setSysOut(
+            vm, "TypeError: unsupported operand type(s) for >>: 'float'");
         op.res = NULL;
         goto __exit;
     }
@@ -3080,8 +3091,8 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             goto __exit;
         }
         PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-        pika_platform_printf(
-            "TypeError: unsupported operand type(s) for <<: 'float'\n");
+        PikaVMFrame_setSysOut(
+            vm, "TypeError: unsupported operand type(s) for <<: 'float'");
         op.res = NULL;
         goto __exit;
     }
@@ -3102,7 +3113,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         op.res = arg_setBool(op.res, "", !bTrue);
         goto __exit;
     }
-    pika_platform_printf("Error: unknown operator '%s'\n", data);
+    PikaVMFrame_setSysOut(vm, "Error: unknown operator '%s'", data);
     PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
 __exit:
     if (NULL != op.a1) {
@@ -3277,7 +3288,7 @@ static Arg* VM_instruction_handler_DEL(PikaObj* self,
         goto __exit;
     }
     PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-    pika_platform_printf("NameError: name '%s' is not defined\n", data);
+    PikaVMFrame_setSysOut(vm, "NameError: name '%s' is not defined", data);
 __exit:
     return NULL;
 }
@@ -3358,10 +3369,8 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self,
         return NULL;
     }
     PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
-    if (vm->vm_thread->try_state == TRY_STATE_NONE) {
-        pika_platform_printf("ModuleNotFoundError: No module named '%s'\r\n",
-                             data);
-    }
+    PikaVMFrame_setSysOut(vm, "ModuleNotFoundError: No module named '%s'",
+                          data);
     return NULL;
 }
 
