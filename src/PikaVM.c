@@ -322,6 +322,16 @@ void pika_vm_exit(void) {
     g_PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_EXIT;
 }
 
+void pika_vm_exit_await(void) {
+    pika_vm_exit();
+    while (1) {
+        pika_platform_thread_yield();
+        if (_VMEvent_getVMCnt() == 0) {
+            return;
+        }
+    }
+}
+
 void pika_vmSignal_setCtrlClear(void) {
     g_PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_NONE;
 }

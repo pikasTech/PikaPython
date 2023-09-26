@@ -318,6 +318,7 @@ void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
 Arg* _vm_get(PikaVMFrame* vm, PikaObj* self, Arg* key, Arg* obj);
 VM_SIGNAL_CTRL VMSignal_getCtrl(void);
 void pika_vm_exit(void);
+void pika_vm_exit_await(void);
 void pika_vmSignal_setCtrlClear(void);
 PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
                                   uint32_t* id,
