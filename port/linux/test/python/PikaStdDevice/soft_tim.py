@@ -5,6 +5,8 @@ tim = Timer()
 cb_times = 0
 def cb_test(signal):
     global cb_times
+    if cb_times > 0:
+        return
     cb_times += 1
     print("cb_test: signal = %d, cb_times = %d" % (signal, cb_times))
 
@@ -14,7 +16,8 @@ tim.setPeriod(100) # 100ms
 tim.enable()
 
 while True:
-    time.sleep(0.1)
-    if cb_times >= 3:
+    time.sleep(1)
+    print("cb_times = %d" % cb_times)
+    if cb_times >= 1:
         tim.close()
         break
