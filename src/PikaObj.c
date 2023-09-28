@@ -1790,7 +1790,9 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
         }
         shell->lineBuff[shell->line_position] = '\0';
         ctrl = shell->handler(self, shell->lineBuff, shell);
-        pika_platform_printf("%s", shell->prefix);
+        if (SHELL_CTRL_EXIT != ctrl) {
+            pika_platform_printf("%s", shell->prefix);
+        }
         __clearBuff(shell);
         goto __exit;
     }

@@ -49,8 +49,13 @@ void PikaDebug_Debuger_set_trace(PikaObj* self) {
     if (!obj_getInt(self, "enable")) {
         return;
     }
+    char* name = "stdin";
+    if (NULL != self->vmFrame->bytecode_frame->name) {
+        name = self->vmFrame->bytecode_frame->name;
+    }
+    pika_platform_printf("<%s>: %d\n", name, self->vmFrame->pc);
     struct ShellConfig cfg = {
-        .prefix = "(pika-db) ",
+        .prefix = "(Pdb-pika) ",
         .handler = __obj_shellLineHandler_debug,
         .fn_getchar = __platform_getchar,
     };

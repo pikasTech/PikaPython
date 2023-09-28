@@ -10,6 +10,7 @@ import hashlib, hmac, aes, base64, time, os, zlib
 import _thread, weakref, eventloop
 import this
 import fsm
+pdb = PikaDebug.Debuger()
 
 mem = PikaStdLib.MemChecker()
 print('hello pikascript!')
