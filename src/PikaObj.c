@@ -2625,7 +2625,11 @@ int obj_runModule(PikaObj* self, char* module_name) {
     if (NULL == bytecode) {
         return 1;
     }
-    pikaVM_runByteCode(self, bytecode);
+
+    PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
+                              .try_result = TRY_RESULT_NONE};
+    _do_pikaVM_runByteCode(self, self, self, (uint8_t*)bytecode, module_name,
+                           &vm_thread, pika_true);
     return 0;
 }
 
