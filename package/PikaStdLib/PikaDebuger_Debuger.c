@@ -27,14 +27,16 @@ static enum shellCTRL __obj_shellLineHandler_debug(PikaObj* self,
     /* print */
     if (strIsStartWith(input_line, "p ")) {
         char* path = input_line + 2;
-        Arg* asm_buff = arg_newStr("B0\n1 REF ");
+        Arg* asm_buff = arg_newStr("print(");
         asm_buff = arg_strAppend(asm_buff, path);
-        asm_buff = arg_strAppend(asm_buff, "\n0 RUN print\n");
-        pikaVM_runAsm((PikaObj*)__pikaMain, arg_getStr(asm_buff));
+        asm_buff = arg_strAppend(asm_buff, ")\n");
+        _pikaVM_runPyLines(self->vmFrame->locals, self->vmFrame->globals,
+                           arg_getStr(asm_buff), pika_true);
         arg_deinit(asm_buff);
         return SHELL_CTRL_CONTINUE;
     }
-    obj_run((PikaObj*)__pikaMain, input_line);
+    _pikaVM_runPyLines(self->vmFrame->locals, self->vmFrame->globals,
+                       input_line, pika_true);
     return SHELL_CTRL_CONTINUE;
 }
 
@@ -48,7 +50,7 @@ void PikaDebug_Debuger_set_trace(PikaObj* self) {
         return;
     }
     struct ShellConfig cfg = {
-        .prefix = "(pika-debug) ",
+        .prefix = "(pika-db) ",
         .handler = __obj_shellLineHandler_debug,
         .fn_getchar = __platform_getchar,
     };

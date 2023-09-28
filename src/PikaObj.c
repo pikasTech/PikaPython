@@ -2032,7 +2032,7 @@ static enum shellCTRL __obj_shellLineHandler_REPL(PikaObj* self,
         return SHELL_CTRL_EXIT;
     }
     /* run single line */
-    _pikaVM_runPyLines(self, input_line, pika_true);
+    _pikaVM_runPyLines(self, self, input_line, pika_true);
     return SHELL_CTRL_CONTINUE;
 }
 
@@ -2542,6 +2542,12 @@ PikaObj* obj_importModuleWithByteCode(PikaObj* self,
 
         pikaVM_runByteCode(obj_getObj((PikaObj*)__pikaMain, name),
                            (uint8_t*)byteCode);
+        PikaObj* module_obj = obj_getObj((PikaObj*)__pikaMain, name);
+
+        PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
+                                  .try_result = TRY_RESULT_NONE};
+        _do_pikaVM_runByteCode(module_obj, module_obj, module_obj,
+                               (uint8_t*)byteCode, name, &vm_thread, pika_true);
     }
     if (self != (PikaObj*)__pikaMain) {
         /* import to other module context */

@@ -136,6 +136,10 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 VMParameters* _pikaVM_runByteCodeFrame(PikaObj* self,
                                        ByteCodeFrame* byteCode_frame,
                                        pika_bool in_repl);
+VMParameters* _pikaVM_runByteCodeFrameGlobals(PikaObj* self,
+                                              PikaObj* globals,
+                                              ByteCodeFrame* byteCode_frame,
+                                              pika_bool in_repl);
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
                                       ByteCodeFrame* byteCode_frame);
 
@@ -310,10 +314,12 @@ VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
                                      VMParameters* locals,
                                      VMParameters* globals,
                                      uint8_t* bytecode,
+                                     char* name,
                                      PikaVMThread* vm_thread,
                                      pika_bool is_const_bytecode);
 void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
                                     uint8_t* bytes,
+                                    char* name,
                                     pika_bool is_const);
 Arg* _vm_get(PikaVMFrame* vm, PikaObj* self, Arg* key, Arg* obj);
 VM_SIGNAL_CTRL VMSignal_getCtrl(void);
@@ -340,6 +346,7 @@ typedef struct {
 } VMLocals;
 
 VMParameters* _pikaVM_runPyLines(PikaObj* self,
+                                 PikaObj* globals,
                                  char* py_lines,
                                  pika_bool in_repl);
 

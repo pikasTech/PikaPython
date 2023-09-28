@@ -3752,9 +3752,9 @@ static ByteCodeFrame* _cache_bcf_fn_bc(PikaObj* self, uint8_t* bytecode) {
 }
 
 VMParameters* _pikaVM_runPyLines(PikaObj* self,
+                                 PikaObj* globals,
                                  char* py_lines,
                                  pika_bool in_repl) {
-    VMParameters* globals = NULL;
     ByteCodeFrame bytecode_frame_stack = {0};
     ByteCodeFrame* bytecode_frame_p = NULL;
     uint8_t is_use_heap_bytecode = 0;
@@ -3779,7 +3779,8 @@ VMParameters* _pikaVM_runPyLines(PikaObj* self,
         goto __exit;
     }
     /* run byteCode */
-    globals = _pikaVM_runByteCodeFrame(self, bytecode_frame_p, in_repl);
+    globals = _pikaVM_runByteCodeFrameGlobals(self, globals, bytecode_frame_p,
+                                              in_repl);
     goto __exit;
 __exit:
     if (!is_use_heap_bytecode) {
@@ -3792,6 +3793,7 @@ VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
                                      VMParameters* locals,
                                      VMParameters* globals,
                                      uint8_t* bytecode,
+                                     char* name,
                                      PikaVMThread* vm_thread,
                                      pika_bool is_const_bytecode) {
     ByteCodeFrame bytecode_frame_stack = {0};
@@ -3812,7 +3814,7 @@ VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
 
     /* load or generate byte code frame */
     /* load bytecode */
-    _do_byteCodeFrame_loadByteCode(bytecode_frame_p, bytecode,
+    _do_byteCodeFrame_loadByteCode(bytecode_frame_p, bytecode, name,
                                    is_const_bytecode);
 
     /* run byteCode */
@@ -3859,13 +3861,13 @@ VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename) {
 }
 
 VMParameters* pikaVM_run(PikaObj* self, char* py_lines) {
-    return _pikaVM_runPyLines(self, py_lines, pika_false);
+    return _pikaVM_runPyLines(self, self, py_lines, pika_false);
 }
 
 VMParameters* pikaVM_runByteCode(PikaObj* self, const uint8_t* bytecode) {
     PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
                               .try_result = TRY_RESULT_NONE};
-    return _do_pikaVM_runByteCode(self, self, self, (uint8_t*)bytecode,
+    return _do_pikaVM_runByteCode(self, self, self, (uint8_t*)bytecode, NULL,
                                   &vm_thread, pika_true);
 }
 
@@ -3891,7 +3893,7 @@ Arg* _do_pikaVM_runByteCodeReturn(PikaObj* self,
                                   PikaVMThread* vm_thread,
                                   pika_bool is_const_bytecode,
                                   char* return_name) {
-    _do_pikaVM_runByteCode(self, locals, globals, bytecode, vm_thread,
+    _do_pikaVM_runByteCode(self, locals, globals, bytecode, NULL, vm_thread,
                            is_const_bytecode);
     Arg* ret = args_getArg(self->list, return_name);
     if (NULL == ret) {
@@ -3907,7 +3909,7 @@ Arg* _do_pikaVM_runByteCodeReturn(PikaObj* self,
 VMParameters* pikaVM_runByteCodeInconstant(PikaObj* self, uint8_t* bytecode) {
     PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
                               .try_result = TRY_RESULT_NONE};
-    return _do_pikaVM_runByteCode(self, self, self, (uint8_t*)bytecode,
+    return _do_pikaVM_runByteCode(self, self, self, (uint8_t*)bytecode, NULL,
                                   &vm_thread, pika_false);
 }
 
@@ -4017,11 +4019,13 @@ void byteCodeFrame_init(ByteCodeFrame* self) {
        can not init */
     constPool_init(&(self->const_pool));
     instructArray_init(&(self->instruct_array));
+    self->name = NULL;
 }
 
 extern const char magic_code_pyo[4];
 void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
                                     uint8_t* bytes,
+                                    char* name,
                                     pika_bool is_const) {
     if (bytes[0] == magic_code_pyo[0] && bytes[1] == magic_code_pyo[1] &&
         bytes[2] == magic_code_pyo[2] && bytes[3] == magic_code_pyo[3]) {
@@ -4037,6 +4041,10 @@ void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
     self->const_pool.size = *const_size_p;
     self->const_pool.content_start =
         (char*)((uintptr_t)const_size_p + sizeof(*const_size_p));
+    if (name != NULL && self->name == NULL) {
+        self->name = pika_platform_malloc(strGetSize(name) + 1);
+        pika_platform_memcpy(self->name, name, strGetSize(name) + 1);
+    }
     if (!is_const) {
         pika_assert(NULL == self->instruct_array.arg_buff);
         pika_assert(NULL == self->instruct_array.arg_buff);
@@ -4052,12 +4060,15 @@ void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
 }
 
 void byteCodeFrame_loadByteCode(ByteCodeFrame* self, uint8_t* bytes) {
-    _do_byteCodeFrame_loadByteCode(self, bytes, pika_true);
+    _do_byteCodeFrame_loadByteCode(self, bytes, NULL, pika_true);
 }
 
 void byteCodeFrame_deinit(ByteCodeFrame* self) {
     constPool_deinit(&(self->const_pool));
     instructArray_deinit(&(self->instruct_array));
+    if (NULL != self->name) {
+        pika_platform_free(self->name);
+    }
 }
 
 void instructArray_init(InstructArray* self) {
@@ -4379,6 +4390,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     g_PikaVMSignal.vm_cnt--;
     VMParameters* result = locals;
     pikaFree(vm, sizeof(PikaVMFrame));
+
     return result;
 }
 
@@ -4400,6 +4412,16 @@ VMParameters* _pikaVM_runByteCodeFrame(PikaObj* self,
                               .try_result = TRY_RESULT_NONE};
     return __pikaVM_runByteCodeFrameWithState(self, self, self, byteCode_frame,
                                               0, &vm_thread, in_repl);
+}
+
+VMParameters* _pikaVM_runByteCodeFrameGlobals(PikaObj* self,
+                                              PikaObj* globals,
+                                              ByteCodeFrame* byteCode_frame,
+                                              pika_bool in_repl) {
+    PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
+                              .try_result = TRY_RESULT_NONE};
+    return __pikaVM_runByteCodeFrameWithState(
+        self, self, globals, byteCode_frame, 0, &vm_thread, in_repl);
 }
 
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
