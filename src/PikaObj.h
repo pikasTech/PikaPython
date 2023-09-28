@@ -70,6 +70,7 @@ struct InstructArray {
 typedef struct ByteCodeFrame ByteCodeFrame;
 struct ByteCodeFrame {
     char* name;
+    Hash name_hash;
     ConstPool const_pool;
     InstructArray instruct_array;
 };

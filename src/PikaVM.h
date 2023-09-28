@@ -107,9 +107,9 @@ struct VMState {
     pika_bool event_thread_exit_done;
 #endif
 #if PIKA_DEBUG_BREAK_POINT_MAX > 0
-    Hash debug_break_module_hash[PIKA_DEBUG_BREAK_POINT_MAX];
-    uint32_t debug_break_point_pc[PIKA_DEBUG_BREAK_POINT_MAX];
-    int debug_break_point_cnt;
+    Hash break_module_hash[PIKA_DEBUG_BREAK_POINT_MAX];
+    uint32_t break_point_pc[PIKA_DEBUG_BREAK_POINT_MAX];
+    int break_point_cnt;
 #endif
 };
 
@@ -217,6 +217,8 @@ static inline char* PikaVMFrame_getConstWithInstructUnit(
                                  instructUnit_getConstPoolIndex(ins_unit));
 }
 
+pika_bool PikaVMFrame_checkBreakPoint(PikaVMFrame* vm);
+
 char* constPool_getNow(ConstPool* self);
 char* constPool_getNext(ConstPool* self);
 char* constPool_getByIndex(ConstPool* self, uint16_t index);
@@ -238,6 +240,7 @@ InstructUnit* byteCodeFrame_findInsForward(ByteCodeFrame* bcframe,
                                            int32_t pc_start,
                                            enum InstructIndex index,
                                            int32_t* p_offset);
+Hash byteCodeFrame_getNameHash(ByteCodeFrame* bcframe);
 void instructArray_init(InstructArray* ins_array);
 void instructArray_deinit(InstructArray* ins_array);
 void instructArray_append(InstructArray* ins_array, InstructUnit* ins_unit);

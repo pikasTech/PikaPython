@@ -53,9 +53,9 @@ volatile VMState g_PikaVMState = {
     .event_thread_exit = pika_false,
 #endif
 #if PIKA_DEBUG_BREAK_POINT_MAX > 0
-    .debug_break_module_hash = {0},
-    .debug_break_point_pc = {0},
-    .debug_break_point_cnt = 0,
+    .break_module_hash = {0},
+    .break_point_pc = {0},
+    .break_point_cnt = 0,
 #endif
 };
 extern volatile PikaObjState g_PikaObjState;
@@ -401,6 +401,21 @@ static int PikaVMFrame_getInvokeDeepthNow(PikaVMFrame* vm) {
     /* support run byteCode */
     InstructUnit* ins_unit = PikaVMFrame_getInstructNow(vm);
     return instructUnit_getInvokeDeepth(ins_unit);
+}
+
+pika_bool PikaVMFrame_checkBreakPoint(PikaVMFrame* vm) {
+#if !PIKA_DEBUG_BREAK_POINT_MAX
+    return pika_false;
+#else
+    if (g_PikaVMState.break_point_cnt == 0) {
+        return pika_false;
+    }
+    if (NULL == vm->bytecode_frame->name) {
+        return pika_false;
+    }
+    Hash module_hash = byteCodeFrame_getNameHash(vm->bytecode_frame);
+    return pika_debug_check_break_hash(module_hash, vm->pc);
+#endif
 }
 
 static int32_t PikaVMFrame_getAddrOffsetOfJmpBack(PikaVMFrame* vm) {
@@ -1811,6 +1826,13 @@ InstructUnit* byteCodeFrame_findInsForward(ByteCodeFrame* bcframe,
                                            int32_t* p_offset) {
     return byteCodeFrame_findInstructUnit(bcframe, pc_start, index, p_offset,
                                           pika_true);
+}
+
+Hash byteCodeFrame_getNameHash(ByteCodeFrame* bcframe) {
+    if (0 == bcframe->name_hash) {
+        bcframe->name_hash = hash_time33(bcframe->name);
+    }
+    return bcframe->name_hash;
 }
 
 InstructUnit* byteCodeFrame_findInsUnitBackward(ByteCodeFrame* bcframe,
@@ -3578,6 +3600,9 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     char* data = PikaVMFrame_getConstWithInstructUnit(vm, ins_unit);
     /* run instruct */
     pika_assert(NULL != vm->vm_thread);
+    if (PikaVMFrame_checkBreakPoint(vm)) {
+        printf("breakpoint\n");
+    }
 
 #if PIKA_INSTRUCT_EXTENSION_ENABLE
     const VMInstruction* ins = instructUnit_getInstruct(instruct);
@@ -4398,9 +4423,9 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
 
 pika_bool pika_debug_check_break(char* module_name, int pc_break) {
     Hash h = hash_time33(module_name);
-    for (int i = 0; i < g_PikaVMState.debug_break_point_cnt; i++) {
-        if (g_PikaVMState.debug_break_module_hash[i] == h &&
-            g_PikaVMState.debug_break_point_pc[i] == pc_break) {
+    for (int i = 0; i < g_PikaVMState.break_point_cnt; i++) {
+        if (g_PikaVMState.break_module_hash[i] == h &&
+            g_PikaVMState.break_point_pc[i] == pc_break) {
             return pika_true;
         }
     }
@@ -4408,9 +4433,9 @@ pika_bool pika_debug_check_break(char* module_name, int pc_break) {
 }
 
 pika_bool pika_debug_check_break_hash(Hash module_hash, int pc_break) {
-    for (int i = 0; i < g_PikaVMState.debug_break_point_cnt; i++) {
-        if (g_PikaVMState.debug_break_module_hash[i] == module_hash &&
-            g_PikaVMState.debug_break_point_pc[i] == pc_break) {
+    for (int i = 0; i < g_PikaVMState.break_point_cnt; i++) {
+        if (g_PikaVMState.break_module_hash[i] == module_hash &&
+            g_PikaVMState.break_point_pc[i] == pc_break) {
             return pika_true;
         }
     }
@@ -4421,15 +4446,13 @@ PIKA_RES pika_debug_set_break(char* module_name, int pc_break) {
     if (pika_debug_check_break(module_name, pc_break)) {
         return PIKA_RES_OK;
     }
-    if (g_PikaVMState.debug_break_point_cnt >= PIKA_DEBUG_BREAK_POINT_MAX) {
+    if (g_PikaVMState.break_point_cnt >= PIKA_DEBUG_BREAK_POINT_MAX) {
         return PIKA_RES_ERR_RUNTIME_ERROR;
     }
     Hash h = hash_time33(module_name);
-    g_PikaVMState.debug_break_module_hash[g_PikaVMState.debug_break_point_cnt] =
-        h;
-    g_PikaVMState.debug_break_point_pc[g_PikaVMState.debug_break_point_cnt] =
-        pc_break;
-    g_PikaVMState.debug_break_point_cnt++;
+    g_PikaVMState.break_module_hash[g_PikaVMState.break_point_cnt] = h;
+    g_PikaVMState.break_point_pc[g_PikaVMState.break_point_cnt] = pc_break;
+    g_PikaVMState.break_point_cnt++;
     return PIKA_RES_OK;
 }
 
@@ -4438,18 +4461,18 @@ PIKA_RES pika_debug_reset_break(char* module_name, int pc_break) {
         return PIKA_RES_OK;
     }
     Hash h = hash_time33(module_name);
-    for (int i = 0; i < g_PikaVMState.debug_break_point_cnt; i++) {
-        if (g_PikaVMState.debug_break_module_hash[i] == h &&
-            g_PikaVMState.debug_break_point_pc[i] == pc_break) {
+    for (int i = 0; i < g_PikaVMState.break_point_cnt; i++) {
+        if (g_PikaVMState.break_module_hash[i] == h &&
+            g_PikaVMState.break_point_pc[i] == pc_break) {
             // Move subsequent break points one position forward
-            for (int j = i; j < g_PikaVMState.debug_break_point_cnt - 1; j++) {
-                g_PikaVMState.debug_break_module_hash[j] =
-                    g_PikaVMState.debug_break_module_hash[j + 1];
-                g_PikaVMState.debug_break_point_pc[j] =
-                    g_PikaVMState.debug_break_point_pc[j + 1];
+            for (int j = i; j < g_PikaVMState.break_point_cnt - 1; j++) {
+                g_PikaVMState.break_module_hash[j] =
+                    g_PikaVMState.break_module_hash[j + 1];
+                g_PikaVMState.break_point_pc[j] =
+                    g_PikaVMState.break_point_pc[j + 1];
             }
             // Decrease the count of break points
-            g_PikaVMState.debug_break_point_cnt--;
+            g_PikaVMState.break_point_cnt--;
             return PIKA_RES_OK;
         }
     }
