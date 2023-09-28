@@ -95,8 +95,8 @@ typedef struct JmpBufCQ {
 } JmpBufCQ;
 #endif
 
-typedef struct VMSignal VMSignal;
-struct VMSignal {
+typedef struct VMState VMState;
+struct VMState {
     VM_SIGNAL_CTRL signal_ctrl;
     int vm_cnt;
 #if PIKA_EVENT_ENABLE
@@ -105,6 +105,11 @@ struct VMSignal {
     pika_platform_thread_t* event_thread;
     pika_bool event_thread_exit;
     pika_bool event_thread_exit_done;
+#endif
+#if PIKA_DEBUG_BREAK_POINT_MAX > 0
+    Hash debug_break_module_hash[PIKA_DEBUG_BREAK_POINT_MAX];
+    uint32_t debug_break_point_pc[PIKA_DEBUG_BREAK_POINT_MAX];
+    int debug_break_point_cnt;
 #endif
 };
 
@@ -338,6 +343,10 @@ void __VMEvent_pickupEvent(char* info);
 void _pikaVM_yield(void);
 int _VM_lock_init(void);
 int _VM_is_first_lock(void);
+PIKA_RES pika_debug_set_break(char* module_name, int pc_break);
+PIKA_RES pika_debug_reset_break(char* module_name, int pc_break);
+pika_bool pika_debug_check_break_hash(Hash module_hash, int pc_break);
+pika_bool pika_debug_check_break(char* module_name, int pc_break);
 
 #define _VMEvent_pickupEvent() __VMEvent_pickupEvent(__FILE__)
 

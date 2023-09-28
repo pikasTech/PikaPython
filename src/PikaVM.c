@@ -38,20 +38,24 @@
 #endif
 
 static pika_platform_thread_mutex_t g_pikaGIL = {0};
-volatile VMSignal g_PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
-
-                                    .vm_cnt = 0,
+volatile VMState g_PikaVMState = {
+    .signal_ctrl = VM_SIGNAL_CTRL_NONE,
+    .vm_cnt = 0,
 #if PIKA_EVENT_ENABLE
-                                    .cq =
-                                        {
-                                            .head = 0,
-                                            .tail = 0,
-                                            .res = {0},
-                                        },
-                                    .event_pickup_cnt = 0,
-                                    .event_thread = NULL,
-                                    .event_thread_exit = pika_false
-
+    .cq =
+        {
+            .head = 0,
+            .tail = 0,
+            .res = {0},
+        },
+    .event_pickup_cnt = 0,
+    .event_thread = NULL,
+    .event_thread_exit = pika_false,
+#endif
+#if PIKA_DEBUG_BREAK_POINT_MAX > 0
+    .debug_break_module_hash = {0},
+    .debug_break_point_pc = {0},
+    .debug_break_point_cnt = 0,
 #endif
 };
 extern volatile PikaObjState g_PikaObjState;
@@ -127,14 +131,14 @@ int _VM_is_first_lock(void) {
 }
 
 int _VMEvent_getVMCnt(void) {
-    return g_PikaVMSignal.vm_cnt;
+    return g_PikaVMState.vm_cnt;
 }
 
 int _VMEvent_getEventPickupCnt(void) {
 #if !PIKA_EVENT_ENABLE
     return -1;
 #else
-    return g_PikaVMSignal.event_pickup_cnt;
+    return g_PikaVMState.event_pickup_cnt;
 #endif
 }
 
@@ -209,21 +213,21 @@ void _VMEvent_deinit(void) {
     pika_platform_panic_handle();
 #else
     for (int i = 0; i < PIKA_EVENT_LIST_SIZE; i++) {
-        if (NULL != g_PikaVMSignal.cq.res[i]) {
-            arg_deinit(g_PikaVMSignal.cq.res[i]);
-            g_PikaVMSignal.cq.res[i] = NULL;
+        if (NULL != g_PikaVMState.cq.res[i]) {
+            arg_deinit(g_PikaVMState.cq.res[i]);
+            g_PikaVMState.cq.res[i] = NULL;
         }
-        if (NULL != g_PikaVMSignal.cq.data[i]) {
-            arg_deinit(g_PikaVMSignal.cq.data[i]);
-            g_PikaVMSignal.cq.data[i] = NULL;
+        if (NULL != g_PikaVMState.cq.data[i]) {
+            arg_deinit(g_PikaVMState.cq.data[i]);
+            g_PikaVMState.cq.data[i] = NULL;
         }
     }
-    if (NULL != g_PikaVMSignal.event_thread) {
-        g_PikaVMSignal.event_thread_exit = 1;
-        pika_platform_thread_destroy(g_PikaVMSignal.event_thread);
-        g_PikaVMSignal.event_thread = NULL;
+    if (NULL != g_PikaVMState.event_thread) {
+        g_PikaVMState.event_thread_exit = 1;
+        pika_platform_thread_destroy(g_PikaVMState.event_thread);
+        g_PikaVMState.event_thread = NULL;
         pika_GIL_EXIT();
-        while (!g_PikaVMSignal.event_thread_exit_done) {
+        while (!g_PikaVMState.event_thread_exit_done) {
             pika_platform_thread_yield();
         }
         pika_GIL_ENTER();
@@ -243,24 +247,23 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
         arg_setType(eventData, ARG_TYPE_OBJECT);
     }
     /* push to event_cq_buff */
-    if (_ecq_isFull(&g_PikaVMSignal.cq)) {
+    if (_ecq_isFull(&g_PikaVMState.cq)) {
         // pika_debug("event_cq_buff is full");
         arg_deinit(eventData);
         return PIKA_RES_ERR_SIGNAL_EVENT_FULL;
     }
-    if (g_PikaVMSignal.cq.res[g_PikaVMSignal.cq.tail] != NULL) {
-        arg_deinit(g_PikaVMSignal.cq.res[g_PikaVMSignal.cq.tail]);
-        g_PikaVMSignal.cq.res[g_PikaVMSignal.cq.tail] = NULL;
+    if (g_PikaVMState.cq.res[g_PikaVMState.cq.tail] != NULL) {
+        arg_deinit(g_PikaVMState.cq.res[g_PikaVMState.cq.tail]);
+        g_PikaVMState.cq.res[g_PikaVMState.cq.tail] = NULL;
     }
-    if (g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.tail] != NULL) {
-        arg_deinit(g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.tail]);
-        g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.tail] = NULL;
+    if (g_PikaVMState.cq.data[g_PikaVMState.cq.tail] != NULL) {
+        arg_deinit(g_PikaVMState.cq.data[g_PikaVMState.cq.tail]);
+        g_PikaVMState.cq.data[g_PikaVMState.cq.tail] = NULL;
     }
-    g_PikaVMSignal.cq.id[g_PikaVMSignal.cq.tail] = eventId;
-    g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.tail] = eventData;
-    g_PikaVMSignal.cq.listener[g_PikaVMSignal.cq.tail] = lisener;
-    g_PikaVMSignal.cq.tail =
-        (g_PikaVMSignal.cq.tail + 1) % PIKA_EVENT_LIST_SIZE;
+    g_PikaVMState.cq.id[g_PikaVMState.cq.tail] = eventId;
+    g_PikaVMState.cq.data[g_PikaVMState.cq.tail] = eventData;
+    g_PikaVMState.cq.listener[g_PikaVMState.cq.tail] = lisener;
+    g_PikaVMState.cq.tail = (g_PikaVMState.cq.tail + 1) % PIKA_EVENT_LIST_SIZE;
     return PIKA_RES_OK;
 #endif
 }
@@ -275,15 +278,14 @@ PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
     return PIKA_RES_ERR_OPERATION_FAILED;
 #else
     /* pop from event_cq_buff */
-    if (_ecq_isEmpty(&g_PikaVMSignal.cq)) {
+    if (_ecq_isEmpty(&g_PikaVMState.cq)) {
         return PIKA_RES_ERR_SIGNAL_EVENT_EMPTY;
     }
-    *id = g_PikaVMSignal.cq.id[g_PikaVMSignal.cq.head];
-    *data = g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.head];
-    *lisener_p = g_PikaVMSignal.cq.listener[g_PikaVMSignal.cq.head];
-    *head = g_PikaVMSignal.cq.head;
-    g_PikaVMSignal.cq.head =
-        (g_PikaVMSignal.cq.head + 1) % PIKA_EVENT_LIST_SIZE;
+    *id = g_PikaVMState.cq.id[g_PikaVMState.cq.head];
+    *data = g_PikaVMState.cq.data[g_PikaVMState.cq.head];
+    *lisener_p = g_PikaVMState.cq.listener[g_PikaVMState.cq.head];
+    *head = g_PikaVMState.cq.head;
+    g_PikaVMState.cq.head = (g_PikaVMState.cq.head + 1) % PIKA_EVENT_LIST_SIZE;
     return PIKA_RES_OK;
 #endif
 }
@@ -303,23 +305,23 @@ void __VMEvent_pickupEvent(char* info) {
     int head;
     if (PIKA_RES_OK == __eventListener_popEvent(&event_lisener, &event_id,
                                                 &event_data, &head)) {
-        g_PikaVMSignal.event_pickup_cnt++;
+        g_PikaVMState.event_pickup_cnt++;
         pika_debug("pickup_info: %s", info);
         pika_debug("pickup_cnt: %d", g_PikaVMSignal.event_pickup_cnt);
         Arg* res =
             __eventListener_runEvent(event_lisener, event_id, event_data);
-        g_PikaVMSignal.cq.res[head] = res;
-        g_PikaVMSignal.event_pickup_cnt--;
+        g_PikaVMState.cq.res[head] = res;
+        g_PikaVMState.event_pickup_cnt--;
     }
 #endif
 }
 
 VM_SIGNAL_CTRL VMSignal_getCtrl(void) {
-    return g_PikaVMSignal.signal_ctrl;
+    return g_PikaVMState.signal_ctrl;
 }
 
 void pika_vm_exit(void) {
-    g_PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_EXIT;
+    g_PikaVMState.signal_ctrl = VM_SIGNAL_CTRL_EXIT;
 }
 
 void pika_vm_exit_await(void) {
@@ -333,7 +335,7 @@ void pika_vm_exit_await(void) {
 }
 
 void pika_vmSignal_setCtrlClear(void) {
-    g_PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_NONE;
+    g_PikaVMState.signal_ctrl = VM_SIGNAL_CTRL_NONE;
 }
 
 /* head declare start */
@@ -4324,13 +4326,13 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     int size = bytecode_frame->instruct_array.size;
     /* locals is the local scope */
 
-    if (g_PikaVMSignal.vm_cnt == 0) {
+    if (g_PikaVMState.vm_cnt == 0) {
         pika_vmSignal_setCtrlClear();
     }
     PikaVMFrame* vm =
         PikaVMFrame_create(locals, globals, bytecode_frame, pc, vm_thread);
     vm->in_repl = in_repl;
-    g_PikaVMSignal.vm_cnt++;
+    g_PikaVMState.vm_cnt++;
     while (vm->pc < size) {
         if (vm->pc == VM_PC_EXIT) {
             break;
@@ -4387,11 +4389,71 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     }
     PikaVMFrame_solveUnusedStack(vm);
     stack_deinit(&(vm->stack));
-    g_PikaVMSignal.vm_cnt--;
+    g_PikaVMState.vm_cnt--;
     VMParameters* result = locals;
     pikaFree(vm, sizeof(PikaVMFrame));
 
     return result;
+}
+
+pika_bool pika_debug_check_break(char* module_name, int pc_break) {
+    Hash h = hash_time33(module_name);
+    for (int i = 0; i < g_PikaVMState.debug_break_point_cnt; i++) {
+        if (g_PikaVMState.debug_break_module_hash[i] == h &&
+            g_PikaVMState.debug_break_point_pc[i] == pc_break) {
+            return pika_true;
+        }
+    }
+    return pika_false;
+}
+
+pika_bool pika_debug_check_break_hash(Hash module_hash, int pc_break) {
+    for (int i = 0; i < g_PikaVMState.debug_break_point_cnt; i++) {
+        if (g_PikaVMState.debug_break_module_hash[i] == module_hash &&
+            g_PikaVMState.debug_break_point_pc[i] == pc_break) {
+            return pika_true;
+        }
+    }
+    return pika_false;
+}
+
+PIKA_RES pika_debug_set_break(char* module_name, int pc_break) {
+    if (pika_debug_check_break(module_name, pc_break)) {
+        return PIKA_RES_OK;
+    }
+    if (g_PikaVMState.debug_break_point_cnt >= PIKA_DEBUG_BREAK_POINT_MAX) {
+        return PIKA_RES_ERR_RUNTIME_ERROR;
+    }
+    Hash h = hash_time33(module_name);
+    g_PikaVMState.debug_break_module_hash[g_PikaVMState.debug_break_point_cnt] =
+        h;
+    g_PikaVMState.debug_break_point_pc[g_PikaVMState.debug_break_point_cnt] =
+        pc_break;
+    g_PikaVMState.debug_break_point_cnt++;
+    return PIKA_RES_OK;
+}
+
+PIKA_RES pika_debug_reset_break(char* module_name, int pc_break) {
+    if (!pika_debug_check_break(module_name, pc_break)) {
+        return PIKA_RES_OK;
+    }
+    Hash h = hash_time33(module_name);
+    for (int i = 0; i < g_PikaVMState.debug_break_point_cnt; i++) {
+        if (g_PikaVMState.debug_break_module_hash[i] == h &&
+            g_PikaVMState.debug_break_point_pc[i] == pc_break) {
+            // Move subsequent break points one position forward
+            for (int j = i; j < g_PikaVMState.debug_break_point_cnt - 1; j++) {
+                g_PikaVMState.debug_break_module_hash[j] =
+                    g_PikaVMState.debug_break_module_hash[j + 1];
+                g_PikaVMState.debug_break_point_pc[j] =
+                    g_PikaVMState.debug_break_point_pc[j + 1];
+            }
+            // Decrease the count of break points
+            g_PikaVMState.debug_break_point_cnt--;
+            return PIKA_RES_OK;
+        }
+    }
+    return PIKA_RES_ERR_RUNTIME_ERROR;
 }
 
 static VMParameters* _pikaVM_runByteCodeFrameWithState(

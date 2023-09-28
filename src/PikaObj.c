@@ -43,7 +43,7 @@
 #include "unistd.h"
 #endif
 
-extern volatile VMSignal g_PikaVMSignal;
+extern volatile VMState g_PikaVMState;
 volatile PikaObjState g_PikaObjState = {
     .helpModulesCmodule = NULL,
     .inRootObj = pika_false,
@@ -2803,8 +2803,8 @@ static void _thread_event(void* arg) {
     while (1) {
         pika_GIL_ENTER();
 #if PIKA_EVENT_ENABLE
-        if (g_PikaVMSignal.event_thread_exit) {
-            g_PikaVMSignal.event_thread_exit_done = 1;
+        if (g_PikaVMState.event_thread_exit) {
+            g_PikaVMState.event_thread_exit_done = 1;
             break;
         }
 #endif
@@ -2826,11 +2826,11 @@ PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
 #else
     _RETURN_WHEN_NOT_ZERO(pika_GIL_ENTER(), -1);
 #if PIKA_EVENT_THREAD_ENABLE
-    if (!g_PikaVMSignal.event_thread) {
+    if (!g_PikaVMState.event_thread) {
         /* using multi thread */
         if (_VM_is_first_lock()) {
             // avoid _VMEvent_pickupEvent() in _time.c as soon as possible
-            g_PikaVMSignal.event_thread = pika_platform_thread_init(
+            g_PikaVMState.event_thread = pika_platform_thread_init(
                 "pika_event", _thread_event, NULL, PIKA_EVENT_THREAD_STACK_SIZE,
                 PIKA_THREAD_PRIO, PIKA_THREAD_TICK);
             pika_debug("event thread init");
@@ -2882,11 +2882,11 @@ Arg* pika_eventListener_sendSignalAwaitResult(PikaEventListener* self,
     while (1) {
     };
 #else
-    extern volatile VMSignal g_PikaVMSignal;
-    int tail = g_PikaVMSignal.cq.tail;
+    extern volatile VMState g_PikaVMState;
+    int tail = g_PikaVMState.cq.tail;
     pika_eventListener_sendSignal(self, eventId, eventSignal);
     while (1) {
-        Arg* res = g_PikaVMSignal.cq.res[tail];
+        Arg* res = g_PikaVMState.cq.res[tail];
         pika_platform_thread_yield();
         if (NULL != res) {
             return res;
