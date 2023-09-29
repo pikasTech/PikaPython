@@ -461,6 +461,8 @@ struct ShellConfig {
     ShellHistory* history;
 #endif
     pika_bool no_echo;
+    PikaObj* locals;
+    PikaObj* globals;
 };
 
 #if PIKA_SHELL_HISTORY_ENABLE

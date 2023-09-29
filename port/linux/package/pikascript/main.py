@@ -1,6 +1,4 @@
 import PikaDebug as pdb
-pdb.set_break('main', 28)
-pdb.set_trace()
 import PikaStdLib, PikaStdDevice, PikaMath, PikaCV, PikaNN
 import random, re, modbus, socket, unittest, binascii, ctypes, requests, mqtt
 import pika_lua, pika_cjson, cjson_test, json

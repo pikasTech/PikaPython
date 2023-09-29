@@ -2034,7 +2034,9 @@ static enum shellCTRL __obj_shellLineHandler_REPL(PikaObj* self,
         return SHELL_CTRL_EXIT;
     }
     /* run single line */
-    _pikaVM_runPyLines(self, self, input_line, pika_true);
+    pikaVM_run_ex_cfg cfg = {0};
+    cfg.in_repl = pika_true;
+    pikaVM_run_ex(self, input_line, &cfg);
     return SHELL_CTRL_CONTINUE;
 }
 

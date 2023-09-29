@@ -2927,6 +2927,25 @@ TEST(pikaMain, REPL_key_down_over) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(pikaMain, REPL_pdb_set_break) {
+    char lines[] = {'n', '\n', 'n', '\n'};
+    write_to_getchar_buffer(lines, strGetSize(lines));
+    /* init */
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    pikaVM_runSingleFile(pikaMain, "test/python/builtins/pdb_set_break.py");
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    /* collect */
+    /* assert */
+    // EXPECT_STREQ(log_buff[1], "2\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 #if PIKA_SHELL_FILTER_ENABLE

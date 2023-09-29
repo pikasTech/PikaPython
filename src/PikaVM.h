@@ -219,6 +219,12 @@ static inline char* PikaVMFrame_getConstWithInstructUnit(
 
 pika_bool PikaVMFrame_checkBreakPoint(PikaVMFrame* vm);
 
+typedef struct {
+    PikaObj* globals;
+    pika_bool in_repl;
+    char* module_name;
+} pikaVM_run_ex_cfg;
+
 char* constPool_getNow(ConstPool* self);
 char* constPool_getNext(ConstPool* self);
 char* constPool_getByIndex(ConstPool* self, uint16_t index);
@@ -226,6 +232,7 @@ void constPool_print(ConstPool* self);
 
 void byteCodeFrame_init(ByteCodeFrame* bf);
 void byteCodeFrame_deinit(ByteCodeFrame* bf);
+void byteCodeFrame_setName(ByteCodeFrame* self, char* name);
 size_t byteCodeFrame_getSize(ByteCodeFrame* bf);
 InstructUnit* byteCodeFrame_findInstructUnit(ByteCodeFrame* bcframe,
                                              int32_t iPcStart,
@@ -357,10 +364,9 @@ typedef struct {
     PikaObj* lreg[PIKA_REGIST_SIZE];
 } VMLocals;
 
-VMParameters* _pikaVM_runPyLines(PikaObj* self,
-                                 PikaObj* globals,
-                                 char* py_lines,
-                                 pika_bool in_repl);
+VMParameters* pikaVM_run_ex(PikaObj* self,
+                            char* py_lines,
+                            pikaVM_run_ex_cfg* cfg);
 
 #endif
 

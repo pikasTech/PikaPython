@@ -30,13 +30,17 @@ static enum shellCTRL __obj_shellLineHandler_debug(PikaObj* self,
         Arg* asm_buff = arg_newStr("print(");
         asm_buff = arg_strAppend(asm_buff, path);
         asm_buff = arg_strAppend(asm_buff, ")\n");
-        _pikaVM_runPyLines(self->vmFrame->locals, self->vmFrame->globals,
-                           arg_getStr(asm_buff), pika_true);
+        pikaVM_run_ex_cfg cfg = {0};
+        cfg.globals = config->globals;
+        cfg.in_repl = pika_true;
+        pikaVM_run_ex(config->locals, arg_getStr(asm_buff), &cfg);
         arg_deinit(asm_buff);
         return SHELL_CTRL_CONTINUE;
     }
-    _pikaVM_runPyLines(self->vmFrame->locals, self->vmFrame->globals,
-                       input_line, pika_true);
+    pikaVM_run_ex_cfg cfg = {0};
+    cfg.globals = config->globals;
+    cfg.in_repl = pika_true;
+    pikaVM_run_ex(config->locals, input_line, &cfg);
     return SHELL_CTRL_CONTINUE;
 }
 
@@ -50,6 +54,7 @@ void PikaDebug_Debuger_set_trace(PikaObj* self) {
         return;
     }
     char* name = "stdin";
+    pika_assert(NULL != self->vmFrame);
     if (NULL != self->vmFrame->bytecode_frame->name) {
         name = self->vmFrame->bytecode_frame->name;
     }
@@ -58,8 +63,11 @@ void PikaDebug_Debuger_set_trace(PikaObj* self) {
         .prefix = "(Pdb-pika) ",
         .handler = __obj_shellLineHandler_debug,
         .fn_getchar = __platform_getchar,
+        .locals = self->vmFrame->locals,
+        .globals = self->vmFrame->globals,
     };
     _do_pikaScriptShell(self, &cfg);
+    shConfig_deinit(&cfg);
 }
 
 void PikaDebug_set_trace(PikaObj* self) {
