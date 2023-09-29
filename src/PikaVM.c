@@ -3589,7 +3589,70 @@ const VM_instruct_handler VM_instruct_handler_table[__INSTRUCTION_CNT] = {
 };
 #endif
 
-void PikaDebug_Debuger_set_trace(PikaObj* self);
+extern volatile PikaObj* __pikaMain;
+static enum shellCTRL __obj_shellLineHandler_debug(PikaObj* self,
+                                                   char* input_line,
+                                                   struct ShellConfig* config) {
+    /* continue */
+    if (strEqu("c", input_line)) {
+        return SHELL_CTRL_EXIT;
+    }
+    /* next */
+    if (strEqu("n", input_line)) {
+        return SHELL_CTRL_EXIT;
+    }
+    /* launch shell */
+    if (strEqu("sh", input_line)) {
+        /* exit pika shell */
+        pikaScriptShell((PikaObj*)__pikaMain);
+        return SHELL_CTRL_CONTINUE;
+    }
+    /* quit */
+    if (strEqu("q", input_line)) {
+        obj_setInt(self, "enable", 0);
+        return SHELL_CTRL_EXIT;
+    }
+    /* print */
+    if (strIsStartWith(input_line, "p ")) {
+        char* path = input_line + 2;
+        Arg* asm_buff = arg_newStr("print(");
+        asm_buff = arg_strAppend(asm_buff, path);
+        asm_buff = arg_strAppend(asm_buff, ")\n");
+        pikaVM_run_ex_cfg cfg = {0};
+        cfg.globals = config->globals;
+        cfg.in_repl = pika_true;
+        pikaVM_run_ex(config->locals, arg_getStr(asm_buff), &cfg);
+        arg_deinit(asm_buff);
+        return SHELL_CTRL_CONTINUE;
+    }
+    pikaVM_run_ex_cfg cfg = {0};
+    cfg.globals = config->globals;
+    cfg.in_repl = pika_true;
+    pikaVM_run_ex(config->locals, input_line, &cfg);
+    return SHELL_CTRL_CONTINUE;
+}
+
+void pika_debug_set_trace(PikaObj* self) {
+    if (!obj_getInt(self, "enable")) {
+        return;
+    }
+    char* name = "stdin";
+    pika_assert(NULL != self->vmFrame);
+    if (NULL != self->vmFrame->bytecode_frame->name) {
+        name = self->vmFrame->bytecode_frame->name;
+    }
+    pika_platform_printf("%s:%d\n", name, self->vmFrame->pc);
+    struct ShellConfig cfg = {
+        .prefix = "(Pdb-pika) ",
+        .handler = __obj_shellLineHandler_debug,
+        .fn_getchar = __platform_getchar,
+        .locals = self->vmFrame->locals,
+        .globals = self->vmFrame->globals,
+    };
+    _do_pikaScriptShell(self, &cfg);
+    shConfig_deinit(&cfg);
+}
+
 static int pikaVM_runInstructUnit(PikaObj* self,
                                   PikaVMFrame* vm,
                                   InstructUnit* ins_unit) {
@@ -3602,7 +3665,7 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     /* run instruct */
     pika_assert(NULL != vm->vm_thread);
     if (PikaVMFrame_checkBreakPoint(vm)) {
-        PikaDebug_Debuger_set_trace(self);
+        pika_debug_set_trace(self);
     }
 
 #if PIKA_INSTRUCT_EXTENSION_ENABLE
@@ -4069,7 +4132,7 @@ void byteCodeFrame_init(ByteCodeFrame* self) {
     constPool_init(&(self->const_pool));
     instructArray_init(&(self->instruct_array));
     self->name = NULL;
-    self->label_pc = 0;
+    self->label_pc = -1;
 }
 
 extern const char magic_code_pyo[4];

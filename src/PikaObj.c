@@ -4517,7 +4517,7 @@ PIKA_RES insert_label_at_line(const char* filename,
     return PIKA_RES_OK;
 }
 
-uint32_t pika_debug_find_break_point_pc(char* pyFile, uint32_t pyLine) {
+int32_t pika_debug_find_break_point_pc(char* pyFile, uint32_t pyLine) {
     ByteCodeFrame bytecode_frame;
     byteCodeFrame_init(&bytecode_frame);
     char* file_buff = pikaMalloc(PIKA_READ_FILE_BUFF_SIZE);

@@ -360,6 +360,7 @@ void _pikaVM_yield(void);
 int _VM_lock_init(void);
 int _VM_is_first_lock(void);
 PIKA_RES pika_debug_set_break(char* module_name, int pc_break);
+void pika_debug_set_trace(PikaObj* self);
 PIKA_RES pika_debug_reset_break(char* module_name, int pc_break);
 pika_bool pika_debug_check_break_hash(Hash module_hash, int pc_break);
 pika_bool pika_debug_check_break(char* module_name, int pc_break);
