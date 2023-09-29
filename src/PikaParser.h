@@ -103,6 +103,7 @@ struct Parser {
     pika_bool isGenBytecode;
     ByteCodeFrame* bytecode_frame;
     uint8_t thisBlockDeepth;
+    uint32_t label_pc;
 };
 
 typedef struct LexToken LexToken;

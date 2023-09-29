@@ -559,7 +559,7 @@ TEST(module, REPL_script) {
     fclose((FILE*)f_getchar_fp);
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[4], "mem used max:\r\n");
+    EXPECT_STREQ(log_buff[3], "mem used max:\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

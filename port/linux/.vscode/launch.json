@@ -12,7 +12,8 @@
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
                 // "--gtest_filter=vm.keyword_2"
-                "--gtest_filter=vm.exit_vm"
+                // "--gtest_filter=compiler.find_break_point"
+                "--gtest_filter=pikaMain.REPL_pdb_set_break"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

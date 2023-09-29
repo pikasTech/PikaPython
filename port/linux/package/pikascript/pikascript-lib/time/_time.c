@@ -8,7 +8,7 @@
 #endif
 
 void (*global_do_sleep_ms)(uint32_t);
-extern volatile VMSignal g_PikaVMSignal;
+extern volatile VMState g_PikaVMState;
 volatile int g_pika_local_timezone = 8;
 
 static void _do_sleep_ms_tick(uint32_t ms) {

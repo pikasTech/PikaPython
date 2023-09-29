@@ -37,13 +37,14 @@
 #include "dataQueue.h"
 #include "dataString.h"
 #include "dataStrs.h"
+#include "PikaParser.h"
 #if __linux
 #include "signal.h"
 #include "termios.h"
 #include "unistd.h"
 #endif
 
-extern volatile VMSignal g_PikaVMSignal;
+extern volatile VMState g_PikaVMState;
 volatile PikaObjState g_PikaObjState = {
     .helpModulesCmodule = NULL,
     .inRootObj = pika_false,
@@ -1790,7 +1791,9 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
         }
         shell->lineBuff[shell->line_position] = '\0';
         ctrl = shell->handler(self, shell->lineBuff, shell);
-        pika_platform_printf("%s", shell->prefix);
+        if (SHELL_CTRL_EXIT != ctrl) {
+            pika_platform_printf("%s", shell->prefix);
+        }
         __clearBuff(shell);
         goto __exit;
     }
@@ -2032,7 +2035,9 @@ static enum shellCTRL __obj_shellLineHandler_REPL(PikaObj* self,
         return SHELL_CTRL_EXIT;
     }
     /* run single line */
-    _pikaVM_runPyLines(self, input_line, pika_true);
+    pikaVM_run_ex_cfg cfg = {0};
+    cfg.in_repl = pika_true;
+    pikaVM_run_ex(self, input_line, &cfg);
     return SHELL_CTRL_CONTINUE;
 }
 
@@ -2542,6 +2547,17 @@ PikaObj* obj_importModuleWithByteCode(PikaObj* self,
 
         pikaVM_runByteCode(obj_getObj((PikaObj*)__pikaMain, name),
                            (uint8_t*)byteCode);
+        PikaObj* module_obj = obj_getObj((PikaObj*)__pikaMain, name);
+
+        PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
+                                  .try_result = TRY_RESULT_NONE};
+        pikaVM_runBytecode_ex_cfg cfg = {0};
+        cfg.globals = module_obj;
+        cfg.locals = module_obj;
+        cfg.name = name;
+        cfg.vm_thread = &vm_thread;
+        cfg.is_const_bytecode = pika_true;
+        pikaVM_runByteCode_ex(module_obj, byteCode, &cfg);
     }
     if (self != (PikaObj*)__pikaMain) {
         /* import to other module context */
@@ -2617,7 +2633,16 @@ int obj_runModule(PikaObj* self, char* module_name) {
     if (NULL == bytecode) {
         return 1;
     }
-    pikaVM_runByteCode(self, bytecode);
+
+    PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
+                              .try_result = TRY_RESULT_NONE};
+    pikaVM_runBytecode_ex_cfg cfg = {0};
+    cfg.globals = self;
+    cfg.locals = self;
+    cfg.name = module_name;
+    cfg.vm_thread = &vm_thread;
+    cfg.is_const_bytecode = pika_true;
+    pikaVM_runByteCode_ex(self, bytecode, &cfg);
     return 0;
 }
 
@@ -2791,8 +2816,8 @@ static void _thread_event(void* arg) {
     while (1) {
         pika_GIL_ENTER();
 #if PIKA_EVENT_ENABLE
-        if (g_PikaVMSignal.event_thread_exit) {
-            g_PikaVMSignal.event_thread_exit_done = 1;
+        if (g_PikaVMState.event_thread_exit) {
+            g_PikaVMState.event_thread_exit_done = 1;
             break;
         }
 #endif
@@ -2814,11 +2839,11 @@ PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
 #else
     _RETURN_WHEN_NOT_ZERO(pika_GIL_ENTER(), -1);
 #if PIKA_EVENT_THREAD_ENABLE
-    if (!g_PikaVMSignal.event_thread) {
+    if (!g_PikaVMState.event_thread) {
         /* using multi thread */
         if (_VM_is_first_lock()) {
             // avoid _VMEvent_pickupEvent() in _time.c as soon as possible
-            g_PikaVMSignal.event_thread = pika_platform_thread_init(
+            g_PikaVMState.event_thread = pika_platform_thread_init(
                 "pika_event", _thread_event, NULL, PIKA_EVENT_THREAD_STACK_SIZE,
                 PIKA_THREAD_PRIO, PIKA_THREAD_TICK);
             pika_debug("event thread init");
@@ -2870,11 +2895,11 @@ Arg* pika_eventListener_sendSignalAwaitResult(PikaEventListener* self,
     while (1) {
     };
 #else
-    extern volatile VMSignal g_PikaVMSignal;
-    int tail = g_PikaVMSignal.cq.tail;
+    extern volatile VMState g_PikaVMState;
+    int tail = g_PikaVMState.cq.tail;
     pika_eventListener_sendSignal(self, eventId, eventSignal);
     while (1) {
-        Arg* res = g_PikaVMSignal.cq.res[tail];
+        Arg* res = g_PikaVMState.cq.res[tail];
         pika_platform_thread_yield();
         if (NULL != res) {
             return res;
@@ -4442,4 +4467,74 @@ size_t pikaDict_getBytesSize(PikaDict* self, char* name) {
 
 void pikaDict_deinit(PikaDict* self) {
     obj_deinit(self);
+}
+
+PIKA_RES insert_label_at_line(const char* filename,
+                              int N,
+                              char* buff,
+                              int buff_size) {
+    FILE* file = pika_platform_fopen(filename, "r");
+    if (!file) {
+        return PIKA_RES_ERR_IO_ERROR;
+    }
+
+    int line_count = 1;
+    int buff_index = 0;
+    char ch;
+
+    while ((pika_platform_fread(&ch, 1, 1, file)) != 0) {
+        if (line_count == N) {
+            char* label = "#!label\n";
+            int label_length = strGetSize(label);
+
+            if (buff_index + label_length >= buff_size) {
+                pika_platform_fclose(file);
+                return PIKA_RES_ERR_IO_ERROR;  // Insufficient buffer size
+            }
+
+            strCopy(buff + buff_index, label);
+            buff_index += label_length;
+            line_count++;  // Skip this line since we're adding a label
+        }
+
+        if (ch == '\n') {
+            line_count++;
+        }
+
+        if (buff_index >=
+            buff_size - 1) {  // -1 to leave space for null terminator
+            pika_platform_fclose(file);
+            return PIKA_RES_ERR_IO_ERROR;  // Insufficient buffer size
+        }
+
+        buff[buff_index] = ch;
+        buff_index++;
+    }
+
+    buff[buff_index] = '\0';  // Null terminate the buffer
+
+    pika_platform_fclose(file);
+    return PIKA_RES_OK;
+}
+
+int32_t pika_debug_find_break_point_pc(char* pyFile, uint32_t pyLine) {
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    char* file_buff = pikaMalloc(PIKA_READ_FILE_BUFF_SIZE);
+    FILE* file = pika_platform_fopen(pyFile, "r");
+    if (!file) {
+        goto __exit;
+    }
+    if (PIKA_RES_OK != insert_label_at_line(pyFile, pyLine, file_buff,
+                                            PIKA_READ_FILE_BUFF_SIZE)) {
+        goto __exit;
+    }
+    pika_lines2Bytes(&bytecode_frame, file_buff);
+__exit:
+    if (NULL != file) {
+        pika_platform_fclose(file);
+    }
+    byteCodeFrame_deinit(&bytecode_frame);
+    pikaFree(file_buff, PIKA_READ_FILE_BUFF_SIZE);
+    return bytecode_frame.label_pc;
 }

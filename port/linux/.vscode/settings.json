@@ -129,7 +129,7 @@
         "editor.defaultFormatter": "tamasfe.even-better-toml"
     },
     "[python]": {
-        "editor.defaultFormatter": "ms-python.autopep8"
+        "editor.defaultFormatter": "ms-python.python"
     },
     "[c]": {
         "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"

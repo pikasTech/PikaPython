@@ -40,7 +40,7 @@ void PikaStdData_List___init__(PikaObj *self) {}
 void PikaStdData_List_append(PikaObj *self, Arg *arg) {}
 void PikaStdData_Dict___init__(PikaObj *self) {}
 void PikaStdData_Dict_set(PikaObj *self, char *key, Arg *val) {}
-PikaObj *New_builtins_object(Args *args){return NULL;};
+PikaObj *New_builtins_object(Args *args) { return NULL; };
 PikaObj *New_PikaStdLib_SysObj(Args *args) { return NULL; };
 PikaObj *New_builtins(Args *args) { return NULL; };
 PikaObj *New_builtins_RangeObj(Args *args) { return NULL; }
@@ -49,6 +49,23 @@ char *string_slice(Args *outBuffs, char *str, int start, int end) {
   return NULL;
 }
 int PikaStdData_FILEIO_init(PikaObj *self, char *path, char *mode) { return 0; }
+
+static int handle_breakpoint_option(int argc, char **argv, int i) {
+  if (0 == strcmp(argv[i], "--break-point")) {
+    if (i + 2 < argc) {
+      uint32_t pc =
+          pika_debug_find_break_point_pc(argv[i + 1], atoi(argv[i + 2]));
+      // printf("break point pc: %d\r\n", pc);
+      /* json output */
+      printf("{\"pc\":%d}\r\n", pc);
+      return 0;
+    } else {
+      printf("Invalid --break-point option usage.\n");
+      return -1;
+    }
+  }
+  return -1;
+}
 
 static int _do_main(int argc, char **argv) {
   int parc = argc - 1;
@@ -68,6 +85,11 @@ static int _do_main(int argc, char **argv) {
 
   /* delete --xxx yyy */
   for (int i = 1; i < argc; i++) {
+    int res = handle_breakpoint_option(argc, argv, i);
+    if (0 == res) {
+      return 0;
+    }
+
     if (0 == strcmp(argv[i], "--add-file")) {
       // printf("before delete: %d\r\n", parc);
       // for (int j = 0; j < parc; j++) {
