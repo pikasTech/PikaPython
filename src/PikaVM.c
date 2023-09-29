@@ -4447,7 +4447,6 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     PikaVMFrame* vm =
         PikaVMFrame_create(locals, globals, bytecode_frame, pc, vm_thread);
     vm->in_repl = in_repl;
-    self->vmFrame = vm;
     g_PikaVMState.vm_cnt++;
     while (vm->pc < size) {
         if (vm->pc == VM_PC_EXIT) {
@@ -4461,6 +4460,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
             vm->vm_thread->error_code = 0;
             vm->vm_thread->line_error_code = 0;
         }
+        self->vmFrame = vm;
         vm->pc = pikaVM_runInstructUnit(self, vm, this_ins_unit);
         vm->ins_cnt++;
 #if PIKA_INSTRUCT_HOOK_ENABLE

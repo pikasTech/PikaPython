@@ -2928,7 +2928,7 @@ TEST(pikaMain, REPL_key_down_over) {
 }
 
 TEST(pikaMain, REPL_pdb_set_break) {
-    char lines[] = {'n', '\n', 'n', '\n'};
+    char lines[] = "pdb.set_break('pdb_set_break', 36)\nn\nn\nn\n";
     write_to_getchar_buffer(lines, strGetSize(lines));
     /* init */
     g_PikaMemInfo.heapUsedMax = 0;
