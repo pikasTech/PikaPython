@@ -1,4 +1,6 @@
 import PikaStdLib
+import PikaDebug as pdb
+pdb.set_trace()
 
 print('hello pikapython')
 for i in range(100):

@@ -1,12 +1,36 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as fs from 'fs';
+import * as os from 'os';
 
-function createAndShowRunButton() {
+function createAndShowButtons() {
+    // Run Button
     let runButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-    runButton.text = "$(triangle-right) PikaPython Run Current File";
+    runButton.text = "▶ PikaPython Run Current File";
     runButton.tooltip = "Run the program";
-    runButton.command = "extension.runCurrentFlie";
+    runButton.command = "extension.runCurrentFile"; // Please ensure this command ID matches your implementation
     runButton.show();
+
+    // Continue Running Button
+    let continueButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+    continueButton.text = "▶▶ Continue";
+    continueButton.tooltip = "Continue running the program";
+    continueButton.command = "extension.continueRunning"; // Ensure you implement and register this command in your extension
+    continueButton.show();
+
+    // Run to the End
+    let runToEndButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+    runToEndButton.text = "▶▶▶ Run to the End";
+    runToEndButton.tooltip = "Run to the end of the program";
+    runToEndButton.command = "extension.runToEnd"; // Ensure you implement and register this command in your extension
+    runToEndButton.show();
+
+    // Exit Running Button
+    let exitButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+    exitButton.text = "■ Exit";
+    exitButton.tooltip = "Exit running program";
+    exitButton.command = "extension.exitRunning"; // Ensure you implement and register this command in your extension
+    exitButton.show();
 }
 
 function hasActiveTextEditor(): boolean {
@@ -54,7 +78,7 @@ export default new class App {
 
     public registerExtensionContext(context: vscode.ExtensionContext) {
         console.log('registerExtensionContext');
-        createAndShowRunButton();
+        createAndShowButtons();
         this.registerRunCommandHandler(context);
         this.listenTerminalCloseEvent(context);
         this.registerRunSelectedTextHandler(context);
@@ -62,17 +86,37 @@ export default new class App {
     }
 
     private registerRunCommandHandler(context: vscode.ExtensionContext) {
-        let runProgramCommand = vscode.commands.registerCommand('extension.runCurrentFlie', () => {
+        let runProgramCommand = vscode.commands.registerCommand('extension.runCurrentFile', () => {
             if (!hasActiveTextEditor()) {
                 return;
             }
-
             let currentFilePath = getActiveFilePath();
             let command = buildRunCommand(currentFilePath);
             this.runCommandInTerminal(command);
         });
-
+        let continueRunningCommand = vscode.commands.registerCommand('extension.continueRunning', () => {
+            if (!hasActiveTextEditor()) {
+                return;
+            }
+            this.runCommandInTerminal('c');
+        });
+        let runToEndCommand = vscode.commands.registerCommand('extension.runToEnd', () => {
+            if (!hasActiveTextEditor()) {
+                return;
+            }
+            this.runCommandInTerminal('q');
+        });
+        let exitRunningCommand = vscode.commands.registerCommand('extension.exitRunning', () => {
+            if (!hasActiveTextEditor()) {
+                return;
+            }
+            this.runCommandInTerminal('exit()');
+            // sleep 1s to wait for the process to exit
+        });
         context.subscriptions.push(runProgramCommand);
+        context.subscriptions.push(continueRunningCommand);
+        context.subscriptions.push(runToEndCommand);
+        context.subscriptions.push(exitRunningCommand);
     }
 
     private listenTerminalCloseEvent(context: vscode.ExtensionContext) {
@@ -154,11 +198,42 @@ export default new class App {
     }
 
 
-    private runCommandInTerminal(command: string) {
+    public runCommandInTerminal(command: string) {
         if (!this.terminal) {
             this.terminal = vscode.window.createTerminal({ name: 'PikaPython' });
         }
         this.terminal.sendText(command);
         this.terminal.show();
+    }
+
+    public async runCommandInNewTerminal(command: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            // 创建一个临时文件来捕获输出
+            const tempFilePath = path.join(os.tmpdir(), 'pikapython_output.txt');
+
+            // 在新terminal中运行命令并将输出重定向到临时文件
+            const terminal = vscode.window.createTerminal('PikaPython');
+            terminal.sendText(`${command} > "${tempFilePath}"`);
+
+            let checkCount = 0;
+            const maxChecks = 20; // 检查次数，因为我们每100ms检查一次，所以20次就是2s
+            const intervalId = setInterval(() => {
+                checkCount++;
+                if (fs.existsSync(tempFilePath)) {
+                    clearInterval(intervalId); // 停止定时器
+
+                    const output = fs.readFileSync(tempFilePath, 'utf-8');
+                    fs.unlinkSync(tempFilePath); // 删除临时文件
+                    terminal.dispose(); // 关闭terminal
+
+                    resolve(output);
+                } else if (checkCount >= maxChecks) {
+                    clearInterval(intervalId); // 停止定时器
+
+                    terminal.dispose();
+                    reject(new Error('Failed to capture terminal output within 2 seconds.'));
+                }
+            }, 100); // 每100ms执行一次
+        });
     }
 };

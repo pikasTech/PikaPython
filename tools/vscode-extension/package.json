@@ -21,6 +21,11 @@
           "type": "string",
           "default": "../PikaPython-win32.exe",
           "description": "Path to the PikaPython executable."
+        },
+        "pikapython.precompilerPath": {
+          "type": "string",
+          "default": "./rust-msc-latest-win10.exe",
+          "description": "Path to the PikaPython precompiler executable."
         }
       }
     },
