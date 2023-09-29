@@ -73,6 +73,7 @@ struct ByteCodeFrame {
     Hash name_hash;
     ConstPool const_pool;
     InstructArray instruct_array;
+    uint32_t label_pc;
 };
 
 typedef struct NativeProperty NativeProperty;
@@ -811,6 +812,8 @@ uint32_t pikaGC_printFreeList(void);
 
 int pika_GIL_EXIT(void);
 int pika_GIL_ENTER(void);
+
+uint32_t pika_debug_find_break_point_pc(char* pyFile, uint32_t pyLine);
 
 typedef PikaObj PikaList;
 typedef PikaObj PikaTuple;

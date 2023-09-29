@@ -803,4 +803,11 @@ TEST(compiler, fn1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(compiler, find_break_point) {
+    uint32_t pc = pika_debug_find_break_point_pc(
+        "test/python/builtins/pdb_set_break.py", 7);
+    printf("pc: %d\n", pc);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END

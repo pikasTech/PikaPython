@@ -748,9 +748,9 @@ Arg* _vm_get(PikaVMFrame* vm, PikaObj* self, Arg* aKey, Arg* aObj) {
             0x73, 0x5f, 0x69, 0x74, 0x65, 0x6d, 0x00, /* const pool */
         };
         if (NULL != vm) {
-            aRes = _do_pikaVM_runByteCodeReturn(oArg, oArg, oArg,
-                                                (uint8_t*)bytes, vm->vm_thread,
-                                                pika_true, "@res_item");
+            aRes = pikaVM_runByteCode_exReturn(oArg, oArg, oArg,
+                                               (uint8_t*)bytes, vm->vm_thread,
+                                               pika_true, "@res_item");
         } else {
             aRes = pikaVM_runByteCodeReturn(oArg, (uint8_t*)bytes, "@res_item");
         }
@@ -3822,13 +3822,9 @@ __exit:
     return globals;
 }
 
-VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
-                                     VMParameters* locals,
-                                     VMParameters* globals,
-                                     uint8_t* bytecode,
-                                     char* name,
-                                     PikaVMThread* vm_thread,
-                                     pika_bool is_const_bytecode) {
+VMParameters* pikaVM_runByteCode_ex(PikaObj* self,
+                                    uint8_t* bytecode,
+                                    pikaVM_runBytecode_ex_cfg* cfg) {
     ByteCodeFrame bytecode_frame_stack = {0};
     ByteCodeFrame* bytecode_frame_p = NULL;
     uint8_t is_use_heap_bytecode = 1;
@@ -3842,24 +3838,24 @@ VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
         /* get bytecode_ptr from stack */
         bytecode_frame_p = &bytecode_frame_stack;
         /* no def/class ins, no need cache bytecode */
-        is_const_bytecode = pika_true;
+        cfg->is_const_bytecode = pika_true;
     }
 
     /* load or generate byte code frame */
     /* load bytecode */
-    _do_byteCodeFrame_loadByteCode(bytecode_frame_p, bytecode, name,
-                                   is_const_bytecode);
+    _do_byteCodeFrame_loadByteCode(bytecode_frame_p, bytecode, cfg->name,
+                                   cfg->is_const_bytecode);
 
     /* run byteCode */
 
-    globals = _pikaVM_runByteCodeFrameWithState(self, locals, globals,
-                                                bytecode_frame_p, 0, vm_thread);
+    cfg->globals = _pikaVM_runByteCodeFrameWithState(
+        self, cfg->locals, cfg->globals, bytecode_frame_p, 0, cfg->vm_thread);
     goto __exit;
 __exit:
     if (!is_use_heap_bytecode) {
         byteCodeFrame_deinit(&bytecode_frame_stack);
     }
-    return globals;
+    return cfg->globals;
 }
 
 VMParameters* pikaVM_runByteCodeFile(PikaObj* self, char* filename) {
@@ -3907,8 +3903,13 @@ VMParameters* pikaVM_run(PikaObj* self, char* py_lines) {
 VMParameters* pikaVM_runByteCode(PikaObj* self, const uint8_t* bytecode) {
     PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
                               .try_result = TRY_RESULT_NONE};
-    return _do_pikaVM_runByteCode(self, self, self, (uint8_t*)bytecode, NULL,
-                                  &vm_thread, pika_true);
+    pikaVM_runBytecode_ex_cfg cfg = {0};
+    cfg.locals = self;
+    cfg.globals = self;
+    cfg.name = NULL;
+    cfg.vm_thread = &vm_thread;
+    cfg.is_const_bytecode = pika_true;
+    return pikaVM_runByteCode_ex(self, (uint8_t*)bytecode, &cfg);
 }
 
 Arg* pikaVM_runByteCodeReturn(PikaObj* self,
@@ -3926,15 +3927,19 @@ Arg* pikaVM_runByteCodeReturn(PikaObj* self,
     return ret;
 }
 
-Arg* _do_pikaVM_runByteCodeReturn(PikaObj* self,
-                                  VMParameters* locals,
-                                  VMParameters* globals,
-                                  uint8_t* bytecode,
-                                  PikaVMThread* vm_thread,
-                                  pika_bool is_const_bytecode,
-                                  char* return_name) {
-    _do_pikaVM_runByteCode(self, locals, globals, bytecode, NULL, vm_thread,
-                           is_const_bytecode);
+Arg* pikaVM_runByteCode_exReturn(PikaObj* self,
+                                 VMParameters* locals,
+                                 VMParameters* globals,
+                                 uint8_t* bytecode,
+                                 PikaVMThread* vm_thread,
+                                 pika_bool is_const_bytecode,
+                                 char* return_name) {
+    pikaVM_runBytecode_ex_cfg cfg = {0};
+    cfg.locals = locals;
+    cfg.globals = globals;
+    cfg.vm_thread = vm_thread;
+    cfg.is_const_bytecode = is_const_bytecode;
+    pikaVM_runByteCode_ex(self, bytecode, &cfg);
     Arg* ret = args_getArg(self->list, return_name);
     if (NULL == ret) {
         return NULL;
@@ -3949,8 +3954,12 @@ Arg* _do_pikaVM_runByteCodeReturn(PikaObj* self,
 VMParameters* pikaVM_runByteCodeInconstant(PikaObj* self, uint8_t* bytecode) {
     PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
                               .try_result = TRY_RESULT_NONE};
-    return _do_pikaVM_runByteCode(self, self, self, (uint8_t*)bytecode, NULL,
-                                  &vm_thread, pika_false);
+    pikaVM_runBytecode_ex_cfg cfg = {0};
+    cfg.locals = self;
+    cfg.globals = self;
+    cfg.vm_thread = &vm_thread;
+    cfg.is_const_bytecode = pika_false;
+    return pikaVM_runByteCode_ex(self, (uint8_t*)bytecode, &cfg);
 }
 
 void constPool_update(ConstPool* self) {
@@ -4060,6 +4069,7 @@ void byteCodeFrame_init(ByteCodeFrame* self) {
     constPool_init(&(self->const_pool));
     instructArray_init(&(self->instruct_array));
     self->name = NULL;
+    self->label_pc = 0;
 }
 
 extern const char magic_code_pyo[4];

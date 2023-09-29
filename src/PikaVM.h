@@ -306,13 +306,13 @@ VMParameters* pikaVM_runByteCodeInconstant(PikaObj* self, uint8_t* bytecode);
 Arg* pikaVM_runByteCodeReturn(PikaObj* self,
                               const uint8_t* bytecode,
                               char* returnName);
-Arg* _do_pikaVM_runByteCodeReturn(PikaObj* self,
-                                  VMParameters* locals,
-                                  VMParameters* globals,
-                                  uint8_t* bytecode,
-                                  PikaVMThread* vm_thread,
-                                  pika_bool is_const_bytecode,
-                                  char* return_name);
+Arg* pikaVM_runByteCode_exReturn(PikaObj* self,
+                                 VMParameters* locals,
+                                 VMParameters* globals,
+                                 uint8_t* bytecode,
+                                 PikaVMThread* vm_thread,
+                                 pika_bool is_const_bytecode,
+                                 char* return_name);
 InstructUnit* instructArray_getNow(InstructArray* self);
 InstructUnit* instructArray_getNext(InstructArray* self);
 VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename);
@@ -325,13 +325,19 @@ Arg* _vm_slice(PikaVMFrame* vm,
                Arg* obj,
                Arg* start,
                int step);
-VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
-                                     VMParameters* locals,
-                                     VMParameters* globals,
-                                     uint8_t* bytecode,
-                                     char* name,
-                                     PikaVMThread* vm_thread,
-                                     pika_bool is_const_bytecode);
+
+typedef struct {
+    VMParameters* locals;
+    VMParameters* globals;
+    char* name;
+    PikaVMThread* vm_thread;
+    pika_bool is_const_bytecode;
+} pikaVM_runBytecode_ex_cfg;
+
+VMParameters* pikaVM_runByteCode_ex(PikaObj* self,
+                                    uint8_t* bytecode,
+                                    pikaVM_runBytecode_ex_cfg* cfg);
+
 void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
                                     uint8_t* bytes,
                                     char* name,
