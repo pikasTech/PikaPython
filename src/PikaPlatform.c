@@ -197,10 +197,16 @@ int pika_snprintf(char* buff, size_t size, const char* fmt, ...) {
 
 PIKA_WEAK void pika_platform_disable_irq_handle(void) {
     /* disable irq to support thread */
+#if PIKA_RTTHREAD_ENABLE
+    rt_enter_critical();
+#endif
 }
 
 PIKA_WEAK void pika_platform_enable_irq_handle(void) {
     /* disable irq to support thread */
+#if PIKA_RTTHREAD_ENABLE
+    rt_exit_critical();
+#endif
 }
 
 PIKA_WEAK void* pika_platform_malloc(size_t size) {
@@ -247,6 +253,9 @@ PIKA_WEAK int64_t pika_platform_get_tick(void) {
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
     return (ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
+#elif PIKA_RTTHREAD_ENABLE
+    uint32_t tick = rt_tick_get() * 1000;
+    return (uint32_t)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
 #else
     return -1;
 #endif
@@ -400,6 +409,8 @@ PIKA_WEAK void pika_platform_thread_yield(void) {
     vTaskDelay(1);
 #elif defined(__linux) || defined(_WIN32)
     return;
+#elif PIKA_RTTHREAD_ENABLE
+    rt_thread_yield();
 #else
     return;
 #endif
@@ -410,6 +421,8 @@ PIKA_WEAK void pika_platform_sleep_ms(uint32_t ms) {
     usleep(ms * 1000);
 #elif defined(_WIN32) && !defined(CROSS_BUILD)
     Sleep(ms);
+#elif PIKA_RTTHREAD_ENABLE
+    rt_thread_mdelay(ms);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR_LOWLEVEL(_);
 #endif
@@ -474,6 +487,22 @@ PIKA_WEAK pika_platform_thread_t* pika_platform_thread_init(
 #endif
 
     return thread;
+#elif PIKA_RTTHREAD_ENABLE
+    pika_platform_thread_t* thread;
+    thread = pikaMalloc(sizeof(pika_platform_thread_t));
+    if(RT_NULL == thread) {
+        return RT_NULL;
+    }
+    thread->thread = rt_thread_create((const char *)name,
+            entry, param,
+            stack_size, priority, tick);
+
+    if (thread->thread == RT_NULL){
+        pikaFree(thread, sizeof(pika_platform_thread_t));
+        return RT_NULL;
+    } else {
+        return thread;
+    }
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
     return NULL;
@@ -485,6 +514,8 @@ PIKA_WEAK uint64_t pika_platform_thread_self(void) {
     return (uint64_t)pthread_self();
 #elif PIKA_FREERTOS_ENABLE
     return (uint64_t)xTaskGetCurrentTaskHandle();
+#elif PIKA_RTTHREAD_ENABLE
+    return (uint64_t)rt_thread_self();
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
     return 0;
@@ -493,6 +524,9 @@ PIKA_WEAK uint64_t pika_platform_thread_self(void) {
 
 PIKA_WEAK void pika_platform_thread_startup(pika_platform_thread_t* thread) {
     (void)thread;
+#ifdef PIKA_RTTHREAD_ENABLE
+    rt_thread_startup(thread->thread);
+#endif
 }
 
 PIKA_WEAK void pika_platform_thread_stop(pika_platform_thread_t* thread) {
@@ -502,6 +536,8 @@ PIKA_WEAK void pika_platform_thread_stop(pika_platform_thread_t* thread) {
     pthread_mutex_unlock(&(thread->mutex));
 #elif PIKA_FREERTOS_ENABLE
     vTaskSuspend(thread->thread);
+#elif PIKA_RTTHREAD_ENABLE
+    rt_thread_suspend(thread->thread);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
@@ -514,6 +550,8 @@ PIKA_WEAK void pika_platform_thread_start(pika_platform_thread_t* thread) {
     pthread_mutex_unlock(&(thread->mutex));
 #elif PIKA_FREERTOS_ENABLE
     vTaskResume(thread->thread);
+#elif PIKA_RTTHREAD_ENABLE
+    rt_thread_resume(thread->thread);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
@@ -534,6 +572,12 @@ PIKA_WEAK void pika_platform_thread_destroy(pika_platform_thread_t* thread) {
         pikaFree(thread, sizeof(pika_platform_thread_t));
         return;
     }
+#elif PIKA_RTTHREAD_ENABLE
+    if (NULL != thread) {
+        rt_thread_delete(thread->thread);
+        pikaFree(thread, sizeof(pika_platform_thread_t));
+        return;
+    }
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
@@ -550,6 +594,13 @@ PIKA_WEAK void pika_platform_thread_exit(pika_platform_thread_t* thread) {
     }
     vTaskDelete(thread->thread);
     return;
+#elif PIKA_RTTHREAD_ENABLE
+    if (NULL == thread) {
+        rt_thread_delete(NULL);
+        return;
+    }
+    rt_thread_delete(thread->thread);
+    return;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
@@ -560,6 +611,9 @@ PIKA_WEAK int pika_platform_thread_mutex_init(pika_platform_thread_mutex_t* m) {
     return pthread_mutex_init(&(m->mutex), NULL);
 #elif PIKA_FREERTOS_ENABLE
     m->mutex = xSemaphoreCreateMutex();
+    return 0;
+#elif PIKA_RTTHREAD_ENABLE
+    m->mutex = rt_mutex_create("platform_mutex", RT_IPC_FLAG_PRIO);
     return 0;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
@@ -572,6 +626,8 @@ PIKA_WEAK int pika_platform_thread_mutex_lock(pika_platform_thread_mutex_t* m) {
     return pthread_mutex_lock(&(m->mutex));
 #elif PIKA_FREERTOS_ENABLE
     return xSemaphoreTake(m->mutex, portMAX_DELAY);
+#elif PIKA_RTTHREAD_ENABLE
+    return rt_mutex_take((m->mutex), RT_WAITING_FOREVER);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
     return -1;
@@ -584,6 +640,8 @@ PIKA_WEAK int pika_platform_thread_mutex_trylock(
     return pthread_mutex_trylock(&(m->mutex));
 #elif PIKA_FREERTOS_ENABLE
     return xSemaphoreTake(m->mutex, 0);
+#elif PIKA_RTTHREAD_ENABLE
+    return rt_mutex_take((m->mutex), 0);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
     return -1;
@@ -596,6 +654,8 @@ PIKA_WEAK int pika_platform_thread_mutex_unlock(
     return pthread_mutex_unlock(&(m->mutex));
 #elif PIKA_FREERTOS_ENABLE
     return xSemaphoreGive(m->mutex);
+#elif PIKA_RTTHREAD_ENABLE
+    return rt_mutex_release((m->mutex));
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
     return -1;
@@ -609,6 +669,8 @@ PIKA_WEAK int pika_platform_thread_mutex_destroy(
 #elif PIKA_FREERTOS_ENABLE
     vSemaphoreDelete(m->mutex);
     return 0;
+#elif PIKA_RTTHREAD_ENABLE
+    return rt_mutex_delete((m->mutex));
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
     return -1;
@@ -619,6 +681,8 @@ PIKA_WEAK void pika_platform_thread_timer_init(pika_platform_timer_t* timer) {
 #ifdef __linux
     timer->time = (struct timeval){0, 0};
 #elif PIKA_FREERTOS_ENABLE
+    timer->time = 0;
+#elif PIKA_RTTHREAD_ENABLE
     timer->time = 0;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
@@ -635,6 +699,10 @@ PIKA_WEAK void pika_platform_thread_timer_cutdown(pika_platform_timer_t* timer,
 #elif PIKA_FREERTOS_ENABLE
     timer->time = platform_uptime_ms();
     timer->time += timeout;
+#elif PIKA_RTTHREAD_ENABLE
+    rt_uint32_t tick = rt_tick_get() * 1000;
+    timer->time = (uint32_t)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
+    timer->time += timeout;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
@@ -649,6 +717,10 @@ PIKA_WEAK char pika_platform_thread_timer_is_expired(
     return ((res.tv_sec < 0) || (res.tv_sec == 0 && res.tv_usec <= 0));
 #elif PIKA_FREERTOS_ENABLE
     return platform_uptime_ms() > timer->time ? 1 : 0;
+#elif PIKA_RTTHREAD_ENABLE
+    uint32_t tick = rt_tick_get() * 1000;
+    uint32_t time = (uint32_t)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
+    return time > timer->time ? 1 : 0;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
     return 1;
@@ -668,6 +740,14 @@ PIKA_WEAK int pika_platform_thread_timer_remain(pika_platform_timer_t* timer) {
         return 0;
     }
     return timer->time - now;
+#elif PIKA_RTTHREAD_ENABLE
+    uint32_t now;
+    uint32_t tick = rt_tick_get() * 1000;
+    now = (uint32_t)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
+    if (timer->time <= now) {
+        return 0;
+    }
+    return timer->time - now;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
     return -1;
@@ -679,6 +759,9 @@ PIKA_WEAK unsigned long pika_platform_thread_timer_now(void) {
     return (unsigned long)time(NULL);
 #elif PIKA_FREERTOS_ENABLE
     return (unsigned long)platform_uptime_ms();
+#elif PIKA_RTTHREAD_ENABLE
+    uint32_t tick = rt_tick_get() * 1000;
+    return (unsigned long)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
     return 1;
@@ -692,6 +775,15 @@ PIKA_WEAK void pika_platform_thread_timer_usleep(unsigned long usec) {
     TickType_t tick = 1;
     if (usec != 0) {
         tick = usec / portTICK_PERIOD_MS;
+
+        if (tick == 0)
+            tick = 1;
+    }
+    vTaskDelay(tick);
+#elif PIKA_RTTHREAD_ENABLE
+    uint32_t tick = 1;
+    if (usec != 0) {
+        tick = usec / RT_TICK_PER_SECOND;
 
         if (tick == 0)
             tick = 1;
