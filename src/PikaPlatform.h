@@ -245,6 +245,11 @@ typedef struct pika_platform_thread {
     StaticTask_t task_buffer;
 #endif
 } pika_platform_thread_t;
+#elif PIKA_RTTHREAD_ENABLE
+#include <rtthread.h>
+typedef struct pika_platform_thread {
+    rt_thread_t thread;
+} pika_platform_thread_t;
 #else
 typedef struct pika_platform_thread {
     void* platform_data;
@@ -272,6 +277,9 @@ typedef pthread_mutex_t pika_mutex_platform_data_t;
 #include "FreeRTOS.h"
 #include "semphr.h"
 typedef SemaphoreHandle_t pika_mutex_platform_data_t;
+#elif PIKA_RTTHREAD_ENABLE
+#include <rtthread.h>
+typedef rt_mutex_t pika_mutex_platform_data_t;
 #else
 typedef void* pika_mutex_platform_data_t;
 #endif
@@ -298,6 +306,11 @@ typedef struct pika_platform_timer {
 #elif PIKA_FREERTOS_ENABLE
 #include "FreeRTOS.h"
 #include "task.h"
+typedef struct pika_platform_timer {
+    uint32_t time;
+} pika_platform_timer_t;
+#elif PIKA_RTTHREAD_ENABLE
+#include <rtthread.h>
 typedef struct pika_platform_timer {
     uint32_t time;
 } pika_platform_timer_t;
