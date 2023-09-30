@@ -197,16 +197,10 @@ int pika_snprintf(char* buff, size_t size, const char* fmt, ...) {
 
 PIKA_WEAK void pika_platform_disable_irq_handle(void) {
     /* disable irq to support thread */
-#if PIKA_RTTHREAD_ENABLE
-    rt_enter_critical();
-#endif
 }
 
 PIKA_WEAK void pika_platform_enable_irq_handle(void) {
     /* disable irq to support thread */
-#if PIKA_RTTHREAD_ENABLE
-    rt_exit_critical();
-#endif
 }
 
 PIKA_WEAK void* pika_platform_malloc(size_t size) {
@@ -613,7 +607,7 @@ PIKA_WEAK int pika_platform_thread_mutex_init(pika_platform_thread_mutex_t* m) {
     m->mutex = xSemaphoreCreateMutex();
     return 0;
 #elif PIKA_RTTHREAD_ENABLE
-    m->mutex = rt_mutex_create("platform_mutex", RT_IPC_FLAG_PRIO);
+    m->mutex = rt_mutex_create("pika_platform_mutex", RT_IPC_FLAG_PRIO);
     return 0;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
