@@ -484,14 +484,13 @@ PIKA_WEAK pika_platform_thread_t* pika_platform_thread_init(
 #elif PIKA_RTTHREAD_ENABLE
     pika_platform_thread_t* thread;
     thread = pikaMalloc(sizeof(pika_platform_thread_t));
-    if(RT_NULL == thread) {
+    if (RT_NULL == thread) {
         return RT_NULL;
     }
-    thread->thread = rt_thread_create((const char *)name,
-            entry, param,
-            stack_size, priority, tick);
+    thread->thread = rt_thread_create((const char*)name, entry, param,
+                                      stack_size, priority, tick);
 
-    if (thread->thread == RT_NULL){
+    if (thread->thread == RT_NULL) {
         pikaFree(thread, sizeof(pika_platform_thread_t));
         return RT_NULL;
     } else {
@@ -518,7 +517,7 @@ PIKA_WEAK uint64_t pika_platform_thread_self(void) {
 
 PIKA_WEAK void pika_platform_thread_startup(pika_platform_thread_t* thread) {
     (void)thread;
-#ifdef PIKA_RTTHREAD_ENABLE
+#if PIKA_RTTHREAD_ENABLE
     rt_thread_startup(thread->thread);
 #endif
 }
@@ -695,7 +694,8 @@ PIKA_WEAK void pika_platform_thread_timer_cutdown(pika_platform_timer_t* timer,
     timer->time += timeout;
 #elif PIKA_RTTHREAD_ENABLE
     rt_uint32_t tick = rt_tick_get() * 1000;
-    timer->time = (uint32_t)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
+    timer->time =
+        (uint32_t)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
     timer->time += timeout;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
@@ -713,7 +713,8 @@ PIKA_WEAK char pika_platform_thread_timer_is_expired(
     return platform_uptime_ms() > timer->time ? 1 : 0;
 #elif PIKA_RTTHREAD_ENABLE
     uint32_t tick = rt_tick_get() * 1000;
-    uint32_t time = (uint32_t)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
+    uint32_t time =
+        (uint32_t)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
     return time > timer->time ? 1 : 0;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
@@ -755,7 +756,8 @@ PIKA_WEAK unsigned long pika_platform_thread_timer_now(void) {
     return (unsigned long)platform_uptime_ms();
 #elif PIKA_RTTHREAD_ENABLE
     uint32_t tick = rt_tick_get() * 1000;
-    return (unsigned long)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
+    return (unsigned long)((tick + RT_TICK_PER_SECOND - 1) /
+                           RT_TICK_PER_SECOND);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
     return 1;
