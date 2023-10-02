@@ -1,7 +1,5 @@
 import PikaUI as ui
 from PikaStdLib import MemChecker as mem
-
-
 class MainContainer(ui.Container):
     def onclick_next(self, event):
         print('Page1: onclick_next')

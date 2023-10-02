@@ -1,4 +1,5 @@
-import PikaStdLib, PikaStdDevice, PikaMath, PikaDebug, PikaCV, PikaNN
+import PikaDebug as pdb
+import PikaStdLib, PikaStdDevice, PikaMath, PikaCV, PikaNN
 import random, re, modbus, socket, unittest, binascii, ctypes, requests, mqtt
 import pika_lua, pika_cjson, cjson_test, json
 import GTestTask, TempDevTest

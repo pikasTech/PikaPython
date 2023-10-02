@@ -69,8 +69,11 @@ struct InstructArray {
 
 typedef struct ByteCodeFrame ByteCodeFrame;
 struct ByteCodeFrame {
+    char* name;
+    Hash name_hash;
     ConstPool const_pool;
     InstructArray instruct_array;
+    int32_t label_pc;
 };
 
 typedef struct NativeProperty NativeProperty;
@@ -459,6 +462,8 @@ struct ShellConfig {
     ShellHistory* history;
 #endif
     pika_bool no_echo;
+    PikaObj* locals;
+    PikaObj* globals;
 };
 
 #if PIKA_SHELL_HISTORY_ENABLE
@@ -807,6 +812,8 @@ uint32_t pikaGC_printFreeList(void);
 
 int pika_GIL_EXIT(void);
 int pika_GIL_ENTER(void);
+
+int32_t pika_debug_find_break_point_pc(char* pyFile, uint32_t pyLine);
 
 typedef PikaObj PikaList;
 typedef PikaObj PikaTuple;

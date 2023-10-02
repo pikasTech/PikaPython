@@ -95,8 +95,8 @@ typedef struct JmpBufCQ {
 } JmpBufCQ;
 #endif
 
-typedef struct VMSignal VMSignal;
-struct VMSignal {
+typedef struct VMState VMState;
+struct VMState {
     VM_SIGNAL_CTRL signal_ctrl;
     int vm_cnt;
 #if PIKA_EVENT_ENABLE
@@ -105,6 +105,11 @@ struct VMSignal {
     pika_platform_thread_t* event_thread;
     pika_bool event_thread_exit;
     pika_bool event_thread_exit_done;
+#endif
+#if PIKA_DEBUG_BREAK_POINT_MAX > 0
+    Hash break_module_hash[PIKA_DEBUG_BREAK_POINT_MAX];
+    uint32_t break_point_pc[PIKA_DEBUG_BREAK_POINT_MAX];
+    int break_point_cnt;
 #endif
 };
 
@@ -136,6 +141,10 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 VMParameters* _pikaVM_runByteCodeFrame(PikaObj* self,
                                        ByteCodeFrame* byteCode_frame,
                                        pika_bool in_repl);
+VMParameters* _pikaVM_runByteCodeFrameGlobals(PikaObj* self,
+                                              PikaObj* globals,
+                                              ByteCodeFrame* byteCode_frame,
+                                              pika_bool in_repl);
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
                                       ByteCodeFrame* byteCode_frame);
 
@@ -208,6 +217,14 @@ static inline char* PikaVMFrame_getConstWithInstructUnit(
                                  instructUnit_getConstPoolIndex(ins_unit));
 }
 
+pika_bool PikaVMFrame_checkBreakPoint(PikaVMFrame* vm);
+
+typedef struct {
+    PikaObj* globals;
+    pika_bool in_repl;
+    char* module_name;
+} pikaVM_run_ex_cfg;
+
 char* constPool_getNow(ConstPool* self);
 char* constPool_getNext(ConstPool* self);
 char* constPool_getByIndex(ConstPool* self, uint16_t index);
@@ -215,6 +232,7 @@ void constPool_print(ConstPool* self);
 
 void byteCodeFrame_init(ByteCodeFrame* bf);
 void byteCodeFrame_deinit(ByteCodeFrame* bf);
+void byteCodeFrame_setName(ByteCodeFrame* self, char* name);
 size_t byteCodeFrame_getSize(ByteCodeFrame* bf);
 InstructUnit* byteCodeFrame_findInstructUnit(ByteCodeFrame* bcframe,
                                              int32_t iPcStart,
@@ -229,6 +247,7 @@ InstructUnit* byteCodeFrame_findInsForward(ByteCodeFrame* bcframe,
                                            int32_t pc_start,
                                            enum InstructIndex index,
                                            int32_t* p_offset);
+Hash byteCodeFrame_getNameHash(ByteCodeFrame* bcframe);
 void instructArray_init(InstructArray* ins_array);
 void instructArray_deinit(InstructArray* ins_array);
 void instructArray_append(InstructArray* ins_array, InstructUnit* ins_unit);
@@ -287,13 +306,13 @@ VMParameters* pikaVM_runByteCodeInconstant(PikaObj* self, uint8_t* bytecode);
 Arg* pikaVM_runByteCodeReturn(PikaObj* self,
                               const uint8_t* bytecode,
                               char* returnName);
-Arg* _do_pikaVM_runByteCodeReturn(PikaObj* self,
-                                  VMParameters* locals,
-                                  VMParameters* globals,
-                                  uint8_t* bytecode,
-                                  PikaVMThread* vm_thread,
-                                  pika_bool is_const_bytecode,
-                                  char* return_name);
+Arg* pikaVM_runByteCode_exReturn(PikaObj* self,
+                                 VMParameters* locals,
+                                 VMParameters* globals,
+                                 uint8_t* bytecode,
+                                 PikaVMThread* vm_thread,
+                                 pika_bool is_const_bytecode,
+                                 char* return_name);
 InstructUnit* instructArray_getNow(InstructArray* self);
 InstructUnit* instructArray_getNext(InstructArray* self);
 VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename);
@@ -306,14 +325,22 @@ Arg* _vm_slice(PikaVMFrame* vm,
                Arg* obj,
                Arg* start,
                int step);
-VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
-                                     VMParameters* locals,
-                                     VMParameters* globals,
-                                     uint8_t* bytecode,
-                                     PikaVMThread* vm_thread,
-                                     pika_bool is_const_bytecode);
+
+typedef struct {
+    VMParameters* locals;
+    VMParameters* globals;
+    char* name;
+    PikaVMThread* vm_thread;
+    pika_bool is_const_bytecode;
+} pikaVM_runBytecode_ex_cfg;
+
+VMParameters* pikaVM_runByteCode_ex(PikaObj* self,
+                                    uint8_t* bytecode,
+                                    pikaVM_runBytecode_ex_cfg* cfg);
+
 void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
                                     uint8_t* bytes,
+                                    char* name,
                                     pika_bool is_const);
 Arg* _vm_get(PikaVMFrame* vm, PikaObj* self, Arg* key, Arg* obj);
 VM_SIGNAL_CTRL VMSignal_getCtrl(void);
@@ -332,6 +359,11 @@ void __VMEvent_pickupEvent(char* info);
 void _pikaVM_yield(void);
 int _VM_lock_init(void);
 int _VM_is_first_lock(void);
+PIKA_RES pika_debug_set_break(char* module_name, int pc_break);
+void pika_debug_set_trace(PikaObj* self);
+PIKA_RES pika_debug_reset_break(char* module_name, int pc_break);
+pika_bool pika_debug_check_break_hash(Hash module_hash, int pc_break);
+pika_bool pika_debug_check_break(char* module_name, int pc_break);
 
 #define _VMEvent_pickupEvent() __VMEvent_pickupEvent(__FILE__)
 
@@ -339,9 +371,9 @@ typedef struct {
     PikaObj* lreg[PIKA_REGIST_SIZE];
 } VMLocals;
 
-VMParameters* _pikaVM_runPyLines(PikaObj* self,
-                                 char* py_lines,
-                                 pika_bool in_repl);
+VMParameters* pikaVM_run_ex(PikaObj* self,
+                            char* py_lines,
+                            pikaVM_run_ex_cfg* cfg);
 
 #endif
 
