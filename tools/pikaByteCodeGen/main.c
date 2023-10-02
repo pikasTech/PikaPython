@@ -110,7 +110,7 @@ static int _do_main(int argc, char **argv) {
     /* no input, default to main.py */
     /* run pika_binder to bind C modules */
     pika_binder();
-    pikaMaker_compileModuleWithDepends(maker, "main");
+    pikaMaker_compileModuleWithListFile(maker, "module_list_default.txt");
     PIKA_RES res = pikaMaker_linkCompiledModules(maker, "pikaModules.py.a");
     pikaMaker_deinit(maker);
     return res;

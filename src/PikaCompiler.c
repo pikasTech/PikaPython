@@ -875,6 +875,14 @@ void pikaMaker_setState(PikaMaker* self, char* module_name, char* state) {
     obj_setStr(module_obj, "state", state);
 }
 
+char* pikaMaker_getState(PikaMaker* self, char* module_name) {
+    PikaObj* module_obj = obj_getObj(self, module_name);
+    if (NULL == module_obj) {
+        return "nocompiled";
+    }
+    return obj_getStr(module_obj, "state");
+}
+
 /*
  * @brief: compile module
  * @param: self PikaMaker
@@ -1056,6 +1064,9 @@ char* pikaMaker_getFirstNocompiled(PikaMaker* self) {
 PIKA_RES pikaMaker_compileModuleWithDepends(PikaMaker* self,
                                             char* module_name) {
     PIKA_RES res = PIKA_RES_OK;
+    if (!strEqu("nocompiled", pikaMaker_getState(self, module_name))) {
+        return PIKA_RES_OK;
+    }
     res = pikaMaker_compileModule(self, module_name);
     if (PIKA_RES_OK != res) {
         obj_setInt(self, "err", res);
@@ -1076,6 +1087,56 @@ PIKA_RES pikaMaker_compileModuleWithDepends(PikaMaker* self,
         pikaMaker_getDependencies(self, uncompiled);
     }
     return PIKA_RES_OK;
+}
+
+PIKA_RES pikaMaker_compileModuleWithList(PikaMaker* self, char* list_content) {
+    PIKA_RES res = PIKA_RES_OK;
+    Args buffs = {0};
+    char* module_name = NULL;
+    char* module_name_start = list_content;
+    char* module_name_end = NULL;
+    pika_platform_printf("=====module list=====\r\n");
+    pika_platform_printf("%s", list_content);
+    pika_platform_printf("====================\r\n");
+    while (1) {
+        module_name_end = strFind(module_name_start, '\n');
+        if (NULL == module_name_end) {
+            break;
+        }
+        module_name = strsSubStr(&buffs, module_name_start, module_name_end);
+        res = pikaMaker_compileModuleWithDepends(self, module_name);
+        if (PIKA_RES_OK != res) {
+            obj_setInt(self, "err", res);
+            goto __exit;
+        }
+        module_name_start = module_name_end + 1;
+    }
+__exit:
+    strsDeinit(&buffs);
+    return PIKA_RES_OK;
+}
+
+PIKA_RES pikaMaker_compileModuleWithListFile(PikaMaker* self,
+                                             char* list_file_name) {
+    Args buffs = {0};
+    PIKA_RES res = PIKA_RES_OK;
+    char* folder_path =
+        strsPathJoin(&buffs, obj_getStr(self, "pwd"), "pikascript-api/");
+    char* list_file_path = strsPathJoin(&buffs, folder_path, list_file_name);
+    pika_platform_printf("  loading %s...\r\n", list_file_name);
+    Arg* list_file_arg = arg_loadFile(NULL, list_file_path);
+    if (NULL == list_file_arg) {
+        pika_platform_printf("Error: Could not load file '%s'\n",
+                             list_file_path);
+        res = PIKA_RES_ERR_IO_ERROR;
+        goto __exit;
+    }
+    char* list_file_content = (char*)arg_getBytes(list_file_arg);
+    res = pikaMaker_compileModuleWithList(self, list_file_content);
+    goto __exit;
+__exit:
+    strsDeinit(&buffs);
+    return res;
 }
 
 int32_t __foreach_handler_linkCompiledModules(Arg* argEach, void* context) {

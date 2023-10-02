@@ -299,3 +299,13 @@ char* strsFilePreProcess(Args* outbuffs, char* lines) {
     strsDeinit(&buffs);
     return result;
 }
+
+char* strsSubStr(Args* buffs_p, char* name_start, char* name_end) {
+    int32_t size = name_end - name_start;
+    char* buff = args_getBuff(buffs_p, size + 1);
+    for (int32_t i = 0; i < size; i++) {
+        buff[i] = name_start[i];
+    }
+    buff[size] = '\0';
+    return buff;
+}

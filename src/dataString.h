@@ -74,6 +74,7 @@ int strGetIndent(char* string);
 int strIsBlank(char* string);
 int strOnly(char* string, char ch);
 int _strCountSign(char* strIn, char sign, pika_bool bracketDepth0);
+char* strFind(char* string, char ch);
 
 #endif
 #ifdef __cplusplus

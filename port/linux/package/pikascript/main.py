@@ -1,7 +1,7 @@
 import PikaDebug as pdb
-import PikaStdLib, PikaStdDevice, PikaMath, PikaCV, PikaNN
+import PikaStdLib, PikaMath, PikaCV, PikaNN
 import random, re, modbus, socket, unittest, binascii, ctypes, requests, mqtt
-import pika_lua, pika_cjson, cjson_test, json
+import pika_lua, pika_cjson, cjson_test
 import GTestTask, TempDevTest
 import cb_test
 import configparser, network, math, struct

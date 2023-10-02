@@ -13,7 +13,8 @@
             "args": [
                 // "--gtest_filter=vm.keyword_2"
                 // "--gtest_filter=compiler.find_break_point"
-                "--gtest_filter=pikaMain.REPL_pdb_set_break"
+                // "--gtest_filter=pikaMain.REPL_pdb_set_break"
+                "--gtest_filter=compiler.compile_list"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

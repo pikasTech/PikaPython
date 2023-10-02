@@ -456,3 +456,13 @@ int strOnly(char* string, char ch) {
     }
     return 1;
 }
+
+char* strFind(char* string, char ch) {
+    int len = strGetSize(string);
+    for (int j = 0; j < len; j++) {
+        if (string[j] == ch) {
+            return string + j;
+        }
+    }
+    return NULL;
+}
