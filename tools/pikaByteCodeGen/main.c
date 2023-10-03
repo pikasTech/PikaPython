@@ -67,6 +67,19 @@ static int handle_breakpoint_option(int argc, char **argv, int i) {
   return -1;
 }
 
+int isFileExists(const char *filename) {
+  FILE *file = fopen(filename, "r");
+
+  if (file == NULL) {
+    // Failed to open the file, it may not exist or other error occurred
+    return 0; // File does not exist or error
+  }
+
+  // File successfully opened, close it and return true
+  fclose(file);
+  return 1; // File exists
+}
+
 static int _do_main(int argc, char **argv) {
   int parc = argc - 1;
   PikaMaker *maker = New_PikaMaker();
@@ -110,7 +123,11 @@ static int _do_main(int argc, char **argv) {
     /* no input, default to main.py */
     /* run pika_binder to bind C modules */
     pika_binder();
-    pikaMaker_compileModuleWithListFile(maker, "module_list_default.txt");
+    if (isFileExists("module_list.txt")) {
+      pikaMaker_compileModuleWithListFile(maker, "../module_list.txt");
+    } else {
+      pikaMaker_compileModuleWithListFile(maker, "module_list_default.txt");
+    }
     PIKA_RES res = pikaMaker_linkCompiledModules(maker, "pikaModules.py.a");
     pikaMaker_deinit(maker);
     return res;

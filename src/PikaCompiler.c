@@ -1095,9 +1095,17 @@ PIKA_RES pikaMaker_compileModuleWithList(PikaMaker* self, char* list_content) {
     char* module_name = NULL;
     char* module_name_start = list_content;
     char* module_name_end = NULL;
-    pika_platform_printf("=====module list=====\r\n");
-    pika_platform_printf("%s", list_content);
-    pika_platform_printf("====================\r\n");
+    pika_platform_printf("  <module list>\n");
+    while (1) {
+        module_name_end = strFind(module_name_start, '\n');
+        if (NULL == module_name_end) {
+            break;
+        }
+        module_name = strsSubStr(&buffs, module_name_start, module_name_end);
+        pika_platform_printf("  - %s\r\n", module_name);
+        module_name_start = module_name_end + 1;
+    }
+    module_name_start = list_content;
     while (1) {
         module_name_end = strFind(module_name_start, '\n');
         if (NULL == module_name_end) {
@@ -1132,6 +1140,7 @@ PIKA_RES pikaMaker_compileModuleWithListFile(PikaMaker* self,
         goto __exit;
     }
     char* list_file_content = (char*)arg_getBytes(list_file_arg);
+    list_file_content = strsFilePreProcess_ex(&buffs, list_file_content, "\n");
     res = pikaMaker_compileModuleWithList(self, list_file_content);
     goto __exit;
 __exit:

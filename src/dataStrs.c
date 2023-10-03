@@ -287,17 +287,21 @@ char* strsTransfer(Args* buffs, char* str, size_t* iout_p) {
     return transfered_str;
 }
 
-char* strsFilePreProcess(Args* outbuffs, char* lines) {
+char* strsFilePreProcess_ex(Args* outbuffs, char* lines, char* endwith) {
     Args buffs = {0};
     /* replace the "\r\n" to "\n" */
     lines = strsReplace(&buffs, lines, "\r\n", "\n");
     /* clear the void line */
     lines = strsReplace(&buffs, lines, "\n\n", "\n");
     /* add '\n' at the end */
-    lines = strsAppend(&buffs, lines, "\n\n");
+    lines = strsAppend(&buffs, lines, endwith);
     char* result = strsCopy(outbuffs, lines);
     strsDeinit(&buffs);
     return result;
+}
+
+char* strsFilePreProcess(Args* outbuffs, char* lines) {
+    return strsFilePreProcess_ex(outbuffs, lines, "\n\n");
 }
 
 char* strsSubStr(Args* buffs_p, char* name_start, char* name_end) {
