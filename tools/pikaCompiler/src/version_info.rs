@@ -5,6 +5,7 @@ use std::io::prelude::*;
 pub struct VersionInfo {
     pub source_path: String,
     pub package_list: BTreeMap<String, String>,
+    pub plot: bool,
 }
 
 impl VersionInfo {
@@ -13,6 +14,7 @@ impl VersionInfo {
             /* default source_path */
             source_path: String::from(""),
             package_list: BTreeMap::new(),
+            plot: true,
         };
         return version_info;
     }
@@ -25,7 +27,9 @@ impl VersionInfo {
             return self;
         }
         /* print the package info */
-        println!("    {}", line);
+        if self.plot {
+            println!("    {}", line);
+        }
 
         // Check if line contains '='
         if let Some(pos) = line.find('=') {

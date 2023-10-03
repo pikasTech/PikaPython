@@ -59,7 +59,15 @@ pub fn pika_compiler_entry() {
     */
     // Generate a list of module names
 
-    let mut module_names: Vec<String> = version_info
+    let mut module_list = VersionInfo::new();
+    module_list.plot = false;
+    // check module_list.txt exists
+    if Path::new("module_list.txt").exists() {
+        module_list = VersionInfo::analyse_file(module_list, String::from("module_list.txt"));
+    } else {
+        module_list = VersionInfo::analyse_file(module_list, String::from("requestment.txt"));
+    }
+    let mut module_names: Vec<String> = module_list
         .package_list
         .iter()
         .filter_map(|(package_name, _)| {

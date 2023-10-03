@@ -900,6 +900,105 @@ PIKA_RES pikaMaker_compileModule(PikaMaker* self, char* module_name) {
     return res;
 }
 
+enum PIKA_MODULE_TYPE {
+    PIKA_MODULE_TYPE_UNKNOWN,
+    PIKA_MODULE_TYPE_PY,
+    PIKA_MODULE_TYPE_PYI,
+    PIKA_MODULE_TYPE_PYO
+};
+
+static enum PIKA_MODULE_TYPE _checkModuleType(char* module_path) {
+    Args buffs = {};
+    enum PIKA_MODULE_TYPE module_type = PIKA_MODULE_TYPE_UNKNOWN;
+    /* module info is not exist */
+    /* set module to be compile */
+    FILE* imp_file_py =
+        pika_platform_fopen(strsAppend(&buffs, module_path, ".py"), "rb");
+    FILE* imp_file_pyi =
+        pika_platform_fopen(strsAppend(&buffs, module_path, ".pyi"), "rb");
+    FILE* imp_file_pyo =
+        pika_platform_fopen(strsAppend(&buffs, module_path, ".py.o"), "rb");
+    if (NULL != imp_file_pyo) {
+        module_type = PIKA_MODULE_TYPE_PYO;
+        goto __exit;
+    }
+    if (NULL != imp_file_py) {
+        module_type = PIKA_MODULE_TYPE_PY;
+        goto __exit;
+    }
+    if (NULL != imp_file_pyi) {
+        module_type = PIKA_MODULE_TYPE_PYI;
+        goto __exit;
+    }
+__exit:
+    if (NULL != imp_file_pyo) {
+        pika_platform_fclose(imp_file_pyo);
+    }
+    if (NULL != imp_file_pyi) {
+        pika_platform_fclose(imp_file_pyi);
+    }
+    if (NULL != imp_file_py) {
+        pika_platform_fclose(imp_file_py);
+    }
+    strsDeinit(&buffs);
+    return module_type;
+}
+
+FILE* _openModuleFile(char* module_path, enum PIKA_MODULE_TYPE module_type) {
+    Args buffs = {};
+    FILE* fp = NULL;
+    switch (module_type) {
+        case PIKA_MODULE_TYPE_PY:
+            fp = pika_platform_fopen(strsAppend(&buffs, module_path, ".py"),
+                                     "rb");
+            break;
+        case PIKA_MODULE_TYPE_PYI:
+            fp = pika_platform_fopen(strsAppend(&buffs, module_path, ".pyi"),
+                                     "rb");
+            break;
+        case PIKA_MODULE_TYPE_PYO:
+            fp = pika_platform_fopen(strsAppend(&buffs, module_path, ".py.o"),
+                                     "rb");
+            break;
+        default:
+            break;
+    }
+    strsDeinit(&buffs);
+    return fp;
+}
+
+int pikaMaker_linkByteocdeFile(PikaMaker* self, char* imp_module_name) {
+    Args buffs = {};
+    char* imp_module_path =
+        strsPathJoin(&buffs, obj_getStr(self, "pwd"), imp_module_name);
+    FILE* imp_file = _openModuleFile(imp_module_path, PIKA_MODULE_TYPE_PYO);
+    pika_platform_printf("  loading %s.py.o...\r\n", imp_module_path);
+    /* found *.py.o, push to compiled list */
+    pikaMaker_setState(self, imp_module_name, "compiled");
+    char* imp_api_path =
+        strsPathJoin(&buffs, obj_getStr(self, "pwd"), "pikascript-api/");
+    imp_api_path = strsPathJoin(&buffs, imp_api_path, imp_module_name);
+    FILE* imp_file_pyo_api =
+        pika_platform_fopen(strsAppend(&buffs, imp_api_path, ".py.o"), "wb+");
+    pika_assert(imp_file_pyo_api != NULL);
+    /* copy imp_file_pyo to imp_api_path */
+    uint8_t* buff = (uint8_t*)pika_platform_malloc(128);
+    size_t read_size = 0;
+    while (1) {
+        read_size = pika_platform_fread(buff, 1, 128, imp_file);
+        if (read_size > 0) {
+            pika_platform_fwrite(buff, 1, read_size, imp_file_pyo_api);
+        } else {
+            break;
+        }
+    }
+    pika_platform_free(buff);
+    pika_platform_fclose(imp_file_pyo_api);
+    pika_platform_fclose(imp_file);
+    strsDeinit(&buffs);
+    return 0;
+}
+
 int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
     int res = 0;
     ByteCodeFrame bf = {0};
@@ -940,43 +1039,14 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
             } else {
                 /* module info is not exist */
                 /* set module to be compile */
-                FILE* imp_file_py = pika_platform_fopen(
-                    strsAppend(&buffs, imp_module_path, ".py"), "rb");
-                FILE* imp_file_pyi = pika_platform_fopen(
-                    strsAppend(&buffs, imp_module_path, ".pyi"), "rb");
-                FILE* imp_file_pyo = pika_platform_fopen(
-                    strsAppend(&buffs, imp_module_path, ".py.o"), "rb");
-                if (NULL != imp_file_pyo) {
-                    pika_platform_printf("  loading %s.py.o...\r\n",
-                                         imp_module_path);
-                    /* found *.py.o, push to compiled list */
-                    pikaMaker_setState(self, imp_module_name, "compiled");
-                    char* imp_api_path = strsPathJoin(
-                        &buffs, obj_getStr(self, "pwd"), "pikascript-api/");
-                    imp_api_path =
-                        strsPathJoin(&buffs, imp_api_path, imp_module_name);
-                    FILE* imp_file_pyo_api = pika_platform_fopen(
-                        strsAppend(&buffs, imp_api_path, ".py.o"), "wb+");
-                    pika_assert(imp_file_pyo_api != NULL);
-                    /* copy imp_file_pyo to imp_api_path */
-                    uint8_t* buff = (uint8_t*)pika_platform_malloc(128);
-                    size_t read_size = 0;
-                    while (1) {
-                        read_size =
-                            pika_platform_fread(buff, 1, 128, imp_file_pyo);
-                        if (read_size > 0) {
-                            pika_platform_fwrite(buff, 1, read_size,
-                                                 imp_file_pyo_api);
-                        } else {
-                            break;
-                        }
-                    }
-                    pika_platform_free(buff);
-                    pika_platform_fclose(imp_file_pyo_api);
-                } else if (NULL != imp_file_py) {
+                enum PIKA_MODULE_TYPE module_type =
+                    _checkModuleType(imp_module_path);
+                if (module_type == PIKA_MODULE_TYPE_PYO) {
+                    pikaMaker_linkByteocdeFile(self, imp_module_path);
+                } else if (module_type == PIKA_MODULE_TYPE_PY) {
                     /* found *.py, push to nocompiled list */
                     pikaMaker_setState(self, imp_module_name, "nocompiled");
-                } else if (NULL != imp_file_pyi) {
+                } else if (module_type == PIKA_MODULE_TYPE_PYI) {
                     /* found *.py, push to nocompiled list */
                     pikaMaker_setState(self, imp_module_name, "cmodule");
                 } else {
@@ -984,15 +1054,6 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
                         "    [warning]: file: '%s.pyi', '%s.py' or '%s.py.o' "
                         "no found\n",
                         imp_module_name, imp_module_name, imp_module_name);
-                }
-                if (NULL != imp_file_pyo) {
-                    pika_platform_fclose(imp_file_pyo);
-                }
-                if (NULL != imp_file_pyi) {
-                    pika_platform_fclose(imp_file_pyi);
-                }
-                if (NULL != imp_file_py) {
-                    pika_platform_fclose(imp_file_py);
                 }
             }
         }
@@ -1112,10 +1173,16 @@ PIKA_RES pikaMaker_compileModuleWithList(PikaMaker* self, char* list_content) {
             break;
         }
         module_name = strsSubStr(&buffs, module_name_start, module_name_end);
-        res = pikaMaker_compileModuleWithDepends(self, module_name);
-        if (PIKA_RES_OK != res) {
-            obj_setInt(self, "err", res);
-            goto __exit;
+        enum PIKA_MODULE_TYPE module_type = _checkModuleType(module_name);
+        if (module_type == PIKA_MODULE_TYPE_PY) {
+            res = pikaMaker_compileModuleWithDepends(self, module_name);
+            if (PIKA_RES_OK != res) {
+                obj_setInt(self, "err", res);
+                goto __exit;
+            }
+        }
+        if (module_type == PIKA_MODULE_TYPE_PYO) {
+            pikaMaker_linkByteocdeFile(self, module_name);
         }
         module_name_start = module_name_end + 1;
     }
