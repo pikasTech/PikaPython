@@ -1845,7 +1845,7 @@ InstructUnit* byteCodeFrame_findInsUnitBackward(ByteCodeFrame* bcframe,
 
 char* _find_super_class_name(ByteCodeFrame* bcframe, int32_t pc_start) {
     /* find super class */
-    int offset = 0;
+    int32_t offset = 0;
     char* super_class_name = NULL;
     byteCodeFrame_findInsForward(bcframe, pc_start, CLS, &offset);
     InstructUnit* unit_run =
