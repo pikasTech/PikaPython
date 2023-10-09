@@ -199,7 +199,7 @@ PikaObj* _flashdb_FlashDB_kvdb_init(PikaObj *self, char* name, char* path, PikaO
     mkdir(path, 0777);
     g_kvdb_path_inited=true;
   }
-  int len =pikaDict_getSize(default_kv_in);
+  // int len =pikaDict_getSize(default_kv_in);
 
   struct fdb_default_kv_node* def_kv_table =(struct fdb_default_kv_node*) malloc(4 * sizeof(struct fdb_default_kv_node));
   g_def_kv_table_idx=0;

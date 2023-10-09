@@ -12,6 +12,8 @@
 #ifndef _FDB_DEF_H_
 #define _FDB_DEF_H_
 
+#include "PikaObj.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -49,7 +51,7 @@ extern "C" {
 
 /* log function. default FDB_PRINT macro is printf() */
 #ifndef FDB_PRINT
-#define FDB_PRINT(...)                 printf(__VA_ARGS__)
+#define FDB_PRINT(...)                 pika_platform_printf(__VA_ARGS__)
 #endif
 #define FDB_LOG_PREFIX1()              FDB_PRINT("[FlashDB]" FDB_LOG_TAG)
 #define FDB_LOG_PREFIX2()              FDB_PRINT(" ")
@@ -88,6 +90,7 @@ if (!(EXPR))                                                                  \
 #define FDB_TSDB_CTRL_SET_MAX_SIZE     0x0A             /**< set database max size in file mode control command, this change MUST before database initialization */
 #define FDB_TSDB_CTRL_SET_NOT_FORMAT   0x0B             /**< set database NOT formatable mode control command, this change MUST before database initialization */
 
+#define FDB_USING_TIMESTAMP_64BIT
 #ifdef FDB_USING_TIMESTAMP_64BIT
     typedef int64_t fdb_time_t;
 #else
@@ -148,7 +151,8 @@ struct fdb_kv {
     bool crc_is_ok;                              /**< node CRC32 check is OK */
     uint8_t name_len;                            /**< name length */
     uint32_t magic;                              /**< magic word(`K`, `V`, `4`, `0`) */
-    uint32_t len;                                /**< node total length (header + name + value), must align by FDB_WRITE_GRAN */
+    // uint32_t len;                                /**< node total length (header + name + value), must align by FDB_WRITE_GRAN */
+    unsigned long len;                                /**< node total length (header + name + value), must align by FDB_WRITE_GRAN */
     uint32_t value_len;                          /**< value length */
     char name[FDB_KV_NAME_MAX];                  /**< name */
     struct {

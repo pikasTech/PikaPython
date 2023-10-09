@@ -1019,8 +1019,9 @@ static void mqtt_yield_thread(void* arg) {
     if (CLIENT_STATE_CONNECTED != state) {
         MQTT_LOG_W("%s:%d %s()..., mqtt is not connected to the server...",
                    __FILE__, __LINE__, __FUNCTION__);
-        pika_platform_thread_stop(c->mqtt_thread); /* mqtt is not connected to
-                                                 the server, stop thread */
+
+        // TODO: panic on ESP32S3 & FREE-RTOS
+        // pika_platform_thread_stop(c->mqtt_thread); /* mqtt is not connected to the server, stop thread */
     }
 
     while (1) {
@@ -1125,8 +1126,9 @@ exit:
             if (NULL != c->mqtt_thread) {
                 mqtt_set_client_state(c, CLIENT_STATE_CONNECTED);
                 pika_platform_thread_startup(c->mqtt_thread);
-                pika_platform_thread_start(
-                    c->mqtt_thread); /* start run mqtt thread */
+                // TODO: panic on ESP32S3 & FREE-RTOS
+                // pika_platform_thread_start(
+                //     c->mqtt_thread); /* start run mqtt thread */
             } else {
                 /*creat the thread fail and disconnect the mqtt socket connect*/
                 network_release(c->mqtt_network);
@@ -1626,7 +1628,8 @@ int mqtt_release_free(mqtt_client_t* c) {
     if(c->mqtt_thread != NULL) {
         MQTT_LOG("%s:%d %s()..., mqtt mqtt_yield_thread release...",
                    __FILE__, __LINE__, __FUNCTION__);
-        pika_platform_thread_stop(c->mqtt_thread); //stop thread
+        // TODO: panic on ESP32S3 & FREE-RTOS
+        // pika_platform_thread_stop(c->mqtt_thread); //stop thread
         network_disconnect(c->mqtt_network);
         mqtt_clean_session(c);
     }

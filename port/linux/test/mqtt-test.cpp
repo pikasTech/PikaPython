@@ -97,7 +97,9 @@ TEST(mqtt, init) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if 0
+#define USING_MQTT_TEST 1
+
+#if USING_MQTT_TEST
 //! Mqtt connect will break the gichub actions, 
 //! if need to test, please enable it manually.
 TEST(mqtt, connect) {
@@ -110,7 +112,7 @@ TEST(mqtt, connect) {
 }
 #endif
 
-#if 0
+#if USING_MQTT_TEST
 //! Mqtt set_para will break the gichub actions, 
 //! if need to test, please enable it manually.
 TEST(mqtt, set_para) {
@@ -123,7 +125,7 @@ TEST(mqtt, set_para) {
 }
 #endif
 
-#if 0
+#if USING_MQTT_TEST
 //! Mqtt publish will break the gichub actions, 
 //! if need to test, please enable it manually.
 TEST(mqtt, publish) {
