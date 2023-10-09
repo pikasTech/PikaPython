@@ -13,6 +13,8 @@
 #include "flashdb.h"
 #define FDB_LOG_TAG "[main]"
 
+bool g_kvdb_path_inited=false;
+
 /* TSDB object */
 //struct fdb_tsdb tsdb = { 0 };
 /* counts for simulated timestamp */
@@ -47,33 +49,6 @@ typedef struct fdb_default_kv_node FDB_DEFAULT_KV_NODE;
 int g_def_kv_table_idx;
 
 void _flashdb_FlashDB___init__(PikaObj *self){
-
-#if PIKA_USING_FLASHDB1
-    fdb_err_t result;
-    bool file_mode = true;
-    uint32_t sec_size = 4096, db_size = sec_size * 4;
-
-#ifdef FDB_USING_KVDB
-    { /* KVDB Sample */
-        //struct fdb_default_kv default_kv;
-
-        //default_kv.kvs = default_kv_table;
-        //default_kv.num = sizeof(default_kv_table) / sizeof(default_kv_table[0]);
-        /* set the lock and unlock function if you want */
-  //      pthread_mutex_init(&kv_locker, NULL);
-  //      fdb_kvdb_control(&kvdb, FDB_KVDB_CTRL_SET_LOCK, (void *)lock);
-  //      fdb_kvdb_control(&kvdb, FDB_KVDB_CTRL_SET_UNLOCK, (void *)unlock);
-        /* set the sector and database max size */
-        fdb_kvdb_control(&g_kvdb, FDB_KVDB_CTRL_SET_SEC_SIZE, &sec_size);
-        fdb_kvdb_control(&g_kvdb, FDB_KVDB_CTRL_SET_MAX_SIZE, &db_size);
-        /* enable file mode */
-        fdb_kvdb_control(&g_kvdb, FDB_KVDB_CTRL_SET_FILE_MODE, &file_mode);
-        /* create database directory */
-        mkdir("fdb_kvdb", 0777);
-        return;
-    }
-#endif /* FDB_USING_KVDB */
-#endif
 
 }
 
@@ -210,8 +185,20 @@ int32_t  _flashdb_foreach(PikaObj* self, Arg* keyEach, Arg* valEach, void* conte
 
 PikaObj* _flashdb_FlashDB_kvdb_init(PikaObj *self, char* name, char* path, PikaObj* default_kv_in, Arg* user_data){
   printf("kvdb_init \n");
-  fdb_err_t result;
 
+  fdb_err_t result;
+  if (!g_kvdb_path_inited) {
+    bool file_mode = true;
+    uint32_t sec_size = 4096, db_size = sec_size * 4;
+
+    fdb_kvdb_control(&g_kvdb, FDB_KVDB_CTRL_SET_SEC_SIZE, &sec_size);
+    fdb_kvdb_control(&g_kvdb, FDB_KVDB_CTRL_SET_MAX_SIZE, &db_size);
+    /* enable file mode */
+    fdb_kvdb_control(&g_kvdb, FDB_KVDB_CTRL_SET_FILE_MODE, &file_mode);
+    /* create database directory */
+    mkdir(path, 0777);
+    g_kvdb_path_inited=true;
+  }
   int len =pikaDict_getSize(default_kv_in);
 
   struct fdb_default_kv_node* def_kv_table =(struct fdb_default_kv_node*) malloc(4 * sizeof(struct fdb_default_kv_node));

@@ -22,7 +22,7 @@ class FlashDBUnitTest(unittest.TestCase):
             'boot_time': boot_time_blob,   # array type kv
         }
         #print(default_kv)
-        kvdb = fdb.kvdb_init("env", "fdb_kvdb1", default_kv, None)
+        kvdb = fdb.kvdb_init("env", "fdb_kvdb", default_kv, None)
 
         res = fdb.kv_get_blob(kvdb, "boot_count", len(boot_count_blob))
         self.assertIsNotNone(res)
@@ -60,7 +60,7 @@ class FlashDBUnitTest(unittest.TestCase):
             'boot_time': boot_time_blob,   # array type kv
         }
         #print(default_kv)
-        kvdb = fdb.kvdb_init("env", "fdb_kvdb1", default_kv, None)
+        kvdb = fdb.kvdb_init("env", "fdb_kvdb", default_kv, None)
 
         boot_count = fdb.kv_get_by_fmt(kvdb, "boot_count", boot_count_size, boot_count_fmt)
         self.assertIsNotNone(boot_count)
