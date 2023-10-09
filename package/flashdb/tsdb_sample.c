@@ -31,11 +31,12 @@ struct env_status {
     int humi;
 };
 
-static bool query_cb(fdb_tsl_t tsl, void* arg);
-static bool query_by_time_cb(fdb_tsl_t tsl, void* arg);
-static bool set_status_cb(fdb_tsl_t tsl, void* arg);
+static bool query_cb(fdb_tsl_t tsl, void *arg);
+static bool query_by_time_cb(fdb_tsl_t tsl, void *arg);
+static bool set_status_cb(fdb_tsl_t tsl, void *arg);
 
-void tsdb_sample(fdb_tsdb_t tsdb) {
+void tsdb_sample(fdb_tsdb_t tsdb)
+{
     struct fdb_blob blob;
 
     FDB_INFO("==================== tsdb_sample ====================\n");
@@ -47,14 +48,12 @@ void tsdb_sample(fdb_tsdb_t tsdb) {
         status.temp = 36;
         status.humi = 85;
         fdb_tsl_append(tsdb, fdb_blob_make(&blob, &status, sizeof(status)));
-        FDB_INFO("append the new status.temp (%d) and status.humi (%d)\n",
-                 status.temp, status.humi);
+        FDB_INFO("append the new status.temp (%d) and status.humi (%d)\n", status.temp, status.humi);
 
         status.temp = 38;
         status.humi = 90;
         fdb_tsl_append(tsdb, fdb_blob_make(&blob, &status, sizeof(status)));
-        FDB_INFO("append the new status.temp (%d) and status.humi (%d)\n",
-                 status.temp, status.humi);
+        FDB_INFO("append the new status.temp (%d) and status.humi (%d)\n", status.temp, status.humi);
     }
 
     { /* QUERY the TSDB */
@@ -63,20 +62,9 @@ void tsdb_sample(fdb_tsdb_t tsdb) {
     }
 
     { /* QUERY the TSDB by time */
-        /* prepare query time (from 1970-01-01 00:00:00 to 2020-05-05 00:00:00)
-         */
-        struct tm tm_from = {.tm_year = 1970 - 1900,
-                             .tm_mon = 0,
-                             .tm_mday = 1,
-                             .tm_hour = 0,
-                             .tm_min = 0,
-                             .tm_sec = 0};
-        struct tm tm_to = {.tm_year = 2020 - 1900,
-                           .tm_mon = 4,
-                           .tm_mday = 5,
-                           .tm_hour = 0,
-                           .tm_min = 0,
-                           .tm_sec = 0};
+        /* prepare query time (from 1970-01-01 00:00:00 to 2020-05-05 00:00:00) */
+        struct tm tm_from = { .tm_year = 1970 - 1900, .tm_mon = 0, .tm_mday = 1, .tm_hour = 0, .tm_min = 0, .tm_sec = 0 };
+        struct tm tm_to = { .tm_year = 2020 - 1900, .tm_mon = 4, .tm_mday = 5, .tm_hour = 0, .tm_min = 0, .tm_sec = 0 };
         time_t from_time = mktime(&tm_from), to_time = mktime(&tm_to);
         size_t count;
         /* query all TSL in TSDB by time */
@@ -91,8 +79,8 @@ void tsdb_sample(fdb_tsdb_t tsdb) {
          * set_status_cb: the change operation will in this callback
          *
          * NOTE: The actions to modify the state must be in order.
-         *       like: FDB_TSL_WRITE -> FDB_TSL_USER_STATUS1 -> FDB_TSL_DELETED
-         * -> FDB_TSL_USER_STATUS2 The intermediate states can also be ignored.
+         *       like: FDB_TSL_WRITE -> FDB_TSL_USER_STATUS1 -> FDB_TSL_DELETED -> FDB_TSL_USER_STATUS2
+         *       The intermediate states can also be ignored.
          *       such as: FDB_TSL_WRITE -> FDB_TSL_DELETED
          */
         fdb_tsl_iter(tsdb, set_status_cb, tsdb);
@@ -101,43 +89,38 @@ void tsdb_sample(fdb_tsdb_t tsdb) {
     FDB_INFO("===========================================================\n");
 }
 
-static bool query_cb(fdb_tsl_t tsl, void* arg) {
+static bool query_cb(fdb_tsl_t tsl, void *arg)
+{
     struct fdb_blob blob;
     // rbg/kcf
-    struct env_status status = {0};
+    struct env_status status={0};
     fdb_tsdb_t db = arg;
 
-    fdb_blob_read(
-        (fdb_db_t)db,
-        fdb_tsl_to_blob(tsl, fdb_blob_make(&blob, &status, sizeof(status))));
-    FDB_INFO("[query_cb] queried a TSL: time: %ld, temp: %d, humi: %d\n",
-             tsl->time, status.temp, status.humi);
+    fdb_blob_read((fdb_db_t) db, fdb_tsl_to_blob(tsl, fdb_blob_make(&blob, &status, sizeof(status))));
+    FDB_INFO("[query_cb] queried a TSL: time: %ld, temp: %d, humi: %d\n", tsl->time, status.temp, status.humi);
 
     return false;
 }
 
-static bool query_by_time_cb(fdb_tsl_t tsl, void* arg) {
+static bool query_by_time_cb(fdb_tsl_t tsl, void *arg)
+{
     struct fdb_blob blob;
-    // rbg/kcf
-    struct env_status status = {0};
+    // rbg/kcf 
+    struct env_status status={0};
     fdb_tsdb_t db = arg;
 
-    fdb_blob_read(
-        (fdb_db_t)db,
-        fdb_tsl_to_blob(tsl, fdb_blob_make(&blob, &status, sizeof(status))));
+    fdb_blob_read((fdb_db_t) db, fdb_tsl_to_blob(tsl, fdb_blob_make(&blob, &status, sizeof(status))));
     // rbg/kcf
-    FDB_INFO(
-        "[query_by_time_cb] queried a TSL: time: %ld, temp: %d, humi: %d\n",
-        tsl->time, status.temp, status.humi);
+    FDB_INFO("[query_by_time_cb] queried a TSL: time: %ld, temp: %d, humi: %d\n", tsl->time, status.temp, status.humi);
 
     return false;
 }
 
-static bool set_status_cb(fdb_tsl_t tsl, void* arg) {
+static bool set_status_cb(fdb_tsl_t tsl, void *arg)
+{
     fdb_tsdb_t db = arg;
 
-    FDB_INFO("set the TSL (time %ld) status from %d to %d\n", tsl->time,
-             tsl->status, FDB_TSL_USER_STATUS1);
+    FDB_INFO("set the TSL (time %ld) status from %d to %d\n", tsl->time, tsl->status, FDB_TSL_USER_STATUS1);
     fdb_tsl_set_status(db, tsl, FDB_TSL_USER_STATUS1);
 
     return false;

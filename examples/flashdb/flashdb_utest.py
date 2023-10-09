@@ -85,4 +85,4 @@ def utest():
     runner = unittest.TextTestRunner()
     res = runner.run(suit)
     
-        
+utest() 

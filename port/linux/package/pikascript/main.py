@@ -6,7 +6,6 @@ import time
 import struct
 
 import flashdb
-import flashdb_utest
 
 print('hello pikapython!')
 mem = PikaStdLib.MemChecker()
