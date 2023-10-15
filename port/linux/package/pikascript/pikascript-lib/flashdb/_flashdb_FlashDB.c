@@ -13,6 +13,9 @@
 #include "flashdb.h"
 #define FDB_LOG_TAG "[main]"
 
+#define _FDBBUFFS (Args*)obj_getPtr(self, "FDBBUFFS")
+#define strdup(x) strsCopy(_FDBBUFFS, x)
+
 bool g_kvdb_path_inited = false;
 
 /* TSDB object */
@@ -47,7 +50,10 @@ typedef struct fdb_kvdb FDB_KVDB;
 typedef struct fdb_default_kv_node FDB_DEFAULT_KV_NODE;
 int g_def_kv_table_idx;
 
-void _flashdb_FlashDB___init__(PikaObj* self) {}
+void _flashdb_FlashDB___init__(PikaObj* self) {
+    Args* buffs = New_strBuff();
+    obj_setPtr(self, "FDBBUFFS", buffs);
+}
 
 /*
 Arg* _flashdb_FlashDB_blob_make(PikaObj *self, Arg* blob, Arg* value_buf, int
@@ -150,15 +156,21 @@ int _flashdb_FlashDB_kvdb_control(PikaObj* self, Arg* kvdb, int cmd, Arg* arg) {
 }
 
 void _flashdb_FlashDB_kvdb_deinit(PikaObj* self, Arg* kvdb) {}
-
-int32_t _flashdb_foreach(PikaObj* self,
+struct _flashdb_foreach_context {
+    struct fdb_default_kv_node* def_kv_table;
+    PikaObj* self;
+};
+int32_t _flashdb_foreach(PikaObj* self_dict,
                          Arg* keyEach,
                          Arg* valEach,
                          void* context) {
     char* key = arg_getStr(keyEach);
     ArgType argt_val = arg_getType(valEach);
-    struct fdb_default_kv_node* def_kv_table =
-        (struct fdb_default_kv_node*)context;
+    struct _flashdb_foreach_context* foreach_context =
+        (struct _flashdb_foreach_context*)context;
+    struct fdb_default_kv_node* def_kv_table = foreach_context->def_kv_table;
+    PikaObj* self = foreach_context->self;
+
     if (argt_val == ARG_TYPE_STRING) {
         char* val = arg_getStr(valEach);
 
@@ -170,7 +182,8 @@ int32_t _flashdb_foreach(PikaObj* self,
     } else if (argt_val == ARG_TYPE_BYTES) {
         size_t bytes_size = arg_getBytesSize(valEach);
         uint8_t* bytes = arg_getBytes(valEach);
-        uint8_t* pbytes = (uint8_t*)malloc(bytes_size * sizeof(uint8_t));
+        uint8_t* pbytes =
+            (uint8_t*)args_getBuff(_FDBBUFFS, bytes_size * sizeof(uint8_t));
         memcpy(pbytes, bytes, bytes_size);
         /*
         for (size_t i=0; i < bytes_size; i++) {
@@ -209,10 +222,15 @@ PikaObj* _flashdb_FlashDB_kvdb_init(PikaObj* self,
     // int len =pikaDict_getSize(default_kv_in);
 
     struct fdb_default_kv_node* def_kv_table =
-        (struct fdb_default_kv_node*)malloc(4 *
-                                            sizeof(struct fdb_default_kv_node));
+        (struct fdb_default_kv_node*)args_getBuff(
+            _FDBBUFFS, (4 * sizeof(struct fdb_default_kv_node)));
     g_def_kv_table_idx = 0;
-    pikaDict_forEach(default_kv_in, _flashdb_foreach, def_kv_table);
+
+    struct _flashdb_foreach_context context = {
+        .def_kv_table = def_kv_table,
+        .self = self,
+    };
+    pikaDict_forEach(default_kv_in, _flashdb_foreach, &context);
 
     struct fdb_default_kv default_kv;
 
@@ -232,3 +250,9 @@ PikaObj* _flashdb_FlashDB_kvdb_init(PikaObj* self,
     obj_setPtr(kvdb_obj, "kvdb", pkvdb);
     return kvdb_obj;
 }
+
+void _flashdb_FlashDB___del__(PikaObj* self) {
+    args_deinit(_FDBBUFFS);
+}
+
+#undef strudp
