@@ -1156,7 +1156,7 @@ PIKA_RES pikaMaker_compileModuleWithList(PikaMaker* self, char* list_content) {
     char* module_name = NULL;
     char* module_name_start = list_content;
     char* module_name_end = NULL;
-    pika_platform_printf("  <module list>\n");
+    pika_platform_printf("  <module list>\r\n");
     while (1) {
         module_name_end = strFind(module_name_start, '\n');
         if (NULL == module_name_end) {
