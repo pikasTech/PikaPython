@@ -28,7 +28,8 @@ impl VersionInfo {
         }
         /* print the package info */
         if self.plot {
-            println!("    {}", line);
+            // print line with \r\n
+            print!("{}{}", line, "\r\n");
         }
 
         // Check if line contains '='
