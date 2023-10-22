@@ -7,37 +7,10 @@ typedef FIL _INNER_FILE;
 int __fmodeflags(const char* mode);
 
 /* public prototypes */
-FILE* fatfs_fopen(const char* filename, const char* modes);
-size_t fatfs_fwrite(const void* ptr, size_t size, size_t n, FILE* stream);
-size_t fatfs_fread(void* ptr, size_t size, size_t n, FILE* stream);
-int fatfs_fclose(FILE* stream);
-int fatfs_fseek(FILE* stream, long offset, int whence);
-long fatfs_ftell(FILE* stream);
-
 #ifndef PIKA_FATFS_ENABLE
 #define PIKA_FATFS_ENABLE 1
 #endif
 
-#if PIKA_FATFS_ENABLE
-FILE* __platform_fopen(const char* filename, const char* modes) {
-    return fatfs_fopen(filename, modes);
-}
-int __platform_fclose(FILE* stream) {
-    return fatfs_fclose(stream);
-}
-size_t __platform_fwrite(const void* ptr, size_t size, size_t n, FILE* stream) {
-    return fatfs_fwrite(ptr, size, n, stream);
-}
-size_t __platform_fread(void* ptr, size_t size, size_t n, FILE* stream) {
-    return fatfs_fread(ptr, size, n, stream);
-}
-int __platform_fseek(FILE* stream, long offset, int whence) {
-    return fatfs_fseek(stream, offset, whence);
-}
-long __platform_ftell(FILE* stream) {
-    return fatfs_ftell(stream);
-}
-#endif
 
 FILE* fatfs_fopen(const char* filename, const char* modes) {
     FRESULT res;
@@ -87,8 +60,25 @@ int fatfs_fclose(FILE* stream) {
 
 int fatfs_fseek(FILE* stream, long offset, int whence) {
     _INNER_FILE* _f = (_INNER_FILE*)stream;
-    f_lseek(_f, offset);
-    return f_tell(_f);
+    DWORD fatfs_offset;
+    switch (whence) {
+        case SEEK_SET:
+            fatfs_offset = offset;
+            break;
+        case SEEK_CUR:
+            fatfs_offset = f_tell(_f) + offset;
+            break;
+        case SEEK_END:
+            fatfs_offset = f_size(_f) + offset;
+            break;
+        default:
+            return -1; // Invalid argument
+    }
+    if (f_lseek(_f, fatfs_offset) == FR_OK) {
+        return 0;
+    } else {
+        return -1;
+    }
 }
 
 long fatfs_ftell(FILE* stream) {
@@ -97,16 +87,123 @@ long fatfs_ftell(FILE* stream) {
 }
 
 int __fmodeflags(const char* mode) {
-    int flags;
-    if (strchr(mode, '+'))
-        flags = FA_WRITE | FA_READ;
-    else if (*mode == 'r')
-        flags = FA_READ;
-    else
-        flags = FA_CREATE_ALWAYS;
-    if (*mode == 'w')
-        flags |= FA_CREATE_ALWAYS;
-    if (*mode == 'a')
-        flags |= FA_OPEN_APPEND;
+    int flags = 0; 
+
+    if (strchr(mode, '+')) {
+        flags = FA_WRITE | FA_READ; 
+    }
+
+    if (*mode == 'r') {
+        if (!(flags & FA_WRITE)) { 
+            flags |= FA_READ;
+        }
+    } else if (*mode == 'w') {
+        flags |= FA_CREATE_ALWAYS | FA_WRITE; 
+    } else if (*mode == 'a') {
+        flags |= FA_OPEN_APPEND | FA_WRITE; 
+    }
+
     return flags;
 }
+
+char* fatfs_getcwd(char* buf, size_t size) {
+    // FatFS doesn't directly provide a getcwd function. You might need 
+    // to manage the current directory yourself or return a default if it's 
+    // not crucial for your application.
+    strncpy(buf, "/", size);
+    return buf;
+}
+
+int fatfs_chdir(const char* path) {
+    // FatFS doesn't directly provide a chdir function. You might need 
+    // to manage the current directory yourself.
+    return -1; // Not implemented
+}
+
+int fatfs_rmdir(const char* pathname) {
+    return f_unlink(pathname);
+}
+
+int fatfs_mkdir(const char* pathname, int mode) {
+    return f_mkdir(pathname);
+}
+
+int fatfs_remove(const char* pathname) {
+    return f_unlink(pathname);
+}
+
+int fatfs_rename(const char* oldpath, const char* newpath) {
+    return f_rename(oldpath, newpath);
+}
+
+char** fatfs_listdir(const char* path, int* count) {
+    DIR dir;
+    static FILINFO fno;
+    FRESULT res;
+    char **filelist = NULL;
+    int idx = 0, capacity = 10; // start with a capacity of 10, then grow if necessary
+
+    res = f_opendir(&dir, path); // Open the directory
+    if (res == FR_OK) {
+        filelist = pika_platform_malloc(capacity * sizeof(char*));
+        if(!filelist) return NULL; // Failed to allocate memory
+
+        for (;;) {
+            res = f_readdir(&dir, &fno); // Read a directory item
+            if (res != FR_OK || fno.fname[0] == 0) break; // Break on error or end of dir
+
+            if (idx == capacity) { // Grow the list if necessary
+                capacity *= 2;
+                char **newlist = pika_platform_realloc(filelist, capacity * sizeof(char*));
+                if(!newlist) {
+                    // Free any previously allocated memory
+                    for(int i = 0; i < idx; i++)
+                        pika_platform_free(filelist[i]);
+                    pika_platform_free(filelist);
+                    *count = 0;
+                    return NULL; // Failed to allocate more memory
+                }
+                filelist = newlist;
+            }
+
+            filelist[idx] = strdup(fno.fname);
+            if(!filelist[idx]) {
+                // Free any previously allocated memory
+                for(int i = 0; i < idx; i++)
+                    pika_platform_free(filelist[i]);
+                pika_platform_free(filelist);
+                *count = 0;
+                return NULL; // Failed to allocate memory for filename
+            }
+            idx++;
+        }
+        f_closedir(&dir);
+    }
+
+    *count = idx;
+    return filelist;
+}
+
+#if PIKA_FATFS_ENABLE
+char* pika_platform_getcwd(char* buf, size_t size) {
+    return fatfs_getcwd(buf, size);
+}
+int pika_platform_chdir(const char* path) {
+    return fatfs_chdir(path);
+}
+int pika_platform_rmdir(const char* pathname) {
+    return fatfs_rmdir(pathname);
+}
+int pika_platform_mkdir(const char* pathname, int mode) {
+    return fatfs_mkdir(pathname, mode);
+}
+int pika_platform_remove(const char* pathname) {
+    return fatfs_remove(pathname);
+}
+int pika_platform_rename(const char* oldpath, const char* newpath) {
+    return fatfs_rename(oldpath, newpath);
+}
+char** pika_platform_listdir(const char* path, int* count) {
+    return fatfs_listdir(path, count);
+}
+#endif

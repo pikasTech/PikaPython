@@ -199,7 +199,13 @@ size_t pika_platform_fwrite(const void* ptr,
 size_t pika_platform_fread(void* ptr, size_t size, size_t n, FILE* stream);
 int pika_platform_fseek(FILE* stream, long offset, int whence);
 long pika_platform_ftell(FILE* stream);
-
+char* pika_platform_getcwd(char* buf, size_t size);
+int pika_platform_chdir(const char* path);
+int pika_platform_rmdir(const char* pathname);
+int pika_platform_mkdir(const char* pathname, int mode);
+int pika_platform_remove(const char* pathname);
+int pika_platform_rename(const char* oldpath, const char* newpath);
+char** pika_platform_listdir(const char* path, int* count);
 /* error */
 void pika_platform_error_handle(void);
 
@@ -211,6 +217,7 @@ int64_t pika_platform_get_tick(void);
 void pika_platform_sleep_ms(uint32_t ms);
 
 void pika_hook_instruct(void);
+void pika_thread_idle_hook(void);
 PIKA_BOOL pika_hook_arg_cache_filter(void* self);
 void* pika_user_malloc(size_t size);
 void pika_user_free(void* ptr, size_t size);

@@ -3904,6 +3904,143 @@ Arg* builtins_min(PikaObj* self, PikaTuple* val) {
     return _max_min(self, val, (uint8_t*)bc_min);
 }
 
+static PIKA_BOOL _check_no_buff_format(char* format) {
+    while (*format) {
+        if (*format == '%') {
+            ++format;
+            if (*format != 's' && *format != '%') {
+                return PIKA_FALSE;
+            }
+        }
+        ++format;
+    }
+    return PIKA_TRUE;
+}
+
+int pika_pvsprintf(char** buff, const char* fmt, va_list args) {
+    int required_size;
+    int current_size = PIKA_SPRINTF_BUFF_SIZE;
+    *buff = (char*)pika_platform_malloc(current_size * sizeof(char));
+
+    if (*buff == NULL) {
+        return -1;  // Memory allocation failed
+    }
+
+    va_list args_copy;
+    va_copy(args_copy, args);
+
+    required_size =
+        pika_platform_vsnprintf(*buff, current_size, fmt, args_copy);
+    va_end(args_copy);
+
+    while (required_size >= current_size) {
+        current_size *= 2;
+        char* new_buff =
+            (char*)pika_platform_realloc(*buff, current_size * sizeof(char));
+
+        if (new_buff == NULL) {
+            pika_platform_free(*buff);
+            *buff = NULL;
+            return -1;  // Memory allocation failed
+        } else {
+            *buff = new_buff;
+        }
+
+        va_copy(args_copy, args);
+        required_size =
+            pika_platform_vsnprintf(*buff, current_size, fmt, args_copy);
+        va_end(args_copy);
+    }
+
+    return required_size;
+}
+
+static int _no_buff_vprintf(char* fmt, va_list args) {
+    int written = 0;
+    while (*fmt) {
+        if (*fmt == '%') {
+            ++fmt;
+            if (*fmt == 's') {
+                char* str = va_arg(args, char*);
+                if (str == NULL) {
+                    str = "(null)";
+                }
+                int len = strlen(str);
+                written += len;
+                for (int i = 0; i < len; i++) {
+                    pika_putchar(str[i]);
+                }
+            } else if (*fmt == '%') {
+                pika_putchar('%');
+                ++written;
+            }
+        } else {
+            pika_putchar(*fmt);
+            ++written;
+        }
+        ++fmt;
+    }
+    return written;
+}
+
+int pika_vprintf(char* fmt, va_list args) {
+    int ret = 0;
+    if (_check_no_buff_format(fmt)) {
+        _no_buff_vprintf(fmt, args);
+        return 0;
+    }
+
+    char* buff = NULL;
+    int required_size = pika_pvsprintf(&buff, fmt, args);
+
+    if (required_size < 0) {
+        ret = -1;  // Memory allocation or other error occurred
+        goto __exit;
+    }
+
+    // putchar
+    for (int i = 0; i < strlen(buff); i++) {
+        pika_putchar(buff[i]);
+    }
+
+__exit:
+    if (NULL != buff) {
+        pika_platform_free(buff);
+    }
+    return ret;
+}
+
+int pika_sprintf(char* buff, char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    int res = pika_platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
+    va_end(args);
+    if (res >= PIKA_SPRINTF_BUFF_SIZE) {
+        pika_platform_printf(
+            "OverflowError: sprintf buff size overflow, please use bigger "
+            "PIKA_SPRINTF_BUFF_SIZE\r\n");
+        pika_platform_printf("Info: buff size request: %d\r\n", res);
+        pika_platform_printf("Info: buff size now: %d\r\n",
+                             PIKA_SPRINTF_BUFF_SIZE);
+        while (1)
+            ;
+    }
+    return res;
+}
+
+int pika_vsprintf(char* buff, char* fmt, va_list args) {
+    /* vsnprintf */
+    return pika_platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
+}
+
+int pika_snprintf(char* buff, size_t size, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    int ret = pika_platform_vsnprintf(buff, size, fmt, args);
+    va_end(args);
+    return ret;
+}
+
 void _do_vsysOut(char* fmt, va_list args) {
     char* fmt_buff = pikaMalloc(strGetSize(fmt) + 2);
     pika_platform_memcpy(fmt_buff, fmt, strGetSize(fmt));

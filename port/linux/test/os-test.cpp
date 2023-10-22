@@ -12,7 +12,7 @@ TEST(os, test1) {
     pikaVM_runSingleFile(pikaMain, "test/python/os/os_test1.py");
     /* assert */
     EXPECT_STREQ(log_buff[0], "PASS\r\n");
-    EXPECT_STREQ(log_buff[1], "Hello World!\r\n");
+    EXPECT_STREQ(log_buff[2], "Hello World!\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
