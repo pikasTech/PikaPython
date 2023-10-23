@@ -11,8 +11,8 @@ int __fmodeflags(const char* mode);
 #define PIKA_FATFS_ENABLE 1
 #endif
 
-
-FILE* fatfs_fopen(const char* filename, const char* modes) {
+#if PIKA_FATFS_ENABLE
+FILE* pika_platform_fopen(const char* filename, const char* modes) {
     FRESULT res;
     int flags;
 
@@ -37,28 +37,28 @@ FILE* fatfs_fopen(const char* filename, const char* modes) {
     return (FILE *)_f;
 }
 
-size_t fatfs_fwrite(const void* ptr, size_t size, size_t n, FILE* stream) {
+size_t pika_platform_fwrite(const void* ptr, size_t size, size_t n, FILE* stream) {
     _INNER_FILE* _f = (_INNER_FILE*)stream;
     size_t len = 0;
     f_write(_f, ptr, n * size, &len);
     return len;
 }
 
-size_t fatfs_fread(void* ptr, size_t size, size_t n, FILE* stream) {
+size_t pika_platform_fread(void* ptr, size_t size, size_t n, FILE* stream) {
     _INNER_FILE* _f = (_INNER_FILE*)stream;
     size_t len = 0;
     f_read(_f, ptr, n * size, &len);
     return len;
 }
 
-int fatfs_fclose(FILE* stream) {
+int pika_platform_fclose(FILE* stream) {
     _INNER_FILE* _f = (_INNER_FILE*)stream;
     f_close(_f);
     free(_f);
     return 0;
 }
 
-int fatfs_fseek(FILE* stream, long offset, int whence) {
+int pika_platform_fseek(FILE* stream, long offset, int whence) {
     _INNER_FILE* _f = (_INNER_FILE*)stream;
     DWORD fatfs_offset;
     switch (whence) {
@@ -81,7 +81,7 @@ int fatfs_fseek(FILE* stream, long offset, int whence) {
     }
 }
 
-long fatfs_ftell(FILE* stream) {
+long pika_platform_ftell(FILE* stream) {
     _INNER_FILE* _f = (_INNER_FILE*)stream;
     return f_tell(_f);
 }
@@ -106,7 +106,7 @@ int __fmodeflags(const char* mode) {
     return flags;
 }
 
-char* fatfs_getcwd(char* buf, size_t size) {
+char* pika_platform_getcwd(char* buf, size_t size) {
     // FatFS doesn't directly provide a getcwd function. You might need 
     // to manage the current directory yourself or return a default if it's 
     // not crucial for your application.
@@ -114,29 +114,29 @@ char* fatfs_getcwd(char* buf, size_t size) {
     return buf;
 }
 
-int fatfs_chdir(const char* path) {
+int pika_platform_chdir(const char* path) {
     // FatFS doesn't directly provide a chdir function. You might need 
     // to manage the current directory yourself.
     return -1; // Not implemented
 }
 
-int fatfs_rmdir(const char* pathname) {
+int pika_platform_rmdir(const char* pathname) {
     return f_unlink(pathname);
 }
 
-int fatfs_mkdir(const char* pathname, int mode) {
+int pika_platform_mkdir(const char* pathname, int mode) {
     return f_mkdir(pathname);
 }
 
-int fatfs_remove(const char* pathname) {
+int pika_platform_remove(const char* pathname) {
     return f_unlink(pathname);
 }
 
-int fatfs_rename(const char* oldpath, const char* newpath) {
+int pika_platform_rename(const char* oldpath, const char* newpath) {
     return f_rename(oldpath, newpath);
 }
 
-char** fatfs_listdir(const char* path, int* count) {
+char** pika_platform_listdir(const char* path, int* count) {
     DIR dir;
     static FILINFO fno;
     FRESULT res;
@@ -184,26 +184,4 @@ char** fatfs_listdir(const char* path, int* count) {
     return filelist;
 }
 
-#if PIKA_FATFS_ENABLE
-char* pika_platform_getcwd(char* buf, size_t size) {
-    return fatfs_getcwd(buf, size);
-}
-int pika_platform_chdir(const char* path) {
-    return fatfs_chdir(path);
-}
-int pika_platform_rmdir(const char* pathname) {
-    return fatfs_rmdir(pathname);
-}
-int pika_platform_mkdir(const char* pathname, int mode) {
-    return fatfs_mkdir(pathname, mode);
-}
-int pika_platform_remove(const char* pathname) {
-    return fatfs_remove(pathname);
-}
-int pika_platform_rename(const char* oldpath, const char* newpath) {
-    return fatfs_rename(oldpath, newpath);
-}
-char** pika_platform_listdir(const char* path, int* count) {
-    return fatfs_listdir(path, count);
-}
 #endif
