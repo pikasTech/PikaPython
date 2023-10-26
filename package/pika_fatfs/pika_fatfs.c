@@ -184,4 +184,43 @@ char** pika_platform_listdir(const char* path, int* count) {
     return filelist;
 }
 
+int pika_platform_path_exists(const char *path){
+    FRESULT res;
+    FILINFO fno;
+    
+    res = f_stat(path, &fno);
+    if (res != FR_OK) {
+        return 0; // Path does not exist
+    }
+    return 1;
+}
+
+int pika_platform_path_isdir(const char *path){
+		int is_dir = 0;
+    FRESULT res;
+    FILINFO fno;
+
+    res = f_stat(path, &fno);
+    if (res == FR_OK) {
+        is_dir = (fno.fattrib & AM_DIR) ? 1 : 0;
+    }else{
+				return 0;
+		}
+    return is_dir;
+}
+
+int pika_platform_path_isfile(const char *path){
+    int is_file = 0;
+    FRESULT res;
+    FILINFO fno;
+
+    res = f_stat(path, &fno);
+    if (res == FR_OK) {
+        is_file = (fno.fattrib & AM_DIR) == 0 ? 1 : 0;
+    }else{
+				return 0;
+		}
+    return is_file;
+}
+
 #endif

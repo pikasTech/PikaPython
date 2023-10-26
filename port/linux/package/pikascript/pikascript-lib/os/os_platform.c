@@ -138,7 +138,7 @@ int os_mkdir_platform(int mode, char* path) {
 
 int os_chdir_platform(char* path) {
     int ret = 0;
-    ret = chdir(path);
+    ret = pika_platform_chdir(path);
     if (ret == 0)
         ret = PIKA_TRUE;
     else

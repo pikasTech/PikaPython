@@ -299,6 +299,120 @@ PIKA_WEAK int pika_platform_mkdir(const char* pathname, int mode) {
 #endif
 }
 
+PIKA_WEAK char *pika_platform_realpath(const char *path, char *resolved_path) {
+#if defined(_WIN32) || defined(__linux) || PIKA_LINUX_COMPATIBLE
+		return realpath(path, resolved_path);
+#else
+    if (!path || !resolved_path) return NULL;
+
+    char *output = resolved_path;
+    const char *segment_start = path;
+    const char *segment_end = path;
+
+    while (*segment_end) {
+        if (*segment_end == '/' || *(segment_end + 1) == '\0') {
+            size_t segment_len = segment_end - segment_start + (*segment_end != '/');
+
+            if (segment_len == 1 && segment_start[0] == '.') {
+                // Skip single-dot segment
+            } else if (segment_len == 2 && segment_start[0] == '.' && segment_start[1] == '.') {
+                // Handle double-dot segment by backtracking
+                if (output > resolved_path) {
+                    output--;  // Move back one char to overwrite the last slash
+                    while (output > resolved_path && *output != '/') {
+                        output--;
+                    }
+                }
+            } else {
+                // Copy the segment to the output
+                strncpy(output, segment_start, segment_len);
+                output += segment_len;
+                if (*segment_end) {
+                    *output = '/';
+                    output++;
+                }
+            }
+
+            segment_end++;  // Move past the slash
+            segment_start = segment_end;
+        } else {
+            segment_end++;
+        }
+    }
+    
+    if (output != resolved_path && *(output - 1) == '/') {
+        output--;  // Remove trailing slash, if any
+    }
+
+    *output = '\0';  // Null-terminate the resolved path
+
+    return resolved_path;
+#endif
+}
+
+PIKA_WEAK int pika_platform_path_exists(const char *path){
+#ifdef _WIN32
+    DWORD attr = GetFileAttributesA((LPCWSTR)path);
+    if (attr == INVALID_FILE_ATTRIBUTES) {
+        return 0;
+    }
+
+    return 1;
+#elif defined(__linux) || PIKA_LINUX_COMPATIBLE
+    struct stat statbuf;
+    if (stat(path, &statbuf) == -1) {
+        return 0;
+    }
+
+    return 1;
+#else
+		WEAK_FUNCTION_NEED_OVERRIDE_ERROR_LOWLEVEL(_);
+#endif
+}
+
+PIKA_WEAK int pika_platform_path_isdir(const char *path){
+#ifdef _WIN32
+    int is_dir = 0;
+    DWORD attrs = GetFileAttributes((LPCWSTR)path);
+    if (attrs != INVALID_FILE_ATTRIBUTES) {
+        is_dir =
+            (attrs & FILE_ATTRIBUTE_DIRECTORY) != 0 ? 1 : 0;
+    }
+    return is_dir;
+#elif defined(__linux) || PIKA_LINUX_COMPATIBLE
+    int is_dir = 0;
+    struct stat st;
+    if (stat(path, &st) == 0) {
+        is_dir = S_ISDIR(st.st_mode) ? PIKA_TRUE : PIKA_FALSE;
+    }
+    return is_dir;
+#else
+		WEAK_FUNCTION_NEED_OVERRIDE_ERROR_LOWLEVEL(_);
+#endif
+}
+
+// Returns true if the given path is a regular file, false otherwise.
+PIKA_WEAK int pika_platform_path_isfile(const char* path) {
+#ifdef _WIN32
+    int is_file = 0;
+    DWORD attrs = GetFileAttributes(path);
+    if (attrs != INVALID_FILE_ATTRIBUTES) {
+        is_file =
+            (attrs & FILE_ATTRIBUTE_DIRECTORY) == 0 ? PIKA_TRUE : PIKA_FALSE;
+    }
+    return is_file;
+#elif defined(__linux) || PIKA_LINUX_COMPATIBLE
+    int is_file = 0;
+    struct stat st;
+    if (stat(path, &st) == 0) {
+        is_file = S_ISREG(st.st_mode) ? PIKA_TRUE : PIKA_FALSE;
+    }
+    return is_file;
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR_LOWLEVEL(_);
+#endif
+}
+
 PIKA_WEAK int pika_platform_remove(const char* pathname) {
 #if defined(__linux) || defined(_WIN32)
     return remove(pathname);
