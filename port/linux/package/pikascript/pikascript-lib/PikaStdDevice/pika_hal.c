@@ -346,7 +346,7 @@ int pika_hal_SG_ioctl_merge_config(pika_hal_SG_config* dst,
                               PIKA_HAL_SG_EVENT_SIGNAL_ANY);
     _IOCTL_CONFIG_USE_DEFAULT(event_callback_ena,
                               PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE);
-		_IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
     return 0;
 }
 
