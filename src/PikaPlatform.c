@@ -294,6 +294,8 @@ PIKA_WEAK int pika_platform_mkdir(const char* pathname, int mode) {
     return mkdir(dirpath);
 #elif defined(__linux) || PIKA_LINUX_COMPATIBLE
     return mkdir(pathname, mode);
+#else
+		WEAK_FUNCTION_NEED_OVERRIDE_ERROR_LOWLEVEL(_);
 #endif
 }
 

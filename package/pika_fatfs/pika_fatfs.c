@@ -166,7 +166,7 @@ char** pika_platform_listdir(const char* path, int* count) {
                 filelist = newlist;
             }
 
-            filelist[idx] = strdup(fno.fname);
+            filelist[idx] = pika_platform_strdup(fno.fname);
             if(!filelist[idx]) {
                 // Free any previously allocated memory
                 for(int i = 0; i < idx; i++)
