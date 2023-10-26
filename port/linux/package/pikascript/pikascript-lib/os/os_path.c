@@ -91,7 +91,7 @@ PIKA_BOOL os_path_exists(PikaObj* self, char* path) {
 
     return PIKA_TRUE;
 #else
-		return pika_platform_path_exists(path);
+    return pika_platform_path_exists(path);
 #endif
 }
 
@@ -122,7 +122,7 @@ PIKA_BOOL os_path_isdir(PikaObj* self, char* path) {
 
 // Returns true if the given path is a regular file, false otherwise.
 PIKA_BOOL os_path_isfile(PikaObj* self, char* path) {
-		return pika_platform_path_isfile(path);
+    return pika_platform_path_isfile(path);
 }
 
 char* os_path_join(PikaObj* self, PikaTuple* paths) {
