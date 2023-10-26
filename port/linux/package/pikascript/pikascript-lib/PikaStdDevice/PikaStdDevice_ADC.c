@@ -27,7 +27,7 @@ void PikaStdDevice_ADC_setPin(PikaObj* self, char* pin) {
 }
 
 static pika_dev* _get_dev(PikaObj* self) {
-    pika_dev* dev = obj_getPtr(self, "pika_dev");
+    pika_dev* dev = PIKA_HAL_OBJ2DEV(self);
     if (NULL != dev) {
         return dev;
     }

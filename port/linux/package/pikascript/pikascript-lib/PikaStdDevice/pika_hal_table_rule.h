@@ -56,8 +56,7 @@
                 return pika_hal_platform_##dev_name##_ioctl_others(dev, cmd,   \
                                                                    arg);       \
         }                                                                      \
-    }
-
+    }                                                                          
 #endif
 
 #if defined(PIKA_HAL_TABLE_DEV_TYPE)

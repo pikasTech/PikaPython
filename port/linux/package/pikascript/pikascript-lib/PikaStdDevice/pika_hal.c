@@ -210,6 +210,7 @@ int pika_hal_GPIO_ioctl_merge_config(pika_hal_GPIO_config* dst,
                               PIKA_HAL_GPIO_EVENT_SIGNAL_RISING);
     _IOCTL_CONFIG_USE_DEFAULT(event_callback_ena,
                               PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE);
+    _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
     return 0;
 }
 
@@ -229,6 +230,7 @@ int pika_hal_UART_ioctl_merge_config(pika_hal_UART_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(RX, NULL);
     _IOCTL_CONFIG_USE_DEFAULT(RTS, NULL);
     _IOCTL_CONFIG_USE_DEFAULT(CTS, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
     return 0;
 }
 
@@ -240,6 +242,7 @@ int pika_hal_SPI_ioctl_merge_config(pika_hal_SPI_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(data_width, PIKA_HAL_SPI_DATA_WIDTH_8);
     _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_SPI_SPEED_2M);
     _IOCTL_CONFIG_USE_DEFAULT(timeout, PIKA_HAL_SPI_TIMEOUT_1000MS);
+    _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
     return 0;
 }
 
@@ -255,6 +258,7 @@ int pika_hal_SOFT_SPI_ioctl_merge_config(pika_hal_SOFT_SPI_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(SCK, NULL);
     _IOCTL_CONFIG_USE_DEFAULT(MOSI, NULL);
     _IOCTL_CONFIG_USE_DEFAULT(MISO, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
     return 0;
 }
 
@@ -268,6 +272,7 @@ int pika_hal_IIC_ioctl_merge_config(pika_hal_IIC_config* dst,
     dst->mem_addr = src->mem_addr;
     _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_IIC_SPEED_100K);
     _IOCTL_CONFIG_USE_DEFAULT(timeout, PIKA_HAL_IIC_TIMEOUT_1000MS);
+    _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
     return 0;
 }
 
@@ -283,6 +288,7 @@ int pika_hal_SOFT_IIC_ioctl_merge_config(pika_hal_SOFT_IIC_config* dst,
     dst->mem_addr = src->mem_addr;
     _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_IIC_SPEED_100K);
     _IOCTL_CONFIG_USE_DEFAULT(timeout, PIKA_HAL_IIC_TIMEOUT_1000MS);
+    _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
     return 0;
 }
 
@@ -291,6 +297,7 @@ int pika_hal_PWM_ioctl_merge_config(pika_hal_PWM_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(period, PIKA_HAL_PWM_PERIOD_1MS * 10);
     // _IOCTL_CONFIG_USE_DEFAULT(duty, 0);
     dst->duty = src->duty;
+    _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
     return 0;
 }
 
@@ -301,6 +308,7 @@ int pika_hal_ADC_ioctl_merge_config(pika_hal_ADC_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(continue_or_single, PIKA_HAL_ADC_SINGLE);
     _IOCTL_CONFIG_USE_DEFAULT(vref, (pika_float)3.3);
     _IOCTL_CONFIG_USE_DEFAULT(max, 8192);
+    _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
     return 0;
 }
 
@@ -310,6 +318,7 @@ int pika_hal_DAC_ioctl_merge_config(pika_hal_DAC_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(sampling_resolution, PIKA_HAL_DAC_RESOLUTION_12);
     _IOCTL_CONFIG_USE_DEFAULT(vref, (pika_float)3.3);
     _IOCTL_CONFIG_USE_DEFAULT(max, 3300000);
+    _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
     return 0;
 }
 
@@ -321,6 +330,23 @@ int pika_hal_WIFI_ioctl_merge_config(pika_hal_WIFI_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT_STR(ap_ssid, "pikapython.com");
     _IOCTL_CONFIG_USE_DEFAULT_STR(ap_bssid, "");
     _IOCTL_CONFIG_USE_DEFAULT_STR(ap_password, "pikapython.com");
+    _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
+    return 0;
+}
+
+int pika_hal_SG_ioctl_merge_config(pika_hal_SG_config* dst,
+                                   pika_hal_SG_config* src) {
+    _IOCTL_CONFIG_USE_DEFAULT(waveform, PIKA_HAL_SG_WAVEFORM_SINE);
+    _IOCTL_CONFIG_USE_DEFAULT(frequency, 10);
+    _IOCTL_CONFIG_USE_DEFAULT(amplitude, 0.1);
+    dst->offset = src->offset;
+    dst->seconds = src->seconds;
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_filter,
+                              PIKA_HAL_SG_EVENT_SIGNAL_ANY);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_ena,
+                              PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE);
+		_IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
     return 0;
 }
 
