@@ -1270,6 +1270,9 @@ pika_bool obj_isArgExist(PikaObj* self, char* argPath) {
         return 0;
     }
     PikaObj* obj_host = obj_getHostObj(self, argPath);
+    if (obj_host == NULL) {
+        return pika_false;
+    }
     int32_t res = 0;
     char* argName;
     Arg* arg;
@@ -2505,7 +2508,26 @@ int32_t obj_newDirectObj(PikaObj* self, char* objName, NewFun newFunPtr) {
     obj_setName(arg_getPtr(aNewObj), objName);
     arg_setType(aNewObj, ARG_TYPE_OBJECT);
     // pikaGC_enable(arg_getPtr(aNewObj));
-    args_setArg(self->list, aNewObj);
+    obj_setArg_noCopy(self, objName, aNewObj);
+    return 0;
+}
+
+int32_t obj_newHostObj(PikaObj* self, char* objName) {
+    Args buffs = {0};
+    size_t tokenCnt = strCountSign(objName, '.');
+    if (0 == tokenCnt) {
+        return 0;
+    }
+    PikaObj* this = self;
+    objName = strsCopy(&buffs, objName);
+    for (int i = 0; i < tokenCnt; i++) {
+        char* name = strsPopToken(&buffs, &objName, '.');
+        if (!obj_isArgExist(this, name)) {
+            obj_newDirectObj(this, name, New_TinyObj);
+            this = obj_getObj(this, name);
+        }
+    }
+    strsDeinit(&buffs);
     return 0;
 }
 
@@ -2543,12 +2565,9 @@ PikaObj* obj_importModuleWithByteCode(PikaObj* self,
                                       uint8_t* byteCode) {
     if (!obj_isArgExist((PikaObj*)__pikaMain, name)) {
         /* import to main module context */
+        obj_newHostObj((PikaObj*)__pikaMain, name);
         obj_newDirectObj((PikaObj*)__pikaMain, name, New_TinyObj);
-
-        pikaVM_runByteCode(obj_getObj((PikaObj*)__pikaMain, name),
-                           (uint8_t*)byteCode);
         PikaObj* module_obj = obj_getObj((PikaObj*)__pikaMain, name);
-
         PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
                                   .try_result = TRY_RESULT_NONE};
         pikaVM_runBytecode_ex_cfg cfg = {0};
@@ -2563,6 +2582,7 @@ PikaObj* obj_importModuleWithByteCode(PikaObj* self,
         /* import to other module context */
         Arg* aModule = obj_getArg((PikaObj*)__pikaMain, name);
         PikaObj* oModule = arg_getPtr(aModule);
+        obj_newHostObj(self, name);
         obj_setArg(self, name, aModule);
         arg_setIsWeakRef(obj_getArg(self, name), pika_true);
         pika_assert(arg_isObject(aModule));
@@ -2620,7 +2640,7 @@ uint8_t* pika_getByteCodeFromModule(char* module_name) {
     }
     /* find module from the library */
     LibObj* lib = obj_getPtr(self, "@lib");
-    PikaObj* module = obj_getObj(lib, module_name);
+    PikaObj* module = LibObj_getModule(lib, module_name);
     /* exit when no module in '@lib' */
     if (NULL == module) {
         return NULL;

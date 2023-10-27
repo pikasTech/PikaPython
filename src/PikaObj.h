@@ -569,6 +569,7 @@ PikaObj* obj_linkLibrary(PikaObj* self, uint8_t* library_bytes);
 int obj_importModule(PikaObj* self, char* module_name);
 int32_t obj_newMetaObj(PikaObj* self, char* objName, NewFun newFunPtr);
 int32_t obj_newDirectObj(PikaObj* self, char* objName, NewFun newFunPtr);
+int32_t obj_newHostObj(PikaObj* self, char* objName);
 int obj_runModule(PikaObj* self, char* module_name);
 PikaObj* obj_runFile(PikaObj* self, char* file_name);
 PikaObj* obj_runSingleFile(PikaObj* self, char* file_name);

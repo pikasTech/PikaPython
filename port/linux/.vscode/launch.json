@@ -14,7 +14,7 @@
                 // "--gtest_filter=vm.keyword_2"
                 // "--gtest_filter=compiler.find_break_point"
                 // "--gtest_filter=pikaMain.REPL_pdb_set_break"
-                "--gtest_filter=make.compile_depend"
+                "--gtest_filter=vm.subsrc_import"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

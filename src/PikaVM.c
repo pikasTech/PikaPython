@@ -3964,6 +3964,7 @@ VMParameters* pikaVM_run(PikaObj* self, char* py_lines) {
 }
 
 VMParameters* pikaVM_runByteCode(PikaObj* self, const uint8_t* bytecode) {
+    pika_assert(NULL != self);
     PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
                               .try_result = TRY_RESULT_NONE};
     pikaVM_runBytecode_ex_cfg cfg = {0};
