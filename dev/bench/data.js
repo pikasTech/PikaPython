@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1698328727487,
+  "lastUpdate": 1698584867545,
   "repoUrl": "https://github.com/pikasTech/PikaPython",
   "entries": {
     "Benchmark": [
@@ -105347,6 +105347,66 @@ window.BENCHMARK_DATA = {
             "value": 0.005001617083177164,
             "unit": "ms/iter",
             "extra": "iterations: 187337\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "88232613+pikasTech@users.noreply.github.com",
+            "name": "Lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1b4a0f126b3980ec2d33a1fbaec720806586d1a1",
+          "message": "Merge pull request #332 from HelloDuoLA/master\n\n增加BAS、HR的Profile，修改已知BUG",
+          "timestamp": "2023-10-29T20:39:07+08:00",
+          "tree_id": "06e214896bdb37156b2742e810023ca4c7b55982",
+          "url": "https://github.com/pikasTech/PikaPython/commit/1b4a0f126b3980ec2d33a1fbaec720806586d1a1"
+        },
+        "date": 1698584855742,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 16937.614957582624,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 16937.614957582624 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 21.10844442822524,
+            "unit": "ms/iter",
+            "extra": "iterations: 46\ncpu: 21.079802540120884 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 13.30039424269617,
+            "unit": "ms/iter",
+            "extra": "iterations: 72\ncpu: 13.296260196880334 ms\nthreads: 1"
+          },
+          {
+            "name": "for_print_1000",
+            "value": 10.585594041625981,
+            "unit": "ms/iter",
+            "extra": "iterations: 91\ncpu: 10.584528769037922 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 2.9523152243472777,
+            "unit": "ms/iter",
+            "extra": "iterations: 326\ncpu: 2.952009484524031 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000593944908321,
+            "unit": "ms/iter",
+            "extra": "iterations: 191832\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
