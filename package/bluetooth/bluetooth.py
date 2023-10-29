@@ -84,7 +84,7 @@ class UUID():
         else:
             raise ValueError
 
-        UUID_bits = len(value_bytes)
+        UUID_bits = len(value_bytes)  # bytes的数量
         return value_bytes,UUID_bits
             
 
@@ -102,10 +102,11 @@ class BLE(_bluetooth.BLE):
         self._py2c_dict    = {}
         self._c2py_dict    = {}
         self._c2value_dict = {}
-        self._adv_data_append = True
+        self._append_adv_data = True
         a = self.init()
         self.setCallback(self._callback)
 
+    # 测试函数
     def test(self):
         if self.pyi_check_active() == False:
             raise OSError
@@ -123,6 +124,7 @@ class BLE(_bluetooth.BLE):
     def test_call_some_name(self):
         super().test_call_some_name()  
 
+    # 检查蓝牙活跃性
     def _check_active(self):
         if self.pyi_check_active() == False:
             raise OSError
@@ -162,7 +164,7 @@ class BLE(_bluetooth.BLE):
 
         TODO:需要支持设置任意值嘛？有点困难
     
-    - `'_addr_mode'`:
+    - `'addr_mode'`:
 
     - `'gap_name'`:
     
@@ -201,56 +203,63 @@ class BLE(_bluetooth.BLE):
         if len(param_name) != 0 :
             first_param = param_name[0]
             if first_param == "mac":
-                return (self.config__addr_mode_get(),self.config_mac_get())
-            elif first_param == "_addr_mode":
-                return self.config__addr_mode_get()
+                return (self.config_addr_mode_get(),self.config_mac_get())
+            elif first_param == "addr_mode":
+                return self.config_addr_mode_get()
             elif first_param == "gap_name":
                 return self.config_gap_name_get()
-            elif first_param == "rxbuf" :
-                self.config_addr_rxbuf_get()
-            elif first_param == "mtu" :
-                self.config_mtu_get()
-            elif first_param == "bond" :
-                self.config_bond_get()
-            elif first_param == "mitm" :
-                self.config_mitm_get()
-            elif first_param == "io":
-                self.config_io_get()
-            elif first_param == "le_secure":
-                self.config_le_secure_get()
+            # elif first_param == "rxbuf" :
+            #     self.config_addr_rxbuf_get()
+            # elif first_param == "mtu" :
+            #     self.config_mtu_get()
+            # elif first_param == "bond" :
+            #     self.config_bond_get()
+            # elif first_param == "mitm" :
+            #     self.config_mitm_get()
+            # elif first_param == "io":
+            #     self.config_io_get()
+            # elif first_param == "le_secure":
+            #     self.config_le_secure_get()
+            elif first_param == "gap_uuid":
+                return self.config_gap_uuid_get()
             else:
                 print("ValueError: unknown config param")   
 
     # 设置参数
         if "mac" in kv:
-            return self.config_mac_update(kv["mac"])
+            self.config_mac_update(kv["mac"])
 
-        if ("_addr_mode" in kv):
-            return self.config__addr_mode_update(kv["_addr_mode"])
+        if ("addr_mode" in kv):
+            self.config_addr_mode_update(kv["_addr_mode"])
 
         if ("gap_name" in kv):
-            return self.config_gap_name_update(kv["gap_name"])
+            self.config_gap_name_update(kv["gap_name"])
 
-        if ("rxbuf" in kv):
-            return self.config_rxbuf_update(kv["rxbuf"])
+        # if ("rxbuf" in kv):
+        #     return self.config_rxbuf_update(kv["rxbuf"])
 
-        if ("mtu" in kv):
-            return self.config_mtu_update(kv["mtu"])
+        # if ("mtu" in kv):
+        #     return self.config_mtu_update(kv["mtu"])
 
-        if ("bond" in kv):
-            return self.config_bond_update(kv["bond"])
+        # if ("bond" in kv):
+        #     return self.config_bond_update(kv["bond"])
 
-        if ("mitm" in kv):
-            return self.config_mitm_update(kv["mitm"])
+        # if ("mitm" in kv):
+        #     return self.config_mitm_update(kv["mitm"])
 
-        if ("bond" in kv):
-            return self.config_mac_update(kv["bond"])
+        # if ("bond" in kv):
+        #     return self.config_mac_update(kv["bond"])
 
-        if ("io" in kv):
-            return self.config_io_update(kv["io"])
+        # if ("io" in kv):
+        #     return self.config_io_update(kv["io"])
 
-        if ("le_secire" in kv):
-            return self.config_le_secire_update(kv["le_secire"])
+        # if ("le_secire" in kv):
+        #     return self.config_le_secire_update(kv["le_secire"])
+        
+        if ("gap_uuid" in kv):
+            uuid = kv["gap_uuid"]
+            if isinstance(uuid,UUID):
+                self.config_gap_uuid_update(uuid.value,uuid._UUID_bits)
 
     '''
     为来自 BLE 堆栈的事件注册回调。
@@ -265,6 +274,7 @@ class BLE(_bluetooth.BLE):
     
     def _callback(self,data):
         event_id = data[0]
+        # print("_callback call")
         # print("event_id",event_id)
         # print("data  ",data[1])
         if self._callback_func != None:
@@ -318,38 +328,35 @@ class BLE(_bluetooth.BLE):
 
         - resp_data(bytes, bytearray, str): 扫描响应数据,默认值为none
 
-        -connectable(bool): 是否可连接, True 为可连接.
+        - connectable(bool): 是否可连接, True 为可连接.
+
+        - adv_data_append: 是否是增加数据
+
+        TODO:存在问题
     '''
     def gap_advertise(self, interval_us,adv_data=None,resp_data=None, connectable=None, adv_data_append=None):
         try:
             self._check_active()
         except:
             raise OSError
-        print("adv_data_append ",adv_data_append)
-        print("adv_data",adv_data)
+        
         if connectable !=  None:
             self._connectable = connectable
         
         if interval_us is None: 
-            # print("here1")
             return self.stop_advertise()
         else:
-            # print("here6")
             # 设置广播载荷
-            if adv_data is None: #参数为空，则使用上次数据
+            if adv_data is None: #参数为空，则使用上次数据广播数据
                 adv_data = self._last_adv_data
             else :
-                # print("here2")
-                if adv_data_append != None:
-                    self._adv_data_append = adv_data_append
-                    # print("here3")
+                if adv_data_append != None: # 设置是否增加数据
+                    self._append_adv_data = adv_data_append
 
-                if self._adv_data_append == True: # 新增数据
+                if self._append_adv_data == True: # 新增数据
                     self._last_adv_data = _to_bytes(adv_data)
-                    # print("here4")
                 else: # 覆盖数据
                     empty_list = []
-                    # print("here5")
                     for i in range(len(adv_data)):
                         empty_list.append(len(adv_data[i]))
                         empty_list += adv_data[i]
@@ -361,10 +368,20 @@ class BLE(_bluetooth.BLE):
                 resp_data = self._last_resp_data
             else :
                 self._last_resp_data = _to_bytes(resp_data)
+        # self._adv_data_append = False
+        # print("_addr_mode : ",self._addr_mode)
+        # print("int(interval_us/625) : ",int(interval_us/625))
+        # print("self._connectable: ",self._connectable)
+        # print("self._last_adv_data : ",self._last_adv_data)
+        # print("len(self._last_adv_data) : ",len(self._last_adv_data))
+        # print("adv_data_append : ",self._append_adv_data)
+        # print("self._b",self._b)
+        # print("self._last_resp_data : ",self._last_resp_data)
+        # print("len(self._last_resp_data) : ",len(self._last_resp_data))
         return self.advertise(self._addr_mode,int(interval_us/625),self._connectable,self._last_adv_data,
-                            len(self._last_adv_data),adv_data_append,self._last_resp_data,len(self._last_resp_data))
+                            len(self._last_adv_data),self._append_adv_data,self._last_resp_data,len(self._last_resp_data))
 
-
+        
     '''
     运行持续指定持续时间(以毫秒为单位)的扫描操作。
     
@@ -550,14 +567,14 @@ class BLE(_bluetooth.BLE):
         except:
             raise OSError
         
-        self._check_active()
+        print("send_update=", send_update)
         if send_update == False:
             return self._py2_change_value(value_handle,data)
         else : 
             rc = self._py2_change_value(value_handle,data)
             if rc != 0:
                 return rc
-            return self.gatts_chr_updated(value_handle)
+            return self.gatts_chr_updated(self._py2c_dict[str(value_handle)])
 
         
     
@@ -874,10 +891,13 @@ def _to_bytes(data,size=None):
         data_bytes = bytes(data)
     elif isinstance(data,int):
         data_list = []
-        while data > 0:
-            remainder = data % 256
-            data_list.insert(0, remainder)
-            data //= 256
+        if data == 0:
+            data_list.append(0)
+        else :
+            while data > 0:
+                remainder = data % 256
+                data_list.insert(0, remainder)
+                data //= 256
         data_bytes = bytes(data_list)
     else:
         raise ValueError
