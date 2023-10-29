@@ -698,9 +698,9 @@ char* LibObj_redirectModule(LibObj* self, Args* buffs_out, char* module_name) {
     if (NULL != module_obj) {
         goto __exit;
     }
-    module_name = strsCopy(&buffs, module_name);
+    char* module_try = strsCopy(&buffs, module_name);
     for (int i = 0; i < token_num; i++) {
-        char* module_try = strsPopToken(&buffs, &module_try, '.');
+        module_try = strsPopToken(&buffs, &module_try, '.');
         PikaObj* module_obj = LibObj_getModule(self, module_try);
         if (NULL != module_obj) {
             char* module_name = obj_getStr(module_obj, "name");
