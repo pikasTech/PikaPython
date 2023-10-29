@@ -40,12 +40,12 @@ char* os_path_abspath(PikaObj* self, char* path) {
         return NULL;
     }
 #else
-    char* cwd = getcwd(NULL, 0);
+    char* cwd = pika_platform_getcwd(NULL, 0);
     if (cwd == NULL) {
         return NULL;
     }
 
-    abs_path = realpath(path, NULL);
+    abs_path = pika_platform_realpath(path, NULL);
     if (abs_path == NULL) {
         free(cwd);
         return NULL;
@@ -83,13 +83,15 @@ PIKA_BOOL os_path_exists(PikaObj* self, char* path) {
     }
 
     return PIKA_TRUE;
-#else
+#elif defined(__linux)
     struct stat statbuf;
     if (stat(path, &statbuf) == -1) {
         return PIKA_FALSE;
     }
 
     return PIKA_TRUE;
+#else
+    return pika_platform_path_exists(path);
 #endif
 }
 
@@ -115,38 +117,12 @@ PIKA_BOOL os_path_isabs(PikaObj* self, char* path) {
 
 // Returns true if the given path is a directory, false otherwise.
 PIKA_BOOL os_path_isdir(PikaObj* self, char* path) {
-    PIKA_BOOL is_dir = PIKA_FALSE;
-#ifdef _WIN32
-    DWORD attrs = GetFileAttributes((LPCWSTR)path);
-    if (attrs != INVALID_FILE_ATTRIBUTES) {
-        is_dir =
-            (attrs & FILE_ATTRIBUTE_DIRECTORY) != 0 ? PIKA_TRUE : PIKA_FALSE;
-    }
-#else
-    struct stat st;
-    if (stat(path, &st) == 0) {
-        is_dir = S_ISDIR(st.st_mode) ? PIKA_TRUE : PIKA_FALSE;
-    }
-#endif
-    return is_dir;
+    return pika_platform_path_isdir(path);
 }
 
 // Returns true if the given path is a regular file, false otherwise.
 PIKA_BOOL os_path_isfile(PikaObj* self, char* path) {
-    PIKA_BOOL is_file = PIKA_FALSE;
-#ifdef _WIN32
-    DWORD attrs = GetFileAttributes(path);
-    if (attrs != INVALID_FILE_ATTRIBUTES) {
-        is_file =
-            (attrs & FILE_ATTRIBUTE_DIRECTORY) == 0 ? PIKA_TRUE : PIKA_FALSE;
-    }
-#else
-    struct stat st;
-    if (stat(path, &st) == 0) {
-        is_file = S_ISREG(st.st_mode) ? PIKA_TRUE : PIKA_FALSE;
-    }
-#endif
-    return is_file;
+    return pika_platform_path_isfile(path);
 }
 
 char* os_path_join(PikaObj* self, PikaTuple* paths) {
@@ -226,7 +202,7 @@ int _os_path_split(char* path, char** folder, char** file) {
         }
         strncpy(*folder, path, idx + 1);
         (*folder)[idx] = '\0';
-        *file = strdup(p + 1);
+        *file = pika_platform_strdup(p + 1);
         if (*file == NULL) {
             pika_platform_free(*folder);
             *folder = NULL;
@@ -234,11 +210,11 @@ int _os_path_split(char* path, char** folder, char** file) {
         }
         return 0;
     } else {
-        *folder = strdup(path);
+        *folder = pika_platform_strdup(path);
         if (*folder == NULL) {
             return -1;
         }
-        *file = strdup("");
+        *file = pika_platform_strdup("");
         if (*file == NULL) {
             pika_platform_free(*folder);
             *folder = NULL;
@@ -258,7 +234,7 @@ int _os_path_splitext(char* path, char** file, char** ext) {
         }
         strncpy(*file, path, idx);
         (*file)[idx] = '\0';
-        *ext = strdup(p);
+        *ext = pika_platform_strdup(p);
         if (!(*ext)) {
             pika_platform_free(*file);
             *file = NULL;
@@ -266,11 +242,11 @@ int _os_path_splitext(char* path, char** file, char** ext) {
         }
         return 0;
     } else {
-        *file = strdup(path);
+        *file = pika_platform_strdup(path);
         if (!(*file)) {
             return -1;
         }
-        *ext = strdup("");
+        *ext = pika_platform_strdup("");
         if (!(*ext)) {
             free(*file);
             *file = NULL;

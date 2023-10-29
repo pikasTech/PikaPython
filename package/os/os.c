@@ -7,6 +7,10 @@
 #include "os_fileStat.h"
 #include "os_platform.h"
 
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 12, 7)
+#error "This library requires PikaScript version 1.12.7 or higher"
+#endif
+
 void os___init__(PikaObj* self) {
     // obj_newDirectObj(self,"os",New_TinyObj);
 
@@ -44,8 +48,8 @@ char* os_read(PikaObj* self, PikaObj* fd, int len) {
 int os_write(PikaObj* self, PikaObj* fd, Arg* buf) {
     if (arg_getType(buf) != ARG_TYPE_BYTES) {
         obj_setErrorCode(self, PIKA_RES_ERR_INVALID_PARAM);
-        pika_platform_printf(
-            "TypeError: a bytes-like object is required, not 'str'\r\n");
+        obj_setSysOut(self,
+                      "TypeError: a bytes-like object is required, not 'str'");
         return -1;
     }
     return os_write_platform(arg_getBytes(buf), arg_getBytesSize(buf), fd);
@@ -58,7 +62,7 @@ int os_lseek(PikaObj* self, PikaObj* fd, int how, int pos) {
 void os_close(PikaObj* self, PikaObj* fd) {
     if (os_close_platform(fd) < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO_ERROR);
-        pika_platform_printf("close file error\r\n");
+        obj_setSysOut(self, "close file error");
     }
 }
 
@@ -79,34 +83,34 @@ void os_mkdir(PikaObj* self, char* path, PikaTuple* mode) {
     }
     if (os_mkdir_platform(iMode, path) < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO_ERROR);
-        pika_platform_printf("mkdir error\r\n");
+        obj_setSysOut(self, "mkdir error");
     }
 }
 
 void os_chdir(PikaObj* self, char* path) {
     if (os_chdir_platform(path) < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO_ERROR);
-        pika_platform_printf("chdir error\r\n");
+        obj_setSysOut(self, "chdir error");
     }
 }
 
 void os_rmdir(PikaObj* self, char* path) {
     if (os_rmdir_platform(path) < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO_ERROR);
-        pika_platform_printf("rmdir error\r\n");
+        obj_setSysOut(self, "rmdir error");
     }
 }
 
 void os_remove(PikaObj* self, char* filename) {
     if (os_remove_platform(filename) < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO_ERROR);
-        pika_platform_printf("remove error\r\n");
+        obj_setSysOut(self, "remove error");
     }
 }
 
 void os_rename(PikaObj* self, char* old, char* new) {
     if (os_rename_platform(old, new) < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO_ERROR);
-        pika_platform_printf("rename error\r\n");
+        obj_setSysOut(self, "rename error");
     }
 }

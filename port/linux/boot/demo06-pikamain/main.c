@@ -6,6 +6,7 @@
 
 int main(int argc, char* argv[]) {
     if (1 == argc) {
+        __platform_printf("======[ rbg/kcf test ]======\r\n");
         PikaObj* pikaMain = pikaScriptInit();
         pikaScriptShell(pikaMain);
         obj_deinit(pikaMain);

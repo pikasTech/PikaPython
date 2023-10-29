@@ -2954,6 +2954,11 @@ char* parser_lines2Target(Parser* self, char* sPyLines) {
 
     __parse_line:
         /* parse single Line to Asm */
+        if (strEqu(sLine, "#!label")) {
+            self->bytecode_frame->label_pc =
+                self->bytecode_frame->instruct_array.size;
+            goto __next_line;
+        }
         sBackendCode = parser_line2Target(self, sLine);
     __parse_after:
         if (NULL == sBackendCode) {

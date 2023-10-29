@@ -97,8 +97,10 @@ TEST(mqtt, init) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if 0
-//! Mqtt connect will break the gichub actions, 
+#define USING_MQTT_TEST 1
+
+#if USING_MQTT_TEST
+//! Mqtt connect will break the gichub actions,
 //! if need to test, please enable it manually.
 TEST(mqtt, connect) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -110,8 +112,8 @@ TEST(mqtt, connect) {
 }
 #endif
 
-#if 0
-//! Mqtt set_para will break the gichub actions, 
+#if USING_MQTT_TEST
+//! Mqtt set_para will break the gichub actions,
 //! if need to test, please enable it manually.
 TEST(mqtt, set_para) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -123,8 +125,8 @@ TEST(mqtt, set_para) {
 }
 #endif
 
-#if 0
-//! Mqtt publish will break the gichub actions, 
+#if USING_MQTT_TEST
+//! Mqtt publish will break the gichub actions,
 //! if need to test, please enable it manually.
 TEST(mqtt, publish) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);

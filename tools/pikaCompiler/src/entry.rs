@@ -57,20 +57,41 @@ pub fn pika_compiler_entry() {
        Compile packages in requestment.txt, solve the packages
        as the top packages.
     */
-    for package in &version_info.package_list {
-        let package_name = package.0;
-        /* skip pikascript-core */
-        if package_name == "pikascript-core" {
-            continue;
-        }
-        compiler = Compiler::analyse_c_package_inner(compiler, String::from(package_name));
-    }
+    // Generate a list of module names
 
-    /* Compile packages in PikaStdLib */
-    compiler = Compiler::analyse_c_package_top(compiler, String::from("PikaStdTask"));
-    compiler = Compiler::analyse_c_package_top(compiler, String::from("PikaStdData"));
-    compiler = Compiler::analyse_c_package_top(compiler, String::from("PikaDebug"));
-    compiler = Compiler::analyse_c_package_top(compiler, String::from("builtins"));
+    let mut module_list = VersionInfo::new();
+    module_list.plot = false;
+    // check module_list.txt exists
+    if Path::new("module_list.txt").exists() {
+        module_list = VersionInfo::analyse_file(module_list, String::from("module_list.txt"));
+    } else {
+        module_list = VersionInfo::analyse_file(module_list, String::from("requestment.txt"));
+    }
+    let mut module_names: Vec<String> = module_list
+        .package_list
+        .iter()
+        .filter_map(|(package_name, _)| {
+            // skip pikascript-core
+            if package_name == "pikascript-core" {
+                None
+            } else {
+                Some(package_name.clone())
+            }
+        })
+        .collect();
+
+    // Add "main" to the start of the module_names
+    module_names.insert(0, "main".to_string());
+
+    // Process each module
+    for module_name in &module_names {
+        compiler = Compiler::import_module(compiler, module_name.clone());
+    }
+    compiler = Compiler::import_module(compiler, "PikaStdLib".to_string());
+    compiler = Compiler::import_module(compiler, "PikaStdData".to_string());
+    compiler = Compiler::import_module(compiler, "PikaDebug".to_string());
+    compiler = Compiler::import_module(compiler, "builtins".to_string());
+
     /* search all *.pyi file and analyse */
     let dir = Path::new(".");
     let pyi_files = collect_pyi_files(&dir);
@@ -227,5 +248,12 @@ pub fn pika_compiler_entry() {
     f.write("#endif\n".as_bytes()).unwrap();
     drop(f);
 
+    // Write to a file
+    let file_name = format!("{}module_list_default.txt", compiler.dist_path);
+    let mut f = File::create(file_name).expect("Unable to create file");
+    let content = module_names.join("\n") + "\n";
+    f.write_all(content.as_bytes())
+        .expect("Unable to write data");
+    drop(f);
     compiler.reuse_old_file();
 }

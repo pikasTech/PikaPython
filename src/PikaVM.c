@@ -38,20 +38,24 @@
 #endif
 
 static pika_platform_thread_mutex_t g_pikaGIL = {0};
-volatile VMSignal g_PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
-
-                                    .vm_cnt = 0,
+volatile VMState g_PikaVMState = {
+    .signal_ctrl = VM_SIGNAL_CTRL_NONE,
+    .vm_cnt = 0,
 #if PIKA_EVENT_ENABLE
-                                    .cq =
-                                        {
-                                            .head = 0,
-                                            .tail = 0,
-                                            .res = {0},
-                                        },
-                                    .event_pickup_cnt = 0,
-                                    .event_thread = NULL,
-                                    .event_thread_exit = pika_false
-
+    .cq =
+        {
+            .head = 0,
+            .tail = 0,
+            .res = {0},
+        },
+    .event_pickup_cnt = 0,
+    .event_thread = NULL,
+    .event_thread_exit = pika_false,
+#endif
+#if PIKA_DEBUG_BREAK_POINT_MAX > 0
+    .break_module_hash = {0},
+    .break_point_pc = {0},
+    .break_point_cnt = 0,
 #endif
 };
 extern volatile PikaObjState g_PikaObjState;
@@ -127,14 +131,14 @@ int _VM_is_first_lock(void) {
 }
 
 int _VMEvent_getVMCnt(void) {
-    return g_PikaVMSignal.vm_cnt;
+    return g_PikaVMState.vm_cnt;
 }
 
 int _VMEvent_getEventPickupCnt(void) {
 #if !PIKA_EVENT_ENABLE
     return -1;
 #else
-    return g_PikaVMSignal.event_pickup_cnt;
+    return g_PikaVMState.event_pickup_cnt;
 #endif
 }
 
@@ -209,21 +213,21 @@ void _VMEvent_deinit(void) {
     pika_platform_panic_handle();
 #else
     for (int i = 0; i < PIKA_EVENT_LIST_SIZE; i++) {
-        if (NULL != g_PikaVMSignal.cq.res[i]) {
-            arg_deinit(g_PikaVMSignal.cq.res[i]);
-            g_PikaVMSignal.cq.res[i] = NULL;
+        if (NULL != g_PikaVMState.cq.res[i]) {
+            arg_deinit(g_PikaVMState.cq.res[i]);
+            g_PikaVMState.cq.res[i] = NULL;
         }
-        if (NULL != g_PikaVMSignal.cq.data[i]) {
-            arg_deinit(g_PikaVMSignal.cq.data[i]);
-            g_PikaVMSignal.cq.data[i] = NULL;
+        if (NULL != g_PikaVMState.cq.data[i]) {
+            arg_deinit(g_PikaVMState.cq.data[i]);
+            g_PikaVMState.cq.data[i] = NULL;
         }
     }
-    if (NULL != g_PikaVMSignal.event_thread) {
-        g_PikaVMSignal.event_thread_exit = 1;
-        pika_platform_thread_destroy(g_PikaVMSignal.event_thread);
-        g_PikaVMSignal.event_thread = NULL;
+    if (NULL != g_PikaVMState.event_thread) {
+        g_PikaVMState.event_thread_exit = 1;
+        pika_platform_thread_destroy(g_PikaVMState.event_thread);
+        g_PikaVMState.event_thread = NULL;
         pika_GIL_EXIT();
-        while (!g_PikaVMSignal.event_thread_exit_done) {
+        while (!g_PikaVMState.event_thread_exit_done) {
             pika_platform_thread_yield();
         }
         pika_GIL_ENTER();
@@ -243,24 +247,23 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
         arg_setType(eventData, ARG_TYPE_OBJECT);
     }
     /* push to event_cq_buff */
-    if (_ecq_isFull(&g_PikaVMSignal.cq)) {
+    if (_ecq_isFull(&g_PikaVMState.cq)) {
         // pika_debug("event_cq_buff is full");
         arg_deinit(eventData);
         return PIKA_RES_ERR_SIGNAL_EVENT_FULL;
     }
-    if (g_PikaVMSignal.cq.res[g_PikaVMSignal.cq.tail] != NULL) {
-        arg_deinit(g_PikaVMSignal.cq.res[g_PikaVMSignal.cq.tail]);
-        g_PikaVMSignal.cq.res[g_PikaVMSignal.cq.tail] = NULL;
+    if (g_PikaVMState.cq.res[g_PikaVMState.cq.tail] != NULL) {
+        arg_deinit(g_PikaVMState.cq.res[g_PikaVMState.cq.tail]);
+        g_PikaVMState.cq.res[g_PikaVMState.cq.tail] = NULL;
     }
-    if (g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.tail] != NULL) {
-        arg_deinit(g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.tail]);
-        g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.tail] = NULL;
+    if (g_PikaVMState.cq.data[g_PikaVMState.cq.tail] != NULL) {
+        arg_deinit(g_PikaVMState.cq.data[g_PikaVMState.cq.tail]);
+        g_PikaVMState.cq.data[g_PikaVMState.cq.tail] = NULL;
     }
-    g_PikaVMSignal.cq.id[g_PikaVMSignal.cq.tail] = eventId;
-    g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.tail] = eventData;
-    g_PikaVMSignal.cq.listener[g_PikaVMSignal.cq.tail] = lisener;
-    g_PikaVMSignal.cq.tail =
-        (g_PikaVMSignal.cq.tail + 1) % PIKA_EVENT_LIST_SIZE;
+    g_PikaVMState.cq.id[g_PikaVMState.cq.tail] = eventId;
+    g_PikaVMState.cq.data[g_PikaVMState.cq.tail] = eventData;
+    g_PikaVMState.cq.listener[g_PikaVMState.cq.tail] = lisener;
+    g_PikaVMState.cq.tail = (g_PikaVMState.cq.tail + 1) % PIKA_EVENT_LIST_SIZE;
     return PIKA_RES_OK;
 #endif
 }
@@ -275,15 +278,14 @@ PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
     return PIKA_RES_ERR_OPERATION_FAILED;
 #else
     /* pop from event_cq_buff */
-    if (_ecq_isEmpty(&g_PikaVMSignal.cq)) {
+    if (_ecq_isEmpty(&g_PikaVMState.cq)) {
         return PIKA_RES_ERR_SIGNAL_EVENT_EMPTY;
     }
-    *id = g_PikaVMSignal.cq.id[g_PikaVMSignal.cq.head];
-    *data = g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.head];
-    *lisener_p = g_PikaVMSignal.cq.listener[g_PikaVMSignal.cq.head];
-    *head = g_PikaVMSignal.cq.head;
-    g_PikaVMSignal.cq.head =
-        (g_PikaVMSignal.cq.head + 1) % PIKA_EVENT_LIST_SIZE;
+    *id = g_PikaVMState.cq.id[g_PikaVMState.cq.head];
+    *data = g_PikaVMState.cq.data[g_PikaVMState.cq.head];
+    *lisener_p = g_PikaVMState.cq.listener[g_PikaVMState.cq.head];
+    *head = g_PikaVMState.cq.head;
+    g_PikaVMState.cq.head = (g_PikaVMState.cq.head + 1) % PIKA_EVENT_LIST_SIZE;
     return PIKA_RES_OK;
 #endif
 }
@@ -303,23 +305,23 @@ void __VMEvent_pickupEvent(char* info) {
     int head;
     if (PIKA_RES_OK == __eventListener_popEvent(&event_lisener, &event_id,
                                                 &event_data, &head)) {
-        g_PikaVMSignal.event_pickup_cnt++;
+        g_PikaVMState.event_pickup_cnt++;
         pika_debug("pickup_info: %s", info);
         pika_debug("pickup_cnt: %d", g_PikaVMSignal.event_pickup_cnt);
         Arg* res =
             __eventListener_runEvent(event_lisener, event_id, event_data);
-        g_PikaVMSignal.cq.res[head] = res;
-        g_PikaVMSignal.event_pickup_cnt--;
+        g_PikaVMState.cq.res[head] = res;
+        g_PikaVMState.event_pickup_cnt--;
     }
 #endif
 }
 
 VM_SIGNAL_CTRL VMSignal_getCtrl(void) {
-    return g_PikaVMSignal.signal_ctrl;
+    return g_PikaVMState.signal_ctrl;
 }
 
 void pika_vm_exit(void) {
-    g_PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_EXIT;
+    g_PikaVMState.signal_ctrl = VM_SIGNAL_CTRL_EXIT;
 }
 
 void pika_vm_exit_await(void) {
@@ -333,7 +335,7 @@ void pika_vm_exit_await(void) {
 }
 
 void pika_vmSignal_setCtrlClear(void) {
-    g_PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_NONE;
+    g_PikaVMState.signal_ctrl = VM_SIGNAL_CTRL_NONE;
 }
 
 /* head declare start */
@@ -399,6 +401,21 @@ static int PikaVMFrame_getInvokeDeepthNow(PikaVMFrame* vm) {
     /* support run byteCode */
     InstructUnit* ins_unit = PikaVMFrame_getInstructNow(vm);
     return instructUnit_getInvokeDeepth(ins_unit);
+}
+
+pika_bool PikaVMFrame_checkBreakPoint(PikaVMFrame* vm) {
+#if !PIKA_DEBUG_BREAK_POINT_MAX
+    return pika_false;
+#else
+    if (g_PikaVMState.break_point_cnt == 0) {
+        return pika_false;
+    }
+    if (NULL == vm->bytecode_frame->name) {
+        return pika_false;
+    }
+    Hash module_hash = byteCodeFrame_getNameHash(vm->bytecode_frame);
+    return pika_debug_check_break_hash(module_hash, vm->pc);
+#endif
 }
 
 static int32_t PikaVMFrame_getAddrOffsetOfJmpBack(PikaVMFrame* vm) {
@@ -731,9 +748,9 @@ Arg* _vm_get(PikaVMFrame* vm, PikaObj* self, Arg* aKey, Arg* aObj) {
             0x73, 0x5f, 0x69, 0x74, 0x65, 0x6d, 0x00, /* const pool */
         };
         if (NULL != vm) {
-            aRes = _do_pikaVM_runByteCodeReturn(oArg, oArg, oArg,
-                                                (uint8_t*)bytes, vm->vm_thread,
-                                                pika_true, "@res_item");
+            aRes = pikaVM_runByteCode_exReturn(oArg, oArg, oArg,
+                                               (uint8_t*)bytes, vm->vm_thread,
+                                               pika_true, "@res_item");
         } else {
             aRes = pikaVM_runByteCodeReturn(oArg, (uint8_t*)bytes, "@res_item");
         }
@@ -1811,6 +1828,13 @@ InstructUnit* byteCodeFrame_findInsForward(ByteCodeFrame* bcframe,
                                           pika_true);
 }
 
+Hash byteCodeFrame_getNameHash(ByteCodeFrame* bcframe) {
+    if (0 == bcframe->name_hash) {
+        bcframe->name_hash = hash_time33(bcframe->name);
+    }
+    return bcframe->name_hash;
+}
+
 InstructUnit* byteCodeFrame_findInsUnitBackward(ByteCodeFrame* bcframe,
                                                 int32_t pc_start,
                                                 enum InstructIndex index,
@@ -1821,7 +1845,7 @@ InstructUnit* byteCodeFrame_findInsUnitBackward(ByteCodeFrame* bcframe,
 
 char* _find_super_class_name(ByteCodeFrame* bcframe, int32_t pc_start) {
     /* find super class */
-    int offset = 0;
+    int32_t offset = 0;
     char* super_class_name = NULL;
     byteCodeFrame_findInsForward(bcframe, pc_start, CLS, &offset);
     InstructUnit* unit_run =
@@ -3565,6 +3589,70 @@ const VM_instruct_handler VM_instruct_handler_table[__INSTRUCTION_CNT] = {
 };
 #endif
 
+extern volatile PikaObj* __pikaMain;
+static enum shellCTRL __obj_shellLineHandler_debug(PikaObj* self,
+                                                   char* input_line,
+                                                   struct ShellConfig* config) {
+    /* continue */
+    if (strEqu("c", input_line)) {
+        return SHELL_CTRL_EXIT;
+    }
+    /* next */
+    if (strEqu("n", input_line)) {
+        return SHELL_CTRL_EXIT;
+    }
+    /* launch shell */
+    if (strEqu("sh", input_line)) {
+        /* exit pika shell */
+        pikaScriptShell((PikaObj*)__pikaMain);
+        return SHELL_CTRL_CONTINUE;
+    }
+    /* quit */
+    if (strEqu("q", input_line)) {
+        obj_setInt(self, "enable", 0);
+        return SHELL_CTRL_EXIT;
+    }
+    /* print */
+    if (strIsStartWith(input_line, "p ")) {
+        char* path = input_line + 2;
+        Arg* asm_buff = arg_newStr("print(");
+        asm_buff = arg_strAppend(asm_buff, path);
+        asm_buff = arg_strAppend(asm_buff, ")\n");
+        pikaVM_run_ex_cfg cfg = {0};
+        cfg.globals = config->globals;
+        cfg.in_repl = pika_true;
+        pikaVM_run_ex(config->locals, arg_getStr(asm_buff), &cfg);
+        arg_deinit(asm_buff);
+        return SHELL_CTRL_CONTINUE;
+    }
+    pikaVM_run_ex_cfg cfg = {0};
+    cfg.globals = config->globals;
+    cfg.in_repl = pika_true;
+    pikaVM_run_ex(config->locals, input_line, &cfg);
+    return SHELL_CTRL_CONTINUE;
+}
+
+void pika_debug_set_trace(PikaObj* self) {
+    if (!obj_getInt(self, "enable")) {
+        return;
+    }
+    char* name = "stdin";
+    pika_assert(NULL != self->vmFrame);
+    if (NULL != self->vmFrame->bytecode_frame->name) {
+        name = self->vmFrame->bytecode_frame->name;
+    }
+    pika_platform_printf("%s:%d\n", name, self->vmFrame->pc);
+    struct ShellConfig cfg = {
+        .prefix = "(Pdb-pika) ",
+        .handler = __obj_shellLineHandler_debug,
+        .fn_getchar = __platform_getchar,
+        .locals = self->vmFrame->locals,
+        .globals = self->vmFrame->globals,
+    };
+    _do_pikaScriptShell(self, &cfg);
+    shConfig_deinit(&cfg);
+}
+
 static int pikaVM_runInstructUnit(PikaObj* self,
                                   PikaVMFrame* vm,
                                   InstructUnit* ins_unit) {
@@ -3576,6 +3664,9 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     char* data = PikaVMFrame_getConstWithInstructUnit(vm, ins_unit);
     /* run instruct */
     pika_assert(NULL != vm->vm_thread);
+    if (PikaVMFrame_checkBreakPoint(vm)) {
+        pika_debug_set_trace(self);
+    }
 
 #if PIKA_INSTRUCT_EXTENSION_ENABLE
     const VMInstruction* ins = instructUnit_getInstruct(instruct);
@@ -3751,14 +3842,16 @@ static ByteCodeFrame* _cache_bcf_fn_bc(PikaObj* self, uint8_t* bytecode) {
     return _cache_bytecodeframe(self);
 }
 
-VMParameters* _pikaVM_runPyLines(PikaObj* self,
-                                 char* py_lines,
-                                 pika_bool in_repl) {
-    VMParameters* globals = NULL;
+VMParameters* pikaVM_run_ex(PikaObj* self,
+                            char* py_lines,
+                            pikaVM_run_ex_cfg* cfg) {
     ByteCodeFrame bytecode_frame_stack = {0};
     ByteCodeFrame* bytecode_frame_p = NULL;
     uint8_t is_use_heap_bytecode = 0;
-
+    PikaObj* globals = self;
+    if (NULL != cfg->globals) {
+        globals = cfg->globals;
+    }
     /*
      * the first obj_run, cache bytecode to heap, to support 'def' and
      * 'class'
@@ -3779,7 +3872,11 @@ VMParameters* _pikaVM_runPyLines(PikaObj* self,
         goto __exit;
     }
     /* run byteCode */
-    globals = _pikaVM_runByteCodeFrame(self, bytecode_frame_p, in_repl);
+    if (NULL != cfg->module_name) {
+        byteCodeFrame_setName(bytecode_frame_p, cfg->module_name);
+    }
+    globals = _pikaVM_runByteCodeFrameGlobals(self, globals, bytecode_frame_p,
+                                              cfg->in_repl);
     goto __exit;
 __exit:
     if (!is_use_heap_bytecode) {
@@ -3788,12 +3885,9 @@ __exit:
     return globals;
 }
 
-VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
-                                     VMParameters* locals,
-                                     VMParameters* globals,
-                                     uint8_t* bytecode,
-                                     PikaVMThread* vm_thread,
-                                     pika_bool is_const_bytecode) {
+VMParameters* pikaVM_runByteCode_ex(PikaObj* self,
+                                    uint8_t* bytecode,
+                                    pikaVM_runBytecode_ex_cfg* cfg) {
     ByteCodeFrame bytecode_frame_stack = {0};
     ByteCodeFrame* bytecode_frame_p = NULL;
     uint8_t is_use_heap_bytecode = 1;
@@ -3807,24 +3901,24 @@ VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
         /* get bytecode_ptr from stack */
         bytecode_frame_p = &bytecode_frame_stack;
         /* no def/class ins, no need cache bytecode */
-        is_const_bytecode = pika_true;
+        cfg->is_const_bytecode = pika_true;
     }
 
     /* load or generate byte code frame */
     /* load bytecode */
-    _do_byteCodeFrame_loadByteCode(bytecode_frame_p, bytecode,
-                                   is_const_bytecode);
+    _do_byteCodeFrame_loadByteCode(bytecode_frame_p, bytecode, cfg->name,
+                                   cfg->is_const_bytecode);
 
     /* run byteCode */
 
-    globals = _pikaVM_runByteCodeFrameWithState(self, locals, globals,
-                                                bytecode_frame_p, 0, vm_thread);
+    cfg->globals = _pikaVM_runByteCodeFrameWithState(
+        self, cfg->locals, cfg->globals, bytecode_frame_p, 0, cfg->vm_thread);
     goto __exit;
 __exit:
     if (!is_use_heap_bytecode) {
         byteCodeFrame_deinit(&bytecode_frame_stack);
     }
-    return globals;
+    return cfg->globals;
 }
 
 VMParameters* pikaVM_runByteCodeFile(PikaObj* self, char* filename) {
@@ -3852,21 +3946,34 @@ VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename) {
     char* lines = (char*)arg_getBytes(file_arg);
     lines = strsFilePreProcess(&buffs, lines);
     /* clear the void line */
-    VMParameters* res = pikaVM_run(self, lines);
+    pikaVM_run_ex_cfg cfg = {0};
+    cfg.in_repl = pika_false;
+    char* module_name = strsPathGetFileName(&buffs, filename);
+    module_name = strsPopToken(&buffs, &module_name, '.');
+    cfg.module_name = module_name;
+    VMParameters* res = pikaVM_run_ex(self, lines, &cfg);
     arg_deinit(file_arg);
     strsDeinit(&buffs);
     return res;
 }
 
 VMParameters* pikaVM_run(PikaObj* self, char* py_lines) {
-    return _pikaVM_runPyLines(self, py_lines, pika_false);
+    pikaVM_run_ex_cfg cfg = {0};
+    cfg.in_repl = pika_false;
+    return pikaVM_run_ex(self, py_lines, &cfg);
 }
 
 VMParameters* pikaVM_runByteCode(PikaObj* self, const uint8_t* bytecode) {
+    pika_assert(NULL != self);
     PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
                               .try_result = TRY_RESULT_NONE};
-    return _do_pikaVM_runByteCode(self, self, self, (uint8_t*)bytecode,
-                                  &vm_thread, pika_true);
+    pikaVM_runBytecode_ex_cfg cfg = {0};
+    cfg.locals = self;
+    cfg.globals = self;
+    cfg.name = NULL;
+    cfg.vm_thread = &vm_thread;
+    cfg.is_const_bytecode = pika_true;
+    return pikaVM_runByteCode_ex(self, (uint8_t*)bytecode, &cfg);
 }
 
 Arg* pikaVM_runByteCodeReturn(PikaObj* self,
@@ -3884,15 +3991,19 @@ Arg* pikaVM_runByteCodeReturn(PikaObj* self,
     return ret;
 }
 
-Arg* _do_pikaVM_runByteCodeReturn(PikaObj* self,
-                                  VMParameters* locals,
-                                  VMParameters* globals,
-                                  uint8_t* bytecode,
-                                  PikaVMThread* vm_thread,
-                                  pika_bool is_const_bytecode,
-                                  char* return_name) {
-    _do_pikaVM_runByteCode(self, locals, globals, bytecode, vm_thread,
-                           is_const_bytecode);
+Arg* pikaVM_runByteCode_exReturn(PikaObj* self,
+                                 VMParameters* locals,
+                                 VMParameters* globals,
+                                 uint8_t* bytecode,
+                                 PikaVMThread* vm_thread,
+                                 pika_bool is_const_bytecode,
+                                 char* return_name) {
+    pikaVM_runBytecode_ex_cfg cfg = {0};
+    cfg.locals = locals;
+    cfg.globals = globals;
+    cfg.vm_thread = vm_thread;
+    cfg.is_const_bytecode = is_const_bytecode;
+    pikaVM_runByteCode_ex(self, bytecode, &cfg);
     Arg* ret = args_getArg(self->list, return_name);
     if (NULL == ret) {
         return NULL;
@@ -3907,8 +4018,12 @@ Arg* _do_pikaVM_runByteCodeReturn(PikaObj* self,
 VMParameters* pikaVM_runByteCodeInconstant(PikaObj* self, uint8_t* bytecode) {
     PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
                               .try_result = TRY_RESULT_NONE};
-    return _do_pikaVM_runByteCode(self, self, self, (uint8_t*)bytecode,
-                                  &vm_thread, pika_false);
+    pikaVM_runBytecode_ex_cfg cfg = {0};
+    cfg.locals = self;
+    cfg.globals = self;
+    cfg.vm_thread = &vm_thread;
+    cfg.is_const_bytecode = pika_false;
+    return pikaVM_runByteCode_ex(self, (uint8_t*)bytecode, &cfg);
 }
 
 void constPool_update(ConstPool* self) {
@@ -4017,11 +4132,14 @@ void byteCodeFrame_init(ByteCodeFrame* self) {
        can not init */
     constPool_init(&(self->const_pool));
     instructArray_init(&(self->instruct_array));
+    self->name = NULL;
+    self->label_pc = -1;
 }
 
 extern const char magic_code_pyo[4];
 void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
                                     uint8_t* bytes,
+                                    char* name,
                                     pika_bool is_const) {
     if (bytes[0] == magic_code_pyo[0] && bytes[1] == magic_code_pyo[1] &&
         bytes[2] == magic_code_pyo[2] && bytes[3] == magic_code_pyo[3]) {
@@ -4037,6 +4155,7 @@ void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
     self->const_pool.size = *const_size_p;
     self->const_pool.content_start =
         (char*)((uintptr_t)const_size_p + sizeof(*const_size_p));
+    byteCodeFrame_setName(self, name);
     if (!is_const) {
         pika_assert(NULL == self->instruct_array.arg_buff);
         pika_assert(NULL == self->instruct_array.arg_buff);
@@ -4051,13 +4170,23 @@ void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
     pika_assert(NULL != self->const_pool.content_start);
 }
 
+void byteCodeFrame_setName(ByteCodeFrame* self, char* name) {
+    if (name != NULL && self->name == NULL) {
+        self->name = pika_platform_malloc(strGetSize(name) + 1);
+        pika_platform_memcpy(self->name, name, strGetSize(name) + 1);
+    }
+}
+
 void byteCodeFrame_loadByteCode(ByteCodeFrame* self, uint8_t* bytes) {
-    _do_byteCodeFrame_loadByteCode(self, bytes, pika_true);
+    _do_byteCodeFrame_loadByteCode(self, bytes, NULL, pika_true);
 }
 
 void byteCodeFrame_deinit(ByteCodeFrame* self) {
     constPool_deinit(&(self->const_pool));
     instructArray_deinit(&(self->instruct_array));
+    if (NULL != self->name) {
+        pika_platform_free(self->name);
+    }
 }
 
 void instructArray_init(InstructArray* self) {
@@ -4313,13 +4442,13 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     int size = bytecode_frame->instruct_array.size;
     /* locals is the local scope */
 
-    if (g_PikaVMSignal.vm_cnt == 0) {
+    if (g_PikaVMState.vm_cnt == 0) {
         pika_vmSignal_setCtrlClear();
     }
     PikaVMFrame* vm =
         PikaVMFrame_create(locals, globals, bytecode_frame, pc, vm_thread);
     vm->in_repl = in_repl;
-    g_PikaVMSignal.vm_cnt++;
+    g_PikaVMState.vm_cnt++;
     while (vm->pc < size) {
         if (vm->pc == VM_PC_EXIT) {
             break;
@@ -4332,6 +4461,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
             vm->vm_thread->error_code = 0;
             vm->vm_thread->line_error_code = 0;
         }
+        self->vmFrame = vm;
         vm->pc = pikaVM_runInstructUnit(self, vm, this_ins_unit);
         vm->ins_cnt++;
 #if PIKA_INSTRUCT_HOOK_ENABLE
@@ -4376,10 +4506,69 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     }
     PikaVMFrame_solveUnusedStack(vm);
     stack_deinit(&(vm->stack));
-    g_PikaVMSignal.vm_cnt--;
+    g_PikaVMState.vm_cnt--;
     VMParameters* result = locals;
     pikaFree(vm, sizeof(PikaVMFrame));
+    self->vmFrame = NULL;
     return result;
+}
+
+pika_bool pika_debug_check_break(char* module_name, int pc_break) {
+    Hash h = hash_time33(module_name);
+    for (int i = 0; i < g_PikaVMState.break_point_cnt; i++) {
+        if (g_PikaVMState.break_module_hash[i] == h &&
+            g_PikaVMState.break_point_pc[i] == pc_break) {
+            return pika_true;
+        }
+    }
+    return pika_false;
+}
+
+pika_bool pika_debug_check_break_hash(Hash module_hash, int pc_break) {
+    for (int i = 0; i < g_PikaVMState.break_point_cnt; i++) {
+        if (g_PikaVMState.break_module_hash[i] == module_hash &&
+            g_PikaVMState.break_point_pc[i] == pc_break) {
+            return pika_true;
+        }
+    }
+    return pika_false;
+}
+
+PIKA_RES pika_debug_set_break(char* module_name, int pc_break) {
+    if (pika_debug_check_break(module_name, pc_break)) {
+        return PIKA_RES_OK;
+    }
+    if (g_PikaVMState.break_point_cnt >= PIKA_DEBUG_BREAK_POINT_MAX) {
+        return PIKA_RES_ERR_RUNTIME_ERROR;
+    }
+    Hash h = hash_time33(module_name);
+    g_PikaVMState.break_module_hash[g_PikaVMState.break_point_cnt] = h;
+    g_PikaVMState.break_point_pc[g_PikaVMState.break_point_cnt] = pc_break;
+    g_PikaVMState.break_point_cnt++;
+    return PIKA_RES_OK;
+}
+
+PIKA_RES pika_debug_reset_break(char* module_name, int pc_break) {
+    if (!pika_debug_check_break(module_name, pc_break)) {
+        return PIKA_RES_OK;
+    }
+    Hash h = hash_time33(module_name);
+    for (int i = 0; i < g_PikaVMState.break_point_cnt; i++) {
+        if (g_PikaVMState.break_module_hash[i] == h &&
+            g_PikaVMState.break_point_pc[i] == pc_break) {
+            // Move subsequent break points one position forward
+            for (int j = i; j < g_PikaVMState.break_point_cnt - 1; j++) {
+                g_PikaVMState.break_module_hash[j] =
+                    g_PikaVMState.break_module_hash[j + 1];
+                g_PikaVMState.break_point_pc[j] =
+                    g_PikaVMState.break_point_pc[j + 1];
+            }
+            // Decrease the count of break points
+            g_PikaVMState.break_point_cnt--;
+            return PIKA_RES_OK;
+        }
+    }
+    return PIKA_RES_ERR_RUNTIME_ERROR;
 }
 
 static VMParameters* _pikaVM_runByteCodeFrameWithState(
@@ -4400,6 +4589,16 @@ VMParameters* _pikaVM_runByteCodeFrame(PikaObj* self,
                               .try_result = TRY_RESULT_NONE};
     return __pikaVM_runByteCodeFrameWithState(self, self, self, byteCode_frame,
                                               0, &vm_thread, in_repl);
+}
+
+VMParameters* _pikaVM_runByteCodeFrameGlobals(PikaObj* self,
+                                              PikaObj* globals,
+                                              ByteCodeFrame* byteCode_frame,
+                                              pika_bool in_repl) {
+    PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
+                              .try_result = TRY_RESULT_NONE};
+    return __pikaVM_runByteCodeFrameWithState(
+        self, self, globals, byteCode_frame, 0, &vm_thread, in_repl);
 }
 
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,

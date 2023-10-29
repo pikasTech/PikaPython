@@ -152,14 +152,16 @@ impl ClassInfo {
             "    pika_platform_printf(\"======[pikapython packages installed]======\\r\\n\");\r\n",
         );
         script_fn.push_str("    pika_printVersion();\r\n");
-        for (package_name, package_version) in version_info.package_list {
-            script_fn.push_str(
+        for (package_name, package_version) in &version_info.package_list {
+            let display_string = if package_version.is_empty() {
+                format!("    pika_platform_printf(\"{}\\r\\n\");\r\n", package_name)
+            } else {
                 format!(
                     "    pika_platform_printf(\"{}=={}\\r\\n\");\r\n",
                     package_name, package_version
                 )
-                .as_str(),
-            );
+            };
+            script_fn.push_str(&display_string);
         }
         script_fn.push_str(
             "    pika_platform_printf(\"===========================================\\r\\n\");\r\n",

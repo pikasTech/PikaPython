@@ -199,7 +199,17 @@ size_t pika_platform_fwrite(const void* ptr,
 size_t pika_platform_fread(void* ptr, size_t size, size_t n, FILE* stream);
 int pika_platform_fseek(FILE* stream, long offset, int whence);
 long pika_platform_ftell(FILE* stream);
-
+char* pika_platform_getcwd(char* buf, size_t size);
+int pika_platform_chdir(const char* path);
+int pika_platform_rmdir(const char* pathname);
+int pika_platform_mkdir(const char* pathname, int mode);
+char* pika_platform_realpath(const char* path, char* resolved_path);
+int pika_platform_path_exists(const char* path);
+int pika_platform_path_isdir(const char* path);
+int pika_platform_path_isfile(const char* path);
+int pika_platform_remove(const char* pathname);
+int pika_platform_rename(const char* oldpath, const char* newpath);
+char** pika_platform_listdir(const char* path, int* count);
 /* error */
 void pika_platform_error_handle(void);
 
@@ -211,6 +221,7 @@ int64_t pika_platform_get_tick(void);
 void pika_platform_sleep_ms(uint32_t ms);
 
 void pika_hook_instruct(void);
+void pika_thread_idle_hook(void);
 PIKA_BOOL pika_hook_arg_cache_filter(void* self);
 void* pika_user_malloc(size_t size);
 void pika_user_free(void* ptr, size_t size);
@@ -245,6 +256,11 @@ typedef struct pika_platform_thread {
     StaticTask_t task_buffer;
 #endif
 } pika_platform_thread_t;
+#elif PIKA_RTTHREAD_ENABLE
+#include <rtthread.h>
+typedef struct pika_platform_thread {
+    rt_thread_t thread;
+} pika_platform_thread_t;
 #else
 typedef struct pika_platform_thread {
     void* platform_data;
@@ -272,6 +288,9 @@ typedef pthread_mutex_t pika_mutex_platform_data_t;
 #include "FreeRTOS.h"
 #include "semphr.h"
 typedef SemaphoreHandle_t pika_mutex_platform_data_t;
+#elif PIKA_RTTHREAD_ENABLE
+#include <rtthread.h>
+typedef rt_mutex_t pika_mutex_platform_data_t;
 #else
 typedef void* pika_mutex_platform_data_t;
 #endif
@@ -298,6 +317,11 @@ typedef struct pika_platform_timer {
 #elif PIKA_FREERTOS_ENABLE
 #include "FreeRTOS.h"
 #include "task.h"
+typedef struct pika_platform_timer {
+    uint32_t time;
+} pika_platform_timer_t;
+#elif PIKA_RTTHREAD_ENABLE
+#include <rtthread.h>
 typedef struct pika_platform_timer {
     uint32_t time;
 } pika_platform_timer_t;

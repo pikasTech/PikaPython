@@ -112,11 +112,12 @@ PIKA_WEAK int platform_net_socket_set_block(int fd) {
 #ifdef __linux
     return __platform_fcntl(
         fd, F_SETFL, __platform_fcntl(fd, F_GETFL, F_GETFL) & ~O_NONBLOCK);
-#elif PIKA_LWIP_ENABLE
+#elif defined(_WIN32)
     unsigned long mode = 0;
     return ioctlsocket(fd, FIONBIO, &mode);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    return -1;
 #endif
 }
 
@@ -124,11 +125,12 @@ PIKA_WEAK int platform_net_socket_set_nonblock(int fd) {
 #ifdef __linux
     return __platform_fcntl(
         fd, F_SETFL, __platform_fcntl(fd, F_GETFL, F_GETFL) | O_NONBLOCK);
-#elif PIKA_LWIP_ENABLE
+#elif defined(_WIN32)
     unsigned long mode = 1;
     return ioctlsocket(fd, FIONBIO, &mode);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    return -1;
 #endif
 }
 

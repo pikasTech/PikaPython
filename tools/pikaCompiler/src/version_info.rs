@@ -1,4 +1,3 @@
-use crate::my_string;
 use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::prelude::*;
@@ -6,6 +5,7 @@ use std::io::prelude::*;
 pub struct VersionInfo {
     pub source_path: String,
     pub package_list: BTreeMap<String, String>,
+    pub plot: bool,
 }
 
 impl VersionInfo {
@@ -14,6 +14,7 @@ impl VersionInfo {
             /* default source_path */
             source_path: String::from(""),
             package_list: BTreeMap::new(),
+            plot: true,
         };
         return version_info;
     }
@@ -22,20 +23,36 @@ impl VersionInfo {
         /* delete '\r' */
         let line = line.replace("\r", "");
         /* skip void line */
-        if line.as_str() == "" {
+        if line.trim().is_empty() {
             return self;
         }
         /* print the package info */
-        println!("    {}", line.as_str());
-        let package_name = my_string::get_first_token(&line, '=').unwrap();
-        // skip pikascript-core
-        if package_name == "pikascript-core" {
-            return self;
+        if self.plot {
+            // print line with \r\n
+            print!("  {}{}", line, "\r\n");
         }
-        let package_version = my_string::get_last_token(&line, '=').unwrap();
-        self.package_list
-            .entry(package_name)
-            .or_insert(package_version);
+
+        // Check if line contains '='
+        if let Some(pos) = line.find('=') {
+            let package_name = line[..pos].trim().to_string();
+            let package_version = line[pos + 1..].trim().to_string();
+
+            // skip pikascript-core
+            if package_name == "pikascript-core" {
+                return self;
+            }
+
+            self.package_list
+                .entry(package_name)
+                .or_insert(package_version);
+        } else {
+            // For formats like "json" without a version.
+            let package_name = line.trim();
+            self.package_list
+                .entry(package_name.to_string())
+                .or_insert("".to_string()); // Assuming you want to insert an empty string for versions.
+        }
+
         return self;
     }
 

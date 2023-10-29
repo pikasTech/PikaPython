@@ -11,6 +11,8 @@
 
 #define PIKA_HAL
 
+#define PIKA_HAL_OBJ2DEV(_self) obj_getPtr((_self), "pika_dev")
+
 typedef enum {
 #define PIKA_HAL_TABLE_DEV_TYPE
 #include "pika_hal_table.h"
@@ -89,6 +91,7 @@ typedef struct {
     void (*event_callback)(pika_dev* dev, PIKA_HAL_GPIO_EVENT_SIGNAL signal);
     PIKA_HAL_GPIO_EVENT_SIGNAL event_callback_filter;
     PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;
+    void* user_data;
 } pika_hal_GPIO_config;
 
 typedef enum {
@@ -152,6 +155,7 @@ typedef struct {
     pika_dev* RX;
     pika_dev* RTS;
     pika_dev* CTS;
+    void* user_data;
 } pika_hal_UART_config;
 
 typedef uint32_t PIKA_HAL_IIC_SLAVE_ADDR;
@@ -213,6 +217,7 @@ typedef struct {
     PIKA_HAL_IIC_MEM_ADDR_SIZE mem_addr_size;
     PIKA_HAL_IIC_SPEED speed;
     PIKA_HAL_IIC_TIMEOUT timeout;
+    void* user_data;
 } pika_hal_IIC_config;
 
 typedef struct {
@@ -226,6 +231,7 @@ typedef struct {
     PIKA_HAL_IIC_MEM_ADDR_SIZE mem_addr_size;
     PIKA_HAL_IIC_SPEED speed;
     PIKA_HAL_IIC_TIMEOUT timeout;
+    void* user_data;
 } pika_hal_SOFT_IIC_config;
 
 typedef enum PIKA_HAL_SPI_TIMEOUT {
@@ -288,6 +294,7 @@ typedef struct {
     PIKA_HAL_SPI_DATA_WIDTH data_width;
     PIKA_HAL_SPI_SPEED speed;
     PIKA_HAL_SPI_TIMEOUT timeout;
+    void* user_data;
 } pika_hal_SPI_config;
 
 typedef struct {
@@ -301,6 +308,7 @@ typedef struct {
     pika_dev* SCK;
     pika_dev* MOSI;
     pika_dev* MISO;
+    void* user_data;
 } pika_hal_SOFT_SPI_config;
 
 typedef enum {
@@ -337,6 +345,7 @@ typedef struct {
     PIKA_HAL_ADC_CONTINUOU_OR_SINGLE continue_or_single;
     PIKA_HAL_ADC_MAX max;
     PIKA_HAL_ADC_VREF vref;
+    void* user_data;
 } pika_hal_ADC_config;
 
 typedef enum {
@@ -369,6 +378,7 @@ typedef struct pika_hal_DAC_config {
     PIKA_HAL_DAC_SPEED speed;
     PIKA_HAL_DAC_MAX max;
     PIKA_HAL_DAC_VREF vref;
+    void* user_data;
 } pika_hal_DAC_config;
 
 typedef enum {
@@ -400,6 +410,7 @@ typedef enum {
 typedef struct {
     PIKA_HAL_PWM_PERIOD period;
     PIKA_HAL_PWM_DUTY duty;
+    void* user_data;
 } pika_hal_PWM_config;
 
 typedef enum {
@@ -456,6 +467,7 @@ typedef struct pika_hal_WIFI_config {
     char ap_ssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
     char ap_bssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
     char ap_password[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    void* user_data;
 } pika_hal_WIFI_config;
 
 typedef struct pika_hal_WIFI_connect_config {
@@ -486,6 +498,7 @@ typedef struct pika_hal_WIFI_scan_result {
 } pika_hal_WIFI_scan_result;
 
 typedef enum {
+    _PIKA_HAL_PWM_PERIOD_UNUSED = 0,
     PIKA_HAL_TIM_PERIOD_1NS = 1,
     PIKA_HAL_TIM_PERIOD_1US = 1000,
     PIKA_HAL_TIM_PERIOD_1MS = 1000000,
@@ -564,6 +577,35 @@ typedef struct pika_hal_CAM_config {
     PIKA_HAL_CAM_FRAMESIZE framesize;
     int buff_len;
 } pika_hal_CAM_config;
+
+/* Signal Generator */
+
+typedef enum {
+    _PIKA_HAL_SG_WAVEFORM_UNUSED = 0,
+    PIKA_HAL_SG_WAVEFORM_SINE,
+    PIKA_HAL_SG_WAVEFORM_SQUARE,
+    PIKA_HAL_SG_WAVEFORM_TRIANGLE,
+} PIKA_HAL_SG_WAVEFORM;
+
+typedef enum {
+    _PIKA_HAL_SG_EVENT_SIGNAL_UNUSED = 0,
+    PIKA_HAL_SG_EVENT_SIGNAL_READY_FOR_OUTPUT,
+    PIKA_HAL_SG_EVENT_SIGNAL_ANY,
+} PIKA_HAL_SG_EVENT_SIGNAL;
+
+typedef struct {
+    PIKA_HAL_SG_WAVEFORM waveform;
+    pika_float frequency;  // Frequency in Hz
+    pika_float amplitude;  // Amplitude in Volts
+    pika_float offset;     // Offset in Volts
+    pika_float seconds;    // Seconds to output
+    void (*event_callback)(pika_dev* dev, PIKA_HAL_SG_EVENT_SIGNAL signal);
+    PIKA_HAL_SG_EVENT_SIGNAL event_callback_filter;
+    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;
+    void* user_data;
+} pika_hal_SG_config;
+
+/* impl typedef */
 
 typedef struct pika_dev_impl {
     int (*open)(pika_dev* dev, char* name);

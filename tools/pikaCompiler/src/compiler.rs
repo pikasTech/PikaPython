@@ -5,11 +5,13 @@ use crate::decorator::Decorator;
 use fs_extra::dir::remove;
 use std::collections::BTreeMap;
 use std::collections::LinkedList;
+use std::ffi::OsString;
 use std::fs;
 use std::fs::File;
 use std::io;
 use std::io::Read;
 use std::path::Path;
+use std::path::PathBuf;
 
 enum PackageType {
     CPackageTop,
@@ -62,95 +64,106 @@ impl Compiler {
     }
 
     pub fn reuse_old_file(&mut self) {
-        let old_path_str = format!("{}-old", self.dist_path.trim_end_matches('/'));
-        let old_path = Path::new(&old_path_str);
+        let old_path = self.get_old_path();
         let new_path = Path::new(&self.dist_path);
 
-        if old_path.exists() && old_path.is_dir() && new_path.exists() && new_path.is_dir() {
-            // Iterate over all the files in the old directory
-            for entry in fs::read_dir(&old_path).expect("Failed to read old directory") {
-                let entry = entry.expect("Failed to read entry in old directory");
-                let file_name = entry.file_name();
-
-                // Check if the same file exists in the new directory
-                let new_file_path = new_path.join(&file_name);
-                if new_file_path.exists() {
-                    // If the file exists in the new directory, compare its contents to the old file
-                    let mut old_file =
-                        fs::File::open(old_path.join(&file_name)).expect("Failed to open old file");
-                    let mut new_file =
-                        fs::File::open(&new_file_path).expect("Failed to open new file");
-
-                    let mut old_contents = Vec::new();
-                    let mut new_contents = Vec::new();
-
-                    old_file
-                        .read_to_end(&mut old_contents)
-                        .expect("Failed to read old file");
-                    new_file
-                        .read_to_end(&mut new_contents)
-                        .expect("Failed to read new file");
-
-                    // If the contents are the same, overwrite the new file
-                    if old_contents != new_contents {
-                        fs::copy(&new_file_path, old_path.join(&file_name))
-                            .expect("Failed to copy new file to old directory");
-                    }
-                    drop(old_file);
-                    drop(new_file);
-                } else {
-                    // If the file doesn't exist in the new directory, delete it from the old directory
-                    fs::remove_file(old_path.join(&file_name))
-                        .expect("Failed to remove file from old directory");
-                }
-            }
-
-            // Iterate over all the files in the new directory
-            for entry in fs::read_dir(&new_path).expect("Failed to read new directory") {
-                let entry = entry.expect("Failed to read entry in new directory");
-                let file_name = entry.file_name();
-
-                // Check if the file exists in the old directory
-                let old_file_path = old_path.join(&file_name);
-                if !old_file_path.exists() {
-                    // If the file doesn't exist in the old directory, copy it from the new directory
-                    fs::copy(&new_path.join(&file_name), &old_file_path)
-                        .expect("Failed to copy new file to old directory");
-                }
-            }
-
-            // Remove the new directory
-            fs::remove_dir_all(&self.dist_path).expect("Failed to remove new directory");
-
-            fs::rename(&old_path, &new_path)
-                .expect("Failed to rename old directory to new directory");
+        if self.paths_are_valid(&old_path, &new_path) {
+            self.sync_from_old_to_new(&old_path, &new_path);
+            self.sync_from_new_to_old(&new_path, &old_path);
+            self.finalize_directory_changes(&new_path, &old_path);
         }
     }
 
+    // Returns the path to the "old" directory.
+    fn get_old_path(&self) -> PathBuf {
+        format!("{}-old", self.dist_path.trim_end_matches('/')).into()
+    }
+
+    // Check if both the old and new paths are valid directories.
+    fn paths_are_valid(&self, old_path: &Path, new_path: &Path) -> bool {
+        old_path.exists() && old_path.is_dir() && new_path.exists() && new_path.is_dir()
+    }
+
+    // Synchronize files from old directory to new directory.
+    fn sync_from_old_to_new(&self, old_path: &Path, new_path: &Path) {
+        let entries = fs::read_dir(&old_path);
+        if let Ok(entries_iter) = entries {
+            for entry in entries_iter {
+                let entry = entry.expect("Failed to read entry in old directory");
+                let file_name = entry.file_name();
+                let new_file_path = new_path.join(&file_name);
+
+                if new_file_path.exists() {
+                    self.handle_existing_file_in_new(&file_name, old_path, new_path);
+                } else {
+                    self.handle_missing_file_in_new(&file_name, old_path);
+                }
+            }
+        }
+    }
+
+    // If a file from the old directory exists in the new directory, we compare and act accordingly.
+    fn handle_existing_file_in_new(&self, file_name: &OsString, old_path: &Path, new_path: &Path) {
+        let old_file_path = old_path.join(&file_name);
+        let new_file_path = new_path.join(&file_name);
+
+        let old_contents = fs::read(&old_file_path).expect("Failed to read old file");
+        let new_contents = fs::read(&new_file_path).expect("Failed to read new file");
+
+        if old_contents != new_contents {
+            fs::copy(&new_file_path, &old_file_path)
+                .expect("Failed to copy new file to old directory");
+        }
+    }
+
+    // If a file from the old directory is missing in the new directory, we delete it from the old directory.
+    fn handle_missing_file_in_new(&self, file_name: &OsString, old_path: &Path) {
+        fs::remove_file(old_path.join(&file_name))
+            .expect("Failed to remove file from old directory");
+    }
+
+    // Synchronize files from new directory to old directory.
+    fn sync_from_new_to_old(&self, new_path: &Path, old_path: &Path) {
+        let entries = fs::read_dir(&new_path);
+        if let Ok(entries_iter) = entries {
+            for entry in entries_iter {
+                let entry = entry.expect("Failed to read entry in new directory");
+                let file_name = entry.file_name();
+
+                if !old_path.join(&file_name).exists() {
+                    fs::copy(new_path.join(&file_name), old_path.join(&file_name))
+                        .expect("Failed to copy new file to old directory");
+                }
+            }
+        }
+    }
+
+    // Remove the new directory and rename the old directory.
+    fn finalize_directory_changes(&self, new_path: &Path, old_path: &Path) {
+        fs::remove_dir_all(&new_path).expect("Failed to remove new directory");
+        fs::rename(&old_path, &new_path).expect("Failed to rename old directory to new directory");
+    }
+
+    fn get_or_create_main_class(&mut self) -> &mut ClassInfo {
+        if !self.class_list.contains_key(&"PikaMain".to_string()) {
+            let new_class_info = ClassInfo::new(
+                &"main".to_string(),
+                &"class PikaMain(PikaStdLib.SysObj):".to_string(),
+                false,
+            )
+            .expect("Failed to create PikaMain class");
+            self.class_list
+                .insert("PikaMain".to_string(), new_class_info);
+        }
+
+        self.class_name_now = Some("PikaMain".to_string());
+
+        self.class_list.get_mut(&"PikaMain".to_string()).unwrap()
+    }
+
     pub fn analyse_py_line(mut compiler: Compiler, line: &String, is_top_pkg: bool) -> Compiler {
-        let file_name = match is_top_pkg {
-            true => "main".to_string(),
-            false => "".to_string(),
-        };
-
-        let class_name = match is_top_pkg {
-            true => "PikaMain".to_string(),
-            false => "".to_string(),
-        };
-
-        /* get class now or create one */
-        let class_now = match compiler.class_list.get_mut(&"PikaMain".to_string()) {
-            Some(class_now) => class_now,
-            None => compiler.class_list.entry(class_name.clone()).or_insert(
-                ClassInfo::new(
-                    &file_name,
-                    &"class PikaMain(PikaStdLib.SysObj):".to_string(),
-                    false,
-                )
-                .unwrap(),
-            ),
-        };
-        compiler.class_name_now = Some(class_name.clone());
+        /* get class main or create one */
+        let class_main = compiler.get_or_create_main_class();
 
         if line.starts_with("import ") {
             let tokens: Vec<&str> = line.split(" as ").collect();
@@ -164,12 +177,12 @@ impl Compiler {
 
             if is_top_pkg {
                 /* add to script */
-                class_now.script_list.add(&line);
+                class_main.script_list.add(&line);
             }
 
             let package_items: Vec<&str> = package_list.split(',').collect();
             for item in package_items {
-                compiler = Compiler::analyse_py_or_pyi_or_pyo(compiler, item.to_string());
+                compiler = Compiler::import_module_ex(compiler, item.to_string(), true);
             }
             return compiler;
         }
@@ -184,14 +197,14 @@ impl Compiler {
 
             if is_top_pkg {
                 /* add to script */
-                class_now.script_list.add(&line);
+                class_main.script_list.add(&line);
             }
 
-            return Compiler::analyse_py_or_pyi_or_pyo(compiler, package_name.to_string());
+            return Compiler::import_module_ex(compiler, package_name.to_string(), true);
         }
 
         if is_top_pkg {
-            class_now.script_list.add(&line);
+            class_main.script_list.add(&line);
         }
         return compiler;
     }
@@ -225,47 +238,46 @@ impl Compiler {
         return self.__do_analyse_file(file_name, PackageType::CPackageInner);
     }
 
-    pub fn analyse_py_or_pyi_or_pyo(mut self: Compiler, file_name: String) -> Compiler {
-        /* check py.o */
-        let suffix = String::from("py.o");
-        /* open file */
-        let file: std::result::Result<std::fs::File, std::io::Error>;
-        file = Compiler::open_file(format!("{}{}.{}", self.source_path, file_name, suffix));
-        match file {
-            /* py import py.o => do nothing */
-            Ok(_) => {
-                println!("    found {}{}.{}...", self.source_path, file_name, suffix);
-                return self;
-            }
-            /* continue */
-            Err(_) => {}
+    // Try to open a file and return whether it was opened successfully.
+    fn try_open_file(&self, file_name: &str, suffix: &str) -> bool {
+        let file_path = format!("{}{}.{}", self.source_path, file_name, suffix);
+        Compiler::open_file(file_path).is_ok()
+    }
+
+    // Logic to handle pyi files.
+    fn handle_pyi_file(mut self, file_name: &str) -> Compiler {
+        if let Some(class_now) = self.class_list.get_mut(&"PikaMain".to_string()) {
+            // Create a constructor for PikaMain.
+            let package_obj_define = format!("{} = {}()", file_name, file_name);
+            class_now.push_object(package_obj_define, &"main".to_string());
+            return Compiler::analyse_c_package_top(self, file_name.to_string());
+        }
+        return self;
+    }
+
+    pub fn import_module_ex(self, file_name: String, from_scan: bool) -> Compiler {
+        // Check for py.o file.
+        if self.try_open_file(&file_name, "py.o") {
+            println!("    found {}{}.py.o...", self.source_path, file_name);
+            return self;
         }
 
-        /* check pyi */
-        let suffix = String::from("pyi");
-        /* open file */
-        let file: std::result::Result<std::fs::File, std::io::Error>;
-        file = Compiler::open_file(format!("{}{}.{}", self.source_path, file_name, suffix));
-        match file {
-            /* py import pyi => top_pyi */
-            Ok(_) => {
-                let class_now = match self.class_list.get_mut(&"PikaMain".to_string()) {
-                    Some(class_now) => class_now,
-                    None => return self,
-                };
-
-                /* create constructor for PikaMain */
-                let package_obj_define = format!("{} = {}()", file_name, file_name);
-                class_now.push_object(package_obj_define, &"main".to_string());
-
-                return Compiler::analyse_c_package_top(self, file_name);
+        // Check for pyi file.
+        if self.try_open_file(&file_name, "pyi") {
+            if from_scan {
+                println!("    binding {}{}.{}...", self.source_path, file_name, "pyi");
+            } else {
+                println!("  binding {}{}.{}...", self.source_path, file_name, "pyi");
             }
-            /* continue */
-            Err(_) => {}
-        };
+            return self.handle_pyi_file(&file_name);
+        }
 
-        /* py import py => inner_py */
-        return self.analyse_py_package_inner(file_name.clone());
+        // Handle py import for py file.
+        self.analyse_py_package_inner(file_name)
+    }
+
+    pub fn import_module(self, file_name: String) -> Compiler {
+        return self.import_module_ex(file_name, false);
     }
 
     fn __do_analyse_file(mut self: Compiler, file_name: String, pkg_type: PackageType) -> Compiler {
@@ -357,12 +369,7 @@ impl Compiler {
                 "py" => {
                     println!("  scanning {}{}.{}...", self.source_path, file_name, suffix);
                 }
-                "pyi" => {
-                    println!(
-                        "    binding {}{}.{}...",
-                        self.source_path, file_name, suffix
-                    );
-                }
+                "pyi" => {}
                 _ => {}
             }
         } else {

@@ -1,0 +1,33 @@
+# Node.js Dependency Directories
+node_modules/
+npm-debug.log
+
+# Windows Image File caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# VS Code directories
+.vscode/
+.vscode-test/
+.history/
+
+# Build and Debug output
+out/
+dist/
+*.log
+*.tsbuildinfo
+
+# Other
+*.DS_Store
+*.code-workspace
+
+# Package lock files (optional, some teams prefer to check these in to ensure consistent dependencies)
+# package-lock.json
+# yarn.lock
+*.cpuprofile

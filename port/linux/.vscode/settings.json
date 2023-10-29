@@ -1,8 +1,6 @@
 {
     "C_Cpp.clang_format_style": "{ BasedOnStyle: Chromium, IndentWidth: 4}",
     "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
-    "editor.defaultFormatter": "xaver.clang-format",
-    "C_Cpp.intelliSenseEngine": "disabled",
     "files.associations": {
         "*.rs": "rust",
         "pikastdlib_sysobj.h": "c",
@@ -129,10 +127,7 @@
         "editor.defaultFormatter": "tamasfe.even-better-toml"
     },
     "[python]": {
-        "editor.defaultFormatter": "ms-python.autopep8"
-    },
-    "[c]": {
-        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+        "editor.defaultFormatter": "ms-python.python"
     },
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"

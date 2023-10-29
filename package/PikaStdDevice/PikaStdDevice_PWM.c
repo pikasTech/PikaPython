@@ -64,7 +64,7 @@ void PikaStdDevice_PWM_setFreq(PikaObj* self, int freq) {
 }
 
 static pika_dev* _get_dev(PikaObj* self) {
-    pika_dev* dev = obj_getPtr(self, "pika_dev");
+    pika_dev* dev = PIKA_HAL_OBJ2DEV(self);
     if (NULL != dev) {
         return dev;
     }

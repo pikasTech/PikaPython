@@ -224,16 +224,15 @@ void LibObj_deinit(LibObj* self) {
 
 /* add bytecode to lib, not copy the bytecode */
 void LibObj_dynamicLink(LibObj* self, char* module_name, uint8_t* bytecode) {
-    if (strIsContain(module_name, '.')) {
-        /* skip file */
-        return;
+    Args buffs = {0};
+    char* module_obj_name = strsReplace(&buffs, module_name, ".", "|");
+    if (!obj_isArgExist(self, module_obj_name)) {
+        obj_newObj(self, module_obj_name, "", New_TinyObj);
     }
-    if (!obj_isArgExist(self, module_name)) {
-        obj_newObj(self, module_name, "", New_TinyObj);
-    }
-    PikaObj* module_obj = obj_getObj(self, module_name);
+    PikaObj* module_obj = obj_getObj(self, module_obj_name);
     obj_setStr(module_obj, "name", module_name);
     obj_setPtr(module_obj, "bytecode", bytecode);
+    strsDeinit(&buffs);
 }
 
 /*
@@ -248,10 +247,12 @@ int LibObj_staticLink(LibObj* self,
                       char* module_name,
                       uint8_t* bytecode,
                       size_t size) {
-    if (!obj_isArgExist(self, module_name)) {
-        obj_newObj(self, module_name, "", New_TinyObj);
+    Args buffs = {0};
+    char* module_obj_name = strsReplace(&buffs, module_name, ".", "|");
+    if (!obj_isArgExist(self, module_obj_name)) {
+        obj_newObj(self, module_obj_name, "", New_TinyObj);
     }
-    PikaObj* module_obj = obj_getObj(self, module_name);
+    PikaObj* module_obj = obj_getObj(self, module_obj_name);
     uint16_t name_len = strGetSize(module_name);
 
     /* copy bytecode to buff */
@@ -261,6 +262,7 @@ int LibObj_staticLink(LibObj* self,
 
     /* link to buff */
     LibObj_dynamicLink(self, module_name, obj_getBytes(module_obj, "buff"));
+    strsDeinit(&buffs);
     return 0;
 }
 
@@ -387,7 +389,7 @@ static int32_t __foreach_handler_libWriteBytecode(Arg* argEach,
     return 0;
 }
 
-//#define NAME_BUFF_SIZE LIB_INFO_BLOCK_SIZE - sizeof(uint32_t)
+// #define NAME_BUFF_SIZE LIB_INFO_BLOCK_SIZE - sizeof(uint32_t)
 static int32_t __foreach_handler_libWriteIndex(Arg* argEach,
                                                PikaLinker* linker) {
     Args buffs = {0};
@@ -649,6 +651,33 @@ Arg* _getPack_libraryBytes(char* pack_name) {
     return f_arg;
 }
 
+typedef struct {
+    char* module_name;
+    PikaObj* module;
+} Context_LibObj_getModule;
+
+int32_t _handler_LibObj_getModule(Arg* argEach, void* context) {
+    Context_LibObj_getModule* ctx = context;
+    if (NULL != ctx->module) {
+        return 0;
+    }
+    if (arg_isObject(argEach)) {
+        PikaObj* module_obj = arg_getPtr(argEach);
+        if (strEqu(obj_getStr(module_obj, "name"), ctx->module_name)) {
+            ctx->module = module_obj;
+            return 0;
+        }
+    }
+    return 0;
+}
+
+PikaObj* LibObj_getModule(LibObj* self, char* module_name) {
+    Context_LibObj_getModule context = {0};
+    context.module_name = module_name;
+    args_foreach(self->list, _handler_LibObj_getModule, &context);
+    return context.module;
+}
+
 int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
     int module_num = _getModuleNum(library_bytes);
     if (module_num < 0) {
@@ -816,7 +845,8 @@ __exit:
 static PIKA_RES __Maker_compileModuleWithInfo(PikaMaker* self,
                                               char* module_name) {
     Args buffs = {0};
-    char* input_file_name = strsAppend(&buffs, module_name, ".py");
+    char* input_file_name = strsReplace(&buffs, module_name, ".", "/");
+    input_file_name = strsAppend(&buffs, input_file_name, ".py");
     char* input_file_path =
         strsPathJoin(&buffs, obj_getStr(self, "pwd"), input_file_name);
     pika_platform_printf("  compiling %s...\r\n", input_file_name);
@@ -869,10 +899,21 @@ void pikaMaker_setPWD(PikaMaker* self, char* pwd) {
  * @return: void
  */
 void pikaMaker_setState(PikaMaker* self, char* module_name, char* state) {
-    obj_newMetaObj(self, module_name, New_TinyObj);
-    PikaObj* module_obj = obj_getObj(self, module_name);
+    Args buffs = {0};
+    char* module_obj_name = strsReplace(&buffs, module_name, ".", "|");
+    obj_newMetaObj(self, module_obj_name, New_TinyObj);
+    PikaObj* module_obj = obj_getObj(self, module_obj_name);
     obj_setStr(module_obj, "name", module_name);
     obj_setStr(module_obj, "state", state);
+    strsDeinit(&buffs);
+}
+
+char* pikaMaker_getState(PikaMaker* self, char* module_name) {
+    PikaObj* module_obj = obj_getObj(self, module_name);
+    if (NULL == module_obj) {
+        return "nocompiled";
+    }
+    return obj_getStr(module_obj, "state");
 }
 
 /*
@@ -890,6 +931,105 @@ PIKA_RES pikaMaker_compileModule(PikaMaker* self, char* module_name) {
         pikaMaker_setState(self, module_name, "failed");
     }
     return res;
+}
+
+enum PIKA_MODULE_TYPE {
+    PIKA_MODULE_TYPE_UNKNOWN,
+    PIKA_MODULE_TYPE_PY,
+    PIKA_MODULE_TYPE_PYI,
+    PIKA_MODULE_TYPE_PYO
+};
+
+static enum PIKA_MODULE_TYPE _checkModuleType(char* module_path) {
+    Args buffs = {};
+    enum PIKA_MODULE_TYPE module_type = PIKA_MODULE_TYPE_UNKNOWN;
+    /* module info is not exist */
+    /* set module to be compile */
+    FILE* imp_file_py =
+        pika_platform_fopen(strsAppend(&buffs, module_path, ".py"), "rb");
+    FILE* imp_file_pyi =
+        pika_platform_fopen(strsAppend(&buffs, module_path, ".pyi"), "rb");
+    FILE* imp_file_pyo =
+        pika_platform_fopen(strsAppend(&buffs, module_path, ".py.o"), "rb");
+    if (NULL != imp_file_pyo) {
+        module_type = PIKA_MODULE_TYPE_PYO;
+        goto __exit;
+    }
+    if (NULL != imp_file_py) {
+        module_type = PIKA_MODULE_TYPE_PY;
+        goto __exit;
+    }
+    if (NULL != imp_file_pyi) {
+        module_type = PIKA_MODULE_TYPE_PYI;
+        goto __exit;
+    }
+__exit:
+    if (NULL != imp_file_pyo) {
+        pika_platform_fclose(imp_file_pyo);
+    }
+    if (NULL != imp_file_pyi) {
+        pika_platform_fclose(imp_file_pyi);
+    }
+    if (NULL != imp_file_py) {
+        pika_platform_fclose(imp_file_py);
+    }
+    strsDeinit(&buffs);
+    return module_type;
+}
+
+FILE* _openModuleFile(char* module_path, enum PIKA_MODULE_TYPE module_type) {
+    Args buffs = {};
+    FILE* fp = NULL;
+    switch (module_type) {
+        case PIKA_MODULE_TYPE_PY:
+            fp = pika_platform_fopen(strsAppend(&buffs, module_path, ".py"),
+                                     "rb");
+            break;
+        case PIKA_MODULE_TYPE_PYI:
+            fp = pika_platform_fopen(strsAppend(&buffs, module_path, ".pyi"),
+                                     "rb");
+            break;
+        case PIKA_MODULE_TYPE_PYO:
+            fp = pika_platform_fopen(strsAppend(&buffs, module_path, ".py.o"),
+                                     "rb");
+            break;
+        default:
+            break;
+    }
+    strsDeinit(&buffs);
+    return fp;
+}
+
+int pikaMaker_linkByteocdeFile(PikaMaker* self, char* imp_module_name) {
+    Args buffs = {};
+    char* imp_module_path =
+        strsPathJoin(&buffs, obj_getStr(self, "pwd"), imp_module_name);
+    FILE* imp_file = _openModuleFile(imp_module_path, PIKA_MODULE_TYPE_PYO);
+    pika_platform_printf("  loading %s.py.o...\r\n", imp_module_path);
+    /* found *.py.o, push to compiled list */
+    pikaMaker_setState(self, imp_module_name, "compiled");
+    char* imp_api_path =
+        strsPathJoin(&buffs, obj_getStr(self, "pwd"), "pikascript-api/");
+    imp_api_path = strsPathJoin(&buffs, imp_api_path, imp_module_name);
+    FILE* imp_file_pyo_api =
+        pika_platform_fopen(strsAppend(&buffs, imp_api_path, ".py.o"), "wb+");
+    pika_assert(imp_file_pyo_api != NULL);
+    /* copy imp_file_pyo to imp_api_path */
+    uint8_t* buff = (uint8_t*)pika_platform_malloc(128);
+    size_t read_size = 0;
+    while (1) {
+        read_size = pika_platform_fread(buff, 1, 128, imp_file);
+        if (read_size > 0) {
+            pika_platform_fwrite(buff, 1, read_size, imp_file_pyo_api);
+        } else {
+            break;
+        }
+    }
+    pika_platform_free(buff);
+    pika_platform_fclose(imp_file_pyo_api);
+    pika_platform_fclose(imp_file);
+    strsDeinit(&buffs);
+    return 0;
 }
 
 int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
@@ -924,67 +1064,32 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
             instructUnit_getInstructIndex(ins_unit) == INH) {
             char* imp_module_name =
                 constPool_getByOffset(const_pool, ins_unit->const_pool_index);
-            char* imp_module_path =
-                strsPathJoin(&buffs, obj_getStr(self, "pwd"), imp_module_name);
+            char* imp_module_name_fs =
+                strsReplace(&buffs, imp_module_name, ".", "/");
+            char* imp_module_path = strsPathJoin(
+                &buffs, obj_getStr(self, "pwd"), imp_module_name_fs);
             /* check if compiled the module */
-            if (obj_isArgExist(self, imp_module_name)) {
+            if (args_isArgExist(self->list, imp_module_name)) {
                 /* module info is exist, do nothing */
             } else {
                 /* module info is not exist */
                 /* set module to be compile */
-                FILE* imp_file_py = pika_platform_fopen(
-                    strsAppend(&buffs, imp_module_path, ".py"), "rb");
-                FILE* imp_file_pyi = pika_platform_fopen(
-                    strsAppend(&buffs, imp_module_path, ".pyi"), "rb");
-                FILE* imp_file_pyo = pika_platform_fopen(
-                    strsAppend(&buffs, imp_module_path, ".py.o"), "rb");
-                if (NULL != imp_file_pyo) {
-                    pika_platform_printf("  loading %s.py.o...\r\n",
-                                         imp_module_path);
-                    /* found *.py.o, push to compiled list */
-                    pikaMaker_setState(self, imp_module_name, "compiled");
-                    char* imp_api_path = strsPathJoin(
-                        &buffs, obj_getStr(self, "pwd"), "pikascript-api/");
-                    imp_api_path =
-                        strsPathJoin(&buffs, imp_api_path, imp_module_name);
-                    FILE* imp_file_pyo_api = pika_platform_fopen(
-                        strsAppend(&buffs, imp_api_path, ".py.o"), "wb+");
-                    pika_assert(imp_file_pyo_api != NULL);
-                    /* copy imp_file_pyo to imp_api_path */
-                    uint8_t* buff = (uint8_t*)pika_platform_malloc(128);
-                    size_t read_size = 0;
-                    while (1) {
-                        read_size =
-                            pika_platform_fread(buff, 1, 128, imp_file_pyo);
-                        if (read_size > 0) {
-                            pika_platform_fwrite(buff, 1, read_size,
-                                                 imp_file_pyo_api);
-                        } else {
-                            break;
-                        }
-                    }
-                    pika_platform_free(buff);
-                    pika_platform_fclose(imp_file_pyo_api);
-                } else if (NULL != imp_file_py) {
+                enum PIKA_MODULE_TYPE module_type =
+                    _checkModuleType(imp_module_path);
+                if (module_type == PIKA_MODULE_TYPE_PYO) {
+                    pikaMaker_linkByteocdeFile(self, imp_module_path);
+                } else if (module_type == PIKA_MODULE_TYPE_PY) {
                     /* found *.py, push to nocompiled list */
                     pikaMaker_setState(self, imp_module_name, "nocompiled");
-                } else if (NULL != imp_file_pyi) {
+                } else if (module_type == PIKA_MODULE_TYPE_PYI) {
                     /* found *.py, push to nocompiled list */
                     pikaMaker_setState(self, imp_module_name, "cmodule");
                 } else {
                     pika_platform_printf(
                         "    [warning]: file: '%s.pyi', '%s.py' or '%s.py.o' "
                         "no found\n",
-                        imp_module_name, imp_module_name, imp_module_name);
-                }
-                if (NULL != imp_file_pyo) {
-                    pika_platform_fclose(imp_file_pyo);
-                }
-                if (NULL != imp_file_pyi) {
-                    pika_platform_fclose(imp_file_pyi);
-                }
-                if (NULL != imp_file_py) {
-                    pika_platform_fclose(imp_file_py);
+                        imp_module_name_fs, imp_module_name_fs,
+                        imp_module_name_fs);
                 }
             }
         }
@@ -1056,6 +1161,9 @@ char* pikaMaker_getFirstNocompiled(PikaMaker* self) {
 PIKA_RES pikaMaker_compileModuleWithDepends(PikaMaker* self,
                                             char* module_name) {
     PIKA_RES res = PIKA_RES_OK;
+    if (!strEqu("nocompiled", pikaMaker_getState(self, module_name))) {
+        return PIKA_RES_OK;
+    }
     res = pikaMaker_compileModule(self, module_name);
     if (PIKA_RES_OK != res) {
         obj_setInt(self, "err", res);
@@ -1076,6 +1184,78 @@ PIKA_RES pikaMaker_compileModuleWithDepends(PikaMaker* self,
         pikaMaker_getDependencies(self, uncompiled);
     }
     return PIKA_RES_OK;
+}
+
+PIKA_RES pikaMaker_compileModuleWithList(PikaMaker* self, char* list_content) {
+    PIKA_RES res = PIKA_RES_OK;
+    Args buffs = {0};
+    char* module_name = NULL;
+    char* module_name_start = list_content;
+    char* module_name_end = NULL;
+    pika_platform_printf("  <module list>\r\n");
+    while (1) {
+        module_name_end = strFind(module_name_start, '\n');
+        if (NULL == module_name_end) {
+            break;
+        }
+        module_name = strsSubStr(&buffs, module_name_start, module_name_end);
+        pika_platform_printf("  - %s\r\n", module_name);
+        module_name_start = module_name_end + 1;
+    }
+    module_name_start = list_content;
+    while (1) {
+        module_name_end = strFind(module_name_start, '\n');
+        if (NULL == module_name_end) {
+            break;
+        }
+        module_name = strsSubStr(&buffs, module_name_start, module_name_end);
+        char* module_name_fs = strsReplace(&buffs, module_name, ".", "/");
+        enum PIKA_MODULE_TYPE module_type = _checkModuleType(module_name_fs);
+        if (module_type == PIKA_MODULE_TYPE_PY) {
+            res = pikaMaker_compileModuleWithDepends(self, module_name);
+            if (PIKA_RES_OK != res) {
+                obj_setInt(self, "err", res);
+                goto __exit;
+            }
+        }
+        if (module_type == PIKA_MODULE_TYPE_PYO) {
+            pikaMaker_linkByteocdeFile(self, module_name);
+        }
+        if (module_type == PIKA_MODULE_TYPE_UNKNOWN) {
+            pika_platform_printf(
+                "    [warning]: file: '%s.pyi', '%s.py' or '%s.py.o' "
+                "no found\n",
+                module_name, module_name, module_name);
+        }
+        module_name_start = module_name_end + 1;
+    }
+__exit:
+    strsDeinit(&buffs);
+    return PIKA_RES_OK;
+}
+
+PIKA_RES pikaMaker_compileModuleWithListFile(PikaMaker* self,
+                                             char* list_file_name) {
+    Args buffs = {0};
+    PIKA_RES res = PIKA_RES_OK;
+    char* folder_path =
+        strsPathJoin(&buffs, obj_getStr(self, "pwd"), "pikascript-api/");
+    char* list_file_path = strsPathJoin(&buffs, folder_path, list_file_name);
+    pika_platform_printf("  loading %s...\r\n", list_file_name);
+    Arg* list_file_arg = arg_loadFile(NULL, list_file_path);
+    if (NULL == list_file_arg) {
+        pika_platform_printf("Error: Could not load file '%s'\n",
+                             list_file_path);
+        res = PIKA_RES_ERR_IO_ERROR;
+        goto __exit;
+    }
+    char* list_file_content = (char*)arg_getBytes(list_file_arg);
+    list_file_content = strsFilePreProcess_ex(&buffs, list_file_content, "\n");
+    res = pikaMaker_compileModuleWithList(self, list_file_content);
+    goto __exit;
+__exit:
+    strsDeinit(&buffs);
+    return res;
 }
 
 int32_t __foreach_handler_linkCompiledModules(Arg* argEach, void* context) {

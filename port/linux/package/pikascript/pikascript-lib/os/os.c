@@ -7,6 +7,10 @@
 #include "os_fileStat.h"
 #include "os_platform.h"
 
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 12, 7)
+#error "This library requires PikaScript version 1.12.7 or higher"
+#endif
+
 void os___init__(PikaObj* self) {
     // obj_newDirectObj(self,"os",New_TinyObj);
 

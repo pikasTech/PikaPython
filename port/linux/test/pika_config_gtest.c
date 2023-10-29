@@ -51,3 +51,26 @@ PIKA_WEAK void pika_hook_unused_stack_arg(PikaVMFrame* vm, Arg* arg) {
         arg_print(arg, pika_true, "\r\n");
     }
 }
+
+#define GETCHAR_BUFFER_SIZE 1024
+uint8_t getchar_buffer[GETCHAR_BUFFER_SIZE] = {0};
+size_t getchar_buffer_index = 0;
+
+int write_to_getchar_buffer(const char* str, size_t size) {
+    if (size > GETCHAR_BUFFER_SIZE - getchar_buffer_index) {
+        return -1;
+    }
+    memcpy(getchar_buffer + getchar_buffer_index, str, size);
+    getchar_buffer_index += size;
+    return 0;
+}
+
+char pika_platform_getchar(void) {
+    if (getchar_buffer_index > 0) {
+        char c = getchar_buffer[0];
+        memmove(getchar_buffer, getchar_buffer + 1, getchar_buffer_index - 1);
+        getchar_buffer_index--;
+        return c;
+    }
+    return getchar();
+}

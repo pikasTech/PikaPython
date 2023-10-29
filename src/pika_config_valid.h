@@ -290,6 +290,10 @@ extern "C" {
         #define PIKA_DEBUG_ENABLE 0
     #endif
 
+    #ifndef PIKA_DEBUG_BREAK_POINT_MAX
+        #define PIKA_DEBUG_BREAK_POINT_MAX 8
+    #endif
+
     #ifndef PIKA_FILEIO_ENABLE
         #define PIKA_FILEIO_ENABLE 1
     #endif

@@ -37,13 +37,14 @@
 #include "dataQueue.h"
 #include "dataString.h"
 #include "dataStrs.h"
+#include "PikaParser.h"
 #if __linux
 #include "signal.h"
 #include "termios.h"
 #include "unistd.h"
 #endif
 
-extern volatile VMSignal g_PikaVMSignal;
+extern volatile VMState g_PikaVMState;
 volatile PikaObjState g_PikaObjState = {
     .helpModulesCmodule = NULL,
     .inRootObj = pika_false,
@@ -1269,6 +1270,9 @@ pika_bool obj_isArgExist(PikaObj* self, char* argPath) {
         return 0;
     }
     PikaObj* obj_host = obj_getHostObj(self, argPath);
+    if (obj_host == NULL) {
+        return pika_false;
+    }
     int32_t res = 0;
     char* argName;
     Arg* arg;
@@ -1790,7 +1794,9 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
         }
         shell->lineBuff[shell->line_position] = '\0';
         ctrl = shell->handler(self, shell->lineBuff, shell);
-        pika_platform_printf("%s", shell->prefix);
+        if (SHELL_CTRL_EXIT != ctrl) {
+            pika_platform_printf("%s", shell->prefix);
+        }
         __clearBuff(shell);
         goto __exit;
     }
@@ -2032,7 +2038,9 @@ static enum shellCTRL __obj_shellLineHandler_REPL(PikaObj* self,
         return SHELL_CTRL_EXIT;
     }
     /* run single line */
-    _pikaVM_runPyLines(self, input_line, pika_true);
+    pikaVM_run_ex_cfg cfg = {0};
+    cfg.in_repl = pika_true;
+    pikaVM_run_ex(self, input_line, &cfg);
     return SHELL_CTRL_CONTINUE;
 }
 
@@ -2500,7 +2508,26 @@ int32_t obj_newDirectObj(PikaObj* self, char* objName, NewFun newFunPtr) {
     obj_setName(arg_getPtr(aNewObj), objName);
     arg_setType(aNewObj, ARG_TYPE_OBJECT);
     // pikaGC_enable(arg_getPtr(aNewObj));
-    args_setArg(self->list, aNewObj);
+    obj_setArg_noCopy(self, objName, aNewObj);
+    return 0;
+}
+
+int32_t obj_newHostObj(PikaObj* self, char* objName) {
+    Args buffs = {0};
+    size_t tokenCnt = strCountSign(objName, '.');
+    if (0 == tokenCnt) {
+        return 0;
+    }
+    PikaObj* this = self;
+    objName = strsCopy(&buffs, objName);
+    for (int i = 0; i < tokenCnt; i++) {
+        char* name = strsPopToken(&buffs, &objName, '.');
+        if (!obj_isArgExist(this, name)) {
+            obj_newDirectObj(this, name, New_TinyObj);
+            this = obj_getObj(this, name);
+        }
+    }
+    strsDeinit(&buffs);
     return 0;
 }
 
@@ -2538,15 +2565,24 @@ PikaObj* obj_importModuleWithByteCode(PikaObj* self,
                                       uint8_t* byteCode) {
     if (!obj_isArgExist((PikaObj*)__pikaMain, name)) {
         /* import to main module context */
+        obj_newHostObj((PikaObj*)__pikaMain, name);
         obj_newDirectObj((PikaObj*)__pikaMain, name, New_TinyObj);
-
-        pikaVM_runByteCode(obj_getObj((PikaObj*)__pikaMain, name),
-                           (uint8_t*)byteCode);
+        PikaObj* module_obj = obj_getObj((PikaObj*)__pikaMain, name);
+        PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
+                                  .try_result = TRY_RESULT_NONE};
+        pikaVM_runBytecode_ex_cfg cfg = {0};
+        cfg.globals = module_obj;
+        cfg.locals = module_obj;
+        cfg.name = name;
+        cfg.vm_thread = &vm_thread;
+        cfg.is_const_bytecode = pika_true;
+        pikaVM_runByteCode_ex(module_obj, byteCode, &cfg);
     }
     if (self != (PikaObj*)__pikaMain) {
         /* import to other module context */
         Arg* aModule = obj_getArg((PikaObj*)__pikaMain, name);
         PikaObj* oModule = arg_getPtr(aModule);
+        obj_newHostObj(self, name);
         obj_setArg(self, name, aModule);
         arg_setIsWeakRef(obj_getArg(self, name), pika_true);
         pika_assert(arg_isObject(aModule));
@@ -2604,7 +2640,7 @@ uint8_t* pika_getByteCodeFromModule(char* module_name) {
     }
     /* find module from the library */
     LibObj* lib = obj_getPtr(self, "@lib");
-    PikaObj* module = obj_getObj(lib, module_name);
+    PikaObj* module = LibObj_getModule(lib, module_name);
     /* exit when no module in '@lib' */
     if (NULL == module) {
         return NULL;
@@ -2617,7 +2653,16 @@ int obj_runModule(PikaObj* self, char* module_name) {
     if (NULL == bytecode) {
         return 1;
     }
-    pikaVM_runByteCode(self, bytecode);
+
+    PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
+                              .try_result = TRY_RESULT_NONE};
+    pikaVM_runBytecode_ex_cfg cfg = {0};
+    cfg.globals = self;
+    cfg.locals = self;
+    cfg.name = module_name;
+    cfg.vm_thread = &vm_thread;
+    cfg.is_const_bytecode = pika_true;
+    pikaVM_runByteCode_ex(self, bytecode, &cfg);
     return 0;
 }
 
@@ -2791,8 +2836,8 @@ static void _thread_event(void* arg) {
     while (1) {
         pika_GIL_ENTER();
 #if PIKA_EVENT_ENABLE
-        if (g_PikaVMSignal.event_thread_exit) {
-            g_PikaVMSignal.event_thread_exit_done = 1;
+        if (g_PikaVMState.event_thread_exit) {
+            g_PikaVMState.event_thread_exit_done = 1;
             break;
         }
 #endif
@@ -2814,11 +2859,11 @@ PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
 #else
     _RETURN_WHEN_NOT_ZERO(pika_GIL_ENTER(), -1);
 #if PIKA_EVENT_THREAD_ENABLE
-    if (!g_PikaVMSignal.event_thread) {
+    if (!g_PikaVMState.event_thread) {
         /* using multi thread */
         if (_VM_is_first_lock()) {
             // avoid _VMEvent_pickupEvent() in _time.c as soon as possible
-            g_PikaVMSignal.event_thread = pika_platform_thread_init(
+            g_PikaVMState.event_thread = pika_platform_thread_init(
                 "pika_event", _thread_event, NULL, PIKA_EVENT_THREAD_STACK_SIZE,
                 PIKA_THREAD_PRIO, PIKA_THREAD_TICK);
             pika_debug("event thread init");
@@ -2870,11 +2915,11 @@ Arg* pika_eventListener_sendSignalAwaitResult(PikaEventListener* self,
     while (1) {
     };
 #else
-    extern volatile VMSignal g_PikaVMSignal;
-    int tail = g_PikaVMSignal.cq.tail;
+    extern volatile VMState g_PikaVMState;
+    int tail = g_PikaVMState.cq.tail;
     pika_eventListener_sendSignal(self, eventId, eventSignal);
     while (1) {
-        Arg* res = g_PikaVMSignal.cq.res[tail];
+        Arg* res = g_PikaVMState.cq.res[tail];
         pika_platform_thread_yield();
         if (NULL != res) {
             return res;
@@ -3879,6 +3924,143 @@ Arg* builtins_min(PikaObj* self, PikaTuple* val) {
     return _max_min(self, val, (uint8_t*)bc_min);
 }
 
+static PIKA_BOOL _check_no_buff_format(char* format) {
+    while (*format) {
+        if (*format == '%') {
+            ++format;
+            if (*format != 's' && *format != '%') {
+                return PIKA_FALSE;
+            }
+        }
+        ++format;
+    }
+    return PIKA_TRUE;
+}
+
+int pika_pvsprintf(char** buff, const char* fmt, va_list args) {
+    int required_size;
+    int current_size = PIKA_SPRINTF_BUFF_SIZE;
+    *buff = (char*)pika_platform_malloc(current_size * sizeof(char));
+
+    if (*buff == NULL) {
+        return -1;  // Memory allocation failed
+    }
+
+    va_list args_copy;
+    va_copy(args_copy, args);
+
+    required_size =
+        pika_platform_vsnprintf(*buff, current_size, fmt, args_copy);
+    va_end(args_copy);
+
+    while (required_size >= current_size) {
+        current_size *= 2;
+        char* new_buff =
+            (char*)pika_platform_realloc(*buff, current_size * sizeof(char));
+
+        if (new_buff == NULL) {
+            pika_platform_free(*buff);
+            *buff = NULL;
+            return -1;  // Memory allocation failed
+        } else {
+            *buff = new_buff;
+        }
+
+        va_copy(args_copy, args);
+        required_size =
+            pika_platform_vsnprintf(*buff, current_size, fmt, args_copy);
+        va_end(args_copy);
+    }
+
+    return required_size;
+}
+
+static int _no_buff_vprintf(char* fmt, va_list args) {
+    int written = 0;
+    while (*fmt) {
+        if (*fmt == '%') {
+            ++fmt;
+            if (*fmt == 's') {
+                char* str = va_arg(args, char*);
+                if (str == NULL) {
+                    str = "(null)";
+                }
+                int len = strlen(str);
+                written += len;
+                for (int i = 0; i < len; i++) {
+                    pika_putchar(str[i]);
+                }
+            } else if (*fmt == '%') {
+                pika_putchar('%');
+                ++written;
+            }
+        } else {
+            pika_putchar(*fmt);
+            ++written;
+        }
+        ++fmt;
+    }
+    return written;
+}
+
+int pika_vprintf(char* fmt, va_list args) {
+    int ret = 0;
+    if (_check_no_buff_format(fmt)) {
+        _no_buff_vprintf(fmt, args);
+        return 0;
+    }
+
+    char* buff = NULL;
+    int required_size = pika_pvsprintf(&buff, fmt, args);
+
+    if (required_size < 0) {
+        ret = -1;  // Memory allocation or other error occurred
+        goto __exit;
+    }
+
+    // putchar
+    for (int i = 0; i < strlen(buff); i++) {
+        pika_putchar(buff[i]);
+    }
+
+__exit:
+    if (NULL != buff) {
+        pika_platform_free(buff);
+    }
+    return ret;
+}
+
+int pika_sprintf(char* buff, char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    int res = pika_platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
+    va_end(args);
+    if (res >= PIKA_SPRINTF_BUFF_SIZE) {
+        pika_platform_printf(
+            "OverflowError: sprintf buff size overflow, please use bigger "
+            "PIKA_SPRINTF_BUFF_SIZE\r\n");
+        pika_platform_printf("Info: buff size request: %d\r\n", res);
+        pika_platform_printf("Info: buff size now: %d\r\n",
+                             PIKA_SPRINTF_BUFF_SIZE);
+        while (1)
+            ;
+    }
+    return res;
+}
+
+int pika_vsprintf(char* buff, char* fmt, va_list args) {
+    /* vsnprintf */
+    return pika_platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
+}
+
+int pika_snprintf(char* buff, size_t size, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    int ret = pika_platform_vsnprintf(buff, size, fmt, args);
+    va_end(args);
+    return ret;
+}
+
 void _do_vsysOut(char* fmt, va_list args) {
     char* fmt_buff = pikaMalloc(strGetSize(fmt) + 2);
     pika_platform_memcpy(fmt_buff, fmt, strGetSize(fmt));
@@ -4442,4 +4624,74 @@ size_t pikaDict_getBytesSize(PikaDict* self, char* name) {
 
 void pikaDict_deinit(PikaDict* self) {
     obj_deinit(self);
+}
+
+PIKA_RES insert_label_at_line(const char* filename,
+                              int N,
+                              char* buff,
+                              int buff_size) {
+    FILE* file = pika_platform_fopen(filename, "r");
+    if (!file) {
+        return PIKA_RES_ERR_IO_ERROR;
+    }
+
+    int line_count = 1;
+    int buff_index = 0;
+    char ch;
+
+    while ((pika_platform_fread(&ch, 1, 1, file)) != 0) {
+        if (line_count == N) {
+            char* label = "#!label\n";
+            int label_length = strGetSize(label);
+
+            if (buff_index + label_length >= buff_size) {
+                pika_platform_fclose(file);
+                return PIKA_RES_ERR_IO_ERROR;  // Insufficient buffer size
+            }
+
+            strCopy(buff + buff_index, label);
+            buff_index += label_length;
+            line_count++;  // Skip this line since we're adding a label
+        }
+
+        if (ch == '\n') {
+            line_count++;
+        }
+
+        if (buff_index >=
+            buff_size - 1) {  // -1 to leave space for null terminator
+            pika_platform_fclose(file);
+            return PIKA_RES_ERR_IO_ERROR;  // Insufficient buffer size
+        }
+
+        buff[buff_index] = ch;
+        buff_index++;
+    }
+
+    buff[buff_index] = '\0';  // Null terminate the buffer
+
+    pika_platform_fclose(file);
+    return PIKA_RES_OK;
+}
+
+int32_t pika_debug_find_break_point_pc(char* pyFile, uint32_t pyLine) {
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    char* file_buff = pikaMalloc(PIKA_READ_FILE_BUFF_SIZE);
+    FILE* file = pika_platform_fopen(pyFile, "r");
+    if (!file) {
+        goto __exit;
+    }
+    if (PIKA_RES_OK != insert_label_at_line(pyFile, pyLine, file_buff,
+                                            PIKA_READ_FILE_BUFF_SIZE)) {
+        goto __exit;
+    }
+    pika_lines2Bytes(&bytecode_frame, file_buff);
+__exit:
+    if (NULL != file) {
+        pika_platform_fclose(file);
+    }
+    byteCodeFrame_deinit(&bytecode_frame);
+    pikaFree(file_buff, PIKA_READ_FILE_BUFF_SIZE);
+    return bytecode_frame.label_pc;
 }
