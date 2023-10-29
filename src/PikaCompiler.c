@@ -678,6 +678,46 @@ PikaObj* LibObj_getModule(LibObj* self, char* module_name) {
     return context.module;
 }
 
+/*
+    redirect import to module
+    example:
+        when IMP XXX.YYY.ZZZ and ZZZ is a calss
+        then redirect to IMP XXX.YYY
+*/
+char* LibObj_redirectModule(LibObj* self, Args* buffs_out, char* module_name) {
+    if (NULL == self) {
+        return NULL;
+    }
+    Args buffs = {0};
+    size_t token_num = strCountSign(module_name, '.');
+    if (0 == token_num) {
+        module_name = NULL;
+        goto __exit;
+    }
+    PikaObj* module_obj = LibObj_getModule(self, module_name);
+    if (NULL != module_obj) {
+        goto __exit;
+    }
+    module_name = strsCopy(&buffs, module_name);
+    for (int i = 0; i < token_num; i++) {
+        char* module_try = strsPopToken(&buffs, &module_try, '.');
+        PikaObj* module_obj = LibObj_getModule(self, module_try);
+        if (NULL != module_obj) {
+            char* module_name = obj_getStr(module_obj, "name");
+            if (NULL != module_name) {
+                goto __exit;
+            }
+        }
+    }
+    module_name = NULL;
+__exit:
+    if (NULL != module_name) {
+        module_name = strsCopy(buffs_out, module_name);
+    }
+    strsDeinit(&buffs);
+    return module_name;
+}
+
 int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
     int module_num = _getModuleNum(library_bytes);
     if (module_num < 0) {

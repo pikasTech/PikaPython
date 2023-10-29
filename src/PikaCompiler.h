@@ -25,6 +25,7 @@ int LibObj_linkFile(LibObj* self, char* output_file_name);
 int LibObj_loadLibraryFile(LibObj* self, char* input_file_name);
 PikaObj* LibObj_getModule(LibObj* self, char* module_name);
 int Lib_loadLibraryFileToArray(char* origin_file_name, char* pikascript_root);
+char* LibObj_redirectModule(LibObj* self, Args* buffs, char* module_name);
 PikaMaker* New_PikaMaker(void);
 void pikaMaker_setPWD(PikaMaker* self, char* pwd);
 PIKA_RES pikaMaker_compileModule(PikaMaker* self, char* module_name);

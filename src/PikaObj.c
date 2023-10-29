@@ -57,6 +57,7 @@ volatile PikaObjState g_PikaObjState = {
 #endif
 };
 
+extern volatile PikaObj* __pikaMain;
 static volatile ShellConfig g_REPL;
 
 PikaObj* New_PikaStdData_Dict(Args* args);
@@ -151,7 +152,6 @@ static int32_t obj_deinit_no_del(PikaObj* self) {
         arg_deinit(self->aName);
     }
 #endif
-    extern volatile PikaObj* __pikaMain;
     /* remove self from gc chain */
     obj_removeGcChain(self);
     /* free the pointer */
@@ -2631,20 +2631,38 @@ PikaObj* obj_linkLibObj(PikaObj* self, LibObj* library) {
     return self;
 }
 
-uint8_t* pika_getByteCodeFromModule(char* module_name) {
-    pika_assert(NULL != module_name);
-    PikaObj* self = (PikaObj*)__pikaMain;
-    /* exit when no found '@lib' */
-    if (!obj_isArgExist(self, "@lib")) {
+LibObj* pika_getLibObj(void) {
+    // Ensure __pikaMain exists
+    if (__pikaMain == NULL) {
         return NULL;
     }
-    /* find module from the library */
-    LibObj* lib = obj_getPtr(self, "@lib");
+
+    // Cast __pikaMain to PikaObj and fetch library
+    PikaObj* self = (PikaObj*)__pikaMain;
+    return obj_getPtr(self, "@lib");
+}
+
+uint8_t* pika_getByteCodeFromModule(char* module_name) {
+    // Check if module_name is not NULL
+    pika_assert(NULL != module_name);
+
+    // Fetch library using pika_getLibObj
+    LibObj* lib = pika_getLibObj();
+
+    // Exit if there's no library
+    if (NULL == lib) {
+        return NULL;
+    }
+
+    // Fetch the module from the library
     PikaObj* module = LibObj_getModule(lib, module_name);
-    /* exit when no module in '@lib' */
+
+    // Check if module exists
     if (NULL == module) {
         return NULL;
     }
+
+    // Return bytecode of the module
     return obj_getPtr(module, "bytecode");
 }
 

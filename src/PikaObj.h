@@ -550,6 +550,7 @@ static inline Arg* arg_newRef(PikaObj* obj) {
 }
 
 uint8_t* pika_getByteCodeFromModule(char* module_name);
+LibObj* pika_getLibObj(void);
 
 PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
                                            char* name,

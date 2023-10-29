@@ -2639,7 +2639,7 @@ static char* Suger_from_import_as(Args* buffs_p, char* sLine) {
     sClass = sClassAfter;
 
     sLineOut = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "import %s\n%s = %s",
-                          sModule, sAlias, sClass);
+                          sClass, sAlias, sClass);
     sLineOut = strsCopy(buffs_p, sLineOut);
 __exit:
     strsDeinit(&buffs);

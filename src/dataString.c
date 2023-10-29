@@ -94,6 +94,7 @@ const char bracketEnd[] = {')', ']', '}', '\'', '\"'};
 #define BRACKET_TYPE_NUM (sizeof(bracketStart) / sizeof(char))
 
 int _strCountSign(char* strIn, char sign, pika_bool bracketDepth0) {
+    pika_assert(NULL != strIn);
     int32_t iCount = 0;
     int32_t iTotalDepth = 0;
     pika_bool bEscaped = pika_false;

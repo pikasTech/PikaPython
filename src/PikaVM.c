@@ -3388,23 +3388,39 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self,
                                        PikaVMFrame* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
+    Args buffs = {0};
+    if (NULL == data) {
+        goto __exit;
+    }
+    char* module_name_redirect =
+        LibObj_redirectModule(pika_getLibObj(), &buffs, data);
+    if (NULL != module_name_redirect) {
+        data = module_name_redirect;
+    }
     /* the module is already imported, skip. */
     if (obj_isArgExist(self, data)) {
-        return NULL;
+        goto __exit;
     }
-    /* find cmodule in root object */
-    extern volatile PikaObj* __pikaMain;
-    if (obj_isArgExist((PikaObj*)__pikaMain, data)) {
-        obj_setArg(self, data, obj_getArg((PikaObj*)__pikaMain, data));
-        return NULL;
+    if (NULL == module_name_redirect) {
+        /* find cmodule in root object */
+        extern volatile PikaObj* __pikaMain;
+        char* cmodule_try = strsGetFirstToken(&buffs, data, '.');
+        if (obj_isArgExist((PikaObj*)__pikaMain, cmodule_try)) {
+            obj_setArg(self, cmodule_try,
+                       obj_getArg((PikaObj*)__pikaMain, cmodule_try));
+            goto __exit;
+        }
     }
+
     /* import module from '@lib' */
     if (0 == obj_importModule(self, data)) {
-        return NULL;
+        goto __exit;
     }
     PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
     PikaVMFrame_setSysOut(vm, "ModuleNotFoundError: No module named '%s'",
                           data);
+__exit:
+    strsDeinit(&buffs);
     return NULL;
 }
 
