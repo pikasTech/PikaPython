@@ -41,6 +41,10 @@
 #include "unistd.h"
 #endif
 
+#if (defined(__linux) || PIKA_LINUX_COMPATIBLE) || defined(_WIN32)
+#include <dirent.h>
+#endif
+
 void pikaFree(void* mem, uint32_t size);
 void* pikaMalloc(uint32_t size);
 int pika_pvsprintf(char** buff, const char* fmt, va_list args);
@@ -289,9 +293,9 @@ PIKA_WEAK int pika_platform_rmdir(const char* pathname) {
 }
 
 PIKA_WEAK int pika_platform_mkdir(const char* pathname, int mode) {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(CROSS_BUILD)
     (void)(mode);
-    return mkdir(dirpath);
+    return mkdir(pathname);
 #elif defined(__linux) || PIKA_LINUX_COMPATIBLE
     return mkdir(pathname, mode);
 #else
@@ -300,7 +304,7 @@ PIKA_WEAK int pika_platform_mkdir(const char* pathname, int mode) {
 }
 
 PIKA_WEAK char* pika_platform_realpath(const char* path, char* resolved_path) {
-#if defined(_WIN32) || defined(__linux) || PIKA_LINUX_COMPATIBLE
+#if defined(__linux) || PIKA_LINUX_COMPATIBLE
     return realpath(path, resolved_path);
 #else
     if (!path || !resolved_path)
@@ -354,7 +358,7 @@ PIKA_WEAK char* pika_platform_realpath(const char* path, char* resolved_path) {
 }
 
 PIKA_WEAK int pika_platform_path_exists(const char* path) {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(CROSS_BUILD)
     DWORD attr = GetFileAttributesA((LPCWSTR)path);
     if (attr == INVALID_FILE_ATTRIBUTES) {
         return 0;
@@ -374,7 +378,7 @@ PIKA_WEAK int pika_platform_path_exists(const char* path) {
 }
 
 PIKA_WEAK int pika_platform_path_isdir(const char* path) {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(CROSS_BUILD)
     int is_dir = 0;
     DWORD attrs = GetFileAttributes((LPCWSTR)path);
     if (attrs != INVALID_FILE_ATTRIBUTES) {
@@ -395,7 +399,7 @@ PIKA_WEAK int pika_platform_path_isdir(const char* path) {
 
 // Returns true if the given path is a regular file, false otherwise.
 PIKA_WEAK int pika_platform_path_isfile(const char* path) {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(CROSS_BUILD)
     int is_file = 0;
     DWORD attrs = GetFileAttributes(path);
     if (attrs != INVALID_FILE_ATTRIBUTES) {

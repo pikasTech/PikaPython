@@ -1,7 +1,6 @@
 main
 json
 math
-struct
 PikaMath
 PikaCV
 PikaNN
@@ -41,3 +40,4 @@ eventloop
 this
 fsm
 subsrc.mod1
+flashdb
