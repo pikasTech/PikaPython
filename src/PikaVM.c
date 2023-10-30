@@ -2873,8 +2873,8 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             }
 #endif
             PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-            pika_platform_printf(
-                "TypeError: unsupported operand type(s) for %%: 'float'\n");
+            PikaVMFrame_setSysOut(vm, 
+                "TypeError: unsupported operand type(s) for %%: 'float'");
             op.res = NULL;
             goto __exit;
         case '-':

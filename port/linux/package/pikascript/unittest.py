@@ -69,22 +69,28 @@ class TestCase:
     def assertNotIn(self, x, y):
         msg = "Expected %r not to be in %r" % (x, y)
         assert x not in y, msg
+    
+    def do_run(self, suite_name, name):
+        mem_before = 0.0
+        mem_after = 0.0
+        mem_before = mem.getNow()
+        self.test_fn()
+        mem_after = mem.getNow()
+        print("\x1b[1m\x1b[32m[       OK ] %s.%s\x1b[0m" % (suite_name, name))
+        if mem_after != mem_before:
+            print("\x1b[33m[ MEM LACK ]", mem_after - mem_before,"\x1b[0m")
 
-    def run(self, result: TestResult, suite_name):
+    def run(self, result: TestResult, suite_name, stop_on_error=False):
         for name in dir(self):
             if name.startswith("test"):
                 result.testsRun += 1
                 self.test_fn = getattr(self, name)
                 print("[ RUN      ] %s.%s" % (suite_name, name))
+                if stop_on_error:
+                    self.do_run(suite_name, name)
+                    continue
                 try:
-                    mem_before = 0.0
-                    mem_after = 0.0
-                    mem_before = mem.getNow()
-                    self.test_fn()
-                    mem_after = mem.getNow()
-                    print("\x1b[1m\x1b[32m[       OK ] %s.%s\x1b[0m" % (suite_name, name))
-                    if mem_after != mem_before:
-                        print("\x1b[33m[ MEM LACK ]", mem_after - mem_before,"\x1b[0m")
+                    self.do_run(suite_name, name)
                 except:
                     print("\x1b[1m\x1b[31m[  FAILED  ]\x1b[0m %s.%s" % (suite_name, name))
                     result.errorsNum += 1
@@ -98,17 +104,17 @@ class TestSuite:
     def addTest(self, case):
         self._tests.append(case)
 
-    def run(self, result: TestResult):
+    def run(self, result: TestResult, stop_on_error=False):
         for case in self._tests:
-            case.run(result, self.name)
+            case.run(result, self.name, stop_on_error)
         return result
 
 
 class TextTestRunner:
-    def run(self, suite: TestSuite):
+    def run(self, suite: TestSuite, stop_on_error=False):
         res = TestResult()
         print("[----------] tests from %s" % suite.name)
-        _ = suite.run(res)
+        _ = suite.run(res, stop_on_error)
         print("[----------] %d tests from %s" % res.testsRun, suite.name)
         print('')
         print('[==========]')
