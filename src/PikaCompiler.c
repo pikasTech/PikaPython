@@ -688,34 +688,31 @@ char* LibObj_redirectModule(LibObj* self, Args* buffs_out, char* module_name) {
     if (NULL == self) {
         return NULL;
     }
+    char* module_name_new = NULL;
     Args buffs = {0};
     size_t token_num = strCountSign(module_name, '.');
     if (0 == token_num) {
-        module_name = NULL;
         goto __exit;
     }
     PikaObj* module_obj = LibObj_getModule(self, module_name);
     if (NULL != module_obj) {
+        module_name_new = module_name;
         goto __exit;
     }
-    char* module_try = strsCopy(&buffs, module_name);
-    for (int i = 0; i < token_num; i++) {
-        PikaObj* module_obj = LibObj_getModule(self, module_try);
+    module_name_new = strsCopy(&buffs, module_name);
+    for (int i = 0; i < token_num + 1; i++) {
+        PikaObj* module_obj = LibObj_getModule(self, module_name_new);
         if (NULL != module_obj) {
-            char* module_name = obj_getStr(module_obj, "name");
-            if (NULL != module_name) {
-                goto __exit;
-            }
+            goto __exit;
         }
-        strPopLastToken(module_try, '.');
+        strPopLastToken(module_name_new, '.');
     }
-    module_name = NULL;
 __exit:
-    if (NULL != module_name) {
-        module_name = strsCopy(buffs_out, module_name);
+    if (NULL != module_name_new) {
+        module_name_new = strsCopy(buffs_out, module_name_new);
     }
     strsDeinit(&buffs);
-    return module_name;
+    return module_name_new;
 }
 
 int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
@@ -1022,12 +1019,12 @@ static char* _redirectModuleFromFs(Args* buffs_out,
                                    char* module_name) {
     Args buffs = {0};
     size_t token_num = strCountSign(module_name, '.');
+    char* module_name_new = NULL;
     if (0 == token_num) {
-        module_path = NULL;
         goto __exit;
     }
     char* module_try = strsCopy(&buffs, module_path);
-    char* module_name = strsCopy(&buffs, module_name);
+    module_name_new = strsCopy(&buffs, module_name);
     for (int i = 0; i < token_num + 1; i++) {
         enum PIKA_MODULE_TYPE module_type = _checkModuleType(module_try);
         if (module_type != PIKA_MODULE_TYPE_UNKNOWN) {
@@ -1037,15 +1034,15 @@ static char* _redirectModuleFromFs(Args* buffs_out,
             }
         }
         strPopLastToken(module_try, '/');
-        strPopLastToken(module_name, '.');
+        strPopLastToken(module_name_new, '.');
     }
     module_path = NULL;
 __exit:
-    if (NULL != module_path) {
-        module_path = strsCopy(buffs_out, module_path);
+    if (NULL != module_name_new) {
+        module_name_new = strsCopy(buffs_out, module_name_new);
     }
     strsDeinit(&buffs);
-    return module_path;
+    return module_name_new;
 }
 
 FILE* _openModuleFile(char* module_path, enum PIKA_MODULE_TYPE module_type) {
@@ -1141,6 +1138,14 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
                 &buffs, obj_getStr(self, "pwd"), imp_module_name_fs);
             char* imp_module_name_redirect =
                 _redirectModuleFromFs(&buffs, imp_module_path, imp_module_name);
+            if (NULL != imp_module_name_redirect) {
+                /* redirect to real module */
+                imp_module_name = imp_module_name_redirect;
+                imp_module_name_fs =
+                    strsReplace(&buffs, imp_module_name, ".", "/");
+                imp_module_path = strsPathJoin(&buffs, obj_getStr(self, "pwd"),
+                                               imp_module_name_fs);
+            }
             /* check if compiled the module */
             if (args_isArgExist(self->list, imp_module_name)) {
                 /* module info is exist, do nothing */
