@@ -75,7 +75,9 @@ void pikaGC_markObj(PikaGC* gc, PikaObj* self);
 void _pikaGC_mark(PikaGC* gc);
 void obj_dump(PikaObj* self);
 void Locals_deinit(PikaObj* self);
+#if __linux
 static void disable_raw_mode(void);
+#endif
 
 static enum shellCTRL __obj_shellLineHandler_REPL(PikaObj* self,
                                                   char* input_line,
@@ -2875,7 +2877,7 @@ PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
     while (1) {
     };
 #else
-    _RETURN_WHEN_NOT_ZERO(pika_GIL_ENTER(), -1);
+    _RETURN_WHEN_NOT_ZERO(pika_GIL_ENTER(), (PIKA_RES)-1);
 #if PIKA_EVENT_THREAD_ENABLE
     if (!g_PikaVMState.event_thread) {
         /* using multi thread */
@@ -2903,7 +2905,7 @@ PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
     }
 __exit:
     pika_GIL_EXIT();
-    return 0;
+    return (PIKA_RES)0;
 #endif
 }
 
@@ -2916,7 +2918,7 @@ PIKA_RES pika_eventListener_send(PikaEventListener* self,
 PIKA_RES pika_eventListener_sendSignal(PikaEventListener* self,
                                        uint32_t eventId,
                                        int eventSignal) {
-    _RETURN_WHEN_NOT_ZERO(pika_GIL_ENTER(), -1);
+    _RETURN_WHEN_NOT_ZERO(pika_GIL_ENTER(), (PIKA_RES)-1);
     Arg* eventData = arg_newInt(eventSignal);
     pika_GIL_EXIT();
     return pika_eventListener_send(self, eventId, eventData);

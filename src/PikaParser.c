@@ -1778,6 +1778,7 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
     char* sRight = NULL;
     char* sImport = NULL;
     char* sInhert = NULL;
+    enum StmtType eStmtType = STMT_none;
     PIKA_RES eResult = PIKA_RES_OK;
 
     sRight = sStmt;
@@ -1829,7 +1830,7 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
         AST_setNodeAttr(ast, (char*)"left", sLeft);
     }
     /* match statment type */
-    enum StmtType eStmtType = Lexer_matchStmtType(sRight);
+    eStmtType = Lexer_matchStmtType(sRight);
     if (STMT_tuple == eStmtType) {
         sRight = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "(%s)", sRight);
         eStmtType = STMT_method;
@@ -2842,6 +2843,7 @@ char* parser_lines2Target(Parser* self, char* sPyLines) {
     uint8_t bIsLineConnectionForBracket = 0;
     char* sOut = NULL;
     char* sBackendCode = NULL;
+    char* sDocstring = NULL;
     uint32_t uLineSize = 0;
     /* parse each line */
     while (1) {
@@ -2893,7 +2895,6 @@ char* parser_lines2Target(Parser* self, char* sPyLines) {
         }
 
         /* filter for docstring ''' or """ */
-        char* sDocstring = NULL;
         if (Parser_checkIsDocstring(sLine, &self->lineBuffs, bIsInDocstring,
                                     &bIsSingleDocstring, &sDocstring)) {
             bIsInDocstring = ~bIsInDocstring;

@@ -109,9 +109,9 @@ PIKA_RES args_setPtrWithType(Args* self,
                              char* name,
                              ArgType type,
                              void* objPtr);
-PIKA_RES args_foreach(Args* self,
-                      int32_t (*eachHandle)(Arg* argEach, void* context),
-                      void* context);
+typedef int32_t (*fn_args_foreach)(Arg* argEach, void* context);
+
+PIKA_RES args_foreach(Args* self, fn_args_foreach eachHandle, void* context);
 
 PIKA_RES args_reverse(Args* self);
 

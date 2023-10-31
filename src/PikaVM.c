@@ -3389,10 +3389,11 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self,
                                        char* data,
                                        Arg* arg_ret_reg) {
     Args buffs = {0};
+    char* module_name_redirect = NULL;
     if (NULL == data) {
         goto __exit;
     }
-    char* module_name_redirect =
+    module_name_redirect =
         LibObj_redirectModule(pika_getLibObj(), &buffs, data);
     if (NULL != module_name_redirect) {
         data = module_name_redirect;
@@ -3558,7 +3559,7 @@ static enum InstructIndex __find_ins_idx_in_ins_set(
 
     do {
         if (0 == strncmp(ins_str, ins->op_str, ins->op_str_len)) {
-            return ins->op_idx;
+            return (enum InstructIndex)ins->op_idx;
         }
         ins++;
     } while (--count);

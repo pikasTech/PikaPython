@@ -31,6 +31,27 @@ pub struct Compiler {
     pub decorator_list_now: Vec<Decorator>,
 }
 
+fn transform_path(original: &str) -> String {
+    let valid_suffixes = &[".py", ".py.o", ".pyi"];
+
+    for suffix in valid_suffixes.iter() {
+        if original.ends_with(suffix) {
+            let prefix = &original[0..original.len() - suffix.len()];
+            // println!("prefix: {}", prefix);
+            // println!("suffix: {}", suffix);
+            let transformed_prefix = prefix.replace(".", "/");
+            // println!("transformed_prefix: {}", transformed_prefix);
+            // println!(
+            //     "transformed_prefix: {}",
+            //     transformed_prefix.to_string() + suffix
+            // );
+            return transformed_prefix.to_string() + suffix;
+        }
+    }
+
+    original.to_string() // 如果不匹配任何有效后缀，则返回原始字符串
+}
+
 impl Compiler {
     pub fn new(source_path: String, dist_path: String) -> Compiler {
         let compiler = Compiler {
@@ -210,16 +231,11 @@ impl Compiler {
     }
 
     fn open_file(path: String) -> io::Result<File> {
-        for entry in fs::read_dir("./").expect("读取目录失败") {
-            if let Ok(entry) = entry {
-                let file = entry.path();
-                let filename = file.to_str().unwrap().replace("./", "");
-                if filename.to_string() == path {
-                    return File::open(path);
-                }
-            }
+        let new_path = transform_path(&path);
+        if Path::new(&new_path).exists() {
+            return File::open(new_path);
         }
-        return Err(std::io::Error::from(std::io::ErrorKind::NotFound));
+        Err(std::io::Error::from(std::io::ErrorKind::NotFound))
     }
 
     pub fn analyse_py_package_main(self: Compiler, file_name: String) -> Compiler {
