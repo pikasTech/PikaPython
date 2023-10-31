@@ -1,5 +1,4 @@
 import PikaStdLib
-import STM32F4
 
 print('hello PikaScript!')
 
