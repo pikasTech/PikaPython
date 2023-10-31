@@ -700,7 +700,6 @@ char* LibObj_redirectModule(LibObj* self, Args* buffs_out, char* module_name) {
     }
     char* module_try = strsCopy(&buffs, module_name);
     for (int i = 0; i < token_num; i++) {
-        module_try = strsPopToken(&buffs, &module_try, '.');
         PikaObj* module_obj = LibObj_getModule(self, module_try);
         if (NULL != module_obj) {
             char* module_name = obj_getStr(module_obj, "name");
@@ -708,6 +707,7 @@ char* LibObj_redirectModule(LibObj* self, Args* buffs_out, char* module_name) {
                 goto __exit;
             }
         }
+        strPopLastToken(module_try, '.');
     }
     module_name = NULL;
 __exit:
@@ -1017,6 +1017,37 @@ __exit:
     return module_type;
 }
 
+static char* _redirectModuleFromFs(Args* buffs_out,
+                                   char* module_path,
+                                   char* module_name) {
+    Args buffs = {0};
+    size_t token_num = strCountSign(module_name, '.');
+    if (0 == token_num) {
+        module_path = NULL;
+        goto __exit;
+    }
+    char* module_try = strsCopy(&buffs, module_path);
+    char* module_name = strsCopy(&buffs, module_name);
+    for (int i = 0; i < token_num + 1; i++) {
+        enum PIKA_MODULE_TYPE module_type = _checkModuleType(module_try);
+        if (module_type != PIKA_MODULE_TYPE_UNKNOWN) {
+            char* module_name = module_try;
+            if (NULL != module_name) {
+                goto __exit;
+            }
+        }
+        strPopLastToken(module_try, '/');
+        strPopLastToken(module_name, '.');
+    }
+    module_path = NULL;
+__exit:
+    if (NULL != module_path) {
+        module_path = strsCopy(buffs_out, module_path);
+    }
+    strsDeinit(&buffs);
+    return module_path;
+}
+
 FILE* _openModuleFile(char* module_path, enum PIKA_MODULE_TYPE module_type) {
     Args buffs = {};
     FILE* fp = NULL;
@@ -1108,6 +1139,8 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
                 strsReplace(&buffs, imp_module_name, ".", "/");
             char* imp_module_path = strsPathJoin(
                 &buffs, obj_getStr(self, "pwd"), imp_module_name_fs);
+            char* imp_module_name_redirect =
+                _redirectModuleFromFs(&buffs, imp_module_path, imp_module_name);
             /* check if compiled the module */
             if (args_isArgExist(self->list, imp_module_name)) {
                 /* module info is exist, do nothing */
