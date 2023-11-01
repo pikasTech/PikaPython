@@ -22,8 +22,11 @@
 #error "Please defined the FDB_USING_FAL_MODE or FDB_USING_FILE_MODE macro"
 #endif
 
-fdb_err_t _fdb_init_ex(fdb_db_t db, const char *name, const char *path, fdb_db_type type, void *user_data)
-{
+fdb_err_t _fdb_init_ex(fdb_db_t db,
+                       const char* name,
+                       const char* path,
+                       fdb_db_type type,
+                       void* user_data) {
     FDB_ASSERT(db);
     FDB_ASSERT(name);
     FDB_ASSERT(path);
@@ -61,16 +64,22 @@ fdb_err_t _fdb_init_ex(fdb_db_t db, const char *name, const char *path, fdb_db_t
             return FDB_PART_NOT_FOUND;
         }
 
-        block_size = fal_flash_device_find(db->storage.part->flash_name)->blk_size;
+        block_size =
+            fal_flash_device_find(db->storage.part->flash_name)->blk_size;
         if (db->sec_size == 0) {
             db->sec_size = block_size;
         } else {
-	  // rbg/kcf
+            // rbg/kcf
             /* must be aligned with block size */
             if (db->sec_size % block_size != 0) {
-	      //     	FDB_INFO("Error: db sector size (%" PRIu32 ") MUST align with block size (%" PRIu32 ").\n", db->sec_size, block_size);
-	      	FDB_INFO("Error: db sector size (%lu) MUST align with block size (%u).\n", db->sec_size, block_size);		
-	      
+                //     	FDB_INFO("Error: db sector size (%" PRIu32 ") MUST align
+                //     with block size (%" PRIu32 ").\n", db->sec_size,
+                //     block_size);
+                FDB_INFO(
+                    "Error: db sector size (%lu) MUST align with block size "
+                    "(%u).\n",
+                    db->sec_size, block_size);
+
                 return FDB_INIT_FAILED;
             }
         }
@@ -83,36 +92,42 @@ fdb_err_t _fdb_init_ex(fdb_db_t db, const char *name, const char *path, fdb_db_t
     FDB_ASSERT((db->sec_size & (db->sec_size - 1)) == 0);
     /* must align with sector size */
     if (db->max_size % db->sec_size != 0) {
-        FDB_INFO("Error: db total size (%" PRIu32 ") MUST align with sector size (%" PRIu32 ").\n", db->max_size, db->sec_size);
+        FDB_INFO("Error: db total size (%" PRIu32
+                 ") MUST align with sector size (%" PRIu32 ").\n",
+                 db->max_size, db->sec_size);
         return FDB_INIT_FAILED;
     }
     /* must has more than or equal 2 sectors */
     if (db->max_size / db->sec_size < 2) {
-        FDB_INFO("Error: db MUST has more than or equal 2 sectors, current has %" PRIu32 " sector(s)\n", db->max_size / db->sec_size);
+        FDB_INFO(
+            "Error: db MUST has more than or equal 2 sectors, current has "
+            "%" PRIu32 " sector(s)\n",
+            db->max_size / db->sec_size);
         return FDB_INIT_FAILED;
     }
 
     return FDB_NO_ERR;
 }
 
-void _fdb_init_finish(fdb_db_t db, fdb_err_t result)
-{
+void _fdb_init_finish(fdb_db_t db, fdb_err_t result) {
     static bool log_is_show = false;
     if (result == FDB_NO_ERR) {
         db->init_ok = true;
         if (!log_is_show) {
             FDB_INFO("FlashDB V%s is initialize success.\n", FDB_SW_VERSION);
-            FDB_INFO("You can get the latest version on https://github.com/armink/FlashDB .\n");
+            FDB_INFO(
+                "You can get the latest version on "
+                "https://github.com/armink/FlashDB .\n");
             log_is_show = true;
         }
     } else if (!db->not_formatable) {
-        FDB_INFO("Error: %s (%s@%s) is initialize fail (%d).\n", db->type == FDB_DB_TYPE_KV ? "KVDB" : "TSDB",
-                db->name, _fdb_db_path(db), (int)result);
+        FDB_INFO("Error: %s (%s@%s) is initialize fail (%d).\n",
+                 db->type == FDB_DB_TYPE_KV ? "KVDB" : "TSDB", db->name,
+                 _fdb_db_path(db), (int)result);
     }
 }
 
-void _fdb_deinit(fdb_db_t db)
-{
+void _fdb_deinit(fdb_db_t db) {
     FDB_ASSERT(db);
 
     if (db->init_ok) {
@@ -135,16 +150,14 @@ void _fdb_deinit(fdb_db_t db)
     db->init_ok = false;
 }
 
-const char *_fdb_db_path(fdb_db_t db)
-{
+const char* _fdb_db_path(fdb_db_t db) {
     if (db->file_mode) {
 #ifdef FDB_USING_FILE_MODE
         return db->storage.dir;
 #else
         return NULL;
 #endif
-    }
-    else {
+    } else {
 #ifdef FDB_USING_FAL_MODE
         return db->storage.part->name;
 #else

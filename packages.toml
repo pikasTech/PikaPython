@@ -204,6 +204,7 @@ releases = [
     "v2.4.0 10f148ce8aba68ceafaff2b94c6c779d31cff3bb",
     "v2.4.1 6ad787b3490f5440cf12b9dfd0042534af3ce7e9",
     "v2.4.2 5a796dd852b2053a396386e1083099c181f36393",
+    "v2.4.3 c7621827d9c762250716727986d4d3d4c1778067",
 ]
 
 [[packages]]
@@ -236,6 +237,7 @@ releases = [
     "v0.1.2 2aafbbdc84eed84edcf5dcd7462a842a14f26a92",
     "v0.1.3 d582a42e0f886820584ae273ce188a42057424e6",
     "v0.1.4 c262db0e26f276dd2186a42b37f28ff15faf9a03",
+    "v0.1.5 c7621827d9c762250716727986d4d3d4c1778067",
 ]
 
 [[packages]]
@@ -249,13 +251,9 @@ releases = [
     "v0.1.5 5a796dd852b2053a396386e1083099c181f36393",
 ]
 
-
 [[packages]]
 name = "struct"
-releases = [
-    "v0.1.0 c3b395c5f0f5ad899695ac332089636820ba7359",
-]
-
+releases = ["v0.1.0 c3b395c5f0f5ad899695ac332089636820ba7359"]
 
 [[packages]]
 name = "socket"
@@ -452,6 +450,7 @@ releases = [
     "v0.4.1 024ab113a8d0d3d92c0a1ec0de03c48b2f44083d",
     "v0.4.2 54a7495c9e9a893d04d1444c53af74061f7d7c82",
     "v0.4.3 6ad787b3490f5440cf12b9dfd0042534af3ce7e9",
+    "v0.4.4 c7621827d9c762250716727986d4d3d4c1778067",
 ]
 
 [[packages]]
@@ -533,6 +532,7 @@ releases = [
     "v0.0.1 280700b8a8eee1849d16ac68871d014392edf269",
     "v0.1.0 8ab8cd90be83f1cb86e2b2bcbb3b68d99d034815",
     "v0.1.1 6ad787b3490f5440cf12b9dfd0042534af3ce7e9",
+    "v0.1.2 c7621827d9c762250716727986d4d3d4c1778067",
 ]
 
 [[packages]]
@@ -545,6 +545,7 @@ releases = [
     "v0.0.5 54a7495c9e9a893d04d1444c53af74061f7d7c82",
     "v0.0.6 a609c1ed280a7ed38e455322bc142ed908fbcc34",
     "v0.0.7 5a796dd852b2053a396386e1083099c181f36393",
+    "v0.0.8 c7621827d9c762250716727986d4d3d4c1778067",
 ]
 
 [[packages]]
@@ -624,6 +625,7 @@ releases = [
     "v0.1.7 5cb104a83e2de9d61bfb5ec9bb65937aae9607a0",
     "v0.1.8 54a7495c9e9a893d04d1444c53af74061f7d7c82",
     "v0.1.9 a609c1ed280a7ed38e455322bc142ed908fbcc34",
+    "v0.2.0 c7621827d9c762250716727986d4d3d4c1778067",
 ]
 
 [[packages]]
@@ -692,6 +694,7 @@ releases = [
     "v0.1.1 024ab113a8d0d3d92c0a1ec0de03c48b2f44083d",
     "v0.1.2 a609c1ed280a7ed38e455322bc142ed908fbcc34",
     "v0.1.3 6ad787b3490f5440cf12b9dfd0042534af3ce7e9",
+    "v0.1.4 c7621827d9c762250716727986d4d3d4c1778067",
 ]
 
 [[packages]]
@@ -703,7 +706,10 @@ releases = [
 
 [[packages]]
 name = "pika_littlefs"
-releases = ["v0.0.1 301105f2f3976d320c361aff4b2743cbbdeaa693"]
+releases = [
+    "v0.0.1 301105f2f3976d320c361aff4b2743cbbdeaa693",
+    "v0.0.2 c7621827d9c762250716727986d4d3d4c1778067",
+]
 
 [[packages]]
 name = "fsm"
@@ -712,3 +718,11 @@ releases = ["v0.1.0 e131fc76e92835f979f4fc4b2d6960d4a4713945"]
 [[packages]]
 name = "eventloop"
 releases = ["v0.1.0 e131fc76e92835f979f4fc4b2d6960d4a4713945"]
+
+[[packages]]
+name = "flashdb"
+releases = ["v0.1.0 c7621827d9c762250716727986d4d3d4c1778067"]
+
+[[packages]]
+name = "bluetooth"
+releases = ["v0.1.0 c7621827d9c762250716727986d4d3d4c1778067"]

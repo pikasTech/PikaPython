@@ -107,26 +107,26 @@ void _hashlib_Hash_update(PikaObj* self, Arg* data) {
         switch (obj_getInt(self, "mode")) {
             case PIKA_HASHLIB_MD5:
                 mbedtls_md5_update_ret((mbedtls_md5_context*)context, data_h,
-                                   data_len);
+                                       data_len);
                 break;
             case PIKA_HASHLIB_SHA1:
                 mbedtls_sha1_update_ret((mbedtls_sha1_context*)context, data_h,
-                                    data_len);
+                                        data_len);
                 break;
             case PIKA_HASHLIB_SHA224:
             case PIKA_HASHLIB_SHA256:
-                mbedtls_sha256_update_ret((mbedtls_sha256_context*)context, data_h,
-                                      data_len);
+                mbedtls_sha256_update_ret((mbedtls_sha256_context*)context,
+                                          data_h, data_len);
                 break;
             case PIKA_HASHLIB_SHA384:
             case PIKA_HASHLIB_SHA512:
-                mbedtls_sha512_update_ret((mbedtls_sha512_context*)context, data_h,
-                                      data_len);
+                mbedtls_sha512_update_ret((mbedtls_sha512_context*)context,
+                                          data_h, data_len);
                 break;
             default:
                 obj_setErrorCode(self, -1);  // not support mode
                 break;
-       }
+        }
     } else {
         obj_setErrorCode(self, -2);  // io error
     }
@@ -151,16 +151,20 @@ Arg* _hashlib_Hash_digest(PikaObj* self) {
                 mbedtls_sha1_finish_ret((mbedtls_sha1_context*)context, buff);
                 break;
             case PIKA_HASHLIB_SHA224:
-                mbedtls_sha256_finish_ret((mbedtls_sha256_context*)context, buff);
+                mbedtls_sha256_finish_ret((mbedtls_sha256_context*)context,
+                                          buff);
                 break;
             case PIKA_HASHLIB_SHA256:
-                mbedtls_sha256_finish_ret((mbedtls_sha256_context*)context, buff);
+                mbedtls_sha256_finish_ret((mbedtls_sha256_context*)context,
+                                          buff);
                 break;
             case PIKA_HASHLIB_SHA384:
-                mbedtls_sha512_finish_ret((mbedtls_sha512_context*)context, buff);
+                mbedtls_sha512_finish_ret((mbedtls_sha512_context*)context,
+                                          buff);
                 break;
             case PIKA_HASHLIB_SHA512:
-                mbedtls_sha512_finish_ret((mbedtls_sha512_context*)context, buff);
+                mbedtls_sha512_finish_ret((mbedtls_sha512_context*)context,
+                                          buff);
                 break;
             default:
                 obj_setErrorCode(self, -1);  // not support mode
@@ -192,16 +196,20 @@ char* _hashlib_Hash_hexdigest(PikaObj* self) {
                 mbedtls_sha1_finish_ret((mbedtls_sha1_context*)context, buff);
                 break;
             case PIKA_HASHLIB_SHA224:
-                mbedtls_sha256_finish_ret((mbedtls_sha256_context*)context, buff);
+                mbedtls_sha256_finish_ret((mbedtls_sha256_context*)context,
+                                          buff);
                 break;
             case PIKA_HASHLIB_SHA256:
-                mbedtls_sha256_finish_ret((mbedtls_sha256_context*)context, buff);
+                mbedtls_sha256_finish_ret((mbedtls_sha256_context*)context,
+                                          buff);
                 break;
             case PIKA_HASHLIB_SHA384:
-                mbedtls_sha512_finish_ret((mbedtls_sha512_context*)context, buff);
+                mbedtls_sha512_finish_ret((mbedtls_sha512_context*)context,
+                                          buff);
                 break;
             case PIKA_HASHLIB_SHA512:
-                mbedtls_sha512_finish_ret((mbedtls_sha512_context*)context, buff);
+                mbedtls_sha512_finish_ret((mbedtls_sha512_context*)context,
+                                          buff);
                 break;
             default:
                 obj_setErrorCode(self, -1);  // not support mode
