@@ -95,17 +95,19 @@ for patch in patches:
         continue
 
     header = lines[0]
-    if not header.startswith('diff --git a/'):
+    if not (header.startswith('diff --git a/') or header.startswith('diff --git "a')):
         print("No valid patch header, skipped")
         continue
 
     paths = header[13:].split(' b/')
     if len(paths) != 2:
-        print("No valid file path in header, skipped")
-        continue
+        paths = header[14:].split(' "b/')
+        if len(paths) != 2:
+            print("No valid file path in header, skipped")
+            continue
 
-    from_file = paths[0]
-    to_file = paths[1]
+    from_file = paths[0].strip('"')
+    to_file = paths[1].strip('"')
 
     print(f"Searching for file: {from_file}")
 
