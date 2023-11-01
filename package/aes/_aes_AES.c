@@ -88,7 +88,7 @@ Arg* _aes_AES_encrypt(PikaObj* self, Arg* msg) {
                                   buff);
             break;
         default:
-            __platform_printf("[%s]not support mode\r\n", __FUNCTION__);
+            obj_setSysOut(self, "[%s]not support mode", __FUNCTION__);
             obj_setErrorCode(self, -3);  // not support now
             break;
     }
@@ -141,7 +141,7 @@ Arg* _aes_AES_decrypt(PikaObj* self, Arg* msg) {
                                   buff);
             break;
         default:
-            __platform_printf("[%s]not support mode\r\n", __FUNCTION__);
+            obj_setSysOut(self, "[%s]not support mode", __FUNCTION__);
             obj_setErrorCode(self, -3);  // not support now
             break;
     }

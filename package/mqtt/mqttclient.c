@@ -1021,7 +1021,8 @@ static void mqtt_yield_thread(void* arg) {
                    __FILE__, __LINE__, __FUNCTION__);
 
         // TODO: panic on ESP32S3 & FREE-RTOS
-        // pika_platform_thread_stop(c->mqtt_thread); /* mqtt is not connected to the server, stop thread */
+        // pika_platform_thread_stop(c->mqtt_thread); /* mqtt is not connected
+        // to the server, stop thread */
     }
 
     while (1) {

@@ -14,18 +14,21 @@
 
 #ifdef FDB_USING_FILE_MODE
 
-#define DB_PATH_MAX            256
+#define DB_PATH_MAX 256
 
-static void get_db_file_path(fdb_db_t db, uint32_t addr, char *path, size_t size)
-{
-#define DB_NAME_MAX            8
+static void get_db_file_path(fdb_db_t db,
+                             uint32_t addr,
+                             char* path,
+                             size_t size) {
+#define DB_NAME_MAX 8
 
     /* from db_name.fdb.0 to db_name.fdb.n */
     char file_name[DB_NAME_MAX + 4 + 10];
     uint32_t sec_addr = FDB_ALIGN_DOWN(addr, db->sec_size);
     int index = sec_addr / db->sec_size;
 
-    snprintf(file_name, sizeof(file_name), "%.*s.fdb.%d", DB_NAME_MAX, db->name, index);
+    snprintf(file_name, sizeof(file_name), "%.*s.fdb.%d", DB_NAME_MAX, db->name,
+             index);
     if (strlen(db->storage.dir) + 1 + strlen(file_name) >= size) {
         /* path is too long */
         FDB_ASSERT(0)
@@ -41,8 +44,7 @@ static void get_db_file_path(fdb_db_t db, uint32_t addr, char *path, size_t size
 #include <unistd.h>
 #endif
 
-static int open_db_file(fdb_db_t db, uint32_t addr, bool clean)
-{
+static int open_db_file(fdb_db_t db, uint32_t addr, bool clean) {
     uint32_t sec_addr = FDB_ALIGN_DOWN(addr, db->sec_size);
     int fd = db->cur_file;
     char path[DB_PATH_MAX];
@@ -59,8 +61,7 @@ static int open_db_file(fdb_db_t db, uint32_t addr, bool clean)
             fd = open(path, O_RDWR | O_CREAT | O_TRUNC, 0777);
             if (fd <= 0) {
                 FDB_INFO("Error: open (%s) file failed.\n", path);
-            }
-            else {
+            } else {
                 close(fd);
                 fd = -1;
             }
@@ -74,14 +75,15 @@ static int open_db_file(fdb_db_t db, uint32_t addr, bool clean)
     return db->cur_file;
 }
 
-fdb_err_t _fdb_file_read(fdb_db_t db, uint32_t addr, void *buf, size_t size)
-{
+fdb_err_t _fdb_file_read(fdb_db_t db, uint32_t addr, void* buf, size_t size) {
     fdb_err_t result = FDB_NO_ERR;
     int fd = open_db_file(db, addr, false);
     if (fd > 0) {
-        /* get the offset address is relative to the start of the current file */
+        /* get the offset address is relative to the start of the current file
+         */
         addr = addr % db->sec_size;
-        if ((lseek(fd, addr, SEEK_SET) != addr) || (read(fd, buf, size) != size))
+        if ((lseek(fd, addr, SEEK_SET) != addr) ||
+            (read(fd, buf, size) != size))
             result = FDB_READ_ERR;
     } else {
         result = FDB_READ_ERR;
@@ -89,16 +91,21 @@ fdb_err_t _fdb_file_read(fdb_db_t db, uint32_t addr, void *buf, size_t size)
     return result;
 }
 
-fdb_err_t _fdb_file_write(fdb_db_t db, uint32_t addr, const void *buf, size_t size, bool sync)
-{
+fdb_err_t _fdb_file_write(fdb_db_t db,
+                          uint32_t addr,
+                          const void* buf,
+                          size_t size,
+                          bool sync) {
     fdb_err_t result = FDB_NO_ERR;
     int fd = open_db_file(db, addr, false);
     if (fd > 0) {
-        /* get the offset address is relative to the start of the current file */
+        /* get the offset address is relative to the start of the current file
+         */
         addr = addr % db->sec_size;
-        if ((lseek(fd, addr, SEEK_SET) != addr) || (write(fd, buf, size) != size))
+        if ((lseek(fd, addr, SEEK_SET) != addr) ||
+            (write(fd, buf, size) != size))
             result = FDB_WRITE_ERR;
-        if(sync) {
+        if (sync) {
             fsync(fd);
         }
     } else {
@@ -107,8 +114,7 @@ fdb_err_t _fdb_file_write(fdb_db_t db, uint32_t addr, const void *buf, size_t si
     return result;
 }
 
-fdb_err_t _fdb_file_erase(fdb_db_t db, uint32_t addr, size_t size)
-{
+fdb_err_t _fdb_file_erase(fdb_db_t db, uint32_t addr, size_t size) {
     fdb_err_t result = FDB_NO_ERR;
     int fd = open_db_file(db, addr, true);
     if (fd > 0) {
@@ -116,8 +122,7 @@ fdb_err_t _fdb_file_erase(fdb_db_t db, uint32_t addr, size_t size)
         uint8_t buf[BUF_SIZE];
         size_t i;
         lseek(fd, 0, SEEK_SET);
-        for (i = 0; i * BUF_SIZE < size; i++)
-        {
+        for (i = 0; i * BUF_SIZE < size; i++) {
             memset(buf, 0xFF, BUF_SIZE);
             write(fd, buf, BUF_SIZE);
         }
@@ -130,8 +135,7 @@ fdb_err_t _fdb_file_erase(fdb_db_t db, uint32_t addr, size_t size)
     return result;
 }
 #elif defined(FDB_USING_FILE_LIBC_MODE)
-static FILE *open_db_file(fdb_db_t db, uint32_t addr, bool clean)
-{
+static FILE* open_db_file(fdb_db_t db, uint32_t addr, bool clean) {
     uint32_t sec_addr = FDB_ALIGN_DOWN(addr, db->sec_size);
 
     if (sec_addr != db->cur_sec || db->cur_file == NULL || clean) {
@@ -161,13 +165,13 @@ static FILE *open_db_file(fdb_db_t db, uint32_t addr, bool clean)
     return db->cur_file;
 }
 
-fdb_err_t _fdb_file_read(fdb_db_t db, uint32_t addr, void *buf, size_t size)
-{
+fdb_err_t _fdb_file_read(fdb_db_t db, uint32_t addr, void* buf, size_t size) {
     fdb_err_t result = FDB_NO_ERR;
-    FILE *fp = open_db_file(db, addr, false);
+    FILE* fp = open_db_file(db, addr, false);
     if (fp) {
         addr = addr % db->sec_size;
-        if ((fseek(fp, addr, SEEK_SET) != 0) || (fread(buf, size, 1, fp) != size))
+        if ((fseek(fp, addr, SEEK_SET) != 0) ||
+            (fread(buf, size, 1, fp) != size))
             result = FDB_READ_ERR;
     } else {
         result = FDB_READ_ERR;
@@ -175,15 +179,19 @@ fdb_err_t _fdb_file_read(fdb_db_t db, uint32_t addr, void *buf, size_t size)
     return result;
 }
 
-fdb_err_t _fdb_file_write(fdb_db_t db, uint32_t addr, const void *buf, size_t size, bool sync)
-{
+fdb_err_t _fdb_file_write(fdb_db_t db,
+                          uint32_t addr,
+                          const void* buf,
+                          size_t size,
+                          bool sync) {
     fdb_err_t result = FDB_NO_ERR;
-    FILE *fp = open_db_file(db, addr, false);
+    FILE* fp = open_db_file(db, addr, false);
     if (fp) {
         addr = addr % db->sec_size;
-        if ((fseek(fp, addr, SEEK_SET) != 0) || (fwrite(buf, size, 1, fp) != size))
+        if ((fseek(fp, addr, SEEK_SET) != 0) ||
+            (fwrite(buf, size, 1, fp) != size))
             result = FDB_READ_ERR;
-        if(sync) {
+        if (sync) {
             fflush(fp);
         }
     } else {
@@ -193,18 +201,16 @@ fdb_err_t _fdb_file_write(fdb_db_t db, uint32_t addr, const void *buf, size_t si
     return result;
 }
 
-fdb_err_t _fdb_file_erase(fdb_db_t db, uint32_t addr, size_t size)
-{
+fdb_err_t _fdb_file_erase(fdb_db_t db, uint32_t addr, size_t size) {
     fdb_err_t result = FDB_NO_ERR;
 
-    FILE *fp = open_db_file(db, addr, true);
+    FILE* fp = open_db_file(db, addr, true);
     if (fp != NULL) {
 #define BUF_SIZE 32
         uint8_t buf[BUF_SIZE];
         size_t i;
         fseek(fp, 0, SEEK_SET);
-        for (i = 0; i * BUF_SIZE < size; i++)
-        {
+        for (i = 0; i * BUF_SIZE < size; i++) {
             memset(buf, 0xFF, BUF_SIZE);
             fwrite(buf, BUF_SIZE, 1, fp);
         }
@@ -219,4 +225,3 @@ fdb_err_t _fdb_file_erase(fdb_db_t db, uint32_t addr, size_t size)
 #endif /* defined(FDB_USING_FILE_LIBC_MODE) */
 
 #endif /* FDB_USING_FILE_MODE */
-

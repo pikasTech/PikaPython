@@ -17,19 +17,21 @@
 
 #define FDB_LOG_TAG "[sample][kvdb][blob]"
 
-void kvdb_type_blob_sample(fdb_kvdb_t kvdb)
-{
+void kvdb_type_blob_sample(fdb_kvdb_t kvdb) {
     struct fdb_blob blob;
 
-    FDB_INFO("==================== kvdb_type_blob_sample ====================\n");
+    FDB_INFO(
+        "==================== kvdb_type_blob_sample ====================\n");
 
     { /* CREATE new Key-Value */
         int temp_data = 36;
 
         /* It will create new KV node when "temp" KV not in database.
-         * fdb_blob_make: It's a blob make function, and it will return the blob when make finish.
+         * fdb_blob_make: It's a blob make function, and it will return the blob
+         * when make finish.
          */
-        fdb_kv_set_blob(kvdb, "temp", fdb_blob_make(&blob, &temp_data, sizeof(temp_data)));
+        fdb_kv_set_blob(kvdb, "temp",
+                        fdb_blob_make(&blob, &temp_data, sizeof(temp_data)));
         FDB_INFO("create the 'temp' blob KV, value is: %d\n", temp_data);
     }
 
@@ -37,7 +39,8 @@ void kvdb_type_blob_sample(fdb_kvdb_t kvdb)
         int temp_data = 0;
 
         /* get the "temp" KV value */
-        fdb_kv_get_blob(kvdb, "temp", fdb_blob_make(&blob, &temp_data, sizeof(temp_data)));
+        fdb_kv_get_blob(kvdb, "temp",
+                        fdb_blob_make(&blob, &temp_data, sizeof(temp_data)));
         /* the blob.saved.len is more than 0 when get the value successful */
         if (blob.saved.len > 0) {
             FDB_INFO("get the 'temp' value is: %d\n", temp_data);
@@ -48,7 +51,8 @@ void kvdb_type_blob_sample(fdb_kvdb_t kvdb)
         int temp_data = 38;
 
         /* change the "temp" KV's value to 38 */
-        fdb_kv_set_blob(kvdb, "temp", fdb_blob_make(&blob, &temp_data, sizeof(temp_data)));
+        fdb_kv_set_blob(kvdb, "temp",
+                        fdb_blob_make(&blob, &temp_data, sizeof(temp_data)));
         FDB_INFO("set 'temp' value to %d\n", temp_data);
     }
 
