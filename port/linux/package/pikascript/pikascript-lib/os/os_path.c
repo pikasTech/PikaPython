@@ -3,7 +3,8 @@
 #include <string.h>
 #ifdef _WIN32
 #include <windows.h>
-#else
+#endif
+#ifdef __linux
 #include <sys/stat.h>
 #include <unistd.h>
 #endif
