@@ -2298,9 +2298,10 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
     PikaObj* oHost = NULL;
     pika_bool bIsTemp = pika_false;
     arg_newReg(aOutReg, PIKA_ARG_BUFF_SIZE);
+    PIKA_RES res = PIKA_RES_OK;
     Arg* aOut = stack_popArg(&vm->stack, &aOutReg);
     if (NULL == aOut) {
-        return NULL;
+        goto __exit;
     }
     ArgType eOutArgType = arg_getType(aOut);
     if (PikaVMFrame_getInvokeDeepthNow(vm) > 0) {
@@ -2318,7 +2319,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
             Locals_setLReg(vm->locals, sArgPath, obj);
             arg_deinit(aOut);
         }
-        return NULL;
+        goto __exit;
     }
 
     PikaObj* oContext = vm->locals;
@@ -2350,8 +2351,8 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
 
     /* ouput arg to context */
     if (sArgPath == sArgName) {
-        obj_setArg_noCopy(oContext, sArgPath, aOut);
-        return NULL;
+        res = obj_setArg_noCopy(oContext, sArgPath, aOut);
+        goto __exit;
     }
 
     oHost = obj_getHostObjWithIsTemp(oContext, sArgPath, &bIsTemp);
@@ -2362,13 +2363,18 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
 
     if (oHost != NULL) {
         if (_proxy_setattr(oHost, sArgName, aOut)) {
-            return NULL;
+            goto __exit;
         }
-        obj_setArg_noCopy(oHost, sArgName, aOut);
-        return NULL;
+        res = obj_setArg_noCopy(oHost, sArgName, aOut);
+        goto __exit;
     }
 
-    obj_setArg_noCopy(oContext, sArgPath, aOut);
+    res = obj_setArg_noCopy(oContext, sArgPath, aOut);
+__exit:
+    if (res != PIKA_RES_OK) {
+        PikaVMFrame_setErrorCode(vm, res);
+        PikaVMFrame_setSysOut(vm, "Error: can't set '%s'", sArgPath);
+    }
     return NULL;
 }
 
