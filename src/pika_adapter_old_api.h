@@ -23,7 +23,6 @@ extern "C" {
 #define __platform_strdup pika_platform_strdup
 #define __platform_tick_from_millisecond pika_platform_tick_from_millisecond
 #define __platform_malloc pika_platform_malloc
-#define __platform_realloc pika_platform_realloc
 #define __platform_calloc pika_platform_calloc
 #define __platform_free pika_platform_free
 #define __platform_memset pika_platform_memset

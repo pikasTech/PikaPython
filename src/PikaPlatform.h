@@ -173,9 +173,10 @@ size_t pika_platform_tick_from_millisecond(size_t ms);
 
 /* libc config */
 void* pika_platform_malloc(size_t size);
-void* pika_platform_realloc(void* ptr, size_t size);
 void* pika_platform_calloc(size_t num, size_t size);
 void pika_platform_free(void* ptr);
+void* pika_reallocn(void* ptr, size_t size_old, size_t size_new);
+void* pika_platform_realloc(void* ptr, size_t size);
 void* pika_platform_memset(void* mem, int ch, size_t size);
 void* pika_platform_memcpy(void* dir, const void* src, size_t size);
 int pika_platform_memcmp(const void* s1, const void* s2, size_t n);

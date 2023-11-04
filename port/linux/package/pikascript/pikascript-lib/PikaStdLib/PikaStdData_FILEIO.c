@@ -174,7 +174,8 @@ char* PikaStdData_FILEIO_readline(PikaObj* self) {
         if (line_size >= line_buff_size) {
             /* line too long, double buff and realloc */
             line_buff_size *= 2;
-            line_buff = (char*)pika_platform_realloc(line_buff, line_buff_size);
+            line_buff = (char*)pika_reallocn(line_buff, line_buff_size / 2,
+                                             line_buff_size);
             pika_platform_memset(line_buff + line_size, 0,
                                  line_buff_size - line_size);
         }

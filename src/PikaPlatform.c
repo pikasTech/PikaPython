@@ -82,8 +82,23 @@ PIKA_WEAK void* pika_platform_realloc(void* ptr, size_t size) {
     return realloc(ptr, size);
 }
 
+void* pika_reallocn(void* ptr, size_t size_old, size_t size_new) {
+    void* new_ptr = pika_platform_malloc(size_new);
+    if (new_ptr) {
+        if (ptr) {
+            pika_platform_memcpy(new_ptr, ptr, size_old);
+            pika_platform_free(ptr);
+        }
+    }
+    return new_ptr;
+}
+
 PIKA_WEAK void* pika_platform_calloc(size_t num, size_t size) {
-    return calloc(num, size);
+    void* ptr = pika_platform_malloc(num * size);
+    if (ptr) {
+        pika_platform_memset(ptr, 0, num * size);
+    }
+    return ptr;
 }
 
 PIKA_WEAK void pika_platform_free(void* ptr) {
@@ -446,8 +461,10 @@ PIKA_WEAK char** pika_platform_listdir(const char* path, int* count) {
     if (dir != NULL) {
         while ((dp = readdir(dir)) != NULL) {
             if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0) {
-                filenames = (char**)pika_platform_realloc(
-                    filenames, (*count + 1) * sizeof(char*));
+                size_t size_old = (*count) * sizeof(char*);
+                size_t size_new = (size_old) + sizeof(char*);
+                filenames =
+                    (char**)pika_reallocn(filenames, size_old, size_new);
                 filenames[*count] = pika_platform_strdup(dp->d_name);
                 (*count)++;
             }
@@ -470,8 +487,10 @@ PIKA_WEAK char** pika_platform_listdir(const char* path, int* count) {
     if (handle != -1L) {
         do {
             if (strcmp(fb.name, ".") != 0 && strcmp(fb.name, "..") != 0) {
-                filenames = (char**)pika_platform_realloc(
-                    filenames, (*count + 1) * sizeof(char*));
+                size_t size_old = (*count) * sizeof(char*);
+                size_t size_new = (size_old) + sizeof(char*);
+                filenames =
+                    (char**)pika_reallocn(filenames, size_old, size_new);
                 filenames[*count] = pika_platform_strdup(fb.name);
                 (*count)++;
             }

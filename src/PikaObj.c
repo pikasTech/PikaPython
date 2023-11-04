@@ -3975,8 +3975,8 @@ int pika_pvsprintf(char** buff, const char* fmt, va_list args) {
 
     while (required_size >= current_size) {
         current_size *= 2;
-        char* new_buff =
-            (char*)pika_platform_realloc(*buff, current_size * sizeof(char));
+        char* new_buff = (char*)pika_reallocn(*buff, current_size / 2,
+                                              current_size * sizeof(char));
 
         if (new_buff == NULL) {
             pika_platform_free(*buff);
