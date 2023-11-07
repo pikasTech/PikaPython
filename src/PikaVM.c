@@ -2568,6 +2568,31 @@ int operatorInfo_init(OperatorInfo* info,
     return 0;
 }
 
+static Arg* _OPT_Method_ex(PikaObj* host,
+                           Arg* arg,
+                           OperatorInfo* op,
+                           char* method_name,
+                           PIKA_RES errno,
+                           char* errinfo) {
+    Arg* method = obj_getMethodArgWithFullPath(host, method_name);
+    if (NULL == method) {
+        PikaVMFrame_setErrorCode(op->vm, errno);
+        PikaVMFrame_setSysOut(op->vm, errinfo);
+        return NULL;
+    }
+    Arg* res = obj_runMethodArg1(host, method, arg);
+    arg_deinit(method);
+    return res;
+}
+
+static Arg* _OPT_Method(OperatorInfo* op,
+                        char* method_name,
+                        PIKA_RES errno,
+                        char* errinfo) {
+    PikaObj* obj1 = arg_getPtr(op->a1);
+    return _OPT_Method_ex(obj1, op->a2, op, method_name, errno, errinfo);
+}
+
 static void _OPT_ADD(OperatorInfo* op) {
 #if !PIKA_NANO_ENABLE
     if (argType_isObject(op->t1)) {
@@ -2577,40 +2602,11 @@ static void _OPT_ADD(OperatorInfo* op) {
             op->res = NULL;
             return;
         }
-        PikaObj* obj1 = arg_getPtr(op->a1);
-        Arg* method_add = obj_getMethodArgWithFullPath(obj1, "__add__");
-        if (NULL == method_add) {
-            PikaVMFrame_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
-            PikaVMFrame_setSysOut(op->vm, "TypeError: unsupported operand +");
-            op->res = NULL;
-            return;
-        }
-        arg_deinit(method_add);
-        PikaObj* obj2 = arg_getPtr(op->a2);
-        obj_setPtr(obj1, "__others", obj2);
-        /* clang-format off */
-        PIKA_PYTHON(
-        @res_add = __add__(__others)
-        )
-        /* clang-format on */
-        const uint8_t bytes[] = {
-            0x0c, 0x00, 0x00, 0x00, /* instruct array size */
-            0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0a, 0x00, 0x00, 0x04, 0x12,
-            0x00,
-            /* instruct array */
-            0x1b, 0x00, 0x00, 0x00, /* const pool size */
-            0x00, 0x5f, 0x5f, 0x6f, 0x74, 0x68, 0x65, 0x72, 0x73, 0x00, 0x5f,
-            0x5f, 0x61, 0x64, 0x64, 0x5f, 0x5f, 0x00, 0x40, 0x72, 0x65, 0x73,
-            0x5f, 0x61, 0x64, 0x64, 0x00, /* const pool */
-        };
-        Arg* res_add =
-            pikaVM_runByteCodeReturn(obj1, (uint8_t*)bytes, "@res_add");
-        obj_removeArg(obj1, "__others");
-        op->res = res_add;
+        op->res = _OPT_Method(op, "__add__", PIKA_RES_ERR_OPERATION_FAILED,
+                              "TypeError: unsupported operand +");
         return;
     }
 #endif
-
     if ((op->t1 == ARG_TYPE_STRING) && (op->t2 == ARG_TYPE_STRING)) {
         char* num1_s = NULL;
         char* num2_s = NULL;
@@ -2654,36 +2650,8 @@ static void _OPT_SUB(OperatorInfo* op) {
             op->res = NULL;
             return;
         }
-        PikaObj* obj1 = arg_getPtr(op->a1);
-        Arg* method_sub = obj_getMethodArgWithFullPath(obj1, "__sub__");
-        if (NULL == method_sub) {
-            PikaVMFrame_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
-            PikaVMFrame_setSysOut(op->vm, "TypeError: unsupported operand +");
-            op->res = NULL;
-            return;
-        }
-        arg_deinit(method_sub);
-        PikaObj* obj2 = arg_getPtr(op->a2);
-        obj_setPtr(obj1, "__others", obj2);
-        /* clang-format off */
-        PIKA_PYTHON(
-        @res_sub = __sub__(__others)
-        )
-        /* clang-format on */
-        const uint8_t bytes[] = {
-            0x0c, 0x00, 0x00, 0x00, /* instruct array size */
-            0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0a, 0x00, 0x00, 0x04, 0x12,
-            0x00,
-            /* instruct array */
-            0x1b, 0x00, 0x00, 0x00, /* const pool size */
-            0x00, 0x5f, 0x5f, 0x6f, 0x74, 0x68, 0x65, 0x72, 0x73, 0x00, 0x5f,
-            0x5f, 0x73, 0x75, 0x62, 0x5f, 0x5f, 0x00, 0x40, 0x72, 0x65, 0x73,
-            0x5f, 0x73, 0x75, 0x62, 0x00, /* const pool */
-        };
-        Arg* res_sub =
-            pikaVM_runByteCodeReturn(obj1, (uint8_t*)bytes, "@res_sub");
-        obj_removeArg(obj1, "__others");
-        op->res = res_sub;
+        op->res = _OPT_Method(op, "__sub__", PIKA_RES_ERR_OPERATION_FAILED,
+                              "TypeError: unsupported operand -");
         return;
     }
 #endif
@@ -2755,29 +2723,18 @@ static void _OPT_EQU(OperatorInfo* op) {
         }
         Arg* __eq__ =
             obj_getMethodArgWithFullPath(arg_getPtr(op->a1), "__eq__");
-        if (NULL != __eq__) {
-            arg_deinit(__eq__);
-            PikaObj* oThis = arg_getObj(op->a1);
-            obj_setArg(oThis, "__others", op->a2);
-            /* clang-format off */
-            PIKA_PYTHON(
-            @res_eq = __eq__(__others)
-            )
-            /* clang-format on */
-            const uint8_t bytes[] = {
-                0x0c, 0x00, 0x00, 0x00, /* instruct array size */
-                0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0a, 0x00, 0x00, 0x04,
-                0x11, 0x00,
-                /* instruct array */
-                0x19, 0x00, 0x00, 0x00, /* const pool size */
-                0x00, 0x5f, 0x5f, 0x6f, 0x74, 0x68, 0x65, 0x72, 0x73, 0x00,
-                0x5f, 0x5f, 0x65, 0x71, 0x5f, 0x5f, 0x00, 0x40, 0x72, 0x65,
-                0x73, 0x5f, 0x65, 0x71, 0x00,
-                /* const pool */
-            };
-            pikaVM_runByteCode(oThis, (uint8_t*)bytes);
-            is_equ = obj_getInt(oThis, "@res_eq");
+        if (NULL == __eq__) {
+            goto __exit;
         }
+        arg_deinit(__eq__);
+        Arg* res = _OPT_Method(op, "__eq__", PIKA_RES_ERR_OPERATION_FAILED,
+                               "TypeError: unsupported operand ==");
+        if (NULL == res) {
+            is_equ = 0;
+            goto __exit;
+        }
+        is_equ = arg_getBool(res);
+        arg_deinit(res);
         goto __exit;
     }
     /* default: int bool, and float */
@@ -2987,27 +2944,9 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                 obj_getMethodArgWithFullPath(obj2, "__contains__");
             if (NULL != __contains__) {
                 arg_deinit(__contains__);
-                obj_setArg(obj2, "__others", op.a1);
-                /* clang-format off */
-                PIKA_PYTHON(
-                @res_contains = __contains__(__others)
-                )
-                /* clang-format on */
-                const uint8_t bytes[] = {
-                    0x0c, 0x00, 0x00, 0x00, /* instruct array size */
-                    0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0a, 0x00, 0x00, 0x04,
-                    0x17, 0x00,
-                    /* instruct array */
-                    0x25, 0x00, 0x00, 0x00, /* const pool size */
-                    0x00, 0x5f, 0x5f, 0x6f, 0x74, 0x68, 0x65, 0x72, 0x73, 0x00,
-                    0x5f, 0x5f, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x73,
-                    0x5f, 0x5f, 0x00, 0x40, 0x72, 0x65, 0x73, 0x5f, 0x63, 0x6f,
-                    0x6e, 0x74, 0x61, 0x69, 0x6e, 0x73, 0x00,
-                    /* const pool */
-                };
-                pikaVM_runByteCode(obj2, (uint8_t*)bytes);
-                op.res =
-                    arg_setBool(op.res, "", obj_getInt(obj2, "@res_contains"));
+                op.res = _OPT_Method_ex(obj2, op.a1, &op, "__contains__",
+                                        PIKA_RES_ERR_OPERATION_FAILED,
+                                        "TypeError: unsupported operand in");
                 goto __exit;
             }
             PikaObj* local = New_TinyObj(NULL);

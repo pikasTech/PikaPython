@@ -2805,10 +2805,9 @@ void pika_eventListener_deinit(PikaEventListener** p_self) {
     }
 }
 
-Arg* pika_runFunction1(Arg* functionArg, Arg* arg1) {
-    PikaObj* locals = New_TinyObj(NULL);
-    obj_setArg(locals, "@d", arg1);
-    obj_setArg(locals, "@f", functionArg);
+Arg* pika_runFunction1_ex(PikaObj* host, Arg* functionArg, Arg* arg1) {
+    obj_setArg(host, "@d", arg1);
+    obj_setArg(host, "@f", functionArg);
     /* clang-format off */
     PIKA_PYTHON(
     @r = @f(@d)
@@ -2822,11 +2821,63 @@ Arg* pika_runFunction1(Arg* functionArg, Arg* arg1) {
         0x00, 0x40, 0x64, 0x00, 0x40, 0x66, 0x00, 0x40, 0x72,
         0x00, /* const pool */
     };
-    pikaVM_runByteCode(locals, (uint8_t*)bytes);
-    Arg* res = obj_getArg(locals, "@r");
-    res = arg_copy(res);
+    Arg* res = pikaVM_runByteCodeReturn(host, bytes, "@r");
+    return res;
+}
+
+Arg* pika_runFunction0_ex(PikaObj* host, Arg* functionArg) {
+    obj_setArg(host, "@f", functionArg);
+    /* clang-format off */
+    PIKA_PYTHON(
+    @r = @f()
+    )
+    /* clang-format on */
+    const uint8_t bytes[] = {
+        0x08, 0x00, 0x00, 0x00, /* instruct array size */
+        0x00, 0x82, 0x01, 0x00, 0x00, 0x04, 0x04, 0x00, /* instruct array */
+        0x07, 0x00, 0x00, 0x00,                         /* const pool size */
+        0x00, 0x40, 0x66, 0x00, 0x40, 0x72, 0x00,       /* const pool */
+    };
+    Arg* res = pikaVM_runByteCodeReturn(host, bytes, "@r");
+    return res;
+}
+
+Arg* pika_runFunction1(Arg* functionArg, Arg* arg1) {
+    PikaObj* locals = New_TinyObj(NULL);
+    Arg* res = pika_runFunction1_ex(locals, functionArg, arg1);
     obj_deinit(locals);
     return res;
+}
+
+Arg* pika_runFunction0(Arg* functionArg) {
+    PikaObj* locals = New_TinyObj(NULL);
+    Arg* res = pika_runFunction0_ex(locals, functionArg);
+    obj_deinit(locals);
+    return res;
+}
+
+Arg* obj_runMethod0(PikaObj* self, char* methodName) {
+    Arg* aMethod = obj_getMethodArg(self, methodName);
+    if (NULL == aMethod) {
+        return NULL;
+    }
+    return pika_runFunction0(aMethod);
+}
+
+Arg* obj_runMethod1(PikaObj* self, char* methodName, Arg* arg1) {
+    Arg* aMethod = obj_getMethodArg(self, methodName);
+    if (NULL == aMethod) {
+        return NULL;
+    }
+    return pika_runFunction1(aMethod, arg1);
+}
+
+Arg* obj_runMethodArg0(PikaObj* self, Arg* methodArg) {
+    return pika_runFunction0_ex(self, methodArg);
+}
+
+Arg* obj_runMethodArg1(PikaObj* self, Arg* methodArg, Arg* arg1) {
+    return pika_runFunction1_ex(self, methodArg, arg1);
 }
 
 Arg* __eventListener_runEvent(PikaEventListener* lisener,
