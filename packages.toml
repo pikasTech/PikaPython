@@ -376,13 +376,6 @@ releases = [
 ]
 
 [[packages]]
-name = "PikaVSF"
-releases = [
-    "v0.0.1 f755ec10042f4deefef1c5491f5e91a651f71a1b",
-    "v0.0.2 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
-]
-
-[[packages]]
 name = "Arm2D"
 releases = [
     "v0.0.1 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
@@ -479,13 +472,6 @@ releases = [
 ]
 
 [[packages]]
-name = "CH32V103"
-releases = [
-    "v1.0.0 4ce839297f208b0ac4fc1e7f16fef16ab605e70d",
-    "v1.0.1 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
-]
-
-[[packages]]
 name = "SmartLoong"
 releases = [
     "v0.0.1 a5437de66e8cff600be247eae63ac9114b6b153f",
@@ -493,33 +479,8 @@ releases = [
 ]
 
 [[packages]]
-name = "W801Device"
-releases = [
-    "v0.0.1 88f4e507f1665ca7ceda149aabf029f4e21e22c7",
-    "v1.0.0 7ae9cd062fa48ecfe4b843c9f13b0daef0efd79d",
-    "v1.1.0 c53bf1483d015555b4823f129864444198227403",
-    "v1.1.1 55164edbf2ab7e2e9e754663579e3c93040da8fa",
-]
-
-[[packages]]
-name = "CH582"
-releases = [
-    "v1.0.0 7cdb0cf9ed161c3fc6802028a9e34c9f94b56244",
-    "v1.1.0 bfc01e09fd71c26a7140d23864c1d3052f23d087",
-    "v1.1.1 268c8433a1add8c902d694808682890a2df8c1fc",
-    "v1.1.2 55164edbf2ab7e2e9e754663579e3c93040da8fa",
-]
-
-[[packages]]
 name = "MM32F5277E9P"
 releases = ["v0.0.1 176232225939eccfaedfea412699a2e53c38ace1"]
-
-[[packages]]
-name = "AIR32F1"
-releases = [
-    "v0.0.1 9f9579c54ebddb12c66afc8da64a987767ff512f",
-    "v0.1.0 faa9c6230149d09188114af7af822e5d34af6b55",
-]
 
 [[packages]]
 name = "modbus"
