@@ -188,16 +188,11 @@ int32_t obj_deinit(PikaObj* self) {
 #endif
     Arg* del = obj_getMethodArgWithFullPath(self, "__del__");
     if (NULL != del) {
-        const uint8_t bytes[] = {
-            0x04, 0x00, 0x00, 0x00, /* instruct array size */
-            0x00, 0x82, 0x01, 0x00, /* instruct array */
-            0x09, 0x00, 0x00, 0x00, /* const pool size */
-            0x00, 0x5f, 0x5f, 0x64, 0x65,
-            0x6c, 0x5f, 0x5f, 0x00, /* const pool */
-        };
         obj_setFlag(self, OBJ_FLAG_IN_DEL);
-        pikaVM_runByteCode(self, (uint8_t*)bytes);
-        arg_deinit(del);
+        Arg* aRes = obj_runMethodArg0(self, del);
+        if (NULL != aRes) {
+            arg_deinit(aRes);
+        }
     }
     extern volatile PikaObj* __pikaMain;
     if (self == (PikaObj*)__pikaMain) {
@@ -2715,22 +2710,9 @@ char* obj_toStr(PikaObj* self) {
     /* check method arg */
     Arg* aMethod = obj_getMethodArgWithFullPath(self, "__str__");
     if (NULL != aMethod) {
-        arg_deinit(aMethod);
-        /* clang-format off */
-        PIKA_PYTHON(
-        @res_str = __str__()
-        )
-        /* clang-format on */
-        const uint8_t bytes[] = {
-            0x08, 0x00, 0x00, 0x00, /* instruct array size */
-            0x00, 0x82, 0x01, 0x00, 0x00, 0x04, 0x09, 0x00, /* instruct array */
-            0x12, 0x00, 0x00, 0x00, /* const pool size */
-            0x00, 0x5f, 0x5f, 0x73, 0x74, 0x72, 0x5f, 0x5f, 0x00, 0x40,
-            0x72, 0x65, 0x73, 0x5f, 0x73, 0x74, 0x72, 0x00, /* const pool */
-        };
-        pikaVM_runByteCode(self, (uint8_t*)bytes);
-        char* str_res = obj_cacheStr(self, obj_getStr(self, "@res_str"));
-        obj_removeArg(self, "@res_str");
+        Arg* aStr = obj_runMethodArg0(self, aMethod);
+        char* str_res = obj_cacheStr(self, arg_getStr(aStr));
+        arg_deinit(aStr);
         return str_res;
     }
 
@@ -2822,6 +2804,8 @@ Arg* pika_runFunction1_ex(PikaObj* host, Arg* functionArg, Arg* arg1) {
         0x00, /* const pool */
     };
     Arg* res = pikaVM_runByteCodeReturn(host, bytes, "@r");
+    arg_deinit(arg1);
+    arg_deinit(functionArg);
     return res;
 }
 
@@ -2839,6 +2823,7 @@ Arg* pika_runFunction0_ex(PikaObj* host, Arg* functionArg) {
         0x00, 0x40, 0x66, 0x00, 0x40, 0x72, 0x00,       /* const pool */
     };
     Arg* res = pikaVM_runByteCodeReturn(host, bytes, "@r");
+    arg_deinit(functionArg);
     return res;
 }
 
@@ -2861,7 +2846,8 @@ Arg* obj_runMethod0(PikaObj* self, char* methodName) {
     if (NULL == aMethod) {
         return NULL;
     }
-    return pika_runFunction0(aMethod);
+    Arg* aRes = pika_runFunction0_ex(self, aMethod);
+    return aRes;
 }
 
 Arg* obj_runMethod1(PikaObj* self, char* methodName, Arg* arg1) {
@@ -2869,7 +2855,8 @@ Arg* obj_runMethod1(PikaObj* self, char* methodName, Arg* arg1) {
     if (NULL == aMethod) {
         return NULL;
     }
-    return pika_runFunction1(aMethod, arg1);
+    Arg* aRes = pika_runFunction1_ex(self, aMethod, arg1);
+    return aRes;
 }
 
 Arg* obj_runMethodArg0(PikaObj* self, Arg* methodArg) {
@@ -2892,7 +2879,7 @@ Arg* __eventListener_runEvent(PikaEventListener* lisener,
     }
     Arg* eventCallBack = obj_getArg(handler, "eventCallBack");
     pika_debug("run event handler: %p", handler);
-    Arg* res = pika_runFunction1(eventCallBack, eventData);
+    Arg* res = pika_runFunction1(arg_copy(eventCallBack), arg_copy(eventData));
     return res;
 }
 
@@ -3343,27 +3330,13 @@ pika_bool arg_isTuple(Arg* arg) {
 }
 
 int64_t obj_getSize(PikaObj* arg_obj) {
-    Arg* method_arg = obj_getMethodArgWithFullPath(arg_obj, "__len__");
-    if (NULL != method_arg) {
-        arg_deinit(method_arg);
-        obj_removeArg(arg_obj, "@res_len");
-        /* clang-format off */
-            PIKA_PYTHON(
-            @res_len = __len__()
-            )
-        /* clang-format on */
-        const uint8_t bytes[] = {
-            0x08, 0x00, 0x00, 0x00, /* instruct array size */
-            0x00, 0x82, 0x01, 0x00, 0x00, 0x04, 0x09, 0x00, /* instruct
-                                                               array */
-            0x12, 0x00, 0x00, 0x00, /* const pool size */
-            0x00, 0x5f, 0x5f, 0x6c, 0x65, 0x6e, 0x5f, 0x5f, 0x00, 0x40,
-            0x72, 0x65, 0x73, 0x5f, 0x6c, 0x65, 0x6e, 0x00, /* const pool */
-        };
-        pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
-        return obj_getInt(arg_obj, "@res_len");
+    Arg* aRes = obj_runMethod0(arg_obj, "__len__");
+    if (NULL == aRes) {
+        return -1;
     }
-    return -1;
+    int64_t res = arg_getInt(aRes);
+    arg_deinit(aRes);
+    return res;
 }
 
 int builtins_len(PikaObj* self, Arg* arg) {

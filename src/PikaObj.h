@@ -390,6 +390,8 @@ Arg* pika_runFunction0(Arg* functionArg);
 Arg* pika_runFunction1(Arg* methodArg, Arg* arg1);
 Arg* obj_runMethodArg0(PikaObj* self, Arg* methodArg);
 Arg* obj_runMethodArg1(PikaObj* self, Arg* methodArg, Arg* arg1);
+Arg* obj_runMethod0(PikaObj* self, char* methodName);
+Arg* obj_runMethod1(PikaObj* self, char* methodName, Arg* arg1);
 PikaObj* New_PikaObj(void);
 PikaObj* New_PikaObj_noGC(void);
 
