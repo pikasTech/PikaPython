@@ -97,6 +97,19 @@ int PikaStdData_Tuple___len__(PikaObj* self) {
     return PikaStdData_Tuple_len(self);
 }
 
+PikaObj* PikaStdData_Tuple___add__(PikaObj* self, PikaObj* others) {
+    PikaObj* res = New_PikaTuple();
+    for (size_t i = 0; i < pikaList_getSize(self); i++) {
+        Arg* arg = pikaList_get(self, i);
+        pikaList_append(res, arg_copy(arg));
+    }
+    for (size_t i = 0; i < pikaList_getSize(others); i++) {
+        Arg* arg = pikaList_get(others, i);
+        pikaList_append(res, arg_copy(arg));
+    }
+    return res;
+}
+
 int PikaStdData_Tuple___eq__(PikaObj* self, Arg* other) {
     if (!arg_isObject(other)) {
         return 0;
@@ -116,4 +129,15 @@ int PikaStdData_Tuple___eq__(PikaObj* self, Arg* other) {
         }
     }
     return 1;
+}
+
+PikaObj* PikaStdData_Tuple___mul__(PikaObj* self, int n) {
+    PikaObj* res = New_PikaTuple();
+    for (int i = 0; i < n; i++) {
+        for (size_t j = 0; j < pikaList_getSize(self); j++) {
+            Arg* arg = pikaList_get(self, j);
+            pikaList_append(res, arg_copy(arg));
+        }
+    }
+    return res;
 }

@@ -25,8 +25,13 @@ class Tuple:
     def __len__(self) -> int: ...
 
     def __eq__(self, other: any) -> int:
-        """ support list == list """
+        """support tuple == tuple""" 
 
+    def __add__(self, others: Tuple) -> Tuple:
+        """support tuple + tuple"""
+    
+    def __mul__(self, n: int) -> Tuple:
+        """support tuple * int"""
 
 class List(Tuple):
     def __init__(self): ...
@@ -57,6 +62,8 @@ class List(Tuple):
     def __add__(self, others: List) -> List:
         """ support list + list"""
 
+    def __mul__(self, n: int) -> Tuple:
+        """ support list * int"""
 
 class Dict:
     def __init__(self):

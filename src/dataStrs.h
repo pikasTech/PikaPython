@@ -57,6 +57,7 @@ char* strsTransfer(Args* buffs, char* str, size_t* iout_p);
 char* strsFilePreProcess(Args* outbuffs, char* lines);
 char* strsFilePreProcess_ex(Args* outbuffs, char* lines, char* endwith);
 char* strsSubStr(Args* buffs_p, char* name_start, char* name_end);
+char* strsRepeat(Args* buffs, char* str, int num);
 
 #endif
 #ifdef __cplusplus

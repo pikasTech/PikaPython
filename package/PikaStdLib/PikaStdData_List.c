@@ -106,3 +106,14 @@ Arg* PikaStdData_List_pop(PikaObj* self, PikaTuple* index) {
 void PikaStdData_List_remove(PikaObj* self, Arg* val) {
     pikaList_remove(self, val);
 }
+
+PikaObj* PikaStdData_List___mul__(PikaObj* self, int n) {
+    PikaObj* res = New_PikaList();
+    for (int i = 0; i < n; i++) {
+        for (size_t j = 0; j < pikaList_getSize(self); j++) {
+            Arg* arg = pikaList_get(self, j);
+            pikaList_append(res, arg_copy(arg));
+        }
+    }
+    return res;
+}

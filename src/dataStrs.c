@@ -315,3 +315,15 @@ char* strsSubStr(Args* buffs_p, char* name_start, char* name_end) {
     buff[size] = '\0';
     return buff;
 }
+
+char* strsRepeat(Args* buffs, char* str, int num) {
+    int32_t size = strGetSize(str) * num;
+    char* buff = args_getBuff(buffs, size + 1);
+    for (int32_t i = 0; i < num; i++) {
+        for (int32_t j = 0; j < strGetSize(str); j++) {
+            buff[i * strGetSize(str) + j] = str[j];
+        }
+    }
+    buff[size] = '\0';
+    return buff;
+}

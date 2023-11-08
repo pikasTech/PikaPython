@@ -2711,27 +2711,105 @@ static void _OPT_POW(OperatorInfo* op) {
             op->res = arg_setInt(op->res, "", ret);
         }
         return;
-    } else if (op->t1 == ARG_TYPE_FLOAT && op->t2 == ARG_TYPE_INT) {
+    }
+    if (op->t1 == ARG_TYPE_FLOAT && op->t2 == ARG_TYPE_INT) {
         float res = 1;
         for (int i = 0; i < op->i2; i++) {
             res = res * op->f1;
         }
         op->res = arg_setFloat(op->res, "", res);
         return;
-    } else {
-#if PIKA_MATH_ENABLE
-        float res = 1;
-        res = pow(op->f1, op->f2);
-        op->res = arg_setFloat(op->res, "", res);
-        return;
-#else
-        PikaVMFrame_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
-        PikaVMFrame_setSysOut(
-            op->vm,
-            "Operation float ** float is not enabled, please set "
-            "PIKA_MATH_ENABLE");
-#endif
     }
+#if PIKA_MATH_ENABLE
+    float res = 1;
+    res = pow(op->f1, op->f2);
+    op->res = arg_setFloat(op->res, "", res);
+    return;
+#else
+    PikaVMFrame_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
+    PikaVMFrame_setSysOut(op->vm,
+                          "Operation float ** float is not enabled, please set "
+                          "PIKA_MATH_ENABLE");
+#endif
+}
+
+static void _OPT_MUL(OperatorInfo* op) {
+    if (op->num == 1) {
+        op->res = arg_copy(op->a2);
+        arg_setIsStarred(op->res, 1);
+        return;
+    }
+    if ((op->t1 == ARG_TYPE_FLOAT) || op->t2 == ARG_TYPE_FLOAT) {
+        op->res = arg_setFloat(op->res, "", op->f1 * op->f2);
+        return;
+    }
+    if ((op->t1 == ARG_TYPE_STRING && op->t2 == ARG_TYPE_INT) ||
+        (op->t1 == ARG_TYPE_INT && op->t2 == ARG_TYPE_STRING)) {
+        char* str = NULL;
+        int64_t num = 0;
+        if (op->t1 == ARG_TYPE_STRING) {
+            str = arg_getStr(op->a1);
+            num = op->i2;
+        } else {
+            str = arg_getStr(op->a2);
+            num = op->i1;
+        }
+        Args str_opt_buffs = {0};
+        char* opt_str_out = strsRepeat(&str_opt_buffs, str, num);
+        op->res = arg_setStr(op->res, "", opt_str_out);
+        strsDeinit(&str_opt_buffs);
+        return;
+    }
+    if ((op->t1 == ARG_TYPE_BYTES && op->t2 == ARG_TYPE_INT) ||
+        (op->t1 == ARG_TYPE_INT && op->t2 == ARG_TYPE_BYTES)) {
+        uint8_t* bytes = NULL;
+        size_t size = 0;
+        int64_t num = 0;
+        if (op->t1 == ARG_TYPE_BYTES) {
+            bytes = arg_getBytes(op->a1);
+            size = arg_getBytesSize(op->a1);
+            num = op->i2;
+        } else {
+            bytes = arg_getBytes(op->a2);
+            size = arg_getBytesSize(op->a2);
+            num = op->i1;
+        }
+        op->res = arg_setBytes(op->res, "", NULL, size * num);
+        uint8_t* bytes_out = arg_getBytes(op->res);
+        for (int i = 0; i < num; i++) {
+            pika_platform_memcpy(bytes_out + i * size, bytes, size);
+        }
+        return;
+    }
+    if (argType_isObject(op->t1) || argType_isObject(op->t2)) {
+        Arg* __mul__ = NULL;
+        PikaObj* obj = NULL;
+        Arg* arg = NULL;
+        if (argType_isObject(op->t1)) {
+            __mul__ =
+                obj_getMethodArgWithFullPath(arg_getPtr(op->a1), "__mul__");
+            obj = arg_getPtr(op->a1);
+            arg = op->a2;
+        }
+        if (NULL == __mul__) {
+            if (argType_isObject(op->t2)) {
+                __mul__ =
+                    obj_getMethodArgWithFullPath(arg_getPtr(op->a2), "__mul__");
+                obj = arg_getPtr(op->a2);
+                arg = op->a1;
+            }
+        }
+        if (NULL == __mul__) {
+            PikaVMFrame_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
+            PikaVMFrame_setSysOut(op->vm, "TypeError: unsupported operand *");
+            op->res = NULL;
+            return;
+        }
+        op->res = obj_runMethodArg1(obj, __mul__, arg_copy(arg));
+        return;
+    }
+    op->res = arg_setInt(op->res, "", op->i1 * op->i2);
+    return;
 }
 
 static Arg* VM_instruction_handler_OPT(PikaObj* self,
@@ -2792,16 +2870,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                 op.res = arg_setBool(op.res, "", op.f1 < op.f2);
                 goto __exit;
             case '*':
-                if (op.num == 1) {
-                    op.res = arg_copy(op.a2);
-                    arg_setIsStarred(op.res, 1);
-                    goto __exit;
-                }
-                if ((op.t1 == ARG_TYPE_FLOAT) || op.t2 == ARG_TYPE_FLOAT) {
-                    op.res = arg_setFloat(op.res, "", op.f1 * op.f2);
-                    goto __exit;
-                }
-                op.res = arg_setInt(op.res, "", op.i1 * op.i2);
+                _OPT_MUL(&op);
                 goto __exit;
             case '&':
                 if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
