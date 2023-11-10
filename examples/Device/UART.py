@@ -1,8 +1,8 @@
 import PikaStdLib
-import machine
+import PikaStdDevice
 
-time = machine.Time()
-uart = machine.UART()
+time = PikaStdDevice.Time()
+uart = PikaStdDevice.UART()
 uart.setId(1)
 uart.setBaudRate(115200)
 uart.enable()

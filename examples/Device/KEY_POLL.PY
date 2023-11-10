@@ -1,4 +1,4 @@
-from machine import GPIO as STD_GPIO
+from PikaStdDevice import GPIO as STD_GPIO
 
 print('PikaScript LED KEY')
 

@@ -1,7 +1,7 @@
 import PikaStdLib
-import machine
+import PikaStdDevice
 
-time = machine.Time()
+time = PikaStdDevice.Time()
 
 while True:
     time.sleep_ms(500)

@@ -1246,11 +1246,6 @@
               <FileType>5</FileType>
               <FilePath>..\pikascript\STM32G0.pyi</FilePath>
             </File>
-            <File>
-              <FileName>machine.pyi</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\pikascript\machine.pyi</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

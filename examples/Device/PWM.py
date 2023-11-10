@@ -1,8 +1,8 @@
 import PikaStdLib
-import machine
+import PikaStdDevice
 
-time = machine.Time()
-pwm = machine.PWM()
+time = PikaStdDevice.Time()
+pwm = PikaStdDevice.PWM()
 pwm.setPin('PA8')
 pwm.setFrequency(2000)
 pwm.setDuty(0.5)

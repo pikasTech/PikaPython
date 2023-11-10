@@ -1,14 +1,14 @@
 import PikaStdLib
 
-import machine
+import PikaStdDevice
 
-lcd = machine.LCD()
+lcd = PikaStdDevice.LCD()
 lcd.init()
 lcd.clear('white')
 mem = PikaStdLib.MemChecker()
-key = machine.KEY()
+key = PikaStdDevice.KEY()
 key.init()
-time = machine.Time()
+time = PikaStdDevice.Time()
 h = 10
 w = 10
 x = 10

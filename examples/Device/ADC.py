@@ -1,8 +1,8 @@
 import PikaStdLib
-import machine
+import PikaStdDevice
 
-time = machine.Time()
-adc1 = machine.ADC()
+time = PikaStdDevice.Time()
+adc1 = PikaStdDevice.ADC()
 
 adc1.setPin('PA1')
 adc1.enable()

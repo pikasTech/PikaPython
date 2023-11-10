@@ -1,9 +1,9 @@
 import PikaStdLib
-import machine
+import PikaStdDevice
 
 mem = PikaStdLib.MemChecker()
-io1 = machine.GPIO()
-time = machine.Time()
+io1 = PikaStdDevice.GPIO()
+time = PikaStdDevice.Time()
 
 io1.setPin('PA8')
 io1.setMode('out')

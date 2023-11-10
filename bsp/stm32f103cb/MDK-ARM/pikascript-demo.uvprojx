@@ -775,11 +775,6 @@
               <FilePath>..\pikascript\main.py</FilePath>
             </File>
             <File>
-              <FileName>machine.pyi</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\pikascript\machine.pyi</FilePath>
-            </File>
-            <File>
               <FileName>PikaStdLib.pyi</FileName>
               <FileType>5</FileType>
               <FilePath>..\pikascript\PikaStdLib.pyi</FilePath>
