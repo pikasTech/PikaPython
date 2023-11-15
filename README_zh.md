@@ -89,7 +89,7 @@ PikaPython 串口终端、脚本下载、模块管理工具。
 
 # 快速上手
 
-可使用[仿真工程](document/1.三分钟快速上手.md)快速上手，无需硬件，也可以使用官方支持的开发板[Pika派—Wireless](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.11.37216340XZtYt9&id=738387991209)，上手即玩。
+可使用[仿真工程](https://pikapython.com/doc/Keil%20%E4%BB%BF%E7%9C%9F%E5%B7%A5%E7%A8%8B.html)快速上手，无需硬件，也可以使用官方支持的开发板[Pika派—Wireless](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.11.37216340XZtYt9&id=738387991209)，上手即玩。
 
 [![PikaPi-WIRELESS](assets/%E5%B0%81%E9%9D%A2%E5%9B%BE.png)](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.11.37216340XZtYt9&id=738387991209)
 
@@ -120,8 +120,6 @@ PikaPython 串口终端、脚本下载、模块管理工具。
 [port](../../tree/master/port) - 操作系统和包管理器支持
 
 [test](../../tree/master/port/linux/test) - 单元测试
-
-[document](../../tree/master/document) - 开发文档
 
 [examples](../../tree/master/examples) - 示例脚本
 
