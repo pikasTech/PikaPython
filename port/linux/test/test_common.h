@@ -255,6 +255,18 @@ void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn);
         EXPECT_EQ(pikaMemNow(), 0);                                       \
     }
 
+#define TEST_RUN_LINES_EXCEPT_OUTPUT_INDEXED(                     \
+    _test_suite_, _test_name_, _lines_, _index_, _except_output_) \
+    TEST(_test_suite_, _test_name_) {                             \
+        PikaObj* self = newRootObj("root", New_PikaMain);         \
+        extern unsigned char pikaModules_py_a[];                  \
+        obj_linkLibrary(self, pikaModules_py_a);                  \
+        obj_run(self, (_lines_)); /* collect */ /* assert */      \
+        EXPECT_STREQ(log_buff[_index_], (_except_output_));       \
+        obj_deinit(self);                                         \
+        EXPECT_EQ(pikaMemNow(), 0);                               \
+    }
+
 #if USE_GOOGLE_TEST
 #include "gtest/gtest.h"
 #define TEST_START

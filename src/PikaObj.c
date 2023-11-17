@@ -30,6 +30,7 @@
 #include <stdint.h>
 #include "BaseObj.h"
 #include "PikaCompiler.h"
+#include "PikaParser.h"
 #include "PikaPlatform.h"
 #include "dataArg.h"
 #include "dataArgs.h"
@@ -37,7 +38,6 @@
 #include "dataQueue.h"
 #include "dataString.h"
 #include "dataStrs.h"
-#include "PikaParser.h"
 #if __linux
 #include "signal.h"
 #include "termios.h"
@@ -114,6 +114,19 @@ int64_t fast_atoi(char* src) {
         return s + n[(*p - '0')];
     }
     return 0;
+}
+
+PIKA_RES fast_atoi_safe(char* src, int64_t* out) {
+    // Check is digit
+    char* p = src;
+    while (*p) {
+        if (*p < '0' || *p > '9') {
+            return PIKA_RES_ERR_INVALID_PARAM;
+        }
+        p++;
+    }
+    *out = fast_atoi(src);
+    return PIKA_RES_OK;
 }
 
 static uint16_t const str100p[100] = {
@@ -3090,7 +3103,12 @@ PIKA_RES _transeInt(Arg* arg, int base, int64_t* res) {
         return PIKA_RES_OK;
     }
     if (ARG_TYPE_STRING == type) {
-        *res = strtoll(arg_getStr(arg), NULL, base);
+        char* end = NULL;
+        char* str = arg_getStr(arg);
+        *res = strtoll(str, &end, base);
+        if (NULL != end && strGetSize(end) != 0) {
+            return PIKA_RES_ERR_INVALID_PARAM;
+        }
         return PIKA_RES_OK;
     }
     if (ARG_TYPE_BYTES == type) {
@@ -3161,7 +3179,8 @@ Arg* builtins_int(PikaObj* self, Arg* arg, PikaTuple* base) {
     if (_transeInt(arg, iBase, &res) == PIKA_RES_OK) {
         return arg_newInt(res);
     }
-    obj_setSysOut(self, "ValueError: invalid literal for int()");
+    obj_setSysOut(self, "ValueError: invalid literal for int(): '%s'",
+                  arg_getStr(arg));
     obj_setErrorCode(self, 1);
     return NULL;
 }

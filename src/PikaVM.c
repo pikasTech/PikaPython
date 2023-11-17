@@ -2364,7 +2364,14 @@ static Arg* VM_instruction_handler_NUM(PikaObj* self,
         return arg_setFloat(arg_ret_reg, "", strtod(data, NULL));
     }
     /* int */
-    return arg_setInt(arg_ret_reg, "", fast_atoi(data));
+    int64_t i64 = 0;
+    if (PIKA_RES_OK != fast_atoi_safe(data, &i64)) {
+        PikaVMFrame_setSysOut(vm, "ValueError: invalid literal for int(): '%s'",
+                              data);
+        PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
+        return NULL;
+    }
+    return arg_setInt(arg_ret_reg, "", i64);
 }
 
 static Arg* VM_instruction_handler_JMP(PikaObj* self,

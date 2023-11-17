@@ -397,6 +397,7 @@ PikaObj* New_PikaObj_noGC(void);
 
 /* tools */
 int64_t fast_atoi(char* src);
+PIKA_RES fast_atoi_safe(char* src, int64_t* out);
 char* fast_itoa(char* buf, uint32_t val);
 
 /* shell */
