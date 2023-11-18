@@ -2518,11 +2518,11 @@ static Arg* _OPT_Method_ex(PikaObj* host,
                            Arg* arg,
                            OperatorInfo* op,
                            char* method_name,
-                           PIKA_RES errno,
+                           PIKA_RES err_no,
                            char* errinfo) {
     Arg* method = obj_getMethodArgWithFullPath(host, method_name);
     if (NULL == method) {
-        PikaVMFrame_setErrorCode(op->vm, errno);
+        PikaVMFrame_setErrorCode(op->vm, err_no);
         PikaVMFrame_setSysOut(op->vm, errinfo);
         return NULL;
     }
@@ -2532,10 +2532,10 @@ static Arg* _OPT_Method_ex(PikaObj* host,
 
 static Arg* _OPT_Method(OperatorInfo* op,
                         char* method_name,
-                        PIKA_RES errno,
+                        PIKA_RES err_no,
                         char* errinfo) {
     PikaObj* obj1 = arg_getPtr(op->a1);
-    return _OPT_Method_ex(obj1, op->a2, op, method_name, errno, errinfo);
+    return _OPT_Method_ex(obj1, op->a2, op, method_name, err_no, errinfo);
 }
 
 static void _OPT_ADD(OperatorInfo* op) {

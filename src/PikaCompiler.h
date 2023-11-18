@@ -42,9 +42,9 @@ int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes);
 void LibObj_printModules(LibObj* self);
 void pikaMaker_deinit(PikaMaker* self);
 PIKA_RES pikaMaker_linkRaw(PikaMaker* self, char* file_path);
-PIKA_RES pikaMaker_linkRaw_New(PikaMaker* self,
-                               char* file_path,
-                               char* pack_path);
+PIKA_RES pikaMaker_linkRawWithPath(PikaMaker* self,
+                                   char* file_path,
+                                   char* pack_path);
 PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
                                  char* module_name,
                                  uint8_t** addr_p,

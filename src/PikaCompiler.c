@@ -266,46 +266,9 @@ int LibObj_staticLink(LibObj* self,
     return 0;
 }
 
-int LibObj_staticLinkFile(LibObj* self, char* input_file_name) {
-    Args buffs = {0};
-    /* read file */
-    Arg* input_file_arg = arg_loadFile(NULL, input_file_name);
-    if (NULL == input_file_arg) {
-        pika_platform_printf("error: can't open file %s\r\n", input_file_name);
-        return -1;
-    }
-    char* module_name = strsGetLastToken(
-        &buffs, input_file_name,
-        '/'); /*Find the address next to the last '/'  location*/
-
-    size_t module_name_len = strlen(module_name);
-
-    /* cut off '.py.o' */
-    if (module_name[module_name_len - 1] == 'o' &&
-        module_name[module_name_len - 2] == '.' &&
-        module_name[module_name_len - 3] == 'y' &&
-        module_name[module_name_len - 4] == 'p' &&
-        module_name[module_name_len - 5] == '.') {
-        module_name[module_name_len - 5] = 0;
-    } else {
-        // pika_platform_printf("linking raw  %s:%s:%ld\r\n", input_file_name,
-        //                   module_name, arg_getBytecodeSize(input_file_arg));
-        /* replace . to | */
-        module_name = strsReplace(&buffs, module_name, ".", "|");
-    }
-
-    /* push bytecode */
-    uint8_t* byte_code = arg_getBytecode(input_file_arg);
-    size_t code_size = arg_getBytecodeSize(input_file_arg);
-    LibObj_staticLink(self, module_name, byte_code, code_size);
-
-    /* deinit */
-    strsDeinit(&buffs);
-    arg_deinit(input_file_arg);
-    return 0;
-}
-
-int LibObj_staticLinkFile_New(LibObj* self, char* input_file_name, char* path) {
+int LibObj_staticLinkFileWithPath(LibObj* self,
+                                  char* input_file_name,
+                                  char* path) {
     Args buffs = {0};
     /* read file */
     Arg* input_file_arg = arg_loadFile(NULL, input_file_name);
@@ -341,6 +304,10 @@ int LibObj_staticLinkFile_New(LibObj* self, char* input_file_name, char* path) {
     strsDeinit(&buffs);
     arg_deinit(input_file_arg);
     return 0;
+}
+
+int LibObj_staticLinkFile(LibObj* self, char* input_file_name) {
+    return LibObj_staticLinkFileWithPath(self, input_file_name, "");
 }
 
 static int32_t __foreach_handler_listModules(Arg* argEach, void* context) {
@@ -1436,12 +1403,12 @@ PIKA_RES pikaMaker_linkRaw(PikaMaker* self, char* file_path) {
  * @param path of the file in pikafs
  * @return PIKA_RES
  */
-PIKA_RES pikaMaker_linkRaw_New(PikaMaker* self,
-                               char* file_path,
-                               char* pack_path) {
+PIKA_RES pikaMaker_linkRawWithPath(PikaMaker* self,
+                                   char* file_path,
+                                   char* pack_path) {
     LibObj* lib = obj_getPtr(self, "lib");
     PIKA_RES ret =
-        (PIKA_RES)LibObj_staticLinkFile_New(lib, file_path, pack_path);
+        (PIKA_RES)LibObj_staticLinkFileWithPath(lib, file_path, pack_path);
     return ret;
 }
 

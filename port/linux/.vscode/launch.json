@@ -18,7 +18,7 @@
                 // "--gtest_filter=vm.run_file_subsrc"
                 // "--gtest_filter=vm.run_file"
                 // "--gtest_filter=stddata.encode_decode"
-                "--gtest_filter=builtin.int_invalid"
+                "--gtest_filter=packtool.packread"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
