@@ -76,6 +76,7 @@ TEST(packtool, packread) {
     pikafs_fclose(pack_file);
     pack_file = NULL;
     EXPECT_NE(n, 0);
+    EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST_END
