@@ -11,13 +11,9 @@
 
 #include "random.h"
 #include <stdlib.h>
+#include "PikaObj.h"
 
-extern int pika_platform_thread_timer_now();
 static unsigned int last_seed = 1;
-
-int __attribute__((weak)) pika_platform_thread_timer_now() {
-    return 1;
-}
 
 static int do_random(unsigned int seed) {
     srand(seed);

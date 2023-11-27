@@ -28,6 +28,9 @@ int pika_platform_cleanup_winsock();
 #include "lwip/netdb.h"
 #include "lwip/opt.h"
 #include "lwip/sys.h"
+#if !LWIP_DNS
+#error "lwip dns is not enabled, please enable it in lwipopts.h"
+#endif
 #else
 /*
     You need to create the pika_platform_socket.h for your platform.
