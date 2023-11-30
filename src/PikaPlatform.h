@@ -100,6 +100,10 @@ extern "C" {
 #define PIKA_BYTECODE_ALIGN __attribute__((aligned(4)))
 #endif
 
+#if defined(_WIN32)
+#pragma warning(disable: 4113)
+#endif
+
 /* OS */
 #if defined(__RTTHREAD__) && PIKA_RTTHREAD_ENABLE
 #include <rtthread.h>

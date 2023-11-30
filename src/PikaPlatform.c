@@ -60,7 +60,7 @@ int pika_putchar(char ch) {
 }
 
 PIKA_WEAK void pika_platform_clear(void) {
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
 }
 
 #if !PIKA_PLATFORM_NO_WEAK
@@ -374,7 +374,7 @@ PIKA_WEAK char* pika_platform_realpath(const char* path, char* resolved_path) {
 
 PIKA_WEAK int pika_platform_path_exists(const char* path) {
 #if defined(_WIN32) && !defined(CROSS_BUILD)
-    DWORD attr = GetFileAttributesA((LPCWSTR)path);
+    DWORD attr = GetFileAttributesA((LPCSTR)path);
     if (attr == INVALID_FILE_ATTRIBUTES) {
         return 0;
     }
@@ -395,7 +395,7 @@ PIKA_WEAK int pika_platform_path_exists(const char* path) {
 PIKA_WEAK int pika_platform_path_isdir(const char* path) {
 #if defined(_WIN32) && !defined(CROSS_BUILD)
     int is_dir = 0;
-    DWORD attrs = GetFileAttributes((LPCWSTR)path);
+    DWORD attrs = GetFileAttributes((LPCSTR)path);
     if (attrs != INVALID_FILE_ATTRIBUTES) {
         is_dir = (attrs & FILE_ATTRIBUTE_DIRECTORY) != 0 ? 1 : 0;
     }
@@ -591,7 +591,7 @@ PIKA_WEAK pika_platform_thread_t* pika_platform_thread_init(
         return thread;
     }
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
     return NULL;
 #endif
 }
@@ -604,7 +604,7 @@ PIKA_WEAK uint64_t pika_platform_thread_self(void) {
 #elif PIKA_RTTHREAD_ENABLE
     return (uint64_t)rt_thread_self();
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
     return 0;
 #endif
 }
@@ -626,7 +626,7 @@ PIKA_WEAK void pika_platform_thread_stop(pika_platform_thread_t* thread) {
 #elif PIKA_RTTHREAD_ENABLE
     rt_thread_suspend(thread->thread);
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
 #endif
 }
 
@@ -640,7 +640,7 @@ PIKA_WEAK void pika_platform_thread_start(pika_platform_thread_t* thread) {
 #elif PIKA_RTTHREAD_ENABLE
     rt_thread_resume(thread->thread);
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
 #endif
 }
 
@@ -666,7 +666,7 @@ PIKA_WEAK void pika_platform_thread_destroy(pika_platform_thread_t* thread) {
         return;
     }
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
 #endif
 }
 
@@ -689,7 +689,7 @@ PIKA_WEAK void pika_platform_thread_exit(pika_platform_thread_t* thread) {
     rt_thread_delete(thread->thread);
     return;
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
 #endif
 }
 
@@ -703,7 +703,7 @@ PIKA_WEAK int pika_platform_thread_mutex_init(pika_platform_thread_mutex_t* m) {
     m->mutex = rt_mutex_create("pika_platform_mutex", RT_IPC_FLAG_PRIO);
     return 0;
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
     return -1;
 #endif
 }
@@ -716,7 +716,7 @@ PIKA_WEAK int pika_platform_thread_mutex_lock(pika_platform_thread_mutex_t* m) {
 #elif PIKA_RTTHREAD_ENABLE
     return rt_mutex_take((m->mutex), RT_WAITING_FOREVER);
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
     return -1;
 #endif
 }
@@ -730,7 +730,7 @@ PIKA_WEAK int pika_platform_thread_mutex_trylock(
 #elif PIKA_RTTHREAD_ENABLE
     return rt_mutex_take((m->mutex), 0);
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
     return -1;
 #endif
 }
@@ -744,7 +744,7 @@ PIKA_WEAK int pika_platform_thread_mutex_unlock(
 #elif PIKA_RTTHREAD_ENABLE
     return rt_mutex_release((m->mutex));
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
     return -1;
 #endif
 }
@@ -759,7 +759,7 @@ PIKA_WEAK int pika_platform_thread_mutex_destroy(
 #elif PIKA_RTTHREAD_ENABLE
     return rt_mutex_delete((m->mutex));
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
     return -1;
 #endif
 }
@@ -772,7 +772,7 @@ PIKA_WEAK void pika_platform_thread_timer_init(pika_platform_timer_t* timer) {
 #elif PIKA_RTTHREAD_ENABLE
     timer->time = 0;
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
 #endif
 }
 
@@ -792,7 +792,7 @@ PIKA_WEAK void pika_platform_thread_timer_cutdown(pika_platform_timer_t* timer,
         (uint32_t)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
     timer->time += timeout;
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
 #endif
 }
 
@@ -811,7 +811,7 @@ PIKA_WEAK char pika_platform_thread_timer_is_expired(
         (uint32_t)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
     return time > timer->time ? 1 : 0;
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
     return 1;
 #endif
 }
@@ -838,7 +838,7 @@ PIKA_WEAK int pika_platform_thread_timer_remain(pika_platform_timer_t* timer) {
     }
     return timer->time - now;
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
     return -1;
 #endif
 }
@@ -853,7 +853,7 @@ PIKA_WEAK unsigned long pika_platform_thread_timer_now(void) {
     return (unsigned long)((tick + RT_TICK_PER_SECOND - 1) /
                            RT_TICK_PER_SECOND);
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
     return 1;
 #endif
 }
@@ -880,7 +880,7 @@ PIKA_WEAK void pika_platform_thread_timer_usleep(unsigned long usec) {
     }
     vTaskDelay(tick);
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
 #endif
 }
 
@@ -890,7 +890,7 @@ PIKA_WEAK void pika_platform_reboot(void) {
 #if __linux
     pika_platform_printf("reboot\n");
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
 #endif
 }
 
