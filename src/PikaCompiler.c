@@ -1485,14 +1485,15 @@ __malloc_err:
  * @return read count
  */
 int pikafs_fread(void* buf, size_t size, size_t count, pikafs_FILE* f) {
+    size_t read_len = size * count;
     if (f->pos >= f->size) {
         return 0;
     }
-    if (f->pos + size * count > f->size) {
-        count = (f->size - f->pos) / size;
+    if (f->pos + read_len > f->size) {
+        read_len = f->size;
     }
-    __platform_memcpy(buf, f->addr + f->pos, size * count);
-    f->pos += size * count;
+    __platform_memcpy(buf, f->addr + f->pos, read_len);
+    f->pos += read_len;
     return count;
 }
 
