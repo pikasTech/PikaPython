@@ -41,7 +41,7 @@
 #include "unistd.h"
 #endif
 
-#if (defined(__linux) || PIKA_LINUX_COMPATIBLE) || defined(_WIN32)
+#if (defined(__linux) || PIKA_LINUX_COMPATIBLE)
 #include <dirent.h>
 #endif
 
