@@ -3058,6 +3058,7 @@ char* pika_file2Target(Args* outBuffs,
     Arg* file_arg = arg_loadFile(NULL, filename);
     pika_assert(NULL != file_arg);
     if (NULL == file_arg) {
+        pika_platform_printf("Error: Can not open file: %s\r\n", filename);
         return NULL;
     }
     char* lines = (char*)arg_getBytes(file_arg);

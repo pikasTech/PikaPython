@@ -193,6 +193,8 @@ PIKA_RES pikaCompileFileWithOutputName(char* output_file_name,
     Args buffs = {0};
     Arg* input_file_arg = arg_loadFile(NULL, input_file_name);
     if (NULL == input_file_arg) {
+        pika_platform_printf("Error: Could not load file '%s'\n",
+                             input_file_name);
         return PIKA_RES_ERR_IO_ERROR;
     }
     char* lines = (char*)arg_getBytes(input_file_arg);
@@ -273,7 +275,7 @@ int LibObj_staticLinkFileWithPath(LibObj* self,
     /* read file */
     Arg* input_file_arg = arg_loadFile(NULL, input_file_name);
     if (NULL == input_file_arg) {
-        pika_platform_printf("error: can't open file %s\r\n", input_file_name);
+        pika_platform_printf("Error: can't open file %s\r\n", input_file_name);
         return -1;
     }
     char* module_name = strsGetLastToken(&buffs, input_file_name, '/');
@@ -362,8 +364,8 @@ static int32_t __foreach_handler_libWriteIndex(Arg* argEach,
     Args buffs = {0};
     if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
-        uint32_t bytecode_size =
-            align_by(obj_getInt(module_obj, "bytesize"), 4);
+        uint32_t bytecode_size = obj_getInt(module_obj, "bytesize");
+        uint32_t bytecode_size_align = align_by(bytecode_size, 4);
         char* module_name = obj_getStr(module_obj, "name");
         module_name = strsReplace(&buffs, module_name, "|", ".");
         uint32_t name_size = strGetSize(module_name);
@@ -377,9 +379,10 @@ static int32_t __foreach_handler_libWriteIndex(Arg* argEach,
 
         pika_platform_memcpy(block_buff, module_name,
                              name_size + 1); /* add '\0' after name */
+        /* should write the size without align */
         pika_platform_memcpy(
-            block_buff + linker->block_size - sizeof(bytecode_size),
-            &bytecode_size, sizeof(bytecode_size));
+            block_buff + linker->block_size - sizeof(bytecode_size_align),
+            &bytecode_size, sizeof(bytecode_size_align));
 
         /* write the block to file */
         linker_fwrite(linker, (uint8_t*)block_buff, linker->block_size);
@@ -548,8 +551,8 @@ static PIKA_RES _loadModuleDataWithIndex(uint8_t* library_bytes,
             *(uint32_t*)(file_info_block + block_size - sizeof(uint32_t));
         bytecode_ptr = bytecode_ptr_next;
         offset += block_size;
-        /* next module ptr */
-        bytecode_ptr_next += module_size;
+        /* next module ptr, align by 4 bytes */
+        bytecode_ptr_next += align_by(module_size, 4);
     }
     *name_p = module_name;
     *addr_p = bytecode_ptr;
@@ -1087,6 +1090,7 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
     Arg* file_arg = arg_loadFile(NULL, file_path);
     uint8_t offset_befor = 0;
     if (NULL == file_arg) {
+        pika_platform_printf("Error: Could not load file '%s'\n", file_path);
         res = 1;
         goto __exit;
     }
@@ -1469,7 +1473,9 @@ pikafs_FILE* pikafs_fopen_pack(char* pack_name, char* file_name) {
     return f;
 
 __exit:
-    arg_deinit(f->farg);
+    if (NULL != f->farg) {
+        arg_deinit(f->farg);
+    }
 __getpack_err:
     pikaFree(f, sizeof(pikafs_FILE));
 __malloc_err:

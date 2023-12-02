@@ -101,7 +101,7 @@ extern "C" {
 #endif
 
 #if defined(_WIN32)
-#pragma warning(disable: 4113)
+#pragma warning(disable : 4113)
 #endif
 
 /* OS */

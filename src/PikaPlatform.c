@@ -31,7 +31,10 @@
 #if defined(_WIN32) && !defined(CROSS_BUILD)
 #include <Windows.h>
 #include <io.h>
-#include <direct.h>
+#endif
+
+#if defined(_WIN32)
+#include <dirent.h>
 #endif
 
 #if defined(__linux) || PIKA_LINUX_COMPATIBLE

@@ -24,6 +24,37 @@ TEST(packtool, packfiles) {
     EXPECT_EQ(ret, PIKA_RES_OK);
 }
 
+TEST(packtool, packfiles_txt) {
+    PikaMaker* maker = New_PikaMaker();
+    PIKA_RES ret = PIKA_RES_OK;
+
+    pikaMaker_linkRawWithPath(maker, "test/assets/test.txt", "txt-file");
+    pikaMaker_linkRawWithPath(maker, "test/assets/widget_config.ini",
+                              "/widget_config.ini");
+
+    // create "./test/out/packout" path if not exist
+    ret = pikaMaker_linkCompiledModulesFullPath(maker,
+                                                "./test/out/packout/ptxt.pack");
+
+    pikaMaker_deinit(maker);
+    EXPECT_EQ(ret, PIKA_RES_OK);
+
+    pikafs_FILE* pack_file =
+        pikafs_fopen_pack("test/out/packout/ptxt.pack", "widget_config.ini");
+    EXPECT_TRUE(pack_file != NULL);
+    while (1) {
+        char buf = 0;
+        size_t n = pikafs_fread(&buf, 1, 1, pack_file);
+        if (n <= 0) {
+            break;
+        }
+        /* the txt file should not contain '\0' */
+        EXPECT_NE(buf, 0);
+    }
+    pikafs_fclose(pack_file);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(packtool, packread_) {
     size_t n = 0;
     // Arg* fileArg = NULL;

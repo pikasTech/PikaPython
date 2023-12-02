@@ -3902,6 +3902,7 @@ VMParameters* pikaVM_runByteCodeFile(PikaObj* self, char* filename) {
     Arg* file_arg = arg_loadFile(NULL, filename);
     pika_assert(NULL != file_arg);
     if (NULL == file_arg) {
+        pika_platform_printf("Error: can not open file '%s'\n", filename);
         return NULL;
     }
     uint8_t* lines = arg_getBytes(file_arg);
@@ -3917,6 +3918,7 @@ VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename) {
     Arg* file_arg = arg_loadFile(NULL, filename);
     pika_assert(NULL != file_arg);
     if (NULL == file_arg) {
+        pika_platform_printf("Error: can not open file '%s'\n", filename);
         return NULL;
     }
     char* lines = (char*)arg_getBytes(file_arg);
