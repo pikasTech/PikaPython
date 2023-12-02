@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1701075625141,
+  "lastUpdate": 1701541289441,
   "repoUrl": "https://github.com/pikasTech/PikaPython",
   "entries": {
     "Benchmark": [
@@ -106367,6 +106367,66 @@ window.BENCHMARK_DATA = {
             "value": 0.0050004252715791855,
             "unit": "ms/iter",
             "extra": "iterations: 352482\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "89487381+b4yuan@users.noreply.github.com",
+            "name": "Brian",
+            "username": "b4yuan"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fba5e0b8ae2e65eb22acbc9f1109ac8d808d6f7c",
+          "message": "Add CodeQL Workflow for Code Security Analysis (#331)\n\n* Add CodeQL Workflow for Code Security Analysis\r\n\r\nAdd CodeQL Workflow for Code Security Analysis\r\n\r\nThis pull request introduces a CodeQL workflow to enhance the security analysis of our repository. CodeQL is a powerful static analysis tool that helps identify and mitigate security vulnerabilities in our codebase. By integrating this workflow into our GitHub Actions, we can proactively identify and address potential issues before they become security threats.\r\n\r\nWe added a new CodeQL workflow file (.github/workflows/codeql.yml) that\r\n- Runs on every push and pull request to the main branch.\r\n- Excludes queries with a high false positive rate or low-severity findings.\r\n- Does not display results for third-party code, focusing only on our own codebase.\r\n\r\nTesting:\r\nTo validate the functionality of this workflow, we have run several test scans on the codebase and reviewed the results. The workflow successfully compiles the project, identifies issues, and provides actionable insights while reducing noise by excluding certain queries and third-party code.\r\n\r\nDeployment:\r\nOnce this pull request is merged, the CodeQL workflow will be active and automatically run on every push and pull request to the main branch. To view the results of these code scans, please follow these steps:\r\n1. Under the repository name, click on the Security tab.\r\n2. In the left sidebar, click Code scanning alerts.\r\n\r\nAdditional Information:\r\n- You can further customize the workflow to adapt to your specific needs by modifying the workflow file.\r\n- For more information on CodeQL and how to interpret its results, refer to the GitHub documentation and the CodeQL documentation.\r\n\r\nSigned-off-by: Brian <bayuan@purdue.edu>\r\n\r\n* Add CodeQL Workflow for Code Security Analysis\r\n\r\nAdd CodeQL Workflow for Code Security Analysis\r\n\r\nThis pull request introduces a CodeQL workflow to enhance the security analysis of our repository. CodeQL is a powerful static analysis tool that helps identify and mitigate security vulnerabilities in our codebase. By integrating this workflow into our GitHub Actions, we can proactively identify and address potential issues before they become security threats.\r\n\r\nWe added a new CodeQL workflow file (.github/workflows/codeql.yml) that\r\n- Runs on every pull request (functionality to run on every push to main branches is included as a comment for convenience).\r\n- Runs daily.\r\n- Excludes queries with a high false positive rate or low-severity findings.\r\n- Does not display results for git submodules, focusing only on our own codebase.\r\n\r\nTesting:\r\nTo validate the functionality of this workflow, we have run several test scans on the codebase and reviewed the results. The workflow successfully compiles the project, identifies issues, and provides actionable insights while reducing noise by excluding certain queries and third-party code.\r\n\r\nDeployment:\r\nOnce this pull request is merged, the CodeQL workflow will be active and automatically run on every push and pull request to the main branch. To view the results of these code scans, please follow these steps:\r\n1. Under the repository name, click on the Security tab.\r\n2. In the left sidebar, click Code scanning alerts.\r\n\r\nAdditional Information:\r\n- You can further customize the workflow to adapt to your specific needs by modifying the workflow file.\r\n- For more information on CodeQL and how to interpret its results, refer to the GitHub documentation and the CodeQL documentation (https://codeql.github.com/ and https://codeql.github.com/docs/).\r\n\r\nSigned-off-by: Brian <bayuan@purdue.edu>\r\n\r\n* Add CodeQL Workflow for Code Security Analysis\r\n\r\nAdd CodeQL Workflow for Code Security Analysis\r\n\r\nThis pull request introduces a CodeQL workflow to enhance the security analysis of our repository. CodeQL is a powerful static analysis tool that helps identify and mitigate security vulnerabilities in our codebase. By integrating this workflow into our GitHub Actions, we can proactively identify and address potential issues before they become security threats.\r\n\r\nWe added a new CodeQL workflow file (.github/workflows/codeql.yml) that\r\n- Runs on every pull request (functionality to run on every push to main branches is included as a comment for convenience).\r\n- Runs daily.\r\n- Excludes queries with a high false positive rate or low-severity findings.\r\n- Does not display results for git submodules, focusing only on our own codebase.\r\n\r\nTesting:\r\nTo validate the functionality of this workflow, we have run several test scans on the codebase and reviewed the results. The workflow successfully compiles the project, identifies issues, and provides actionable insights while reducing noise by excluding certain queries and third-party code.\r\n\r\nDeployment:\r\nOnce this pull request is merged, the CodeQL workflow will be active and automatically run on every push and pull request to the main branch. To view the results of these code scans, please follow these steps:\r\n1. Under the repository name, click on the Security tab.\r\n2. In the left sidebar, click Code scanning alerts.\r\n\r\nAdditional Information:\r\n- You can further customize the workflow to adapt to your specific needs by modifying the workflow file.\r\n- For more information on CodeQL and how to interpret its results, refer to the GitHub documentation and the CodeQL documentation (https://codeql.github.com/ and https://codeql.github.com/docs/).\r\n\r\nSigned-off-by: Brian <bayuan@purdue.edu>\r\n\r\n* Add CodeQL Workflow for Code Security Analysis\r\n\r\nAdd CodeQL Workflow for Code Security Analysis\r\n\r\nThis pull request introduces a CodeQL workflow to enhance the security analysis of our repository. CodeQL is a powerful static analysis tool that helps identify and mitigate security vulnerabilities in our codebase. By integrating this workflow into our GitHub Actions, we can proactively identify and address potential issues before they become security threats.\r\n\r\nWe added a new CodeQL workflow file (.github/workflows/codeql.yml) that\r\n- Runs on every pull request (functionality to run on every push to main branches is included as a comment for convenience).\r\n- Runs daily.\r\n- Excludes queries with a high false positive rate or low-severity findings.\r\n- Does not display results for git submodules, focusing only on our own codebase.\r\n\r\nTesting:\r\nTo validate the functionality of this workflow, we have run several test scans on the codebase and reviewed the results. The workflow successfully compiles the project, identifies issues, and provides actionable insights while reducing noise by excluding certain queries and third-party code.\r\n\r\nDeployment:\r\nOnce this pull request is merged, the CodeQL workflow will be active and automatically run on every push and pull request to the main branch. To view the results of these code scans, please follow these steps:\r\n1. Under the repository name, click on the Security tab.\r\n2. In the left sidebar, click Code scanning alerts.\r\n\r\nAdditional Information:\r\n- You can further customize the workflow to adapt to your specific needs by modifying the workflow file.\r\n- For more information on CodeQL and how to interpret its results, refer to the GitHub documentation and the CodeQL documentation (https://codeql.github.com/ and https://codeql.github.com/docs/).\r\n\r\nSigned-off-by: Brian <bayuan@purdue.edu>\r\n\r\n* Remove failing on error and clean up codeql.yml\r\n\r\n---------\r\n\r\nSigned-off-by: Brian <bayuan@purdue.edu>",
+          "timestamp": "2023-12-03T01:51:52+08:00",
+          "tree_id": "487a560a33455e2deef8cf7e971c3ae3f65f2d60",
+          "url": "https://github.com/pikasTech/PikaPython/commit/fba5e0b8ae2e65eb22acbc9f1109ac8d808d6f7c"
+        },
+        "date": 1701541281377,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 16199.494313773574,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 16199.494313773574 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 24.202168079045606,
+            "unit": "ms/iter",
+            "extra": "iterations: 73\ncpu: 24.200516598342578 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 13.371708698619825,
+            "unit": "ms/iter",
+            "extra": "iterations: 132\ncpu: 13.370824567106492 ms\nthreads: 1"
+          },
+          {
+            "name": "for_print_1000",
+            "value": 12.382970950636077,
+            "unit": "ms/iter",
+            "extra": "iterations: 142\ncpu: 12.382183240159053 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 3.0866314182840036,
+            "unit": "ms/iter",
+            "extra": "iterations: 567\ncpu: 3.0865160993011767 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.0050000934952488365,
+            "unit": "ms/iter",
+            "extra": "iterations: 352215\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
