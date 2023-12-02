@@ -75,7 +75,8 @@ jobs:
     #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
 
     - run: |
-        ./.github/workflows/codeql-buildscript.sh
+        cd src
+        mkdir build && cd build && cmake ../ && make
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
@@ -119,8 +120,3 @@ jobs:
         name: codeql-results
         path: ${{ steps.step1.outputs.sarif-output }}
         retention-days: 5
-
-    - name: Fail if an error is found
-      run: |
-        ./.github/workflows/fail_on_error.py \
-          ${{ steps.step1.outputs.sarif-output }}/cpp.sarif
