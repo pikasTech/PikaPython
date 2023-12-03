@@ -33,19 +33,11 @@
 #include <io.h>
 #endif
 
-#if defined(_WIN32)
-#include <dirent.h>
-#endif
-
 #if defined(__linux) || PIKA_LINUX_COMPATIBLE
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "unistd.h"
-#endif
-
-#if (defined(__linux) || PIKA_LINUX_COMPATIBLE)
-#include <dirent.h>
 #endif
 
 void pikaFree(void* mem, uint32_t size);
@@ -287,8 +279,15 @@ PIKA_WEAK long pika_platform_ftell(FILE* stream) {
 }
 
 PIKA_WEAK char* pika_platform_getcwd(char* buf, size_t size) {
-#if defined(__linux) || defined(_WIN32)
+#if defined(__linux)
     return getcwd(buf, size);
+#elif defined(_WIN32)
+    if (!GetCurrentDirectoryA(size, buf)) {
+        return NULL;
+    }
+    else {
+        return buf;
+    }
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR_LOWLEVEL(_);
 #endif
@@ -479,7 +478,7 @@ PIKA_WEAK char** pika_platform_listdir(const char* path, int* count) {
     struct _finddata_t fb;
     intptr_t handle = 0;
     char dirpath[256] = {0};
-    char* currentPath = _getcwd(dirpath, 256);
+    char* currentPath = pika_platform_getcwd(dirpath, sizeof dirpath);
     strcat(dirpath, path);
     strcat(dirpath, "\\*");
 
