@@ -18,7 +18,7 @@
 #ifdef FDB_USING_KVDB
 /* Auto update KV to latest default when current KVDB version number is changed.
  * @see fdb_kvdb.ver_num */
-/* #define FDB_KV_AUTO_UPDATE */
+#define FDB_KV_AUTO_UPDATE
 #endif
 
 /* using TSDB (Time series database) feature */

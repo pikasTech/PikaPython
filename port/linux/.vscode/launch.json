@@ -18,7 +18,8 @@
                 // "--gtest_filter=vm.run_file_subsrc"
                 // "--gtest_filter=vm.run_file"
                 // "--gtest_filter=stddata.encode_decode"
-                "--gtest_filter=packtool.packfiles_txt"
+                // "--gtest_filter=packtool.packfiles_txt"
+                "--gtest_filter=flashdb.*"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

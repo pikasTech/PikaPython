@@ -6,7 +6,7 @@ class FDB(_flashdb.FlashDB):
 
     def kv_get_blob(self, kvdb, key, size):
         res = super().kv_get_blob(kvdb, key, size)
-        if type(res) == type([]):
+        if type(res) == list:
             return bytes(res)
         return None
 

@@ -18,14 +18,16 @@
 #ifdef FDB_USING_KVDB
 /* Auto update KV to latest default when current KVDB version number is changed.
  * @see fdb_kvdb.ver_num */
-/* #define FDB_KV_AUTO_UPDATE */
+#define FDB_KV_AUTO_UPDATE
 #endif
 
 /* using TSDB (Time series database) feature */
 #define FDB_USING_TSDB
 
 /* Using file storage mode by POSIX file API, like open/read/write/close */
-#define FDB_USING_FILE_POSIX_MODE
+// #define FDB_USING_FILE_POSIX_MODE
+
+#define FDB_USING_FILE_LIBC_MODE
 
 /* log print macro. default EF_PRINT macro is printf() */
 /* #define FDB_PRINT(...)              my_printf(__VA_ARGS__) */

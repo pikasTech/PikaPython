@@ -1,13 +1,13 @@
 #include "_flashdb_FlashDB.h"
 #include <stdio.h>
+#include "_flashdb_kvdb_t.h"
 #include "flashdb.h"
 #include "pikaScript.h"
-#include "_flashdb_kvdb_t.h"
 
-//#include "fdb_def.h"
+// #include "fdb_def.h"
 #define PIKA_USING_FLASHDB1 1
 #if PIKA_USING_FLASHDB1
-//#include <pthread.h>
+// #include <pthread.h>
 #include "flashdb.h"
 #define FDB_LOG_TAG "[main]"
 
@@ -251,7 +251,10 @@ PikaObj* _flashdb_FlashDB_kvdb_init(PikaObj* self,
 }
 
 void _flashdb_FlashDB___del__(PikaObj* self) {
-    args_deinit(_FDBBUFFS);
+    Args* buffs = _FDBBUFFS;
+    if (NULL != buffs) {
+        args_deinit(_FDBBUFFS);
+    }
 }
 
 #undef strudp

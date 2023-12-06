@@ -25,7 +25,6 @@ class FlashDBUnitTest(unittest.TestCase):
         }
         #print(default_kv)
         kvdb = fdb.kvdb_init("env", DB_PATH, default_kv, None)
-        return
 
         res = fdb.kv_get_blob(kvdb, "boot_count", len(boot_count_blob))
         self.assertIsNotNone(res)

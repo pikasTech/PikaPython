@@ -771,6 +771,9 @@ int test_flashdb(void) {
 
         /* run TSDB sample */
         tsdb_sample(&tsdb);
+
+        /* close TSDB */
+        fdb_tsdb_deinit(&tsdb);
     }
 #endif /* FDB_USING_TSDB */
 #else
