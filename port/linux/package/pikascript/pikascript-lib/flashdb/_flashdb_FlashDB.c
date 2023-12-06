@@ -8,8 +8,6 @@
 #define PIKA_USING_FLASHDB1 1
 #if PIKA_USING_FLASHDB1
 //#include <pthread.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include "flashdb.h"
 #define FDB_LOG_TAG "[main]"
 
@@ -40,7 +38,8 @@ static void unlock(fdb_db_t db)
 }
 */
 static fdb_time_t get_time(void) {
-    return time(NULL);
+    // ms to s
+    return pika_platform_get_tick() / 1000;
 }
 #endif
 
@@ -81,13 +80,13 @@ PikaObj* _flashdb_FlashDB_kv_get_blob(PikaObj* self,
     blob.size = size;
     uint8_t* buf = (uint8_t*)pikaMalloc(size + 1);
     if (!buf) {
-        printf("alloc fail\n");
+        pika_platform_printf("alloc fail\n");
         return NULL;
     }
     blob.buf = buf;
     size_t len = fdb_kv_get_blob(kvdb, key, &blob);
     if (len != size) {
-        printf("size error\n");
+        pika_platform_printf("size error\n");
         pikaFree(buf, size + 1);
         return NULL;
     }
@@ -129,7 +128,7 @@ int _flashdb_FlashDB_kv_set_blob(PikaObj* self,
 
     ArgType argt_blob_in = arg_getType(blob_in);
     if (argt_blob_in != ARG_TYPE_BYTES) {
-        printf("blob must be bytes but got:%d", argt_blob_in);
+        pika_platform_printf("blob must be bytes but got:%d", argt_blob_in);
     }
     size_t len = arg_getBytesSize(blob_in);
     uint8_t* bytes = (uint8_t*)arg_getBytes(blob_in);
@@ -187,9 +186,9 @@ int32_t _flashdb_foreach(PikaObj* self_dict,
         memcpy(pbytes, bytes, bytes_size);
         /*
         for (size_t i=0; i < bytes_size; i++) {
-          printf("%02x", bytes[i]);
+          pika_platform_printf("%02x", bytes[i]);
         }
-        printf("\n");
+        pika_platform_printf("\n");
         */
         def_kv_table[g_def_kv_table_idx].key = strdup(key);
         def_kv_table[g_def_kv_table_idx].value = pbytes;
@@ -204,7 +203,7 @@ PikaObj* _flashdb_FlashDB_kvdb_init(PikaObj* self,
                                     char* path,
                                     PikaObj* default_kv_in,
                                     Arg* user_data) {
-    printf("kvdb_init \n");
+    pika_platform_printf("kvdb_init \n");
 
     fdb_err_t result;
     if (!g_kvdb_path_inited) {
@@ -216,7 +215,7 @@ PikaObj* _flashdb_FlashDB_kvdb_init(PikaObj* self,
         /* enable file mode */
         fdb_kvdb_control(&g_kvdb, FDB_KVDB_CTRL_SET_FILE_MODE, &file_mode);
         /* create database directory */
-        mkdir(path, 0777);
+        pika_platform_mkdir(path, 0777);
         g_kvdb_path_inited = true;
     }
     // int len =pikaDict_getSize(default_kv_in);

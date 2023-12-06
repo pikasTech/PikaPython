@@ -25,7 +25,9 @@
 #define FDB_USING_TSDB
 
 /* Using file storage mode by POSIX file API, like open/read/write/close */
-#define FDB_USING_FILE_POSIX_MODE
+// #define FDB_USING_FILE_POSIX_MODE
+
+#define FDB_USING_FILE_LIBC_MODE
 
 /* log print macro. default EF_PRINT macro is printf() */
 /* #define FDB_PRINT(...)              my_printf(__VA_ARGS__) */

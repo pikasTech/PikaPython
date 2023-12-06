@@ -13,6 +13,17 @@
 #define _FDB_DEF_H_
 
 #include "PikaObj.h"
+#ifndef bool
+#define bool pika_bool
+#endif
+
+#ifndef true
+#define true pika_true
+#endif
+
+#ifndef false
+#define false pika_false
+#endif
 
 #ifdef __cplusplus
 extern "C" {

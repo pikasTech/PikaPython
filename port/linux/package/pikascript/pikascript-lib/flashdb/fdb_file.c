@@ -144,21 +144,21 @@ static FILE* open_db_file(fdb_db_t db, uint32_t addr, bool clean) {
         get_db_file_path(db, addr, path, DB_PATH_MAX);
 
         if (db->cur_file) {
-            fclose(db->cur_file);
+            pika_platform_fclose(db->cur_file);
         }
 
         if (clean) {
             /* clean the old file */
-            db->cur_file = fopen(path, "wb+");
+            db->cur_file = pika_platform_fopen(path, "wb+");
             if (db->cur_file == NULL) {
                 FDB_INFO("Error: open (%s) file failed.\n", path);
             } else {
-                fclose(db->cur_file);
+                pika_platform_fclose(db->cur_file);
             }
         }
 
         /* open the database file */
-        db->cur_file = fopen(path, "rb+");
+        db->cur_file = pika_platform_fopen(path, "rb+");
         db->cur_sec = sec_addr;
     }
 
@@ -170,8 +170,8 @@ fdb_err_t _fdb_file_read(fdb_db_t db, uint32_t addr, void* buf, size_t size) {
     FILE* fp = open_db_file(db, addr, false);
     if (fp) {
         addr = addr % db->sec_size;
-        if ((fseek(fp, addr, SEEK_SET) != 0) ||
-            (fread(buf, size, 1, fp) != size))
+        if ((pika_platform_fseek(fp, addr, SEEK_SET) != 0) ||
+            (pika_platform_fread(buf, size, 1, fp) != size))
             result = FDB_READ_ERR;
     } else {
         result = FDB_READ_ERR;
@@ -188,11 +188,11 @@ fdb_err_t _fdb_file_write(fdb_db_t db,
     FILE* fp = open_db_file(db, addr, false);
     if (fp) {
         addr = addr % db->sec_size;
-        if ((fseek(fp, addr, SEEK_SET) != 0) ||
-            (fwrite(buf, size, 1, fp) != size))
+        if ((pika_platform_fseek(fp, addr, SEEK_SET) != 0) ||
+            (pika_platform_fwrite(buf, size, 1, fp) != size))
             result = FDB_READ_ERR;
         if (sync) {
-            fflush(fp);
+            pika_platform_fflush(fp);
         }
     } else {
         result = FDB_READ_ERR;
@@ -209,14 +209,14 @@ fdb_err_t _fdb_file_erase(fdb_db_t db, uint32_t addr, size_t size) {
 #define BUF_SIZE 32
         uint8_t buf[BUF_SIZE];
         size_t i;
-        fseek(fp, 0, SEEK_SET);
+        pika_platform_fseek(fp, 0, SEEK_SET);
         for (i = 0; i * BUF_SIZE < size; i++) {
             memset(buf, 0xFF, BUF_SIZE);
-            fwrite(buf, BUF_SIZE, 1, fp);
+            pika_platform_fwrite(buf, BUF_SIZE, 1, fp);
         }
         memset(buf, 0xFF, BUF_SIZE);
-        fwrite(buf, size - i * BUF_SIZE, 1, fp);
-        fflush(fp);
+        pika_platform_fwrite(buf, size - i * BUF_SIZE, 1, fp);
+        pika_platform_fflush(fp);
     } else {
         result = FDB_ERASE_ERR;
     }
