@@ -153,7 +153,7 @@ fdb_err_t _fdb_write_status(fdb_db_t db,
                             uint8_t status_table[],
                             size_t status_num,
                             size_t status_index,
-                            bool sync) {
+                            pika_bool sync) {
     fdb_err_t result = FDB_NO_ERR;
     size_t byte_index;
 
@@ -273,7 +273,7 @@ extern fdb_err_t _fdb_file_write(fdb_db_t db,
                                  uint32_t addr,
                                  const void* buf,
                                  size_t size,
-                                 bool sync);
+                                 pika_bool sync);
 extern fdb_err_t _fdb_file_erase(fdb_db_t db, uint32_t addr, size_t size);
 #endif /* FDB_USING_FILE_LIBC */
 
@@ -322,7 +322,7 @@ fdb_err_t _fdb_flash_write(fdb_db_t db,
                            uint32_t addr,
                            const void* buf,
                            size_t size,
-                           bool sync) {
+                           pika_bool sync) {
     fdb_err_t result = FDB_NO_ERR;
 
     if (db->file_mode) {

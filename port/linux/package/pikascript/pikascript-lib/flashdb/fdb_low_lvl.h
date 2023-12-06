@@ -73,7 +73,7 @@ fdb_err_t _fdb_write_status(fdb_db_t db,
                             uint8_t status_table[],
                             size_t status_num,
                             size_t status_index,
-                            bool sync);
+                            pika_bool sync);
 size_t _fdb_read_status(fdb_db_t db,
                         uint32_t addr,
                         uint8_t status_table[],
@@ -84,6 +84,6 @@ fdb_err_t _fdb_flash_write(fdb_db_t db,
                            uint32_t addr,
                            const void* buf,
                            size_t size,
-                           bool sync);
+                           pika_bool sync);
 
 #endif /* _FDB_LOW_LVL_H_ */

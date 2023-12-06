@@ -34,5 +34,7 @@
 
 /* print debug information */
 #define FDB_DEBUG_ENABLE
+#define FDB_KV_CACHE_TABLE_SIZE 0
+#define FDB_SECTOR_CACHE_TABLE_SIZE 0
 
 #endif /* _FDB_CFG_H_ */

@@ -7,8 +7,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "flashdb.h"
 #include "fdb_low_lvl.h"
+#include "flashdb.h"
 
 #define FDB_LOG_TAG "[file]"
 
@@ -37,14 +37,14 @@ static void get_db_file_path(fdb_db_t db,
 }
 
 #if defined(FDB_USING_FILE_POSIX_MODE)
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #if !defined(_MSC_VER)
 #include <unistd.h>
 #endif
 
-static int open_db_file(fdb_db_t db, uint32_t addr, bool clean) {
+static int open_db_file(fdb_db_t db, uint32_t addr, pika_bool clean) {
     uint32_t sec_addr = FDB_ALIGN_DOWN(addr, db->sec_size);
     int fd = db->cur_file;
     char path[DB_PATH_MAX];
@@ -77,7 +77,7 @@ static int open_db_file(fdb_db_t db, uint32_t addr, bool clean) {
 
 fdb_err_t _fdb_file_read(fdb_db_t db, uint32_t addr, void* buf, size_t size) {
     fdb_err_t result = FDB_NO_ERR;
-    int fd = open_db_file(db, addr, false);
+    int fd = open_db_file(db, addr, pika_false);
     if (fd > 0) {
         /* get the offset address is relative to the start of the current file
          */
@@ -95,9 +95,9 @@ fdb_err_t _fdb_file_write(fdb_db_t db,
                           uint32_t addr,
                           const void* buf,
                           size_t size,
-                          bool sync) {
+                          pika_bool sync) {
     fdb_err_t result = FDB_NO_ERR;
-    int fd = open_db_file(db, addr, false);
+    int fd = open_db_file(db, addr, pika_false);
     if (fd > 0) {
         /* get the offset address is relative to the start of the current file
          */
@@ -116,7 +116,7 @@ fdb_err_t _fdb_file_write(fdb_db_t db,
 
 fdb_err_t _fdb_file_erase(fdb_db_t db, uint32_t addr, size_t size) {
     fdb_err_t result = FDB_NO_ERR;
-    int fd = open_db_file(db, addr, true);
+    int fd = open_db_file(db, addr, pika_true);
     if (fd > 0) {
 #define BUF_SIZE 32
         uint8_t buf[BUF_SIZE];
@@ -135,7 +135,7 @@ fdb_err_t _fdb_file_erase(fdb_db_t db, uint32_t addr, size_t size) {
     return result;
 }
 #elif defined(FDB_USING_FILE_LIBC_MODE)
-static FILE* open_db_file(fdb_db_t db, uint32_t addr, bool clean) {
+static FILE* open_db_file(fdb_db_t db, uint32_t addr, pika_bool clean) {
     uint32_t sec_addr = FDB_ALIGN_DOWN(addr, db->sec_size);
 
     if (sec_addr != db->cur_sec || db->cur_file == NULL || clean) {
@@ -157,7 +157,7 @@ static FILE* open_db_file(fdb_db_t db, uint32_t addr, bool clean) {
             }
         }
 
-        /* open the database file */
+        /* open the database file to read and write */
         db->cur_file = pika_platform_fopen(path, "rb+");
         db->cur_sec = sec_addr;
     }
@@ -167,12 +167,19 @@ static FILE* open_db_file(fdb_db_t db, uint32_t addr, bool clean) {
 
 fdb_err_t _fdb_file_read(fdb_db_t db, uint32_t addr, void* buf, size_t size) {
     fdb_err_t result = FDB_NO_ERR;
-    FILE* fp = open_db_file(db, addr, false);
+    FILE* fp = open_db_file(db, addr, pika_false);
     if (fp) {
         addr = addr % db->sec_size;
-        if ((pika_platform_fseek(fp, addr, SEEK_SET) != 0) ||
-            (pika_platform_fread(buf, size, 1, fp) != size))
+        if ((pika_platform_fseek(fp, addr, SEEK_SET) != 0)) {
+            printf("Error: seek (%s) file failed.\n", db->name);
             result = FDB_READ_ERR;
+        }
+        size_t sizer = pika_platform_fread(buf, 1, size, fp);
+        if (sizer != size) {
+            printf("Error: read (%s) file failed.\n", db->name);
+            result = FDB_READ_ERR;
+        }
+        result = FDB_READ_ERR;
     } else {
         result = FDB_READ_ERR;
     }
@@ -183,14 +190,20 @@ fdb_err_t _fdb_file_write(fdb_db_t db,
                           uint32_t addr,
                           const void* buf,
                           size_t size,
-                          bool sync) {
+                          pika_bool sync) {
     fdb_err_t result = FDB_NO_ERR;
-    FILE* fp = open_db_file(db, addr, false);
+    FILE* fp = open_db_file(db, addr, pika_false);
     if (fp) {
         addr = addr % db->sec_size;
-        if ((pika_platform_fseek(fp, addr, SEEK_SET) != 0) ||
-            (pika_platform_fwrite(buf, size, 1, fp) != size))
+        if ((pika_platform_fseek(fp, addr, SEEK_SET) != 0)) {
+            printf("Error: seek (%s) file failed.\n", db->name);
             result = FDB_READ_ERR;
+        }
+        size_t sizew = pika_platform_fwrite(buf, 1, size, fp);
+        if (sizew != size) {
+            printf("Error: write (%s) file failed.\n", db->name);
+            result = FDB_WRITE_ERR;
+        }
         if (sync) {
             pika_platform_fflush(fp);
         }
@@ -204,7 +217,7 @@ fdb_err_t _fdb_file_write(fdb_db_t db,
 fdb_err_t _fdb_file_erase(fdb_db_t db, uint32_t addr, size_t size) {
     fdb_err_t result = FDB_NO_ERR;
 
-    FILE* fp = open_db_file(db, addr, true);
+    FILE* fp = open_db_file(db, addr, pika_true);
     if (fp != NULL) {
 #define BUF_SIZE 32
         uint8_t buf[BUF_SIZE];
@@ -212,10 +225,19 @@ fdb_err_t _fdb_file_erase(fdb_db_t db, uint32_t addr, size_t size) {
         pika_platform_fseek(fp, 0, SEEK_SET);
         for (i = 0; i * BUF_SIZE < size; i++) {
             memset(buf, 0xFF, BUF_SIZE);
-            pika_platform_fwrite(buf, BUF_SIZE, 1, fp);
+            size_t sizew = pika_platform_fwrite(buf, BUF_SIZE, 1, fp);
+            if (sizew != 1) {
+                FDB_PRINT("Error: write (%s) file failed.\n", db->name);
+                result = FDB_WRITE_ERR;
+                break;
+            }
         }
         memset(buf, 0xFF, BUF_SIZE);
-        pika_platform_fwrite(buf, size - i * BUF_SIZE, 1, fp);
+        size_t sizew = pika_platform_fwrite(buf, size - i * BUF_SIZE, 1, fp);
+        if (sizew != size - i * BUF_SIZE) {
+            FDB_PRINT("Error: write (%s) file failed.\n", db->name);
+            result = FDB_WRITE_ERR;
+        }
         pika_platform_fflush(fp);
     } else {
         result = FDB_ERASE_ERR;

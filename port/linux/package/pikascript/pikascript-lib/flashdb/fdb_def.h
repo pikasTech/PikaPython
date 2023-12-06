@@ -13,17 +13,6 @@
 #define _FDB_DEF_H_
 
 #include "PikaObj.h"
-#ifndef bool
-#define bool pika_bool
-#endif
-
-#ifndef true
-#define true pika_true
-#endif
-
-#ifndef false
-#define false pika_false
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -192,7 +181,7 @@ typedef enum fdb_tsl_status fdb_tsl_status_t;
 /* key-value node object */
 struct fdb_kv {
     fdb_kv_status_t status; /**< node status, @see fdb_kv_status_t */
-    bool crc_is_ok;         /**< node CRC32 check is OK */
+    pika_bool crc_is_ok;         /**< node CRC32 check is OK */
     uint8_t name_len;       /**< name length */
     uint32_t magic;         /**< magic word(`K`, `V`, `4`, `0`) */
     // uint32_t len;                                /**< node total length
@@ -232,7 +221,7 @@ struct fdb_tsl {
     } addr;
 };
 typedef struct fdb_tsl* fdb_tsl_t;
-typedef bool (*fdb_tsl_cb)(fdb_tsl_t tsl, void* arg);
+typedef pika_bool (*fdb_tsl_cb)(fdb_tsl_t tsl, void* arg);
 
 typedef enum {
     FDB_DB_TYPE_KV,
@@ -261,7 +250,7 @@ typedef enum fdb_sector_dirty_status fdb_sector_dirty_status_t;
 
 /* KVDB section information */
 struct kvdb_sec_info {
-    bool check_ok; /**< sector header check is OK */
+    pika_bool check_ok; /**< sector header check is OK */
     struct {
         fdb_sector_store_status_t
             store; /**< sector store status @see fdb_sector_store_status_t */
@@ -279,7 +268,7 @@ typedef struct kvdb_sec_info* kv_sec_info_t;
 
 /* TSDB section information */
 struct tsdb_sec_info {
-    bool check_ok; /**< sector header check is OK */
+    pika_bool check_ok; /**< sector header check is OK */
     fdb_sector_store_status_t
         status;     /**< sector store status @see fdb_sector_store_status_t */
     uint32_t addr;  /**< sector start address */
@@ -327,9 +316,9 @@ struct fdb_db {
     uint32_t
         max_size; /**< database max size. It's a multiple of section size */
     uint32_t oldest_addr; /**< the oldest sector start address */
-    bool init_ok;         /**< initialized successfully */
-    bool file_mode;       /**< is file mode, default is false */
-    bool not_formatable;  /**< is can NOT be formated mode, default is false */
+    pika_bool init_ok;         /**< initialized successfully */
+    pika_bool file_mode;       /**< is file mode, default is pika_false */
+    pika_bool not_formatable;  /**< is can NOT be formated mode, default is pika_false */
 #ifdef FDB_USING_FILE_MODE
 #if defined(FDB_USING_FILE_POSIX_MODE)
     int cur_file; /**< current file object */
@@ -348,12 +337,12 @@ struct fdb_db {
 struct fdb_kvdb {
     struct fdb_db parent;              /**< inherit from fdb_db */
     struct fdb_default_kv default_kvs; /**< default KV */
-    bool gc_request;                   /**< request a GC check */
-    bool
+    pika_bool gc_request;                   /**< request a GC check */
+    pika_bool
         in_recovery_check; /**< is in recovery check status when first reboot */
     struct fdb_kv cur_kv;
     struct kvdb_sec_info cur_sector;
-    bool last_is_complete_del;
+    pika_bool last_is_complete_del;
 
 #ifdef FDB_KV_USING_CACHE
     /* KV cache table */
@@ -378,8 +367,8 @@ struct fdb_tsdb {
     fdb_time_t last_time;         /**< last TSL timestamp */
     fdb_get_time get_time;        /**< the current timestamp get function */
     size_t max_len;               /**< the maximum length of each log */
-    bool rollover; /**< the oldest data will rollover by newest data, default is
-                      true */
+    pika_bool rollover; /**< the oldest data will rollover by newest data, default is
+                      pika_true */
 
     void* user_data;
 };

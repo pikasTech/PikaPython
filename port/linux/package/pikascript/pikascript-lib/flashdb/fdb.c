@@ -110,15 +110,15 @@ fdb_err_t _fdb_init_ex(fdb_db_t db,
 }
 
 void _fdb_init_finish(fdb_db_t db, fdb_err_t result) {
-    static bool log_is_show = false;
+    static pika_bool log_is_show = pika_false;
     if (result == FDB_NO_ERR) {
-        db->init_ok = true;
+        db->init_ok = pika_true;
         if (!log_is_show) {
             FDB_INFO("FlashDB V%s is initialize success.\n", FDB_SW_VERSION);
             FDB_INFO(
                 "You can get the latest version on "
                 "https://github.com/armink/FlashDB .\n");
-            log_is_show = true;
+            log_is_show = pika_true;
         }
     } else if (!db->not_formatable) {
         FDB_INFO("Error: %s (%s@%s) is initialize fail (%d).\n",
@@ -147,7 +147,7 @@ void _fdb_deinit(fdb_db_t db) {
 #endif /* FDB_USING_FILE_MODE */
     }
 
-    db->init_ok = false;
+    db->init_ok = pika_false;
 }
 
 const char* _fdb_db_path(fdb_db_t db) {

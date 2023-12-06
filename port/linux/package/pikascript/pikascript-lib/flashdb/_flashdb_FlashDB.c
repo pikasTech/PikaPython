@@ -14,7 +14,7 @@
 #define _FDBBUFFS (Args*)obj_getPtr(self, "FDBBUFFS")
 #define strdup(x) strsCopy(_FDBBUFFS, x)
 
-bool g_kvdb_path_inited = false;
+pika_bool g_kvdb_path_inited = pika_false;
 
 /* TSDB object */
 // struct fdb_tsdb tsdb = { 0 };
@@ -207,7 +207,7 @@ PikaObj* _flashdb_FlashDB_kvdb_init(PikaObj* self,
 
     fdb_err_t result;
     if (!g_kvdb_path_inited) {
-        bool file_mode = true;
+        pika_bool file_mode = pika_true;
         uint32_t sec_size = 4096, db_size = sec_size * 4;
 
         fdb_kvdb_control(&g_kvdb, FDB_KVDB_CTRL_SET_SEC_SIZE, &sec_size);
@@ -216,7 +216,7 @@ PikaObj* _flashdb_FlashDB_kvdb_init(PikaObj* self,
         fdb_kvdb_control(&g_kvdb, FDB_KVDB_CTRL_SET_FILE_MODE, &file_mode);
         /* create database directory */
         pika_platform_mkdir(path, 0777);
-        g_kvdb_path_inited = true;
+        g_kvdb_path_inited = pika_true;
     }
     // int len =pikaDict_getSize(default_kv_in);
 

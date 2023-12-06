@@ -125,7 +125,7 @@ struct query_count_args {
 
 struct check_sec_hdr_cb_args {
     fdb_tsdb_t db;
-    bool check_failed;
+    pika_bool check_failed;
     size_t empty_num;
     uint32_t empty_addr;
 };
@@ -219,7 +219,7 @@ static uint32_t get_last_sector_addr(fdb_tsdb_t db,
 static fdb_err_t read_sector_info(fdb_tsdb_t db,
                                   uint32_t addr,
                                   tsdb_sec_info_t sector,
-                                  bool traversal) {
+                                  pika_bool traversal) {
     fdb_err_t result = FDB_NO_ERR;
     struct sector_hdr_data sec_hdr;
 
@@ -234,10 +234,10 @@ static fdb_err_t read_sector_info(fdb_tsdb_t db,
 
     /* check magic word */
     if (sector->magic != SECTOR_MAGIC_WORD) {
-        sector->check_ok = false;
+        sector->check_ok = pika_false;
         return FDB_INIT_FAILED;
     }
-    sector->check_ok = true;
+    sector->check_ok = pika_true;
     sector->status = (fdb_sector_store_status_t)_fdb_get_status(
         sec_hdr.status, FDB_SECTOR_STORE_STATUS_NUM);
     sector->start_time = sec_hdr.start_time;
@@ -303,11 +303,11 @@ static fdb_err_t format_sector(fdb_tsdb_t db, uint32_t addr) {
     result = _fdb_flash_erase((fdb_db_t)db, addr, db_sec_size(db));
     if (result == FDB_NO_ERR) {
         _FDB_WRITE_STATUS(db, addr, sec_hdr.status, FDB_SECTOR_STORE_STATUS_NUM,
-                          FDB_SECTOR_STORE_EMPTY, true);
+                          FDB_SECTOR_STORE_EMPTY, pika_true);
         /* set the magic */
         sec_hdr.magic = SECTOR_MAGIC_WORD;
         FLASH_WRITE(db, addr + SECTOR_MAGIC_OFFSET, &sec_hdr.magic,
-                    sizeof(sec_hdr.magic), true);
+                    sizeof(sec_hdr.magic), pika_true);
     }
 
     return result;
@@ -318,20 +318,20 @@ static void sector_iterator(fdb_tsdb_t db,
                             fdb_sector_store_status_t status,
                             void* arg1,
                             void* arg2,
-                            bool (*callback)(tsdb_sec_info_t sector,
+                            pika_bool (*callback)(tsdb_sec_info_t sector,
                                              void* arg1,
                                              void* arg2),
-                            bool traversal) {
+                            pika_bool traversal) {
     uint32_t sec_addr = sector->addr, traversed_len = 0;
 
     /* search all sectors */
     do {
-        read_sector_info(db, sec_addr, sector, false);
+        read_sector_info(db, sec_addr, sector, pika_false);
         if (status == FDB_SECTOR_STORE_UNUSED || status == sector->status) {
             if (traversal) {
-                read_sector_info(db, sec_addr, sector, true);
+                read_sector_info(db, sec_addr, sector, pika_true);
             }
-            /* iterator is interrupted when callback return true */
+            /* iterator is interrupted when callback return pika_true */
             if (callback && callback(sector, arg1, arg2)) {
                 return;
             }
@@ -351,15 +351,15 @@ static fdb_err_t write_tsl(fdb_tsdb_t db, fdb_blob_t blob, fdb_time_t time) {
     idx.log_addr = db->cur_sec.empty_data - FDB_WG_ALIGN(idx.log_len);
     /* write the status will by write granularity */
     _FDB_WRITE_STATUS(db, idx_addr, idx.status_table, FDB_TSL_STATUS_NUM,
-                      FDB_TSL_PRE_WRITE, false);
+                      FDB_TSL_PRE_WRITE, pika_false);
     /* write other index info */
     FLASH_WRITE(db, idx_addr + LOG_IDX_TS_OFFSET, &idx.time,
-                sizeof(struct log_idx_data) - LOG_IDX_TS_OFFSET, false);
+                sizeof(struct log_idx_data) - LOG_IDX_TS_OFFSET, pika_false);
     /* write blob data */
-    FLASH_WRITE(db, idx.log_addr, blob->buf, blob->size, false);
+    FLASH_WRITE(db, idx.log_addr, blob->buf, blob->size, pika_false);
     /* write the status will by write granularity */
     _FDB_WRITE_STATUS(db, idx_addr, idx.status_table, FDB_TSL_STATUS_NUM,
-                      FDB_TSL_WRITE, true);
+                      FDB_TSL_WRITE, pika_true);
 
     return result;
 }
@@ -380,29 +380,29 @@ static fdb_err_t update_sec_status(fdb_tsdb_t db,
         if (sector->end_info_stat[0] == FDB_TSL_UNUSED) {
             _FDB_WRITE_STATUS(db, cur_sec_addr + SECTOR_END0_STATUS_OFFSET,
                               end_status, FDB_TSL_STATUS_NUM, FDB_TSL_PRE_WRITE,
-                              false);
+                              pika_false);
             FLASH_WRITE(db, cur_sec_addr + SECTOR_END0_TIME_OFFSET,
-                        (uint32_t*)&db->last_time, sizeof(fdb_time_t), false);
+                        (uint32_t*)&db->last_time, sizeof(fdb_time_t), pika_false);
             FLASH_WRITE(db, cur_sec_addr + SECTOR_END0_IDX_OFFSET, &end_index,
-                        sizeof(end_index), false);
+                        sizeof(end_index), pika_false);
             _FDB_WRITE_STATUS(db, cur_sec_addr + SECTOR_END0_STATUS_OFFSET,
                               end_status, FDB_TSL_STATUS_NUM, FDB_TSL_WRITE,
-                              true);
+                              pika_true);
         } else if (sector->end_info_stat[1] == FDB_TSL_UNUSED) {
             _FDB_WRITE_STATUS(db, cur_sec_addr + SECTOR_END1_STATUS_OFFSET,
                               end_status, FDB_TSL_STATUS_NUM, FDB_TSL_PRE_WRITE,
-                              false);
+                              pika_false);
             FLASH_WRITE(db, cur_sec_addr + SECTOR_END1_TIME_OFFSET,
-                        (uint32_t*)&db->last_time, sizeof(fdb_time_t), false);
+                        (uint32_t*)&db->last_time, sizeof(fdb_time_t), pika_false);
             FLASH_WRITE(db, cur_sec_addr + SECTOR_END1_IDX_OFFSET, &end_index,
-                        sizeof(end_index), false);
+                        sizeof(end_index), pika_false);
             _FDB_WRITE_STATUS(db, cur_sec_addr + SECTOR_END1_STATUS_OFFSET,
                               end_status, FDB_TSL_STATUS_NUM, FDB_TSL_WRITE,
-                              true);
+                              pika_true);
         }
         /* change current sector to full */
         _FDB_WRITE_STATUS(db, cur_sec_addr, status, FDB_SECTOR_STORE_STATUS_NUM,
-                          FDB_SECTOR_STORE_FULL, true);
+                          FDB_SECTOR_STORE_FULL, pika_true);
         sector->status = FDB_SECTOR_STORE_FULL;
         /* calculate next sector address */
         if (sector->addr + db_sec_size(db) < db_max_size(db)) {
@@ -413,7 +413,7 @@ static fdb_err_t update_sec_status(fdb_tsdb_t db,
             /* not rollover */
             return FDB_SAVED_FULL;
         }
-        read_sector_info(db, new_sec_addr, &db->cur_sec, false);
+        read_sector_info(db, new_sec_addr, &db->cur_sec, pika_false);
         if (sector->status != FDB_SECTOR_STORE_EMPTY) {
             /* calculate the oldest sector address */
             if (new_sec_addr + db_sec_size(db) < db_max_size(db)) {
@@ -422,7 +422,7 @@ static fdb_err_t update_sec_status(fdb_tsdb_t db,
                 db_oldest_addr(db) = 0;
             }
             format_sector(db, new_sec_addr);
-            read_sector_info(db, new_sec_addr, &db->cur_sec, false);
+            read_sector_info(db, new_sec_addr, &db->cur_sec, pika_false);
         }
     } else if (sector->status == FDB_SECTOR_STORE_FULL) {
         /* database full */
@@ -434,10 +434,10 @@ static fdb_err_t update_sec_status(fdb_tsdb_t db,
         sector->status = FDB_SECTOR_STORE_USING;
         sector->start_time = cur_time;
         _FDB_WRITE_STATUS(db, sector->addr, status, FDB_SECTOR_STORE_STATUS_NUM,
-                          FDB_SECTOR_STORE_USING, true);
+                          FDB_SECTOR_STORE_USING, pika_true);
         /* save the start timestamp */
         FLASH_WRITE(db, sector->addr + SECTOR_START_TIME_OFFSET,
-                    (uint32_t*)&cur_time, sizeof(fdb_time_t), true);
+                    (uint32_t*)&cur_time, sizeof(fdb_time_t), pika_true);
     }
 
     return result;
@@ -528,7 +528,7 @@ void fdb_tsl_iter(fdb_tsdb_t db, fdb_tsl_cb cb, void* arg) {
     /* search all sectors */
     do {
         traversed_len += db_sec_size(db);
-        if (read_sector_info(db, sec_addr, &sector, false) != FDB_NO_ERR) {
+        if (read_sector_info(db, sec_addr, &sector, pika_false) != FDB_NO_ERR) {
             continue;
         }
         /* sector has TSL */
@@ -542,7 +542,7 @@ void fdb_tsl_iter(fdb_tsdb_t db, fdb_tsl_cb cb, void* arg) {
             /* search all TSL */
             do {
                 read_tsl(db, &tsl);
-                /* iterator is interrupted when callback return true */
+                /* iterator is interrupted when callback return pika_true */
                 if (cb(&tsl, arg)) {
                     db_unlock(db);
                     return;
@@ -580,7 +580,7 @@ void fdb_tsl_iter_reverse(fdb_tsdb_t db, fdb_tsl_cb cb, void* cb_arg) {
     /* search all sectors */
     do {
         traversed_len += db_sec_size(db);
-        if (read_sector_info(db, sec_addr, &sector, false) != FDB_NO_ERR) {
+        if (read_sector_info(db, sec_addr, &sector, pika_false) != FDB_NO_ERR) {
             continue;
         }
         /* sector has TSL */
@@ -594,7 +594,7 @@ void fdb_tsl_iter_reverse(fdb_tsdb_t db, fdb_tsl_cb cb, void* cb_arg) {
             /* search all TSL */
             do {
                 read_tsl(db, &tsl);
-                /* iterator is interrupted when callback return true */
+                /* iterator is interrupted when callback return pika_true */
                 if (cb(&tsl, cb_arg)) {
                     goto __exit;
                 }
@@ -619,7 +619,7 @@ static int search_start_tsl_addr(fdb_tsdb_t db,
                                  fdb_time_t from,
                                  fdb_time_t to) {
     struct fdb_tsl tsl;
-    while (true) {
+    while (pika_true) {
         tsl.addr.index =
             start + FDB_ALIGN((end - start) / 2, LOG_IDX_DATA_SIZE);
         read_tsl(db, &tsl);
@@ -663,7 +663,7 @@ void fdb_tsl_iter_by_time(fdb_tsdb_t db,
     struct tsdb_sec_info sector;
     uint32_t sec_addr, start_addr, traversed_len = 0;
     struct fdb_tsl tsl;
-    bool found_start_tsl = false;
+    pika_bool found_start_tsl = pika_false;
 
     uint32_t (*get_sector_addr)(fdb_tsdb_t, tsdb_sec_info_t, uint32_t);
     uint32_t (*get_tsl_addr)(tsdb_sec_info_t, fdb_tsl_t);
@@ -694,7 +694,7 @@ void fdb_tsl_iter_by_time(fdb_tsdb_t db,
     /* search all sectors */
     do {
         traversed_len += db_sec_size(db);
-        if (read_sector_info(db, sec_addr, &sector, false) != FDB_NO_ERR) {
+        if (read_sector_info(db, sec_addr, &sector, pika_false) != FDB_NO_ERR) {
             continue;
         }
         /* sector has TSL */
@@ -715,7 +715,7 @@ void fdb_tsl_iter_by_time(fdb_tsdb_t db,
                 uint32_t start = sector.addr + SECTOR_HDR_DATA_SIZE,
                          end = sector.end_idx;
 
-                found_start_tsl = true;
+                found_start_tsl = pika_true;
                 /* search the first start TSL address */
                 tsl.addr.index =
                     search_start_tsl_addr(db, start, end, from, to);
@@ -726,7 +726,7 @@ void fdb_tsl_iter_by_time(fdb_tsdb_t db,
                         if ((from <= to && tsl.time >= from &&
                              tsl.time <= to) ||
                             (from > to && tsl.time <= from && tsl.time >= to)) {
-                            /* iterator is interrupted when callback return true
+                            /* iterator is interrupted when callback return pika_true
                              */
                             if (cb(&tsl, cb_arg)) {
                                 goto __exit;
@@ -748,14 +748,14 @@ __exit:
     db_unlock(db);
 }
 
-static bool query_count_cb(fdb_tsl_t tsl, void* arg) {
+static pika_bool query_count_cb(fdb_tsl_t tsl, void* arg) {
     struct query_count_args* args = arg;
 
     if (tsl->status == args->status) {
         args->count++;
     }
 
-    return false;
+    return pika_false;
 }
 
 /**
@@ -801,7 +801,7 @@ fdb_err_t fdb_tsl_set_status(fdb_tsdb_t db,
 
     /* write the status will by write granularity */
     _FDB_WRITE_STATUS(db, tsl->addr.index, status_table, FDB_TSL_STATUS_NUM,
-                      status, true);
+                      status, pika_true);
 
     return result;
 }
@@ -822,15 +822,15 @@ fdb_blob_t fdb_tsl_to_blob(fdb_tsl_t tsl, fdb_blob_t blob) {
     return blob;
 }
 
-static bool check_sec_hdr_cb(tsdb_sec_info_t sector, void* arg1, void* arg2) {
+static pika_bool check_sec_hdr_cb(tsdb_sec_info_t sector, void* arg1, void* arg2) {
     struct check_sec_hdr_cb_args* arg = arg1;
     fdb_tsdb_t db = arg->db;
 
     if (!sector->check_ok) {
         FDB_INFO("Sector (0x%08" PRIX32 ") header info is incorrect.\n",
                  sector->addr);
-        (arg->check_failed) = true;
-        return true;
+        (arg->check_failed) = pika_true;
+        return pika_true;
     } else if (sector->status == FDB_SECTOR_STORE_USING) {
         if (db->cur_sec.addr == FDB_DATA_UNUSED) {
             memcpy(&db->cur_sec, sector, sizeof(struct tsdb_sec_info));
@@ -838,8 +838,8 @@ static bool check_sec_hdr_cb(tsdb_sec_info_t sector, void* arg1, void* arg2) {
             FDB_INFO(
                 "Warning: Sector status is wrong, there are multiple sectors "
                 "in use.\n");
-            (arg->check_failed) = true;
-            return true;
+            (arg->check_failed) = pika_true;
+            return pika_true;
         }
     } else if (sector->status == FDB_SECTOR_STORE_EMPTY) {
         (arg->empty_num) += 1;
@@ -849,14 +849,14 @@ static bool check_sec_hdr_cb(tsdb_sec_info_t sector, void* arg1, void* arg2) {
         }
     }
 
-    return false;
+    return pika_false;
 }
-static bool format_all_cb(tsdb_sec_info_t sector, void* arg1, void* arg2) {
+static pika_bool format_all_cb(tsdb_sec_info_t sector, void* arg1, void* arg2) {
     fdb_tsdb_t db = arg1;
 
     format_sector(db, sector->addr);
 
-    return false;
+    return pika_false;
 }
 
 static void tsl_format_all(fdb_tsdb_t db) {
@@ -864,12 +864,12 @@ static void tsl_format_all(fdb_tsdb_t db) {
 
     sector.addr = 0;
     sector_iterator(db, &sector, FDB_SECTOR_STORE_UNUSED, db, NULL,
-                    format_all_cb, false);
+                    format_all_cb, pika_false);
     db_oldest_addr(db) = 0;
     db->cur_sec.addr = 0;
     db->last_time = 0;
     /* read the current using sector info */
-    read_sector_info(db, db->cur_sec.addr, &db->cur_sec, false);
+    read_sector_info(db, db->cur_sec.addr, &db->cur_sec, pika_false);
 
     FDB_INFO("All sector format finished.\n");
 }
@@ -900,7 +900,7 @@ void fdb_tsdb_control(fdb_tsdb_t db, int cmd, void* arg) {
     switch (cmd) {
         case FDB_TSDB_CTRL_SET_SEC_SIZE:
             /* this change MUST before database initialization */
-            FDB_ASSERT(db->parent.init_ok == false);
+            FDB_ASSERT(db->parent.init_ok == pika_false);
             db->parent.sec_size = *(uint32_t*)arg;
             break;
         case FDB_TSDB_CTRL_GET_SEC_SIZE:
@@ -928,11 +928,11 @@ void fdb_tsdb_control(fdb_tsdb_t db, int cmd, void* arg) {
             break;
         case FDB_TSDB_CTRL_SET_ROLLOVER:
             /* this change MUST after database initialized */
-            FDB_ASSERT(db->parent.init_ok == true);
-            db->rollover = *(bool*)arg;
+            FDB_ASSERT(db->parent.init_ok == pika_true);
+            db->rollover = *(pika_bool*)arg;
             break;
         case FDB_TSDB_CTRL_GET_ROLLOVER:
-            *(bool*)arg = db->rollover;
+            *(pika_bool*)arg = db->rollover;
             break;
         case FDB_TSDB_CTRL_GET_LAST_TIME:
             *(fdb_time_t*)arg = db->last_time;
@@ -940,8 +940,8 @@ void fdb_tsdb_control(fdb_tsdb_t db, int cmd, void* arg) {
         case FDB_TSDB_CTRL_SET_FILE_MODE:
 #ifdef FDB_USING_FILE_MODE
             /* this change MUST before database initialization */
-            FDB_ASSERT(db->parent.init_ok == false);
-            db->parent.file_mode = *(bool*)arg;
+            FDB_ASSERT(db->parent.init_ok == pika_false);
+            db->parent.file_mode = *(pika_bool*)arg;
 #else
             FDB_INFO(
                 "Error: set file mode Failed. Please defined the "
@@ -951,14 +951,14 @@ void fdb_tsdb_control(fdb_tsdb_t db, int cmd, void* arg) {
         case FDB_TSDB_CTRL_SET_MAX_SIZE:
 #ifdef FDB_USING_FILE_MODE
             /* this change MUST before database initialization */
-            FDB_ASSERT(db->parent.init_ok == false);
+            FDB_ASSERT(db->parent.init_ok == pika_false);
             db->parent.max_size = *(uint32_t*)arg;
 #endif
             break;
         case FDB_TSDB_CTRL_SET_NOT_FORMAT:
             /* this change MUST before database initialization */
-            FDB_ASSERT(db->parent.init_ok == false);
-            db->parent.not_formatable = *(bool*)arg;
+            FDB_ASSERT(db->parent.init_ok == pika_false);
+            db->parent.not_formatable = *(pika_bool*)arg;
             break;
     }
 }
@@ -984,7 +984,7 @@ fdb_err_t fdb_tsdb_init(fdb_tsdb_t db,
                         void* user_data) {
     fdb_err_t result = FDB_NO_ERR;
     struct tsdb_sec_info sector;
-    struct check_sec_hdr_cb_args check_sec_arg = {db, false, 0, 0};
+    struct check_sec_hdr_cb_args check_sec_arg = {db, pika_false, 0, 0};
 
     FDB_ASSERT(get_time);
 
@@ -995,8 +995,8 @@ fdb_err_t fdb_tsdb_init(fdb_tsdb_t db,
 
     db->get_time = get_time;
     db->max_len = max_len;
-    /* default rollover flag is true */
-    db->rollover = true;
+    /* default rollover flag is pika_true */
+    db->rollover = pika_true;
     db_oldest_addr(db) = FDB_DATA_UNUSED;
     db->cur_sec.addr = FDB_DATA_UNUSED;
     /* must less than sector size */
@@ -1005,7 +1005,7 @@ fdb_err_t fdb_tsdb_init(fdb_tsdb_t db,
     /* check all sector header */
     sector.addr = 0;
     sector_iterator(db, &sector, FDB_SECTOR_STORE_UNUSED, &check_sec_arg, NULL,
-                    check_sec_hdr_cb, true);
+                    check_sec_hdr_cb, pika_true);
     /* format all sector when check failed */
     if (check_sec_arg.check_failed) {
         if (db->parent.not_formatable) {
@@ -1040,7 +1040,7 @@ fdb_err_t fdb_tsdb_init(fdb_tsdb_t db,
               ", current using sector is 0x%08" PRIX32 ".\n",
               db_name(db), db_oldest_addr(db), db->cur_sec.addr);
     /* read the current using sector info */
-    read_sector_info(db, db->cur_sec.addr, &db->cur_sec, true);
+    read_sector_info(db, db->cur_sec.addr, &db->cur_sec, pika_true);
     /* get last save time */
     if (db->cur_sec.status == FDB_SECTOR_STORE_USING) {
         db->last_time = db->cur_sec.end_time;
@@ -1054,7 +1054,7 @@ fdb_err_t fdb_tsdb_init(fdb_tsdb_t db,
         } else {
             addr -= db_sec_size(db);
         }
-        read_sector_info(db, addr, &sec, false);
+        read_sector_info(db, addr, &sec, pika_false);
         db->last_time = sec.end_time;
     }
 
