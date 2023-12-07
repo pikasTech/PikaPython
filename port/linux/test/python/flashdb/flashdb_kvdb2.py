@@ -38,3 +38,4 @@ assert new_boot_count is not None
 print( "get the 'boot_count' value is %d" % new_boot_count)
 print("===========================================================")
 assert new_boot_count == boot_count
+print('PASS')

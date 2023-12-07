@@ -31,3 +31,4 @@ assert res is not None
 
 new_boot_count = struct.unpack("i", res)[0]      
 assert new_boot_count == boot_count
+print('PASS')

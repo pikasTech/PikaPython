@@ -12,7 +12,7 @@ class KVDB(_flashdb.KVDB):
         return None
 
     def set_by_fmt(self, key, v, fmt):
-        if type(v) == type([]) or type(v) == type(()):
+        if type(v) == list or type(v) == tuple:
             blob = struct.pack(fmt, *v)
             return super().set_blob(key, blob)
         if type(v) == type(0):

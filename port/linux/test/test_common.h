@@ -150,11 +150,9 @@ void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn);
         extern unsigned char pikaModules_py_a[];                         \
         obj_linkLibrary(pikaMain, pikaModules_py_a);                     \
         /* run */                                                        \
-        __platform_printf("BEGIN\r\n");                                  \
         pikaVM_runSingleFile(pikaMain, _file_name_);                     \
         /* assert */                                                     \
         EXPECT_STREQ(log_buff[0], (_except_output_));                    \
-        EXPECT_STREQ(log_buff[1], "BEGIN\r\n");                          \
         /* deinit */                                                     \
         obj_deinit(pikaMain);                                            \
         EXPECT_EQ(pikaMemNow(), 0);                                      \
