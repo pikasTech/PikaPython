@@ -637,7 +637,7 @@ TEST_RUN_SINGLE_FILE_PASS(struct, unpack, "test/python/struct/unpack.py")
 extern "C" {
 #define PIKA_USING_FLASHDB 1
 #if PIKA_USING_FLASHDB
-//#include <pthread.h>
+// #include <pthread.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "flashdb.h"
@@ -731,10 +731,11 @@ int test_flashdb(void) {
         kvdb_type_string_sample(&kvdb);
         /* run blob KV samples */
         kvdb_type_blob_sample(&kvdb);
+        fdb_kvdb_deinit(&kvdb);
     }
 #endif /* FDB_USING_KVDB */
 
-//#define FDB_USING_TSDB 1
+// #define FDB_USING_TSDB 1
 #ifdef FDB_USING_TSDB
     { /* TSDB Sample */
         /* set the lock and unlock function if you want */

@@ -38,8 +38,8 @@ class FlashDBUnitTest(unittest.TestCase):
         self.assertIsNotNone(res)
 
         new_boot_count = struct.unpack("i", res)[0]      
-        
         self.assertEqual(new_boot_count, boot_count)
+        fdb.kvdb_deinit()
         
     def xtest_boot_count2(self):
         print('test boot_count increment 2')

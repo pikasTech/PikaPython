@@ -142,6 +142,7 @@ void _fdb_deinit(fdb_db_t db) {
 #else
         if (db->cur_file != 0) {
             pika_platform_fclose(db->cur_file);
+            db->cur_file = 0;
         }
 #endif /* FDB_USING_FILE_POSIX_MODE */
 #endif /* FDB_USING_FILE_MODE */

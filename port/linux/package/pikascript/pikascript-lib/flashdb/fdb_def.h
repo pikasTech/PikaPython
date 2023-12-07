@@ -181,7 +181,7 @@ typedef enum fdb_tsl_status fdb_tsl_status_t;
 /* key-value node object */
 struct fdb_kv {
     fdb_kv_status_t status; /**< node status, @see fdb_kv_status_t */
-    pika_bool crc_is_ok;         /**< node CRC32 check is OK */
+    pika_bool crc_is_ok;    /**< node CRC32 check is OK */
     uint8_t name_len;       /**< name length */
     uint32_t magic;         /**< magic word(`K`, `V`, `4`, `0`) */
     // uint32_t len;                                /**< node total length
@@ -315,10 +315,11 @@ struct fdb_db {
     uint32_t sec_size; /**< flash section size. It's a multiple of block size */
     uint32_t
         max_size; /**< database max size. It's a multiple of section size */
-    uint32_t oldest_addr; /**< the oldest sector start address */
-    pika_bool init_ok;         /**< initialized successfully */
-    pika_bool file_mode;       /**< is file mode, default is pika_false */
-    pika_bool not_formatable;  /**< is can NOT be formated mode, default is pika_false */
+    uint32_t oldest_addr;     /**< the oldest sector start address */
+    pika_bool init_ok;        /**< initialized successfully */
+    pika_bool file_mode;      /**< is file mode, default is pika_false */
+    pika_bool not_formatable; /**< is can NOT be formated mode, default is
+                                 pika_false */
 #ifdef FDB_USING_FILE_MODE
 #if defined(FDB_USING_FILE_POSIX_MODE)
     int cur_file; /**< current file object */
@@ -337,7 +338,7 @@ struct fdb_db {
 struct fdb_kvdb {
     struct fdb_db parent;              /**< inherit from fdb_db */
     struct fdb_default_kv default_kvs; /**< default KV */
-    pika_bool gc_request;                   /**< request a GC check */
+    pika_bool gc_request;              /**< request a GC check */
     pika_bool
         in_recovery_check; /**< is in recovery check status when first reboot */
     struct fdb_kv cur_kv;
@@ -367,8 +368,8 @@ struct fdb_tsdb {
     fdb_time_t last_time;         /**< last TSL timestamp */
     fdb_get_time get_time;        /**< the current timestamp get function */
     size_t max_len;               /**< the maximum length of each log */
-    pika_bool rollover; /**< the oldest data will rollover by newest data, default is
-                      pika_true */
+    pika_bool rollover; /**< the oldest data will rollover by newest data,
+                      default is pika_true */
 
     void* user_data;
 };

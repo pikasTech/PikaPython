@@ -145,6 +145,7 @@ static FILE* open_db_file(fdb_db_t db, uint32_t addr, pika_bool clean) {
 
         if (db->cur_file) {
             pika_platform_fclose(db->cur_file);
+            db->cur_file = 0;
         }
 
         if (clean) {
@@ -154,6 +155,7 @@ static FILE* open_db_file(fdb_db_t db, uint32_t addr, pika_bool clean) {
                 FDB_INFO("Error: open (%s) file failed.\n", path);
             } else {
                 pika_platform_fclose(db->cur_file);
+                db->cur_file = 0;
             }
         }
 
@@ -179,7 +181,6 @@ fdb_err_t _fdb_file_read(fdb_db_t db, uint32_t addr, void* buf, size_t size) {
             printf("Error: read (%s) file failed.\n", db->name);
             result = FDB_READ_ERR;
         }
-        result = FDB_READ_ERR;
     } else {
         result = FDB_READ_ERR;
     }

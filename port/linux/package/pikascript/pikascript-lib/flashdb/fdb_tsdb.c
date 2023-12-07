@@ -319,8 +319,8 @@ static void sector_iterator(fdb_tsdb_t db,
                             void* arg1,
                             void* arg2,
                             pika_bool (*callback)(tsdb_sec_info_t sector,
-                                             void* arg1,
-                                             void* arg2),
+                                                  void* arg1,
+                                                  void* arg2),
                             pika_bool traversal) {
     uint32_t sec_addr = sector->addr, traversed_len = 0;
 
@@ -382,7 +382,8 @@ static fdb_err_t update_sec_status(fdb_tsdb_t db,
                               end_status, FDB_TSL_STATUS_NUM, FDB_TSL_PRE_WRITE,
                               pika_false);
             FLASH_WRITE(db, cur_sec_addr + SECTOR_END0_TIME_OFFSET,
-                        (uint32_t*)&db->last_time, sizeof(fdb_time_t), pika_false);
+                        (uint32_t*)&db->last_time, sizeof(fdb_time_t),
+                        pika_false);
             FLASH_WRITE(db, cur_sec_addr + SECTOR_END0_IDX_OFFSET, &end_index,
                         sizeof(end_index), pika_false);
             _FDB_WRITE_STATUS(db, cur_sec_addr + SECTOR_END0_STATUS_OFFSET,
@@ -393,7 +394,8 @@ static fdb_err_t update_sec_status(fdb_tsdb_t db,
                               end_status, FDB_TSL_STATUS_NUM, FDB_TSL_PRE_WRITE,
                               pika_false);
             FLASH_WRITE(db, cur_sec_addr + SECTOR_END1_TIME_OFFSET,
-                        (uint32_t*)&db->last_time, sizeof(fdb_time_t), pika_false);
+                        (uint32_t*)&db->last_time, sizeof(fdb_time_t),
+                        pika_false);
             FLASH_WRITE(db, cur_sec_addr + SECTOR_END1_IDX_OFFSET, &end_index,
                         sizeof(end_index), pika_false);
             _FDB_WRITE_STATUS(db, cur_sec_addr + SECTOR_END1_STATUS_OFFSET,
@@ -726,7 +728,8 @@ void fdb_tsl_iter_by_time(fdb_tsdb_t db,
                         if ((from <= to && tsl.time >= from &&
                              tsl.time <= to) ||
                             (from > to && tsl.time <= from && tsl.time >= to)) {
-                            /* iterator is interrupted when callback return pika_true
+                            /* iterator is interrupted when callback return
+                             * pika_true
                              */
                             if (cb(&tsl, cb_arg)) {
                                 goto __exit;
@@ -822,7 +825,9 @@ fdb_blob_t fdb_tsl_to_blob(fdb_tsl_t tsl, fdb_blob_t blob) {
     return blob;
 }
 
-static pika_bool check_sec_hdr_cb(tsdb_sec_info_t sector, void* arg1, void* arg2) {
+static pika_bool check_sec_hdr_cb(tsdb_sec_info_t sector,
+                                  void* arg1,
+                                  void* arg2) {
     struct check_sec_hdr_cb_args* arg = arg1;
     fdb_tsdb_t db = arg->db;
 

@@ -150,11 +150,14 @@ Arg* _flashdb_FlashDB_kv_to_blob(PikaObj* self, Arg* kv, Arg* blob) {
     return NULL;
 }
 
-int _flashdb_FlashDB_kvdb_control(PikaObj* self, Arg* kvdb, int cmd, Arg* arg) {
+int _flashdb_FlashDB_kvdb_control(PikaObj* self, int cmd, Arg* arg) {
     return 0;
 }
 
-void _flashdb_FlashDB_kvdb_deinit(PikaObj* self, Arg* kvdb) {}
+void _flashdb_FlashDB_kvdb_deinit(PikaObj* self) {
+    fdb_kvdb_deinit(&g_kvdb);
+}
+
 struct _flashdb_foreach_context {
     struct fdb_default_kv_node* def_kv_table;
     PikaObj* self;
@@ -244,9 +247,7 @@ PikaObj* _flashdb_FlashDB_kvdb_init(PikaObj* self,
     }
 
     PikaObj* kvdb_obj = newNormalObj(New__flashdb_kvdb_t);
-    args_setStruct(kvdb_obj->list, "kvdb_struct", g_kvdb);
-    FDB_KVDB* pkvdb = args_getStruct(kvdb_obj->list, "kvdb_struct");
-    obj_setPtr(kvdb_obj, "kvdb", pkvdb);
+    obj_setPtr(kvdb_obj, "kvdb", &g_kvdb);
     return kvdb_obj;
 }
 
