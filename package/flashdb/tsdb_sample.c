@@ -31,9 +31,9 @@ struct env_status {
     int humi;
 };
 
-static bool query_cb(fdb_tsl_t tsl, void* arg);
-static bool query_by_time_cb(fdb_tsl_t tsl, void* arg);
-static bool set_status_cb(fdb_tsl_t tsl, void* arg);
+static pika_bool query_cb(fdb_tsl_t tsl, void* arg);
+static pika_bool query_by_time_cb(fdb_tsl_t tsl, void* arg);
+static pika_bool set_status_cb(fdb_tsl_t tsl, void* arg);
 
 void tsdb_sample(fdb_tsdb_t tsdb) {
     struct fdb_blob blob;
@@ -101,7 +101,7 @@ void tsdb_sample(fdb_tsdb_t tsdb) {
     FDB_INFO("===========================================================\n");
 }
 
-static bool query_cb(fdb_tsl_t tsl, void* arg) {
+static pika_bool query_cb(fdb_tsl_t tsl, void* arg) {
     struct fdb_blob blob;
     // rbg/kcf
     struct env_status status = {0};
@@ -113,10 +113,10 @@ static bool query_cb(fdb_tsl_t tsl, void* arg) {
     FDB_INFO("[query_cb] queried a TSL: time: %ld, temp: %d, humi: %d\n",
              tsl->time, status.temp, status.humi);
 
-    return false;
+    return pika_false;
 }
 
-static bool query_by_time_cb(fdb_tsl_t tsl, void* arg) {
+static pika_bool query_by_time_cb(fdb_tsl_t tsl, void* arg) {
     struct fdb_blob blob;
     // rbg/kcf
     struct env_status status = {0};
@@ -130,17 +130,17 @@ static bool query_by_time_cb(fdb_tsl_t tsl, void* arg) {
         "[query_by_time_cb] queried a TSL: time: %ld, temp: %d, humi: %d\n",
         tsl->time, status.temp, status.humi);
 
-    return false;
+    return pika_false;
 }
 
-static bool set_status_cb(fdb_tsl_t tsl, void* arg) {
+static pika_bool set_status_cb(fdb_tsl_t tsl, void* arg) {
     fdb_tsdb_t db = arg;
 
     FDB_INFO("set the TSL (time %ld) status from %d to %d\n", tsl->time,
              tsl->status, FDB_TSL_USER_STATUS1);
     fdb_tsl_set_status(db, tsl, FDB_TSL_USER_STATUS1);
 
-    return false;
+    return pika_false;
 }
 
 #endif /* FDB_USING_TSDB */

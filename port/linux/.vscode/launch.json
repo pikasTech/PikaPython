@@ -19,7 +19,7 @@
                 // "--gtest_filter=vm.run_file"
                 // "--gtest_filter=stddata.encode_decode"
                 // "--gtest_filter=packtool.packfiles_txt"
-                "--gtest_filter=flashdb.utest"
+                "--gtest_filter=flashdb.kvdb1"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

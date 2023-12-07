@@ -1,5 +1,6 @@
-#include "_flashdb_FlashDB.h"
+#include "_flashdb_KVDB.h"
 #include <stdio.h>
+#include "_flashdb_KVDB_CTRL.h"
 #include "_flashdb_kvdb_t.h"
 #include "flashdb.h"
 #include "pikaScript.h"
@@ -13,8 +14,6 @@
 
 #define _FDBBUFFS (Args*)obj_getPtr(self, "FDBBUFFS")
 #define strdup(x) strsCopy(_FDBBUFFS, x)
-
-pika_bool g_kvdb_path_inited = pika_false;
 
 /* TSDB object */
 // struct fdb_tsdb tsdb = { 0 };
@@ -44,39 +43,39 @@ static fdb_time_t get_time(void) {
 #endif
 
 /* KVDB object */
-static struct fdb_kvdb g_kvdb = {0};
+
+typedef struct _fdb_kvdb_context {
+    struct fdb_kvdb kvdb;
+    pika_bool path_inited;
+} fdb_kvdb_context;
+
+#define _OBJ2KVDB_CONTEXT(x) ((fdb_kvdb_context*)obj_getStruct(x, "kvdbctx"))
+#define _OBJ2KVDB(x) (&_OBJ2KVDB_CONTEXT(x)->kvdb)
+
 typedef struct fdb_kvdb FDB_KVDB;
 typedef struct fdb_default_kv_node FDB_DEFAULT_KV_NODE;
 int g_def_kv_table_idx;
 
-void _flashdb_FlashDB___init__(PikaObj* self) {
-    Args* buffs = New_strBuff();
-    obj_setPtr(self, "FDBBUFFS", buffs);
-}
-
 /*
-Arg* _flashdb_FlashDB_blob_make(PikaObj *self, Arg* blob, Arg* value_buf, int
+Arg* _flashdb_KVDB_blob_make(PikaObj *self, Arg* blob, Arg* value_buf, int
 buf_len){ return NULL;
 }
 
-Arg* _flashdb_FlashDB_blob_read(PikaObj *self, Arg* db, Arg* blob){
+Arg* _flashdb_KVDB_blob_read(PikaObj *self, Arg* db, Arg* blob){
   return NULL;
 }
 
-int _flashdb_FlashDB_kv_del(PikaObj *self, Arg* kvdb, char* key){
+int _flashdb_KVDB_kv_del(PikaObj *self, Arg* kvdb, char* key){
   return 0;
 }
 
-Arg* _flashdb_FlashDB_kv_get(PikaObj *self, Arg* kvdb, char* key){
+Arg* _flashdb_KVDB_kv_get(PikaObj *self, Arg* kvdb, char* key){
   return NULL;
 }
 */
-PikaObj* _flashdb_FlashDB_kv_get_blob(PikaObj* self,
-                                      PikaObj* kvdb_in,
-                                      char* key,
-                                      int size) {
+PikaObj* _flashdb_KVDB_get_blob(PikaObj* self, char* key, int size) {
     struct fdb_blob blob;
-    FDB_KVDB* kvdb = (FDB_KVDB*)obj_getPtr(kvdb_in, "kvdb");
+    FDB_KVDB* kvdb = _OBJ2KVDB(self);
     blob.size = size;
     uint8_t* buf = (uint8_t*)pikaMalloc(size + 1);
     if (!buf) {
@@ -98,33 +97,30 @@ PikaObj* _flashdb_FlashDB_kv_get_blob(PikaObj* self,
     return list;
 }
 
-Arg* _flashdb_FlashDB_kv_get_obj(PikaObj* self, Arg* kvdb, char* key, Arg* kv) {
+Arg* _flashdb_KVDB_get_obj(PikaObj* self, Arg* kvdb, char* key, Arg* kv) {
     return NULL;
 }
 
-Arg* _flashdb_FlashDB_kv_iterate(PikaObj* self, Arg* kvdb, Arg* itr) {
+Arg* _flashdb_KVDB_iterate(PikaObj* self, Arg* kvdb, Arg* itr) {
     return NULL;
 }
 
-Arg* _flashdb_FlashDB_kv_iterator_init(PikaObj* self, Arg* kvdb, Arg* itr) {
+Arg* _flashdb_KVDB_iterator_init(PikaObj* self, Arg* kvdb, Arg* itr) {
     return NULL;
 }
 
-void _flashdb_FlashDB_kv_print(PikaObj* self, PikaObj* kvdb_in) {
-    FDB_KVDB* kvdb = (FDB_KVDB*)obj_getPtr(kvdb_in, "kvdb");
+void _flashdb_KVDB_print(PikaObj* self) {
+    FDB_KVDB* kvdb = _OBJ2KVDB(self);
     fdb_kv_print(kvdb);
 }
 
-int _flashdb_FlashDB_kv_set(PikaObj* self, Arg* kvdb, char* key, char* value) {
+int _flashdb_KVDB_set(PikaObj* self, Arg* kvdb, char* key, char* value) {
     return 0;
 }
 
-int _flashdb_FlashDB_kv_set_blob(PikaObj* self,
-                                 PikaObj* kvdb_in,
-                                 char* key,
-                                 Arg* blob_in) {
+int _flashdb_KVDB_set_blob(PikaObj* self, char* key, Arg* blob_in) {
     fdb_err_t res = FDB_NO_ERR;
-    FDB_KVDB* kvdb = (FDB_KVDB*)obj_getPtr(kvdb_in, "kvdb");
+    FDB_KVDB* kvdb = _OBJ2KVDB(self);
 
     ArgType argt_blob_in = arg_getType(blob_in);
     if (argt_blob_in != ARG_TYPE_BYTES) {
@@ -142,20 +138,20 @@ int _flashdb_FlashDB_kv_set_blob(PikaObj* self,
     return res;
 }
 
-int _flashdb_FlashDB_kv_set_default(PikaObj* self, Arg* kvdb) {
+int _flashdb_KVDB_set_default(PikaObj* self, Arg* kvdb) {
     return 0;
 }
 
-Arg* _flashdb_FlashDB_kv_to_blob(PikaObj* self, Arg* kv, Arg* blob) {
+Arg* _flashdb_KVDB_to_blob(PikaObj* self, Arg* kv, Arg* blob) {
     return NULL;
 }
 
-int _flashdb_FlashDB_kvdb_control(PikaObj* self, int cmd, Arg* arg) {
-    return 0;
+int _flashdb_KVDB_control(PikaObj* self, int cmd, Arg* arg) {
+    return -1;
 }
 
-void _flashdb_FlashDB_kvdb_deinit(PikaObj* self) {
-    fdb_kvdb_deinit(&g_kvdb);
+void _flashdb_KVDB_deinit(PikaObj* self) {
+    fdb_kvdb_deinit(_OBJ2KVDB(self));
 }
 
 struct _flashdb_foreach_context {
@@ -201,25 +197,36 @@ int32_t _flashdb_foreach(PikaObj* self_dict,
     return 0;
 }
 
-PikaObj* _flashdb_FlashDB_kvdb_init(PikaObj* self,
-                                    char* name,
-                                    char* path,
-                                    PikaObj* default_kv_in,
-                                    Arg* user_data) {
+void _flashdb_KVDB___init__(PikaObj* self,
+                            char* name,
+                            char* path,
+                            PikaObj* default_kv_in,
+                            Arg* user_data) {
     pika_platform_printf("kvdb_init \n");
-
+    if (NULL == _OBJ2KVDB_CONTEXT(self)) {
+        Args* buffs = New_strBuff();
+        obj_setPtr(self, "FDBBUFFS", buffs);
+        // create kvdb context if not exist
+        fdb_kvdb_context kvdb_initial = {
+            .kvdb = {0},
+            .path_inited = pika_false,
+        };
+        obj_setStruct(self, "kvdbctx", kvdb_initial);
+    }
+    fdb_kvdb_context* kvdb_context = _OBJ2KVDB_CONTEXT(self);
+    fdb_kvdb_t kvdb_this = &kvdb_context->kvdb;
     fdb_err_t result;
-    if (!g_kvdb_path_inited) {
+    if (!kvdb_context->path_inited) {
         pika_bool file_mode = pika_true;
         uint32_t sec_size = 4096, db_size = sec_size * 4;
 
-        fdb_kvdb_control(&g_kvdb, FDB_KVDB_CTRL_SET_SEC_SIZE, &sec_size);
-        fdb_kvdb_control(&g_kvdb, FDB_KVDB_CTRL_SET_MAX_SIZE, &db_size);
+        fdb_kvdb_control(kvdb_this, FDB_KVDB_CTRL_SET_SEC_SIZE, &sec_size);
+        fdb_kvdb_control(kvdb_this, FDB_KVDB_CTRL_SET_MAX_SIZE, &db_size);
         /* enable file mode */
-        fdb_kvdb_control(&g_kvdb, FDB_KVDB_CTRL_SET_FILE_MODE, &file_mode);
+        fdb_kvdb_control(kvdb_this, FDB_KVDB_CTRL_SET_FILE_MODE, &file_mode);
         /* create database directory */
         pika_platform_mkdir(path, 0777);
-        g_kvdb_path_inited = pika_true;
+        kvdb_context->path_inited = pika_true;
     }
     // int len =pikaDict_getSize(default_kv_in);
 
@@ -240,22 +247,32 @@ PikaObj* _flashdb_FlashDB_kvdb_init(PikaObj* self,
     default_kv.num = 4;
 
     result =
-        fdb_kvdb_init(&g_kvdb, strdup(name), strdup(path), &default_kv, NULL);
+        fdb_kvdb_init(kvdb_this, strdup(name), strdup(path), &default_kv, NULL);
 
     if (result != FDB_NO_ERR) {
-        return NULL;
+        obj_setSysOut(self, "kvdb_init fail");
+        obj_setErrorCode(self, result);
     }
-
-    PikaObj* kvdb_obj = newNormalObj(New__flashdb_kvdb_t);
-    obj_setPtr(kvdb_obj, "kvdb", &g_kvdb);
-    return kvdb_obj;
 }
 
-void _flashdb_FlashDB___del__(PikaObj* self) {
+void _flashdb_KVDB___del__(PikaObj* self) {
     Args* buffs = _FDBBUFFS;
     if (NULL != buffs) {
         args_deinit(_FDBBUFFS);
     }
+    if (NULL != _OBJ2KVDB_CONTEXT(self)) {
+        fdb_kvdb_deinit(_OBJ2KVDB(self));
+    }
+}
+
+void _flashdb_KVDB_CTRL___init__(PikaObj* self) {
+    obj_setInt(self, "SET_SEC_SIZE", FDB_KVDB_CTRL_SET_SEC_SIZE);
+    obj_setInt(self, "GET_SEC_SIZE", FDB_KVDB_CTRL_GET_SEC_SIZE);
+    obj_setInt(self, "SET_LOCK", FDB_KVDB_CTRL_SET_LOCK);
+    obj_setInt(self, "SET_UNLOCK", FDB_KVDB_CTRL_SET_UNLOCK);
+    obj_setInt(self, "SET_FILE_MODE", FDB_KVDB_CTRL_SET_FILE_MODE);
+    obj_setInt(self, "SET_MAX_SIZE", FDB_KVDB_CTRL_SET_MAX_SIZE);
+    obj_setInt(self, "SET_NOT_FORMAT", FDB_KVDB_CTRL_SET_NOT_FORMAT);
 }
 
 #undef strudp

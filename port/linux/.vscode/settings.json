@@ -116,7 +116,8 @@
         "vector": "c",
         "datastrs.h": "c",
         "__instruction_table.h": "c",
-        "assert.h": "c"
+        "assert.h": "c",
+        "_flashdb_kvdb_ctrl.h": "c"
     },
     "python.formatting.provider": "none",
     "clangd.arguments": [

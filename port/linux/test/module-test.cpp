@@ -788,7 +788,9 @@ TEST(flashdb, base) {
     EXPECT_EQ(test_flashdb(), 0);
 }
 
-TEST_RUN_SINGLE_FILE(flashdb, utest, "test/python/flashdb/flashdb_utest.py")
+TEST_RUN_SINGLE_FILE(flashdb, kvdb2, "test/python/flashdb/flashdb_kvdb2.py")
+
+TEST_RUN_SINGLE_FILE(flashdb, kvdb1, "test/python/flashdb/flashdb_kvdb1.py")
 
 #endif
 

@@ -1,25 +1,26 @@
 import _flashdb
 import struct
 
+KVDB_CTRL = _flashdb.KVDB_CTRL()
 
-class FDB(_flashdb.FlashDB):
+class KVDB(_flashdb.KVDB):
 
-    def kv_get_blob(self, kvdb, key, size):
-        res = super().kv_get_blob(kvdb, key, size)
+    def get_blob(self, key, size):
+        res = super().get_blob(key, size)
         if type(res) == list:
             return bytes(res)
         return None
 
-    def kv_set_by_fmt(self, kvdb, key, v, fmt):
+    def set_by_fmt(self, key, v, fmt):
         if type(v) == type([]) or type(v) == type(()):
             blob = struct.pack(fmt, *v)
-            return super().kv_set_blob(kvdb, key, blob)
+            return super().set_blob(key, blob)
         if type(v) == type(0):
             blob = struct.pack(fmt, v)
-            return super().kv_set_blob(kvdb, key, blob)
+            return super().set_blob(key, blob)
 
-    def kv_get_by_fmt(self, kvdb, key, size, fmt):
-        res = super().kv_get_blob(kvdb, key, size)
+    def get_by_fmt(self, key, size, fmt):
+        res = super().get_blob(key, size)
 
         if res is None:
             return None
