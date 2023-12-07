@@ -226,15 +226,15 @@ fdb_err_t _fdb_file_erase(fdb_db_t db, uint32_t addr, size_t size) {
         pika_platform_fseek(fp, 0, SEEK_SET);
         for (i = 0; i * BUF_SIZE < size; i++) {
             memset(buf, 0xFF, BUF_SIZE);
-            size_t sizew = pika_platform_fwrite(buf, BUF_SIZE, 1, fp);
-            if (sizew != 1) {
+            size_t sizew = pika_platform_fwrite(buf, 1, BUF_SIZE, fp);
+            if (sizew != BUF_SIZE) {
                 FDB_PRINT("Error: write (%s) file failed.\n", db->name);
                 result = FDB_WRITE_ERR;
                 break;
             }
         }
         memset(buf, 0xFF, BUF_SIZE);
-        size_t sizew = pika_platform_fwrite(buf, size - i * BUF_SIZE, 1, fp);
+        size_t sizew = pika_platform_fwrite(buf, 1, size - i * BUF_SIZE, fp);
         if (sizew != size - i * BUF_SIZE) {
             FDB_PRINT("Error: write (%s) file failed.\n", db->name);
             result = FDB_WRITE_ERR;

@@ -9,8 +9,11 @@
  * @brief configuration file
  */
 
+
 #ifndef _FDB_CFG_H_
 #define _FDB_CFG_H_
+
+#include "PikaObj.h"
 
 /* using KVDB feature */
 #define FDB_USING_KVDB
@@ -33,8 +36,12 @@
 /* #define FDB_PRINT(...)              my_printf(__VA_ARGS__) */
 
 /* print debug information */
+#ifndef PIKA_FDB_DEBUG_ENABLE
+#define PIKA_FDB_DEBUG_ENABLE 0
+#endif
+
+#if PIKA_FDB_DEBUG_ENABLE
 #define FDB_DEBUG_ENABLE
-#define FDB_KV_CACHE_TABLE_SIZE 0
-#define FDB_SECTOR_CACHE_TABLE_SIZE 0
+#endif
 
 #endif /* _FDB_CFG_H_ */
