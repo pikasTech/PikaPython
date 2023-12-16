@@ -1847,7 +1847,7 @@ static Arg* _VM_instruction_eval(PikaObj* self,
     char* sCode = arg_getStr(aCode);
     char* sCmd = strsAppend(&buffs, "@res = ", sCode);
     if (PIKA_RES_OK != pika_lines2Bytes(&bcFrame, sCmd)) {
-        pika_platform_printf(PIKA_ERR_STRING_SYNTAX_ERROR);
+        PikaVMFrame_setSysOut(vm, PIKA_ERR_STRING_SYNTAX_ERROR);
         aReturn = NULL;
         goto __exit;
     }
@@ -3843,7 +3843,7 @@ VMParameters* pikaVM_run_ex(PikaObj* self,
     /* generate byte code */
     byteCodeFrame_init(bytecode_frame_p);
     if (PIKA_RES_OK != pika_lines2Bytes(bytecode_frame_p, py_lines)) {
-        pika_platform_printf(PIKA_ERR_STRING_SYNTAX_ERROR);
+        obj_setSysOut(self, PIKA_ERR_STRING_SYNTAX_ERROR);
         globals = NULL;
         goto __exit;
     }

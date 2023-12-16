@@ -4137,12 +4137,13 @@ void _do_vsysOut(char* fmt, va_list args) {
 }
 
 void obj_setSysOut(PikaObj* self, char* fmt, ...) {
-    pika_assert(NULL != self->vmFrame);
-    if (self->vmFrame->vm_thread->error_code == 0) {
-        self->vmFrame->vm_thread->error_code = PIKA_RES_ERR_RUNTIME_ERROR;
-    }
-    if (self->vmFrame->vm_thread->try_state == TRY_STATE_INNER) {
-        return;
+    if (NULL != self->vmFrame) {
+        if (self->vmFrame->vm_thread->error_code == 0) {
+            self->vmFrame->vm_thread->error_code = PIKA_RES_ERR_RUNTIME_ERROR;
+        }
+        if (self->vmFrame->vm_thread->try_state == TRY_STATE_INNER) {
+            return;
+        }
     }
     va_list args;
     va_start(args, fmt);

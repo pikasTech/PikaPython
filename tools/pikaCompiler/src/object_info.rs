@@ -39,7 +39,13 @@ impl ObjectInfo {
             "    obj_newObj(self, \"{}\", \"{}\", New_{});\n",
             self.name, self.import_class_name, self.import_class_name
         );
+        let module_define = format!(
+            "#ifndef PIKA_MODULE_{}_DISABLE\n",
+            self.import_class_name.to_ascii_uppercase()
+        );
+        new_object_fn.push_str(&module_define);
         new_object_fn.push_str(&new_fn);
+        new_object_fn.push_str("#endif\n");
         return new_object_fn;
     }
 }
