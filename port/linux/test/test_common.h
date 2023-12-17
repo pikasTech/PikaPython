@@ -12,6 +12,7 @@
 
 extern "C" {
 #include <stdio.h>
+#include "../fuzzypid/fuzzy_PID.h"
 #include "PikaMain.h"
 #include "PikaMath_Operator.h"
 #include "PikaStdLib_MemChecker.h"

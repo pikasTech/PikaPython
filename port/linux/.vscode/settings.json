@@ -117,7 +117,14 @@
         "datastrs.h": "c",
         "__instruction_table.h": "c",
         "assert.h": "c",
-        "_flashdb_kvdb_ctrl.h": "c"
+        "_flashdb_kvdb_ctrl.h": "c",
+        "_fuzzypid.h": "c",
+        "_fuzzypid_membershipfunction.h": "c",
+        "_fuzzypid_fuzzypidcontroller.h": "c",
+        "_fuzzypid_pidparams.h": "c",
+        "_fuzzypid_rulebase.h": "c",
+        "fuzzy_pid.h": "c",
+        "_fuzzypid_piddirect.h": "c"
     },
     "python.formatting.provider": "none",
     "clangd.arguments": [
@@ -128,7 +135,7 @@
         "editor.defaultFormatter": "tamasfe.even-better-toml"
     },
     "[python]": {
-        "editor.defaultFormatter": "ms-python.python"
+        "editor.defaultFormatter": "ms-python.autopep8"
     },
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"

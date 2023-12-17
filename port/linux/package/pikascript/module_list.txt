@@ -41,3 +41,4 @@ this
 fsm
 subsrc.mod1
 flashdb
+fuzzypid

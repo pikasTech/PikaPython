@@ -1427,7 +1427,7 @@ static uint32_t _get_n_input_with_unpack(PikaVMFrame* vm, int n_used) {
 }
 
 #define vars_or_keys_or_default (f.is_vars || f.is_keys || f.is_default)
-#define METHOD_TYPE_LIST_MAX_LEN PIKA_LINE_BUFF_SIZE
+#define METHOD_TYPE_LIST_MAX_LEN PIKA_LINE_BUFF_SIZE * 2
 static int PikaVMFrame_loadArgsFromMethodArg(PikaVMFrame* vm,
                                              PikaObj* oMethodHost,
                                              Args* aLoclas,

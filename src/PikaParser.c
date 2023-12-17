@@ -2589,6 +2589,7 @@ static char* Suger_from_import_as(Args* buffs_p, char* sLine) {
     return sLine;
 #endif
     Args buffs = {0};
+    Arg* aLineOut = NULL;
     char* sLineOut = sLine;
     char* sClass = NULL;
     char* sModule = NULL;
@@ -2636,13 +2637,20 @@ static char* Suger_from_import_as(Args* buffs_p, char* sLine) {
                                 sClassItem);
         sClassAfter = strsAppend(&buffs, sClassAfter, sClassItem);
     }
-    sClassAfter[strlen(sClassAfter) - 1] = '\0';
+    sClassAfter[strGetSize(sClassAfter) - 1] = '\0';
     sClass = sClassAfter;
-
-    sLineOut = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "import %s\n%s = %s",
-                          sClass, sAlias, sClass);
+    aLineOut = arg_newStr("import ");
+    aLineOut = arg_strAppend(aLineOut, sClass);
+    aLineOut = arg_strAppend(aLineOut, "\n");
+    aLineOut = arg_strAppend(aLineOut, sAlias);
+    aLineOut = arg_strAppend(aLineOut, " = ");
+    aLineOut = arg_strAppend(aLineOut, sClass);
+    sLineOut = arg_getStr(aLineOut);
     sLineOut = strsCopy(buffs_p, sLineOut);
 __exit:
+    if (NULL != aLineOut) {
+        arg_deinit(aLineOut);
+    }
     strsDeinit(&buffs);
     return sLineOut;
 }
