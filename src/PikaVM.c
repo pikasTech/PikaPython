@@ -2170,6 +2170,9 @@ static Arg* VM_instruction_handler_STR(PikaObj* self,
                                        PikaVMFrame* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
+    if (NULL == data) {
+        return arg_setStr(arg_ret_reg, "", "");
+    }
     if (strIsContain(data, '\\')) {
         Args buffs = {0};
         size_t i_out = 0;
