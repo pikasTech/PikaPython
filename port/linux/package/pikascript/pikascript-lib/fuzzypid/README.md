@@ -1,4 +1,12 @@
-## fuzzy-pid
+## fuzzypid
+
+fuzzypid 模块为 [fuzzy-pid](https://github.com/FlameAlpha/fuzzy-pid) 项目提供了 Python 绑定。
+
+该项目 LICENSE 详见 [LICENSE](https://github.com/FlameAlpha/fuzzy-pid/blob/main/LICENSE)。
+
+在此对原作者 [FlameAlpha](https://github.com/FlameAlpha) 表示感谢。
+
+## fuzzy-pid 原 README
 
 ### 介绍
 鉴于控制算法常于嵌入式平台使用，所以使用C语言实现模糊PID控制算法。实现的功能包括但不限于：
