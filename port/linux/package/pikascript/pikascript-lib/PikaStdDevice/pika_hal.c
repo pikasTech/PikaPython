@@ -26,6 +26,7 @@ static size_t _pika_hal_dev_config_size(PIKA_HAL_DEV_TYPE dev_type) {
 }
 
 pika_dev* pika_hal_open(PIKA_HAL_DEV_TYPE dev_type, char* name) {
+    pika_dev_impl* impl = NULL;
     if (NULL == name) {
         __platform_printf("Error: dev_open name is NULL.\r\n");
         return NULL;
@@ -36,7 +37,7 @@ pika_dev* pika_hal_open(PIKA_HAL_DEV_TYPE dev_type, char* name) {
         __platform_printf("Error: dev_type invalied.\r\n");
         goto __exit;
     }
-    pika_dev_impl* impl = _pika_dev_get_impl(dev_type);
+    impl = _pika_dev_get_impl(dev_type);
     dev = (pika_dev*)pikaMalloc(sizeof(pika_dev));
     if (dev == NULL) {
         goto __exit;
@@ -67,10 +68,11 @@ __exit:
 
 int pika_hal_close(pika_dev* dev) {
     int ret = -1;
+    pika_dev_impl* impl = NULL;
     if (dev == NULL) {
         goto __exit;
     }
-    pika_dev_impl* impl = _pika_dev_get_impl(dev->type);
+    impl = _pika_dev_get_impl(dev->type);
     if (impl->close == NULL) {
         goto __exit;
     }
@@ -376,5 +378,118 @@ int pika_hal_CAM_ioctl_merge_config(pika_hal_CAM_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(format, PIKA_HAL_CAM_PIXFORMAT_RGB565);
     _IOCTL_CONFIG_USE_DEFAULT(framesize, PIKA_HAL_CAM_FRAMESIZE_QVGA);
     _IOCTL_CONFIG_USE_DEFAULT(buff_len, 320 * 240 * 16);
+    return 0;
+}
+
+pika_hal_CircularQueue* pika_hal_circularQueue_create(size_t capacity) {
+    pika_hal_CircularQueue* cb =
+        (pika_hal_CircularQueue*)pikaMalloc(sizeof(pika_hal_CircularQueue));
+    if (NULL == cb) {
+        return NULL;
+    }
+    cb->head = 0;
+    cb->tail = 0;
+    cb->count = 0;
+#if PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE
+    pika_platform_thread_mutex_init(&cb->mutex);
+#endif
+    cb->capacity = capacity;
+    cb->buffer = (uint8_t*)pikaMalloc(capacity);
+    if (NULL == cb->buffer) {
+        pikaFree(cb, sizeof(pika_hal_CircularQueue));
+        return NULL;
+    }
+    return cb;
+}
+
+int pika_hal_circularQueue_enqueue(pika_hal_CircularQueue* cb, uint8_t ch) {
+    int ret = 0;
+#if PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE
+    pika_platform_thread_mutex_lock(&cb->mutex);
+#endif
+    if (cb->count == cb->capacity) {
+        ret = -1;
+        goto __exit;
+    }
+
+    cb->buffer[cb->tail] = ch;
+    cb->tail = (cb->tail + 1) % cb->capacity;
+    cb->count++;
+__exit:
+#if PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE
+    pika_platform_thread_mutex_unlock(&cb->mutex);
+#endif
+    return ret;
+}
+
+int pika_hal_circularQueue_dequeue(pika_hal_CircularQueue* cb, uint8_t* value) {
+    int ret = 0;
+#if PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE
+    pika_platform_thread_mutex_lock(&cb->mutex);
+#endif
+    if (cb->count == 0) {
+        ret = -1;
+        goto __exit;
+    }
+
+    *value = cb->buffer[cb->head];
+    cb->head = (cb->head + 1) % cb->capacity;
+    cb->count--;
+__exit:
+#if PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE
+    pika_platform_thread_mutex_unlock(&cb->mutex);
+#endif
+    return ret;
+}
+
+int pika_hal_circularQueue_deinit(pika_hal_CircularQueue* cb) {
+#if PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE
+    pika_platform_thread_mutex_lock(&cb->mutex);
+#endif
+    pikaFree(cb->buffer, cb->capacity);
+    cb->buffer = NULL;
+    cb->head = 0;
+    cb->tail = 0;
+    cb->count = 0;
+    cb->capacity = 0;
+#if PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE
+    pika_platform_thread_mutex_destroy(&cb->mutex);
+#endif
+    pikaFree(cb, sizeof(pika_hal_CircularQueue));
+    return 0;
+}
+
+size_t pika_hal_circularQueue_getCount(pika_hal_CircularQueue* cb) {
+#if PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE
+    pika_platform_thread_mutex_lock(&cb->mutex);
+#endif
+    size_t count = cb->count;
+#if PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE
+    pika_platform_thread_mutex_unlock(&cb->mutex);
+#endif
+    return count;
+}
+
+int pika_hal_circularQueue_isEmpty(pika_hal_CircularQueue* cb) {
+    return cb->count == 0;
+}
+
+int pika_hal_circularQueue_isFull(pika_hal_CircularQueue* cb) {
+    return cb->count == cb->capacity;
+}
+
+int pika_hal_circularQueue_peek(pika_hal_CircularQueue* cb, uint8_t* value) {
+    if (cb->count == 0) {
+        return -1;  // »º³åÇøÎª¿Õ
+    }
+
+#if PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE
+    pika_platform_thread_mutex_lock(&cb->mutex);
+#endif
+    *value = cb->buffer[cb->head];
+#if PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE
+    pika_platform_thread_mutex_unlock(&cb->mutex);
+#endif
+
     return 0;
 }

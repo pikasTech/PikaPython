@@ -10,6 +10,9 @@
  */
 
 #define PIKA_HAL
+#ifndef PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE
+#define PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE 0
+#endif
 
 #define PIKA_HAL_OBJ2DEV(_self) obj_getPtr((_self), "pika_dev")
 
@@ -629,5 +632,25 @@ typedef struct pika_dev_impl {
 /* config merge headers */
 #define PIKA_HAL_TABLE_IOCTL_MERGE_CONFIG_HEADER
 #include "pika_hal_table.h"
+
+typedef struct {
+    uint8_t* buffer;
+    size_t capacity;
+    size_t head;
+    size_t tail;
+    size_t count;
+#if PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE
+    pika_platform_thread_mutex_t mutex;
+#endif
+} pika_hal_CircularQueue;
+
+pika_hal_CircularQueue* pika_hal_circularQueue_create(size_t capacity);
+int pika_hal_circularQueue_enqueue(pika_hal_CircularQueue* cb, uint8_t ch);
+int pika_hal_circularQueue_dequeue(pika_hal_CircularQueue* cb, uint8_t* value);
+int pika_hal_circularQueue_deinit(pika_hal_CircularQueue* cb);
+size_t pika_hal_circularQueue_getCount(pika_hal_CircularQueue* cb);
+int pika_hal_circularQueue_isEmpty(pika_hal_CircularQueue* cb);
+int pika_hal_circularQueue_isFull(pika_hal_CircularQueue* cb);
+int pika_hal_circularQueue_peek(pika_hal_CircularQueue* cb, uint8_t* value);
 
 #endif
