@@ -41,19 +41,16 @@ fuzzy_pid_params = FuzzyPIDParams([
     [0.65, 0, 0, 0, 0, 0, 1],
     [-0.34, 0, 0, 0, 0, 0, 1],
     [-1.1, 0, 0, 0, 0, 0, 1],
-    [-2.4, 0, 0, 0, 0, 0, 1],
-    [1.2, 0, 0, 0, 0, 0, 1],
-    [1.2, 0.05, 0.1, 0, 0, 0, 1],
 ])
 
-direct = PIDDirect([True, False, False, False, True, True])
+direct = PIDDirect([True, False, False])
 
 fuzzy_pid_controller = FuzzyPIDController(
     rule_base, mf_params, fuzzy_pid_params, direct=direct)
 
 max_error = 100
 middle_pwm_output = 500
-control_id = 5
+control_id = 2
 real = 0
 idea = max_error * 0.9
 print("idea value: ", idea)

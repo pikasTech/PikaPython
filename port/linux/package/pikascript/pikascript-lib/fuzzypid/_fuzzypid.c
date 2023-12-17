@@ -168,12 +168,19 @@ void _fuzzypid_FuzzyPIDController___init__(PikaObj* self,
     int* rules = obj_getPtr(rule_base, "rules");
     int* mf_params_mat = obj_getPtr(mf_params, "mf_params");
     float* fuzzy_pid_params = obj_getPtr(pid_params, "fuzzy_pid_params");
-    int DOF = obj_getInt(pid_params, "DOF");
+    int DOF_pid_parms = obj_getInt(pid_params, "DOF");
+    int DOF_direct = obj_getInt(direct, "DOF");
+    if (DOF_pid_parms != DOF_direct) {
+        obj_setSysOut(self,
+                      "Error: pid_params and direct must have the same length");
+        obj_setErrorCode(self, -__LINE__);
+        return;
+    }
     struct PID** pid_vector = fuzzy_pid_vector_init(
         (float(*)[pid_params_count])fuzzy_pid_params, delta_k, mf_type, fo_type,
-        df_type, mf_params_mat, (int(*)[pid_params_count])rules, DOF);
+        df_type, mf_params_mat, (int(*)[pid_params_count])rules, DOF_pid_parms);
     obj_setPtr(self, "pid_vector", pid_vector);
-    obj_setInt(self, "DOF", DOF);
+    obj_setInt(self, "DOF", DOF_pid_parms);
     obj_setPtr(self, "direct_vector", obj_getPtr(direct, "direct_vector"));
 }
 
@@ -191,6 +198,12 @@ pika_float _fuzzypid_FuzzyPIDController_compute_output(PikaObj* self,
                                                        pika_float input) {
     struct PID** pid_vector = obj_getPtr(self, "pid_vector");
     pika_bool* direct_vector = obj_getPtr(self, "direct_vector");
+    int DOF = obj_getInt(self, "DOF");
+    if (control_id < 0 || control_id >= DOF) {
+        obj_setSysOut(self, "Error: control_id out of range");
+        obj_setErrorCode(self, -__LINE__);
+        return 0;
+    }
     return fuzzy_pid_motor_pwd_output(real, input, direct_vector[control_id],
                                       pid_vector[control_id]);
 }
