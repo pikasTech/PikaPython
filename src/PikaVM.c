@@ -307,7 +307,7 @@ void __VMEvent_pickupEvent(char* info) {
                                                 &event_data, &head)) {
         g_PikaVMState.event_pickup_cnt++;
         pika_debug("pickup_info: %s", info);
-        pika_debug("pickup_cnt: %d", g_PikaVMSignal.event_pickup_cnt);
+        pika_debug("pickup_cnt: %d", g_PikaVMState.event_pickup_cnt);
         Arg* res =
             __eventListener_runEvent(event_lisener, event_id, event_data);
         g_PikaVMState.cq.res[head] = res;
