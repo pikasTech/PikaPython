@@ -480,7 +480,7 @@ int pika_hal_circularQueue_isFull(pika_hal_CircularQueue* cb) {
 
 int pika_hal_circularQueue_peek(pika_hal_CircularQueue* cb, uint8_t* value) {
     if (cb->count == 0) {
-        return -1;  // »º³åÇøÎª¿Õ
+        return -1;
     }
 
 #if PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE

@@ -59,4 +59,5 @@ int pika_hal_utils_WIFI_config(pika_dev* dev, pika_hal_WIFI_config* cfg);
 /* SG utils */
 int pika_hal_utils_SG_config(pika_dev* dev, pika_hal_SG_config* cfg);
 pika_float pika_hal_utils_SG_read(pika_dev* dev);
+
 #endif
