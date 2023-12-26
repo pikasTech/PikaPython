@@ -612,6 +612,19 @@ char* Lexer_getTokenStream(Args* outBuffs, char* sStmt) {
             */
             if (('>' == c0) || ('<' == c0) || ('*' == c0) || ('/' == c0)) {
                 if (c0 == c1) {
+                    /* >>=, <<=, **=, //= */
+                    if ('=' == c2) {
+                        char sContent[4] = {0};
+                        sContent[0] = c0;
+                        sContent[1] = c1;
+                        sContent[2] = '=';
+                        aTokenStream = Lexer_setSymbel(aTokenStream, sStmt, i,
+                                                       &iSymbolStartIndex);
+                        aTokenStream = Lexer_setToken(aTokenStream,
+                                                      TOKEN_operator, sContent);
+                        i = i + 2;
+                        continue;
+                    }
                     char content[3] = {0};
                     content[0] = c0;
                     content[1] = c1;
@@ -624,11 +637,11 @@ char* Lexer_getTokenStream(Args* outBuffs, char* sStmt) {
                 }
             }
             /*
-                >=, <=, *=, /=, +=, -=, !=, ==, %=
+                >=, <=, *=, /=, +=, -=, !=, ==, %=, |=, ^=, &=
             */
             if (('>' == c0) || ('<' == c0) || ('*' == c0) || ('/' == c0) ||
                 ('+' == c0) || ('-' == c0) || ('!' == c0) || ('=' == c0) ||
-                ('%' == c0) || ('^' == c0)) {
+                ('%' == c0) || ('|' == c0) || ('&' == c0) || ('^' == c0)) {
                 if ('=' == c1) {
                     char content[3] = {0};
                     content[0] = c0;
