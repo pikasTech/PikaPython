@@ -378,7 +378,8 @@ class ModBusRTU(ModBus):
     
     def setUart(self, uart: PikaStdDevice.UART):
         self._uart = uart
-        uart.setCallBack(self.recvCallback, uart.SIGNAL_RX)
+        debug('set uart', uart)
+        uart.setCallback(self.recvCallback, uart.SIGNAL_RX)
 
     def recv(self, count: int = 10):
         """

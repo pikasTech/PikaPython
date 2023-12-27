@@ -336,6 +336,12 @@ int pika_hal_WIFI_ioctl_merge_config(pika_hal_WIFI_config* dst,
     return 0;
 }
 
+int pika_hal_LAN_ioctl_merge_config(pika_hal_LAN_config* dst,
+                                    pika_hal_LAN_config* src) {
+    _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
+    return 0;
+}
+
 int pika_hal_SG_ioctl_merge_config(pika_hal_SG_config* dst,
                                    pika_hal_SG_config* src) {
     _IOCTL_CONFIG_USE_DEFAULT(waveform, PIKA_HAL_SG_WAVEFORM_SINE);
