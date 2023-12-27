@@ -335,6 +335,12 @@ int pika_hal_WIFI_ioctl_merge_config(pika_hal_WIFI_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
     return 0;
 }
+                                     
+int pika_hal_LAN_ioctl_merge_config(pika_hal_LAN_config* dst,
+                                     pika_hal_LAN_config* src) {
+    _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
+    return 0;
+}
 
 int pika_hal_SG_ioctl_merge_config(pika_hal_SG_config* dst,
                                    pika_hal_SG_config* src) {
@@ -480,7 +486,7 @@ int pika_hal_circularQueue_isFull(pika_hal_CircularQueue* cb) {
 
 int pika_hal_circularQueue_peek(pika_hal_CircularQueue* cb, uint8_t* value) {
     if (cb->count == 0) {
-        return -1;
+        return -1;  // 缓冲区为空
     }
 
 #if PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE
