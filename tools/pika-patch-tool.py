@@ -42,14 +42,17 @@ for root, apply_dirs, files in os.walk('.'):
         src_file = os.path.join(root, file)
         rel_path = os.path.relpath(root, '.')
         target_file = os.path.join(base_path, rel_path, file)
-        print(f"Processing file: {src_file}")  
+        print(f"Processing file: {src_file}")
         if os.path.exists(target_file):
-            diff_command = ["git", "diff", "--no-index",  target_file, src_file]
+            diff_command = ["git", "diff",
+                            "--no-index",  target_file, src_file]
             result = subprocess.run(diff_command, stdout=subprocess.PIPE)
-            if result.stdout:  
-                diff_output = result.stdout.decode()
-                print(diff_output)  
-                with open("/tmp/base/changes.patch", "a") as patch_file:
+            if result.stdout:
+                # 确保使用UTF-8编码解码stdout
+                diff_output = result.stdout.decode('utf-8')
+                print(diff_output)
+                # 使用UTF-8编码打开文件进行写入
+                with open("/tmp/base/changes.patch", "a", encoding='utf-8') as patch_file:
                     patch_file.write(diff_output)
         else:
             print(f"No base file, skipped: {target_file}")
@@ -61,7 +64,7 @@ if not os.path.exists("/tmp/base/changes.patch"):
     exit()
 
 # read the patch
-with open("/tmp/base/changes.patch") as patch_file:
+with open("/tmp/base/changes.patch", encoding='utf-8') as patch_file:
     patch_data = patch_file.read()
 
 # split the patch into a list of patches
@@ -116,7 +119,7 @@ for patch in patches:
     for dir in search_dirs:
         file_name = os.path.basename(from_file)
         # find file
-        #if is_found:
+        # if is_found:
         #    break
 
         for root, apply_dirs, files in os.walk(dir):
@@ -133,11 +136,12 @@ for patch in patches:
                 print(f"Applying patch: {patch}")
                 # Strip the trailing whitespace for each line
                 lines = [line for line in patch.split('\n')]
-                with open("/tmp/base/temp.patch", 'w') as f:
+                with open("/tmp/base/temp.patch", 'w', encoding='utf-8') as f:
                     for line in lines:
                         f.write(line + '\n')
                 apply_patch_command = ["git", "apply", "/tmp/base/temp.patch"]
-                result = subprocess.run(apply_patch_command, stdout=subprocess.PIPE, cwd=main_repo_path)
+                result = subprocess.run(
+                    apply_patch_command, stdout=subprocess.PIPE, cwd=main_repo_path)
                 # check the result
                 if result.returncode != 0:
                     fail_count += 1
@@ -146,7 +150,8 @@ for patch in patches:
                 else:
                     success_count += 1
                     success_list.append(apply_file)
-                    print("\033[92mSuccessfully applied patch\033[0m", apply_file)
+                    print(
+                        "\033[92mSuccessfully applied patch\033[0m", apply_file)
                 break
 
 print("\n\n===========================================\n\n")
@@ -162,12 +167,15 @@ if fail_count > 0:
         print(file)
 
 # setup remote url
-repo_url = input("Please enter your remote repository URL (default: '{}'): ".format(default_repo_url)) or default_repo_url
-subprocess.run(["git", "remote", "set-url", "origin", repo_url], cwd = main_repo_path)
+repo_url = input("Please enter your remote repository URL (default: '{}'): ".format(
+    default_repo_url)) or default_repo_url
+subprocess.run(["git", "remote", "set-url", "origin",
+               repo_url], cwd=main_repo_path)
 
 # setup commit message
-commit_msg = input("Please enter your commit message (default: 'Apply patches'): ") or "Apply patches"
-subprocess.run(["git", "commit", "-a" ,"-m", commit_msg], cwd=main_repo_path)
+commit_msg = input(
+    "Please enter your commit message (default: 'Apply patches'): ") or "Apply patches"
+subprocess.run(["git", "commit", "-a", "-m", commit_msg], cwd=main_repo_path)
 
 # confirm push
 confirm = input("Are you sure you want to push to the repository ([Y]/N)? ")
