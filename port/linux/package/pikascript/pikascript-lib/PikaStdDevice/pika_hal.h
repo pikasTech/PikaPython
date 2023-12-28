@@ -32,16 +32,26 @@ typedef enum {
     PIKA_HAL_IOCTL_CONFIG,
     PIKA_HAL_IOCTL_ENABLE,
     PIKA_HAL_IOCTL_DISABLE,
-    PIKA_HAL_IOCTL_WIFI_GET_ACTIVE,
-    PIKA_HAL_IOCTL_WIFI_GET_STATUS,
+    PIKA_HAL_IOCTL_NET_GET_ACTIVE,
+    PIKA_HAL_IOCTL_NET_GET_STATUS,
     PIKA_HAL_IOCTL_WIFI_SCAN,
     PIKA_HAL_IOCTL_WIFI_CONNECT,
     PIKA_HAL_IOCTL_WIFI_DISCONNECT,
-    PIKA_HAL_IOCTL_WIFI_SET_IFCONFIG,
-    PIKA_HAL_IOCTL_WIFI_GET_IFCONFIG,
+    PIKA_HAL_IOCTL_NET_SET_IFCONFIG,
+    PIKA_HAL_IOCTL_NET_GET_IFCONFIG,
     PIKA_HAL_IOCTL_CAM_CAPTURE,
     _ = 0xFFFFFFFF,  // make sure it is 4 byte width
 } PIKA_HAL_IOCTL_CMD;
+
+#define PIKA_HAL_IOCTL_WIFI_GET_ACTIVE PIKA_HAL_IOCTL_NET_GET_ACTIVE
+#define PIKA_HAL_IOCTL_WIFI_GET_STATUS PIKA_HAL_IOCTL_NET_GET_STATUS
+#define PIKA_HAL_IOCTL_WIFI_SET_IFCONFIG PIKA_HAL_IOCTL_NET_SET_IFCONFIG
+#define PIKA_HAL_IOCTL_WIFI_GET_IFCONFIG PIKA_HAL_IOCTL_NET_GET_IFCONFIG
+
+#define PIKA_HAL_IOCTL_LAN_GET_ACTIVE PIKA_HAL_IOCTL_NET_GET_ACTIVE
+#define PIKA_HAL_IOCTL_LAN_GET_STATUS PIKA_HAL_IOCTL_NET_GET_STATUS
+#define PIKA_HAL_IOCTL_LAN_SET_IFCONFIG PIKA_HAL_IOCTL_NET_SET_IFCONFIG
+#define PIKA_HAL_IOCTL_LAN_GET_IFCONFIG PIKA_HAL_IOCTL_NET_GET_IFCONFIG
 
 /* posix file like API */
 pika_dev* pika_hal_open(PIKA_HAL_DEV_TYPE dev_type, char* name);
@@ -433,6 +443,13 @@ typedef enum {
 } PIKA_HAL_WIFI_STATUS;
 
 typedef enum {
+    _PIKA_HAL_LAN_STATUS_UNUSED = 0,
+    PIKA_HAL_LAN_STATUS_IDLE,
+    PIKA_HAL_LAN_STATUS_CONNECTING,
+    PIKA_HAL_LAN_STATUS_GOT_IP,
+} PIKA_HAL_LAN_STATUS;
+
+typedef enum {
     _PIKA_HAL_WIFI_CHANNEL_UNUSED = 0,
     PIKA_HAL_WIFI_CHANNEL_0,
     PIKA_HAL_WIFI_CHANNEL_1,
@@ -479,12 +496,15 @@ typedef struct pika_hal_WIFI_connect_config {
     char password[PIKA_HAL_WIFI_PARAM_MAX_LEN];
 } pika_hal_WIFI_connect_config;
 
-typedef struct pika_hal_WIFI_ifconfig {
+typedef struct pika_hal_NET_ifconfig {
     char ip[PIKA_HAL_WIFI_PARAM_MAX_LEN];
     char netmask[PIKA_HAL_WIFI_PARAM_MAX_LEN];
     char gateway[PIKA_HAL_WIFI_PARAM_MAX_LEN];
     char dns[PIKA_HAL_WIFI_PARAM_MAX_LEN];
-} pika_hal_WIFI_ifconfig;
+} pika_hal_NET_ifconfig;
+
+#define pika_hal_WIFI_ifconfig pika_hal_NET_ifconfig
+#define pika_hal_LAN_ifconfig pika_hal_NET_ifconfig
 
 typedef struct pika_hal_WIFI_record {
     char ssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
@@ -499,6 +519,10 @@ typedef struct pika_hal_WIFI_scan_result {
     int count;
     pika_hal_WIFI_record records[];
 } pika_hal_WIFI_scan_result;
+
+typedef struct pika_hal_LAN_config {
+    void* user_data;
+} pika_hal_LAN_config;
 
 typedef enum {
     _PIKA_HAL_PWM_PERIOD_UNUSED = 0,

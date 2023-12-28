@@ -1,4 +1,4 @@
-﻿#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
 #include "lvgl.h"
 #else
 #include "../../lvgl.h"
@@ -13,9 +13,9 @@
 #include "pika_lvgl_FLEX_ALIGN.h"
 #include "pika_lvgl_FLEX_FLOW.h"
 #include "pika_lvgl_LAYOUT_FLEX.h"
-#include "pika_lvgl_SIZE.h"
 #include "pika_lvgl_OPA.h"
 #include "pika_lvgl_PALETTE.h"
+#include "pika_lvgl_SIZE.h"
 #include "pika_lvgl_STATE.h"
 #include "pika_lvgl_TEXT_DECOR.h"
 #include "pika_lvgl_arc.h"
@@ -27,10 +27,13 @@
 
 PikaObj* pika_lv_event_listener_g;
 Args* pika_lv_id_register_g;
+pika_platform_thread_mutex_t pika_lv_global_mutex_g = {0};
 
-#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 11, 7)
-#error "pikascript version must be greater than 1.11.7"
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 13, 1)
+#error "pikascript version must be greater than 1.13.1"
 #endif
+
+volatile int g_lvgl_inited = 0;
 
 void pika_lvgl_STATE___init__(PikaObj* self) {
     obj_setInt(self, "DEFAULT", LV_STATE_DEFAULT);
@@ -47,6 +50,20 @@ void pika_lvgl_STATE___init__(PikaObj* self) {
     obj_setInt(self, "USER_3", LV_STATE_USER_3);
     obj_setInt(self, "USER_4", LV_STATE_USER_4);
     obj_setInt(self, "ANY", LV_STATE_ANY);
+}
+
+void pika_lvgl_lock(PikaObj* self) {
+    if (!g_lvgl_inited) {
+        return;
+    }
+    pika_platform_thread_mutex_lock(&pika_lv_global_mutex_g);
+}
+
+void pika_lvgl_unlock(PikaObj* self) {
+    if (!g_lvgl_inited) {
+        return;
+    }
+    pika_platform_thread_mutex_unlock(&pika_lv_global_mutex_g);
 }
 
 void pika_lvgl_flag_t___init__(PikaObj* self) {
@@ -201,9 +218,8 @@ PikaObj* pika_lvgl_scr_act(PikaObj* self) {
     return new_obj;
 }
 
-volatile int g_lvgl_inited = 0;
 void pika_lvgl___init__(PikaObj* self) {
-    if (!lv_is_initialized()){
+    if (!lv_is_initialized()) {
         pika_debug("Error: lvgl is not initialized");
         return;
     }
@@ -211,7 +227,11 @@ void pika_lvgl___init__(PikaObj* self) {
     pika_lv_event_listener_g = obj_getObj(self, "lv_event_listener");
     pika_lv_id_register_g = New_args(NULL);
     if (!g_lvgl_inited) {
+        pika_debug("Init pika_lv_global_mutex_g");
+        pika_platform_thread_mutex_init(&pika_lv_global_mutex_g);
+        pika_lvgl_lock(NULL);
         lv_png_init();
+        pika_lvgl_unlock(NULL);
         g_lvgl_inited = 1;
     }
 }
@@ -301,11 +321,11 @@ void pika_lvgl_LAYOUT_FLEX___init__(PikaObj* self) {
     obj_setInt(self, "value", LV_LAYOUT_FLEX);
 }
 
-void pika_lvgl_SIZE___init__(PikaObj *self){
+void pika_lvgl_SIZE___init__(PikaObj* self) {
     obj_setInt(self, "CONTENT", LV_SIZE_CONTENT);
 }
 
-int pika_lvgl_pct(PikaObj *self, int x){
+int pika_lvgl_pct(PikaObj* self, int x) {
     return LV_PCT(x);
 }
 
