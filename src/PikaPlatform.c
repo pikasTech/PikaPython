@@ -230,6 +230,21 @@ PIKA_WEAK char pika_platform_getchar(void) {
 #endif
 }
 
+PIKA_WEAK int pika_platform_repl_recv(uint8_t* buff,
+                                      size_t size,
+                                      uint32_t timeout) {
+    if (timeout != PIKA_TIMEOUT_FOREVER) {
+        pika_platform_printf(
+            "Error: timeout not support for default pika_platform_repl_recv, "
+            "please override it\n");
+        return -1;
+    }
+    for (size_t i = 0; i < size; i++) {
+        buff[i] = pika_platform_getchar();
+    }
+    return size;
+}
+
 /* file system support */
 PIKA_WEAK FILE* pika_platform_fopen(const char* filename, const char* modes) {
 #if defined(__linux) || defined(_WIN32)

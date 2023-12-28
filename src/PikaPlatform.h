@@ -194,6 +194,9 @@ char pika_platform_getchar(void);
 int pika_platform_putchar(char ch);
 int pika_platform_fflush(void* stream);
 
+#define PIKA_TIMEOUT_FOREVER 0xFFFFFFFF
+int pika_platform_repl_recv(uint8_t* buff, size_t size, uint32_t timeout);
+
 /* file API */
 FILE* pika_platform_fopen(const char* filename, const char* modes);
 int pika_platform_fclose(FILE* stream);
