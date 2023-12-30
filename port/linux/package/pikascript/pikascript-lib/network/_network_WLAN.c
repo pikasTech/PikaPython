@@ -24,7 +24,8 @@ void _network_WLAN_connect(PikaObj* self, char* ssid, char* key) {
     pika_hal_WIFI_connect_config conncfg = {0};
     strcpy(conncfg.ssid, ssid);
     strcpy(conncfg.password, key);
-    _net_check_res(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_CONNECT, &conncfg));
+    _net_check_res(
+        pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_CONNECT, &conncfg));
     return;
 }
 
@@ -40,7 +41,8 @@ void _network_WLAN_connectWithBssid(PikaObj* self,
     strcpy(conncfg.ssid, ssid);
     strcpy(conncfg.password, key);
     strcpy(conncfg.bssid, bssid);
-    _net_check_res(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_CONNECT, &conncfg));
+    _net_check_res(
+        pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_CONNECT, &conncfg));
 }
 
 void _network_WLAN_disconnect(PikaObj* self) {
@@ -101,7 +103,6 @@ PikaObj* _network_WLAN_scan(PikaObj* self) {
     pika_platform_free(result);
     return scan_list;
 }
-
 
 void _network_WLAN_config(PikaObj* self, PikaDict* kwargs) {
     pika_dev* hal_net = _NET_OBJ_2DEV(self);

@@ -230,6 +230,21 @@ PIKA_WEAK char pika_platform_getchar(void) {
 #endif
 }
 
+PIKA_WEAK int pika_platform_repl_recv(uint8_t* buff,
+                                      size_t size,
+                                      uint32_t timeout) {
+    if (timeout != PIKA_TIMEOUT_FOREVER) {
+        pika_platform_printf(
+            "Error: timeout not support for default pika_platform_repl_recv, "
+            "please override it\n");
+        return -1;
+    }
+    for (size_t i = 0; i < size; i++) {
+        buff[i] = pika_platform_getchar();
+    }
+    return size;
+}
+
 /* file system support */
 PIKA_WEAK FILE* pika_platform_fopen(const char* filename, const char* modes) {
 #if defined(__linux) || defined(_WIN32)
@@ -715,10 +730,7 @@ PIKA_WEAK int pika_platform_thread_mutex_lock(pika_platform_thread_mutex_t* m) {
 #ifdef __linux
     return pthread_mutex_lock(&(m->mutex));
 #elif PIKA_FREERTOS_ENABLE
-    if (pdTRUE == xSemaphoreTake(m->mutex, portMAX_DELAY)){
-        return 0;
-    }
-    return -1;
+    return xSemaphoreTake(m->mutex, portMAX_DELAY);
 #elif PIKA_RTTHREAD_ENABLE
     return rt_mutex_take((m->mutex), RT_WAITING_FOREVER);
 #else
@@ -732,10 +744,7 @@ PIKA_WEAK int pika_platform_thread_mutex_trylock(
 #ifdef __linux
     return pthread_mutex_trylock(&(m->mutex));
 #elif PIKA_FREERTOS_ENABLE
-    if (pdTRUE == xSemaphoreTake(m->mutex, 0)){
-        return 0;
-    }
-    return -1;
+    return xSemaphoreTake(m->mutex, 0);
 #elif PIKA_RTTHREAD_ENABLE
     return rt_mutex_take((m->mutex), 0);
 #else

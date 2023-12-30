@@ -2079,8 +2079,14 @@ int shConfig_deinit(ShellConfig* self) {
     return 0;
 }
 
+char pika_repl_getchar(void) {
+    char c = 0;
+    pika_platform_repl_recv((uint8_t*)&c, 1, PIKA_TIMEOUT_FOREVER);
+    return c;
+}
+
 void pikaPythonShell(PikaObj* self) {
-    pikaScriptShell_withGetchar(self, pika_platform_getchar);
+    pikaScriptShell_withGetchar(self, pika_repl_getchar);
 }
 
 void pikaShellSetEcho(pika_bool enable_echo) {
