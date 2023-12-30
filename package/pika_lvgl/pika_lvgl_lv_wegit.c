@@ -11,20 +11,23 @@
 #include "pika_lvgl_arc.h"
 #include "pika_lvgl_bar.h"
 #include "pika_lvgl_btn.h"
+#include "pika_lvgl_cf_t.h"
+#include "pika_lvgl_chart.h"
+#include "pika_lvgl_chart_series_t.h"
 #include "pika_lvgl_checkbox.h"
 #include "pika_lvgl_dropdown.h"
 #include "pika_lvgl_img.h"
-#include "pika_lvgl_cf_t.h"
 #include "pika_lvgl_img_dsc_t.h"
 #include "pika_lvgl_label.h"
+#include "pika_lvgl_meter_indicator_t.h"
+#include "pika_lvgl_meter_scale_t.h"
 #include "pika_lvgl_lv_obj.h"
+#include "pika_lvgl_meter.h"
 #include "pika_lvgl_roller.h"
 #include "pika_lvgl_slider.h"
 #include "pika_lvgl_switch.h"
 #include "pika_lvgl_table.h"
 #include "pika_lvgl_textarea.h"
-#include "pika_lvgl_chart.h"
-#include "pika_lvgl_chart_series_t.h"
 
 void pika_lvgl_arc___init__(PikaObj* self, PikaObj* parent) {
     lv_obj_t* lv_parent = obj_getPtr(parent, "lv_obj");
@@ -368,13 +371,14 @@ void pika_lvgl_textarea_set_one_line(PikaObj* self, int en) {
     lv_textarea_set_one_line(lv_obj, en);
 }
 
-void pika_lvgl_cf_t___init__(PikaObj *self){
+void pika_lvgl_cf_t___init__(PikaObj* self) {
     obj_setInt(self, "RAW", LV_IMG_CF_RAW);
     obj_setInt(self, "RAW_ALPHA", LV_IMG_CF_RAW_ALPHA);
     obj_setInt(self, "RAW_CHROMA_KEYED", LV_IMG_CF_RAW_CHROMA_KEYED);
     obj_setInt(self, "TRUE_COLOR", LV_IMG_CF_TRUE_COLOR);
     obj_setInt(self, "TRUE_COLOR_ALPHA", LV_IMG_CF_TRUE_COLOR_ALPHA);
-    obj_setInt(self, "TRUE_COLOR_CHROMA_KEYED", LV_IMG_CF_TRUE_COLOR_CHROMA_KEYED);
+    obj_setInt(self, "TRUE_COLOR_CHROMA_KEYED",
+               LV_IMG_CF_TRUE_COLOR_CHROMA_KEYED);
     obj_setInt(self, "INDEXED_1BIT", LV_IMG_CF_INDEXED_1BIT);
     obj_setInt(self, "INDEXED_2BIT", LV_IMG_CF_INDEXED_2BIT);
     obj_setInt(self, "INDEXED_4BIT", LV_IMG_CF_INDEXED_4BIT);
@@ -497,12 +501,12 @@ void pika_lvgl_img_set_zoom(PikaObj* self, int zoom) {
     lv_img_set_zoom(lv_obj, zoom);
 }
 
-void pika_lvgl_chart___init__(PikaObj *self, PikaObj* parent){
+void pika_lvgl_chart___init__(PikaObj* self, PikaObj* parent) {
     lv_obj_t* lv_obj = lv_chart_create(obj_getPtr(parent, "lv_obj"));
-    obj_setPtr(self, "lv_obj", lv_obj); 
+    obj_setPtr(self, "lv_obj", lv_obj);
 }
 
-PikaObj* pika_lvgl_chart_add_series(PikaObj *self, PikaObj* color, int axis){
+PikaObj* pika_lvgl_chart_add_series(PikaObj* self, PikaObj* color, int axis) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_color_t* lv_color = obj_getPtr(color, "lv_color");
     lv_chart_series_t* ser = lv_chart_add_series(lv_obj, *lv_color, axis);
@@ -511,7 +515,7 @@ PikaObj* pika_lvgl_chart_add_series(PikaObj *self, PikaObj* color, int axis){
     return new_obj;
 }
 
-PikaObj* pika_lvgl_chart_get_series_next(PikaObj *self, PikaObj* ser){
+PikaObj* pika_lvgl_chart_get_series_next(PikaObj* self, PikaObj* ser) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_chart_series_t* series = obj_getPtr(ser, "lv_chart_series_t");
     lv_chart_series_t* next = lv_chart_get_series_next(lv_obj, series);
@@ -520,37 +524,37 @@ PikaObj* pika_lvgl_chart_get_series_next(PikaObj *self, PikaObj* ser){
     return new_obj;
 }
 
-void pika_lvgl_chart_set_ext_y_array(PikaObj *self, PikaObj* ser, Arg* array){
+void pika_lvgl_chart_set_ext_y_array(PikaObj* self, PikaObj* ser, Arg* array) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_chart_series_t* series = obj_getPtr(ser, "series");
-    if (arg_getType(array) == ARG_TYPE_INT){
+    if (arg_getType(array) == ARG_TYPE_INT) {
         lv_coord_t* arr = (lv_coord_t*)arg_getInt(array);
         lv_chart_set_ext_y_array(lv_obj, series, arr);
         pika_debug("set ext y array, arr: %p", arr);
     }
 }
 
-void pika_lvgl_chart_refresh(PikaObj *self){
+void pika_lvgl_chart_refresh(PikaObj* self) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_chart_refresh(lv_obj);
 }
 
-void pika_lvgl_chart_set_point_count(PikaObj *self, int cnt){
+void pika_lvgl_chart_set_point_count(PikaObj* self, int cnt) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_chart_set_point_count(lv_obj, cnt);
 }
 
-void pika_lvgl_chart_set_range(PikaObj *self, int axis, int min, int max){
+void pika_lvgl_chart_set_range(PikaObj* self, int axis, int min, int max) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_chart_set_range(lv_obj, axis, min, max);
 }
 
-void pika_lvgl_chart_set_zoom_x(PikaObj *self, int zoom_x){
+void pika_lvgl_chart_set_zoom_x(PikaObj* self, int zoom_x) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_chart_set_zoom_x(lv_obj, zoom_x);
 }
 
-void pika_lvgl_chart_set_zoom_y(PikaObj *self, int zoom_y){
+void pika_lvgl_chart_set_zoom_y(PikaObj* self, int zoom_y) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_chart_set_zoom_y(lv_obj, zoom_y);
 }
@@ -566,8 +570,8 @@ typedef struct {
 
 extern const lv_obj_class_t lv_tabview_class;
 
-lv_obj_t * lv_tabview_create(lv_obj_t * parent, lv_dir_t tab_pos, lv_coord_t tab_size);
-lv_obj_t * lv_tabview_add_tab(lv_obj_t * tv, const char * name);
+lv_obj_t * lv_tabview_create(lv_obj_t * parent, lv_dir_t tab_pos, lv_coord_t
+tab_size); lv_obj_t * lv_tabview_add_tab(lv_obj_t * tv, const char * name);
 lv_obj_t * lv_tabview_get_content(lv_obj_t * tv);
 lv_obj_t * lv_tabview_get_tab_btns(lv_obj_t * tv);
 void lv_tabview_set_act(lv_obj_t * obj, uint32_t id, lv_anim_enable_t anim_en);
@@ -582,12 +586,16 @@ class tabview(lv_obj):
     def get_tab_act(self) -> int: ...
 */
 
-void pika_lvgl_tabview___init__(PikaObj *self, PikaObj* parent, int tab_pos, int tab_size){
-    lv_obj_t* lv_obj = lv_tabview_create(obj_getPtr(parent, "lv_obj"), tab_pos, tab_size);
-    obj_setPtr(self, "lv_obj", lv_obj); 
+void pika_lvgl_tabview___init__(PikaObj* self,
+                                PikaObj* parent,
+                                int tab_pos,
+                                int tab_size) {
+    lv_obj_t* lv_obj =
+        lv_tabview_create(obj_getPtr(parent, "lv_obj"), tab_pos, tab_size);
+    obj_setPtr(self, "lv_obj", lv_obj);
 }
 
-PikaObj* pika_lvgl_tabview_add_tab(PikaObj *self, char* name){
+PikaObj* pika_lvgl_tabview_add_tab(PikaObj* self, char* name) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_obj_t* tab = lv_tabview_add_tab(lv_obj, name);
     PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_obj);
@@ -595,7 +603,7 @@ PikaObj* pika_lvgl_tabview_add_tab(PikaObj *self, char* name){
     return new_obj;
 }
 
-PikaObj* pika_lvgl_tabview_get_content(PikaObj *self){
+PikaObj* pika_lvgl_tabview_get_content(PikaObj* self) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_obj_t* content = lv_tabview_get_content(lv_obj);
     PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_obj);
@@ -603,7 +611,7 @@ PikaObj* pika_lvgl_tabview_get_content(PikaObj *self){
     return new_obj;
 }
 
-PikaObj* pika_lvgl_tabview_get_tab_btns(PikaObj *self){
+PikaObj* pika_lvgl_tabview_get_tab_btns(PikaObj* self) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_obj_t* btns = lv_tabview_get_tab_btns(lv_obj);
     PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_obj);
@@ -611,14 +619,231 @@ PikaObj* pika_lvgl_tabview_get_tab_btns(PikaObj *self){
     return new_obj;
 }
 
-void pika_lvgl_tabview_set_act(PikaObj *self, int id, int anim_en){
+void pika_lvgl_tabview_set_act(PikaObj* self, int id, int anim_en) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_tabview_set_act(lv_obj, id, anim_en);
 }
 
-int pika_lvgl_tabview_get_tab_act(PikaObj *self){
+int pika_lvgl_tabview_get_tab_act(PikaObj* self) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     return lv_tabview_get_tab_act(lv_obj);
+}
+
+/*
+class meter_indicator_t:
+    def __init__(self): ...
+
+
+class meter_scale_t:
+    def __init__(self): ...
+*/
+
+void pika_lvgl_meter_indicator_t___init__(PikaObj* self) {
+    lv_meter_indicator_t indicator_t = {0};
+    obj_setStruct(self, "indicator_t", indicator_t);
+    obj_setPtr(self, "indicator", obj_getStruct(self, "indicator_t"));
+}
+
+void pika_lvgl_meter_scale_t___init__(PikaObj* self) {
+    lv_meter_scale_t scale_t = {0};
+    obj_setStruct(self, "scale_t", scale_t);
+    obj_setPtr(self, "scale", obj_getStruct(self, "scale_t"));
+}
+
+/*
+class meter(lv_obj):
+    """
+    lv_obj_t * lv_meter_create(lv_obj_t * parent);
+    meter_scale_t * lv_meter_add_scale(lv_obj_t * obj);
+    void lv_meter_set_scale_ticks(lv_obj_t * obj, meter_scale_t * scale,
+uint16_t cnt, uint16_t width, uint16_t len, lv_color_t color); void
+lv_meter_set_scale_major_ticks(lv_obj_t * obj, meter_scale_t * scale,
+uint16_t nth, uint16_t width, uint16_t len, lv_color_t color, int16_t
+label_gap); void lv_meter_set_scale_range(lv_obj_t * obj, meter_scale_t *
+scale, int32_t min, int32_t max, uint32_t angle_range, uint32_t rotation);
+    meter_indicator_t * lv_meter_add_needle_line(lv_obj_t * obj,
+meter_scale_t * scale, uint16_t width, lv_color_t color, int16_t r_mod);
+
+    meter_indicator_t * lv_meter_add_needle_img(lv_obj_t * obj,
+meter_scale_t * scale, const void * src, lv_coord_t pivot_x, lv_coord_t
+pivot_y); meter_indicator_t * lv_meter_add_arc(lv_obj_t * obj,
+meter_scale_t * scale, uint16_t width, lv_color_t color, int16_t r_mod);
+    meter_indicator_t * lv_meter_add_scale_lines(lv_obj_t * obj,
+meter_scale_t * scale, lv_color_t color_start, lv_color_t color_end, bool
+local, int16_t width_mod); void lv_meter_set_indicator_value(lv_obj_t * obj,
+meter_indicator_t * indic, int32_t value); void
+lv_meter_set_indicator_start_value(lv_obj_t * obj, meter_indicator_t * indic,
+int32_t value); void lv_meter_set_indicator_end_value(lv_obj_t * obj,
+meter_indicator_t * indic, int32_t value);
+    """
+
+    def __init__(self, parent: lv_obj): ...
+    def add_scale(self) -> meter_scale_t: ...
+
+    def set_scale_ticks(self, scale: meter_scale_t, cnt: int, width: int,
+                        len: int, color: lv_color_t): ...
+
+    def set_scale_major_ticks(self, scale: meter_scale_t, nth: int, width:
+int, len: int, color: lv_color_t, label_gap: int): ...
+
+    def set_scale_range(self, scale: meter_scale_t, min: int, max: int,
+                        angle_range: int, rotation: int): ...
+
+    def add_needle_line(self, scale: meter_scale_t, width: int,
+                        color: lv_color_t, r_mod: int) -> meter_indicator_t:
+...
+
+    def add_needle_img(self, scale: meter_scale_t, src: any,
+                       pivot_x: int, pivot_y: int) -> meter_indicator_t: ...
+
+    def add_arc(self, scale: meter_scale_t, width: int, color: lv_color_t,
+                r_mod: int) -> meter_indicator_t: ...
+    def add_scale_lines(self, scale: meter_scale_t, color_start: lv_color_t,
+                        color_end: lv_color_t, local: int, width_mod: int) ->
+meter_indicator_t: ...
+
+    def set_indicator_value(self, indic: meter_indicator_t, value: int): ...
+
+    def set_indicator_start_value(
+        self, indic: meter_indicator_t, value: int): ...
+    def set_indicator_end_value(
+        self, indic: meter_indicator_t, value: int): ...
+*/
+
+void pika_lvgl_meter___init__(PikaObj* self, PikaObj* parent) {
+    lv_obj_t* lv_obj = lv_meter_create(obj_getPtr(parent, "lv_obj"));
+    obj_setPtr(self, "lv_obj", lv_obj);
+}
+
+PikaObj* pika_lvgl_meter_add_scale(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_meter_scale_t* scale = lv_meter_add_scale(lv_obj);
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_meter_scale_t);
+    obj_setPtr(new_obj, "scale", scale);
+    return new_obj;
+}
+
+void pika_lvgl_meter_set_scale_ticks(PikaObj* self,
+                                     PikaObj* scale,
+                                     int cnt,
+                                     int width,
+                                     int len,
+                                     PikaObj* color) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_meter_scale_t* lv_scale = obj_getPtr(scale, "scale");
+    lv_color_t* lv_color = obj_getPtr(color, "lv_color");
+    lv_meter_set_scale_ticks(lv_obj, lv_scale, cnt, width, len, *lv_color);
+}
+
+void pika_lvgl_meter_set_scale_major_ticks(PikaObj* self,
+                                           PikaObj* scale,
+                                           int nth,
+                                           int width,
+                                           int len,
+                                           PikaObj* color,
+                                           int label_gap) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_meter_scale_t* lv_scale = obj_getPtr(scale, "scale");
+    lv_color_t* lv_color = obj_getPtr(color, "lv_color");
+    lv_meter_set_scale_major_ticks(lv_obj, lv_scale, nth, width, len, *lv_color,
+                                   label_gap);
+}
+
+void pika_lvgl_meter_set_scale_range(PikaObj* self,
+                                     PikaObj* scale,
+                                     int min,
+                                     int max,
+                                     int angle_range,
+                                     int rotation) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_meter_scale_t* lv_scale = obj_getPtr(scale, "scale");
+    lv_meter_set_scale_range(lv_obj, lv_scale, min, max, angle_range, rotation);
+}
+
+PikaObj* pika_lvgl_meter_add_needle_line(PikaObj* self,
+                                         PikaObj* scale,
+                                         int width,
+                                         PikaObj* color,
+                                         int r_mod) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_meter_scale_t* lv_scale = obj_getPtr(scale, "scale");
+    lv_color_t* lv_color = obj_getPtr(color, "lv_color");
+    lv_meter_indicator_t* indic =
+        lv_meter_add_needle_line(lv_obj, lv_scale, width, *lv_color, r_mod);
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_meter_indicator_t);
+    obj_setPtr(new_obj, "indicator", indic);
+    return new_obj;
+}
+
+PikaObj* pika_lvgl_meter_add_needle_img(PikaObj* self,
+                                        PikaObj* scale,
+                                        PikaObj* src,
+                                        int pivot_x,
+                                        int pivot_y) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_meter_scale_t* lv_scale = obj_getPtr(scale, "scale");
+    lv_img_dsc_t* img_dsc = obj_getStruct(src, "img_dsc");
+    lv_meter_indicator_t* indic =
+        lv_meter_add_needle_img(lv_obj, lv_scale, img_dsc, pivot_x, pivot_y);
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_meter_indicator_t);
+    obj_setPtr(new_obj, "indicator", indic);
+    return new_obj;
+}
+
+PikaObj* pika_lvgl_meter_add_arc(PikaObj* self,
+                                 PikaObj* scale,
+                                 int width,
+                                 PikaObj* color,
+                                 int r_mod) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_meter_scale_t* lv_scale = obj_getPtr(scale, "scale");
+    lv_color_t* lv_color = obj_getPtr(color, "lv_color");
+    lv_meter_indicator_t* indic =
+        lv_meter_add_arc(lv_obj, lv_scale, width, *lv_color, r_mod);
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_meter_indicator_t);
+    obj_setPtr(new_obj, "indicator", indic);
+    return new_obj;
+}
+
+PikaObj* pika_lvgl_meter_add_scale_lines(PikaObj* self,
+                                         PikaObj* scale,
+                                         PikaObj* color_start,
+                                         PikaObj* color_end,
+                                         int local,
+                                         int width_mod) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_meter_scale_t* lv_scale = obj_getPtr(scale, "scale");
+    lv_color_t* lv_color_start = obj_getPtr(color_start, "lv_color");
+    lv_color_t* lv_color_end = obj_getPtr(color_end, "lv_color");
+    lv_meter_indicator_t* indic = lv_meter_add_scale_lines(
+        lv_obj, lv_scale, *lv_color_start, *lv_color_end, local, width_mod);
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_meter_indicator_t);
+    obj_setPtr(new_obj, "indicator", indic);
+    return new_obj;
+}
+
+void pika_lvgl_meter_set_indicator_value(PikaObj* self,
+                                         PikaObj* indic,
+                                         int value) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_meter_indicator_t* lv_indic = obj_getPtr(indic, "indicator");
+    lv_meter_set_indicator_value(lv_obj, lv_indic, value);
+}
+
+void pika_lvgl_meter_set_indicator_start_value(PikaObj* self,
+                                               PikaObj* indic,
+                                               int value) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_meter_indicator_t* lv_indic = obj_getPtr(indic, "indicator");
+    lv_meter_set_indicator_start_value(lv_obj, lv_indic, value);
+}
+
+void pika_lvgl_meter_set_indicator_end_value(PikaObj* self,
+                                             PikaObj* indic,
+                                             int value) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_meter_indicator_t* lv_indic = obj_getPtr(indic, "indicator");
+    lv_meter_set_indicator_end_value(lv_obj, lv_indic, value);
 }
 
 #endif

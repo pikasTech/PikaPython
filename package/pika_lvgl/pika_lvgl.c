@@ -1,4 +1,4 @@
-#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+﻿#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
 #include "lvgl.h"
 #else
 #include "../../lvgl.h"
@@ -19,12 +19,12 @@
 #include "pika_lvgl_STATE.h"
 #include "pika_lvgl_TEXT_DECOR.h"
 #include "pika_lvgl_arc.h"
+#include "pika_lvgl_common.h"
 #include "pika_lvgl_flag_t.h"
 #include "pika_lvgl_indev_t.h"
 #include "pika_lvgl_lv_color_t.h"
 #include "pika_lvgl_lv_obj.h"
 #include "pika_lvgl_lv_timer_t.h"
-#include "pika_lvgl_common.h"
 
 PikaObj* pika_lv_event_listener_g;
 Args* pika_lv_id_register_g;
@@ -386,6 +386,53 @@ void pika_lvgl_DIR___init__(PikaObj* self) {
     obj_setInt(self, "HOR", LV_DIR_HOR);
     obj_setInt(self, "VER", LV_DIR_VER);
     obj_setInt(self, "ALL", LV_DIR_ALL);
+}
+
+/*
+enum {
+    LV_SCROLLBAR_MODE_OFF,
+    LV_SCROLLBAR_MODE_ON,
+    LV_SCROLLBAR_MODE_ACTIVE,
+    LV_SCROLLBAR_MODE_AUTO,
+};
+typedef uint8_t lv_scrollbar_mode_t;
+
+class SCROLLBAR_MODE:
+    OFF: int
+    ON: int
+    ACTIVE: int
+    AUTO: int
+    def __init__(self): ...
+*/
+
+void pika_lvgl_SCROLLBAR_MODE___init__(PikaObj* self) {
+    obj_setInt(self, "OFF", LV_SCROLLBAR_MODE_OFF);
+    obj_setInt(self, "ON", LV_SCROLLBAR_MODE_ON);
+    obj_setInt(self, "ACTIVE", LV_SCROLLBAR_MODE_ACTIVE);
+    obj_setInt(self, "AUTO", LV_SCROLLBAR_MODE_AUTO);
+}
+
+/*
+def color_black() -> lv_color_t: ...
+def color_white() -> lv_color_t: ...
+*/
+
+PikaObj* pika_lvgl_color_black(PikaObj* self) {
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_color_t);
+    lv_color_t lv_color = lv_color_black();
+    args_setStruct(new_obj->list, "lv_color_struct", lv_color);
+    lv_color_t* plv_color = args_getStruct(new_obj->list, "lv_color_struct");
+    obj_setPtr(new_obj, "lv_color", plv_color);
+    return new_obj;
+}
+
+PikaObj* pika_lvgl_color_white(PikaObj* self) {
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_color_t);
+    lv_color_t lv_color = lv_color_white();
+    args_setStruct(new_obj->list, "lv_color_struct", lv_color);
+    lv_color_t* plv_color = args_getStruct(new_obj->list, "lv_color_struct");
+    obj_setPtr(new_obj, "lv_color", plv_color);
+    return new_obj;
 }
 
 #endif
