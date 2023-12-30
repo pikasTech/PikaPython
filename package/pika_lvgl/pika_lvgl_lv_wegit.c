@@ -555,5 +555,70 @@ void pika_lvgl_chart_set_zoom_y(PikaObj *self, int zoom_y){
     lv_chart_set_zoom_y(lv_obj, zoom_y);
 }
 
+/*
+typedef struct {
+    lv_obj_t obj;
+    char ** map;
+    uint16_t tab_cnt;
+    uint16_t tab_cur;
+    lv_dir_t tab_pos;
+} lv_tabview_t;
+
+extern const lv_obj_class_t lv_tabview_class;
+
+lv_obj_t * lv_tabview_create(lv_obj_t * parent, lv_dir_t tab_pos, lv_coord_t tab_size);
+lv_obj_t * lv_tabview_add_tab(lv_obj_t * tv, const char * name);
+lv_obj_t * lv_tabview_get_content(lv_obj_t * tv);
+lv_obj_t * lv_tabview_get_tab_btns(lv_obj_t * tv);
+void lv_tabview_set_act(lv_obj_t * obj, uint32_t id, lv_anim_enable_t anim_en);
+uint16_t lv_tabview_get_tab_act(lv_obj_t * tv);
+
+class tabview(lv_obj):
+    def __init__(self, parent: lv_obj, tab_pos: int, tab_size: int): ...
+    def add_tab(self, name: str) -> lv_obj: ...
+    def get_content(self) -> lv_obj: ...
+    def get_tab_btns(self) -> lv_obj: ...
+    def set_act(self, id: int, anim_en: int): ...
+    def get_tab_act(self) -> int: ...
+*/
+
+void pika_lvgl_tabview___init__(PikaObj *self, PikaObj* parent, int tab_pos, int tab_size){
+    lv_obj_t* lv_obj = lv_tabview_create(obj_getPtr(parent, "lv_obj"), tab_pos, tab_size);
+    obj_setPtr(self, "lv_obj", lv_obj); 
+}
+
+PikaObj* pika_lvgl_tabview_add_tab(PikaObj *self, char* name){
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* tab = lv_tabview_add_tab(lv_obj, name);
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_obj);
+    obj_setPtr(new_obj, "lv_obj", tab);
+    return new_obj;
+}
+
+PikaObj* pika_lvgl_tabview_get_content(PikaObj *self){
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* content = lv_tabview_get_content(lv_obj);
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_obj);
+    obj_setPtr(new_obj, "lv_obj", content);
+    return new_obj;
+}
+
+PikaObj* pika_lvgl_tabview_get_tab_btns(PikaObj *self){
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* btns = lv_tabview_get_tab_btns(lv_obj);
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_obj);
+    obj_setPtr(new_obj, "lv_obj", btns);
+    return new_obj;
+}
+
+void pika_lvgl_tabview_set_act(PikaObj *self, int id, int anim_en){
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_tabview_set_act(lv_obj, id, anim_en);
+}
+
+int pika_lvgl_tabview_get_tab_act(PikaObj *self){
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_tabview_get_tab_act(lv_obj);
+}
 
 #endif

@@ -24,6 +24,7 @@
 #include "pika_lvgl_lv_color_t.h"
 #include "pika_lvgl_lv_obj.h"
 #include "pika_lvgl_lv_timer_t.h"
+#include "pika_lvgl_common.h"
 
 PikaObj* pika_lv_event_listener_g;
 Args* pika_lv_id_register_g;
@@ -53,17 +54,25 @@ void pika_lvgl_STATE___init__(PikaObj* self) {
 }
 
 void pika_lvgl_lock(PikaObj* self) {
+#if PIKA_LVGL_THREAD_LOCK_ENABLE
     if (!g_lvgl_inited) {
         return;
     }
     pika_platform_thread_mutex_lock(&pika_lv_global_mutex_g);
+#else
+    return;
+#endif
 }
 
 void pika_lvgl_unlock(PikaObj* self) {
+#if PIKA_LVGL_THREAD_LOCK_ENABLE
     if (!g_lvgl_inited) {
         return;
     }
     pika_platform_thread_mutex_unlock(&pika_lv_global_mutex_g);
+#else
+    return;
+#endif
 }
 
 void pika_lvgl_flag_t___init__(PikaObj* self) {
@@ -227,8 +236,10 @@ void pika_lvgl___init__(PikaObj* self) {
     pika_lv_event_listener_g = obj_getObj(self, "lv_event_listener");
     pika_lv_id_register_g = New_args(NULL);
     if (!g_lvgl_inited) {
+#if PIKA_LVGL_THREAD_LOCK_ENABLE
         pika_debug("Init pika_lv_global_mutex_g");
         pika_platform_thread_mutex_init(&pika_lv_global_mutex_g);
+#endif
         pika_lvgl_lock(NULL);
         lv_png_init();
         pika_lvgl_unlock(NULL);
@@ -259,6 +270,15 @@ void pika_lvgl_obj___init__(PikaObj* self, PikaTuple* parent) {
 PikaObj* pika_lvgl_palette_lighten(PikaObj* self, int p, int lvl) {
     PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_color_t);
     lv_color_t lv_color = lv_palette_lighten(p, lvl);
+    args_setStruct(new_obj->list, "lv_color_struct", lv_color);
+    lv_color_t* plv_color = args_getStruct(new_obj->list, "lv_color_struct");
+    obj_setPtr(new_obj, "lv_color", plv_color);
+    return new_obj;
+}
+
+PikaObj* pika_lvgl_palette_darken(PikaObj* self, int p, int lvl) {
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_color_t);
+    lv_color_t lv_color = lv_palette_darken(p, lvl);
     args_setStruct(new_obj->list, "lv_color_struct", lv_color);
     lv_color_t* plv_color = args_getStruct(new_obj->list, "lv_color_struct");
     obj_setPtr(new_obj, "lv_color", plv_color);
@@ -327,6 +347,45 @@ void pika_lvgl_SIZE___init__(PikaObj* self) {
 
 int pika_lvgl_pct(PikaObj* self, int x) {
     return LV_PCT(x);
+}
+
+/*
+"""
+enum {
+    LV_DIR_NONE     = 0x00,
+    LV_DIR_LEFT     = (1 << 0),
+    LV_DIR_RIGHT    = (1 << 1),
+    LV_DIR_TOP      = (1 << 2),
+    LV_DIR_BOTTOM   = (1 << 3),
+    LV_DIR_HOR      = LV_DIR_LEFT | LV_DIR_RIGHT,
+    LV_DIR_VER      = LV_DIR_TOP | LV_DIR_BOTTOM,
+    LV_DIR_ALL      = LV_DIR_HOR | LV_DIR_VER,
+};
+
+typedef uint8_t lv_dir_t;
+"""
+
+class DIR:
+    NONE: int
+    LEFT: int
+    RIGHT: int
+    TOP: int
+    BOTTOM: int
+    HOR: int
+    VER: int
+    ALL: int
+    def __init__(self): ...
+*/
+
+void pika_lvgl_DIR___init__(PikaObj* self) {
+    obj_setInt(self, "NONE", LV_DIR_NONE);
+    obj_setInt(self, "LEFT", LV_DIR_LEFT);
+    obj_setInt(self, "RIGHT", LV_DIR_RIGHT);
+    obj_setInt(self, "TOP", LV_DIR_TOP);
+    obj_setInt(self, "BOTTOM", LV_DIR_BOTTOM);
+    obj_setInt(self, "HOR", LV_DIR_HOR);
+    obj_setInt(self, "VER", LV_DIR_VER);
+    obj_setInt(self, "ALL", LV_DIR_ALL);
 }
 
 #endif
