@@ -19,7 +19,7 @@
                 // "--gtest_filter=vm.run_file"
                 // "--gtest_filter=stddata.encode_decode"
                 // "--gtest_filter=packtool.packfiles_txt"
-                "--gtest_filter=parser.rshift_equ"
+                "--gtest_filter=cmodule.class_attr_obj"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

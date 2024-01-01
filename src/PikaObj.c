@@ -868,40 +868,42 @@ static PikaObj* _obj_getObjDirect(PikaObj* self,
         return NULL;
     }
     /* finded object, check type*/
-    Arg* arg_obj = args_getArg(self->list, name);
+    Arg* aObj = args_getArg(self->list, name);
     ArgType type = ARG_TYPE_NONE;
-    if (NULL == arg_obj) {
-        arg_obj = _obj_getPropArg(self, name);
+    if (NULL == aObj) {
+        aObj = _obj_getPropArg(self, name);
     }
-    if (NULL == arg_obj) {
+    if (NULL == aObj) {
         return NULL;
     }
-    type = arg_getType(arg_obj);
+    type = arg_getType(aObj);
     /* found meta Object */
     if (type == ARG_TYPE_OBJECT_META) {
         return _obj_initMetaObj(self, name);
     }
     /* found Objcet */
     if (argType_isObject(type)) {
-        return arg_getPtr(arg_obj);
+        return arg_getPtr(aObj);
     }
 #if !PIKA_NANO_ENABLE
     /* found class */
     if (type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
         type == ARG_TYPE_METHOD_CONSTRUCTOR) {
         *pIsTemp = pika_true;
-        PikaObj* method_args_obj = New_TinyObj(NULL);
-        Arg* cls_obj_arg = obj_runMethodArg(self, method_args_obj, arg_obj);
-        obj_deinit(method_args_obj);
+        PikaObj* oMethodArgs = New_TinyObj(NULL);
+        Arg* aClsObj = obj_runMethodArg(self, oMethodArgs, aObj);
+        obj_deinit(oMethodArgs);
+        Args* args = New_args(NULL);
         if (type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
-            obj_runNativeMethod(arg_getPtr(cls_obj_arg), "__init__", NULL);
+            obj_runNativeMethod(arg_getPtr(aClsObj), "__init__", args);
         }
-        PikaObj* res = arg_getPtr(cls_obj_arg);
-        arg_deinit(cls_obj_arg);
+        PikaObj* res = arg_getPtr(aClsObj);
+        arg_deinit(aClsObj);
+        args_deinit(args);
         return res;
     }
 #endif
-    return _arg_to_obj(arg_obj, pIsTemp);
+    return _arg_to_obj(aObj, pIsTemp);
 }
 
 static PikaObj* _obj_getObjWithKeepDeepth(PikaObj* self,
@@ -917,20 +919,32 @@ static PikaObj* _obj_getObjWithKeepDeepth(PikaObj* self,
     pika_assert(strGetSize(objPath) < PIKA_PATH_BUFF_SIZE);
     strcpy(objPath_buff, objPath);
     int32_t token_num = strGetTokenNum(objPath, '.');
-    PikaObj* obj = self;
+    PikaObj* objThis = self;
+    PikaObj* objNext = NULL;
+    pika_bool bThisIsTemp = pika_false;
     for (int32_t i = 0; i < token_num - keepDeepth; i++) {
         char* token = strPopFirstToken(&objPath_ptr, '.');
-        obj = _obj_getObjDirect(obj, token, pIsTemp);
-        if (obj == NULL) {
+        objNext = _obj_getObjDirect(objThis, token, pIsTemp);
+        if (objNext == NULL) {
+            objThis = NULL;
             goto __exit;
         }
+        if (bThisIsTemp) {
+            if (*pIsTemp == pika_false) {
+                obj_refcntInc(objNext);
+                *pIsTemp = pika_true;
+            }
+            obj_deinit(objThis);
+        }
+        objThis = objNext;
+        bThisIsTemp = *pIsTemp;
     }
     goto __exit;
 __exit:
-    if (NULL != obj) {
-        pika_assert(obj_checkAlive(obj));
+    if (NULL != objThis) {
+        pika_assert(obj_checkAlive(objThis));
     }
-    return obj;
+    return objThis;
 }
 
 PikaObj* obj_getObj(PikaObj* self, char* objPath) {

@@ -34,7 +34,7 @@
 #endif
 
 #if defined(_WIN32)
-#include <dirent.h>
+#include <direct.h>
 #endif
 
 #if defined(__linux) || PIKA_LINUX_COMPATIBLE

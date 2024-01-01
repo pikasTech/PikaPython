@@ -1,4 +1,5 @@
 #include "GTestTask.h"
+#include "GTestTask_ATTR_TYPE.h"
 #include "GTestTask_ProxyTest.h"
 #include "GTestTask_Task.h"
 #include "PikaStdData_Dict.h"
@@ -66,4 +67,26 @@ void GTestTask_test_raise(PikaObj* self) {
 
 void GTestTask__test___init__(PikaObj* self) {
     obj_setStr(self, "a", NULL);
+}
+
+/*
+class ATTR_TYPE:
+    b: int
+    def __init__(self): ...
+
+
+class ClassAttr:
+    A: int
+    B: ATTR_TYPE
+    def __init__(self, a: int): ...
+*/
+
+void GTestTask_ATTR_TYPE___init__(PikaObj* self) {
+    obj_setInt(self, "b", 0);
+}
+
+void GTestTask_ClassAttr___init__(PikaObj* self, int a) {
+    obj_setInt(self, "A", a);
+    obj_newDirectObj(self, "B", New_GTestTask_ATTR_TYPE);
+    obj_runMethod0(obj_getObj(self, "B"), "__init__");
 }
