@@ -81,10 +81,10 @@ int compare(const _tm* t1, const _tm* t2) {
     for (int i = 0; i < size; i++) {
         // printf("t1=%d,t2=%d\n",it1[i],it2[i]);
         if (it1[i] != it2[i]) {
-            printf("mytime:  ");
-            time_asctime(t1);
-            printf("ctime:  ");
-            time_asctime(t2);
+            // printf("mytime:  ");
+            // time_asctime(t1);
+            // printf("ctime:  ");
+            // time_asctime(t2);
             return 1;
         }
     }
