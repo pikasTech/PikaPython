@@ -435,4 +435,98 @@ PikaObj* pika_lvgl_color_white(PikaObj* self) {
     return new_obj;
 }
 
+/*
+class PART:
+    MAIN: int
+    SCROLLBAR: int
+    INDICATOR: int
+    KNOB: int
+    SELECTED: int
+    ITEMS: int
+    TICKS: int
+    CURSOR: int
+    CUSTOM_FIRST: int
+    ANY: int
+    def __init__(self): ...
+*/
+
+void pika_lvgl_PART___init__(PikaObj* self) {
+    obj_setInt(self, "MAIN", LV_PART_MAIN);
+    obj_setInt(self, "SCROLLBAR", LV_PART_SCROLLBAR);
+    obj_setInt(self, "INDICATOR", LV_PART_INDICATOR);
+    obj_setInt(self, "KNOB", LV_PART_KNOB);
+    obj_setInt(self, "SELECTED", LV_PART_SELECTED);
+    obj_setInt(self, "ITEMS", LV_PART_ITEMS);
+    obj_setInt(self, "TICKS", LV_PART_TICKS);
+    obj_setInt(self, "CURSOR", LV_PART_CURSOR);
+    obj_setInt(self, "CUSTOM_FIRST", LV_PART_CUSTOM_FIRST);
+    obj_setInt(self, "ANY", LV_PART_ANY);
+}
+
+/*
+class CHART_TYPE:
+    NONE: int
+    LINE: int
+    BAR: int
+    SCATTER: int
+    def __init__(self): ...
+*/
+
+void pika_lvgl_CHART_TYPE___init__(PikaObj* self) {
+    obj_setInt(self, "NONE", LV_CHART_TYPE_NONE);
+    obj_setInt(self, "LINE", LV_CHART_TYPE_LINE);
+    obj_setInt(self, "BAR", LV_CHART_TYPE_BAR);
+    obj_setInt(self, "SCATTER", LV_CHART_TYPE_SCATTER);
+}
+
+/*
+class CHART_AXIS:
+    PRIMARY_Y: int
+    SECONDARY_Y: int
+    PRIMARY_X: int
+    SECONDARY_X: int
+    def __init__(self): ...
+*/
+
+void pika_lvgl_CHART_AXIS___init__(PikaObj* self) {
+    obj_setInt(self, "PRIMARY_Y", LV_CHART_AXIS_PRIMARY_Y);
+    obj_setInt(self, "SECONDARY_Y", LV_CHART_AXIS_SECONDARY_Y);
+    obj_setInt(self, "PRIMARY_X", LV_CHART_AXIS_PRIMARY_X);
+    obj_setInt(self, "SECONDARY_X", LV_CHART_AXIS_SECONDARY_X);
+}
+
+/*
+class CHART_UPDATE_MODE:
+    SHIFT: int
+    CIRCULAR: int
+    def __init__(self): ...
+*/
+
+void pika_lvgl_CHART_UPDATE_MODE___init__(PikaObj* self) {
+    obj_setInt(self, "SHIFT", LV_CHART_UPDATE_MODE_SHIFT);
+    obj_setInt(self, "CIRCULAR", LV_CHART_UPDATE_MODE_CIRCULAR);
+}
+
+/*
+class CHART_DRAW_PART:
+    DIV_LINE_INIT: int
+    DIV_LINE_HOR: int
+    DIV_LINE_VER: int
+    LINE_AND_POINT: int
+    BAR: int
+    CURSOR: int
+    TICK_LABEL: int
+    def __init__(self): ...
+*/
+
+void pika_lvgl_CHART_DRAW_PART___init__(PikaObj* self) {
+    obj_setInt(self, "DIV_LINE_INIT", LV_CHART_DRAW_PART_DIV_LINE_INIT);
+    obj_setInt(self, "DIV_LINE_HOR", LV_CHART_DRAW_PART_DIV_LINE_HOR);
+    obj_setInt(self, "DIV_LINE_VER", LV_CHART_DRAW_PART_DIV_LINE_VER);
+    obj_setInt(self, "LINE_AND_POINT", LV_CHART_DRAW_PART_LINE_AND_POINT);
+    obj_setInt(self, "BAR", LV_CHART_DRAW_PART_BAR);
+    obj_setInt(self, "CURSOR", LV_CHART_DRAW_PART_CURSOR);
+    obj_setInt(self, "TICK_LABEL", LV_CHART_DRAW_PART_TICK_LABEL);
+}
+
 #endif

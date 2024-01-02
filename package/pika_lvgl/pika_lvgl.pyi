@@ -641,10 +641,53 @@ class lv_obj:
     # def get_scroll_end(self) -> point_t: ...
     # def set_scroll_propagation(self, en: int): ...
     # def get_scroll_propagation(self) -> int: ...
+    def remove_style_all(self): ...
+    def move_foreground(self): ...
+    def move_background(self): ...
+
+
+"""
+void lv_indev_read_timer_cb(lv_timer_t * timer);
+void lv_indev_enable(lv_indev_t * indev, bool en);
+lv_indev_t * lv_indev_get_act(void);
+lv_indev_type_t lv_indev_get_type(const lv_indev_t * indev);
+void lv_indev_reset(lv_indev_t * indev, lv_obj_t * obj);
+void lv_indev_reset_long_press(lv_indev_t * indev);
+void lv_indev_set_cursor(lv_indev_t * indev, lv_obj_t * cur_obj);
+void lv_indev_set_group(lv_indev_t * indev, lv_group_t * group);
+void lv_indev_set_button_points(lv_indev_t * indev, const lv_point_t points[]);
+void lv_indev_get_point(const lv_indev_t * indev, lv_point_t * point);
+lv_dir_t lv_indev_get_gesture_dir(const lv_indev_t * indev);
+uint32_t lv_indev_get_key(const lv_indev_t * indev);
+lv_dir_t lv_indev_get_scroll_dir(const lv_indev_t * indev);
+lv_obj_t * lv_indev_get_scroll_obj(const lv_indev_t * indev);
+void lv_indev_get_vect(const lv_indev_t * indev, lv_point_t * point);
+void lv_indev_wait_release(lv_indev_t * indev);
+lv_obj_t * lv_indev_get_obj_act(void);
+lv_timer_t * lv_indev_get_read_timer(lv_disp_t * indev);
+lv_obj_t * lv_indev_search_obj(lv_obj_t * obj, lv_point_t * point);
+"""
 
 
 class indev_t:
+    def __init__(self): ...
+    def enable(self, en: int): ...
+    def get_type(self) -> int: ...
+    def reset(self, obj: lv_obj): ...
+    def reset_long_press(self): ...
+    def set_cursor(self, cur_obj: lv_obj): ...
+    # def set_group(self, group: lv_group): ...
+    def set_button_points(self, points: point_t): ...
+    def get_point(self)->point_t: ...
+    def get_gesture_dir(self) -> int: ...
+    def get_key(self) -> int: ...
+    def get_scroll_dir(self) -> int: ...
+    def get_scroll_obj(self) -> lv_obj: ...
     def get_vect(self, point: point_t): ...
+    def wait_release(self): ...
+    def get_obj_act(self) -> lv_obj: ...
+    # def get_read_timer(self) -> lv_timer: ...
+    def search_obj(self, obj: lv_obj, point: point_t) -> lv_obj: ...
 
 
 class FLEX_ALIGN:
@@ -657,6 +700,20 @@ class FLEX_ALIGN:
     def __init__(self): ...
 
 
+class PART:
+    MAIN: int
+    SCROLLBAR: int
+    INDICATOR: int
+    KNOB: int
+    SELECTED: int
+    ITEMS: int
+    TICKS: int
+    CURSOR: int
+    CUSTOM_FIRST: int
+    ANY: int
+    def __init__(self): ...
+
+
 class obj(lv_obj):
     FLAG: flag_t
     def __init__(self, *parent): ...
@@ -666,6 +723,8 @@ def indev_get_act() -> indev_t: ...
 
 
 class point_t:
+    x: int
+    y: int
     def __init__(self): ...
 
 
@@ -853,16 +912,184 @@ class chart_series_t:
     ...
 
 
+"""
+enum {
+    LV_CHART_TYPE_NONE,     /**< Don't draw the series*/
+    LV_CHART_TYPE_LINE,     /**< Connect the points with lines*/
+    LV_CHART_TYPE_BAR,      /**< Draw columns*/
+    LV_CHART_TYPE_SCATTER,  /**< Draw points and lines in 2D (x,y coordinates)*/
+};
+typedef uint8_t lv_chart_type_t;
+"""
+
+
+class CHART_TYPE:
+    NONE: int
+    LINE: int
+    BAR: int
+    SCATTER: int
+    def __init__(self): ...
+
+
+"""
+enum {
+    LV_CHART_AXIS_PRIMARY_Y     = 0x00,
+    LV_CHART_AXIS_SECONDARY_Y   = 0x01,
+    LV_CHART_AXIS_PRIMARY_X     = 0x02,
+    LV_CHART_AXIS_SECONDARY_X   = 0x04,
+    _LV_CHART_AXIS_LAST
+};
+typedef uint8_t lv_chart_axis_t;
+"""
+
+
+class CHART_AXIS:
+    PRIMARY_Y: int
+    SECONDARY_Y: int
+    PRIMARY_X: int
+    SECONDARY_X: int
+    def __init__(self): ...
+
+
+"""
+enum {
+    LV_CHART_UPDATE_MODE_SHIFT,     /**< Shift old data to the left and add the new one the right*/
+    LV_CHART_UPDATE_MODE_CIRCULAR,  /**< Add the new data in a circular way*/
+};
+typedef uint8_t lv_chart_update_mode_t;
+"""
+
+
+class CHART_UPDATE_MODE:
+    SHIFT: int
+    CIRCULAR: int
+    def __init__(self): ...
+
+"""
+typedef enum {
+    LV_CHART_DRAW_PART_DIV_LINE_INIT,    /**< Used before/after drawn the div lines*/
+    LV_CHART_DRAW_PART_DIV_LINE_HOR,     /**< Used for each horizontal division lines*/
+    LV_CHART_DRAW_PART_DIV_LINE_VER,     /**< Used for each vertical division lines*/
+    LV_CHART_DRAW_PART_LINE_AND_POINT,   /**< Used on line and scatter charts for lines and points*/
+    LV_CHART_DRAW_PART_BAR,              /**< Used on bar charts for the rectangles*/
+    LV_CHART_DRAW_PART_CURSOR,           /**< Used on cursor lines and points*/
+    LV_CHART_DRAW_PART_TICK_LABEL,       /**< Used on tick lines and labels*/
+} lv_chart_draw_part_type_t;
+"""
+
+
+class CHART_DRAW_PART:
+    DIV_LINE_INIT: int
+    DIV_LINE_HOR: int
+    DIV_LINE_VER: int
+    LINE_AND_POINT: int
+    BAR: int
+    CURSOR: int
+    TICK_LABEL: int
+    def __init__(self): ...
+
+
+"""
+lv_obj_t * lv_chart_create(lv_obj_t * parent);
+void lv_chart_set_type(lv_obj_t * obj, lv_chart_type_t type);
+void lv_chart_set_point_count(lv_obj_t * obj, uint16_t cnt);
+void lv_chart_set_range(lv_obj_t * obj, lv_chart_axis_t axis, lv_coord_t min, lv_coord_t max);
+void lv_chart_set_update_mode(lv_obj_t * obj, lv_chart_update_mode_t update_mode);
+void lv_chart_set_div_line_count(lv_obj_t * obj, uint8_t hdiv, uint8_t vdiv);
+void lv_chart_set_zoom_x(lv_obj_t * obj, uint16_t zoom_x);
+void lv_chart_set_zoom_y(lv_obj_t * obj, uint16_t zoom_y);
+uint16_t lv_chart_get_zoom_x(const lv_obj_t * obj);
+uint16_t lv_chart_get_zoom_y(const lv_obj_t * obj);
+void lv_chart_set_axis_tick(lv_obj_t * obj, lv_chart_axis_t axis, lv_coord_t major_len, lv_coord_t minor_len,
+                            lv_coord_t major_cnt, lv_coord_t minor_cnt, bool label_en, lv_coord_t draw_size);
+lv_chart_type_t lv_chart_get_type(const lv_obj_t * obj);
+uint16_t lv_chart_get_point_count(const lv_obj_t * obj);
+uint16_t lv_chart_get_x_start_point(const lv_obj_t * obj, lv_chart_series_t * ser);
+void lv_chart_get_point_pos_by_id(lv_obj_t * obj, lv_chart_series_t * ser, uint16_t id, lv_point_t * p_out);
+void lv_chart_refresh(lv_obj_t * obj);
+lv_chart_series_t * lv_chart_add_series(lv_obj_t * obj, lv_color_t color, lv_chart_axis_t axis);
+void lv_chart_remove_series(lv_obj_t * obj, lv_chart_series_t * series);
+void lv_chart_hide_series(lv_obj_t * chart, lv_chart_series_t * series, bool hide);
+void lv_chart_set_series_color(lv_obj_t * chart, lv_chart_series_t * series, lv_color_t color);
+void lv_chart_set_x_start_point(lv_obj_t * obj, lv_chart_series_t * ser, uint16_t id);
+lv_chart_series_t * lv_chart_get_series_next(const lv_obj_t * chart, const lv_chart_series_t * ser);
+lv_chart_cursor_t * lv_chart_add_cursor(lv_obj_t * obj, lv_color_t color, lv_dir_t dir);
+void lv_chart_set_cursor_pos(lv_obj_t * chart, lv_chart_cursor_t * cursor, lv_point_t * pos);
+void lv_chart_set_cursor_point(lv_obj_t * chart, lv_chart_cursor_t * cursor, lv_chart_series_t * ser,
+                               uint16_t point_id);
+lv_point_t lv_chart_get_cursor_point(lv_obj_t * chart, lv_chart_cursor_t * cursor);
+void lv_chart_set_all_value(lv_obj_t * obj, lv_chart_series_t * ser, lv_coord_t value);
+void lv_chart_set_next_value(lv_obj_t * obj, lv_chart_series_t * ser, lv_coord_t value);
+void lv_chart_set_next_value2(lv_obj_t * obj, lv_chart_series_t * ser, lv_coord_t x_value, lv_coord_t y_value);
+void lv_chart_set_value_by_id(lv_obj_t * obj, lv_chart_series_t * ser, uint16_t id, lv_coord_t value);
+void lv_chart_set_value_by_id2(lv_obj_t * obj, lv_chart_series_t * ser, uint16_t id, lv_coord_t x_value,
+                               lv_coord_t y_value);
+void lv_chart_set_ext_y_array(lv_obj_t * obj, lv_chart_series_t * ser, lv_coord_t array[]);
+void lv_chart_set_ext_x_array(lv_obj_t * obj, lv_chart_series_t * ser, lv_coord_t array[]);
+lv_coord_t * lv_chart_get_y_array(const lv_obj_t * obj, lv_chart_series_t * ser);
+lv_coord_t * lv_chart_get_x_array(const lv_obj_t * obj, lv_chart_series_t * ser);
+uint32_t lv_chart_get_pressed_point(const lv_obj_t * obj);
+"""
+
+
+class chart_cursor_t:
+    ...
+
+
+class coord_t:
+    ...
+
+
 class chart(lv_obj):
+    TYPE: CHART_TYPE
+    AXIS: CHART_AXIS
+    UPDATE_MODE: CHART_UPDATE_MODE
+    DRAW_PART: CHART_DRAW_PART
     def __init__(self, parent: lv_obj): ...
     def set_point_count(self, cnt: int): ...
     def set_range(self, axis: int, min: int, max: int): ...
     def set_zoom_x(self, zoom_x: int): ...
     def set_zoom_y(self, zoom_y: int): ...
     def add_series(self, color: lv_color_t, axis: int) -> chart_series_t: ...
-    def get_series_next(self, ser: chart_series_t) -> chart_series_t: ...
-    def set_ext_y_array(self, ser: chart_series_t, array: any): ...
+    def remove_series(self, series: chart_series_t): ...
+    def hide_series(self, series: chart_series_t, hide: int): ...
+    def set_series_color(self, series: chart_series_t, color: lv_color_t): ...
     def refresh(self): ...
+    def set_type(self, type: int): ...
+    def set_update_mode(self, update_mode: int): ...
+    def set_div_line_count(self, hdiv: int, vdiv: int): ...
+    def set_axis_tick(self, axis: int, major_len: int, minor_len: int,
+                      major_cnt: int, minor_cnt: int, label_en: int, draw_size: int): ...
+
+    def get_type(self) -> int: ...
+    def get_point_count(self) -> int: ...
+    def get_x_start_point(self, ser: chart_series_t) -> int: ...
+    def get_point_pos_by_id(self, ser: chart_series_t, id: int) -> point_t: ...
+    def get_zoom_x(self) -> int: ...
+    def get_zoom_y(self) -> int: ...
+    def get_series_next(self, ser: chart_series_t) -> chart_series_t: ...
+    def set_x_start_point(self, ser: chart_series_t, id: int): ...
+    def add_cursor(self, color: lv_color_t, dir: int) -> chart_cursor_t: ...
+    def set_cursor_pos(self, cursor: chart_cursor_t, pos: point_t): ...
+    def set_cursor_point(
+        self, cursor: chart_cursor_t, ser: chart_series_t, point_id: int): ...
+
+    def get_cursor_point(self, cursor: chart_cursor_t) -> point_t: ...
+    def set_all_value(self, ser: chart_series_t, value: int): ...
+    def set_next_value(self, ser: chart_series_t, value: int): ...
+    def set_next_value2(self, ser: chart_series_t,
+                        x_value: int, y_value: int): ...
+
+    def set_value_by_id(self, ser: chart_series_t, id: int, value: int): ...
+    def set_value_by_id2(self, ser: chart_series_t, id: int,
+                         x_value: int, y_value: int): ...
+
+    def set_ext_x_array(self, ser: chart_series_t, array: any): ...
+    def set_ext_y_array(self, ser: chart_series_t, array: any): ...
+    def get_y_array(self, ser: chart_series_t) -> any: ...
+    def get_x_array(self, ser: chart_series_t) -> any: ...
+    def get_pressed_point(self) -> int: ...
+
 
 """
 typedef struct {
@@ -976,12 +1203,78 @@ class meter(lv_obj):
     def set_indicator_end_value(
         self, indic: meter_indicator_t, value: int): ...
 
+"""
+enum {
+    LV_KEYBOARD_MODE_TEXT_LOWER,
+    LV_KEYBOARD_MODE_TEXT_UPPER,
+    LV_KEYBOARD_MODE_SPECIAL,
+    LV_KEYBOARD_MODE_NUMBER,
+    LV_KEYBOARD_MODE_USER_1,
+    LV_KEYBOARD_MODE_USER_2,
+    LV_KEYBOARD_MODE_USER_3,
+    LV_KEYBOARD_MODE_USER_4,
+};
+typedef uint8_t lv_keyboard_mode_t;
+
+typedef struct {
+    lv_btnmatrix_t btnm;
+    lv_obj_t * ta;
+    lv_keyboard_mode_t mode;
+    uint8_t popovers : 1;
+} lv_keyboard_t;
+
+extern const lv_obj_class_t lv_keyboard_class;
+
+lv_obj_t * lv_keyboard_create(lv_obj_t * parent);
+
+void lv_keyboard_set_textarea(lv_obj_t * kb, lv_obj_t * ta);
+void lv_keyboard_set_mode(lv_obj_t * kb, lv_keyboard_mode_t mode);
+void lv_keyboard_set_popovers(lv_obj_t * kb, bool en);
+void lv_keyboard_set_map(lv_obj_t * kb, lv_keyboard_mode_t mode, const char * map[],
+                         const lv_btnmatrix_ctrl_t ctrl_map[]);
+
+lv_obj_t * lv_keyboard_get_textarea(const lv_obj_t * kb);
+lv_keyboard_mode_t lv_keyboard_get_mode(const lv_obj_t * kb);
+bool lv_btnmatrix_get_popovers(const lv_obj_t * obj);
+static inline const char ** lv_keyboard_get_map_array(const lv_obj_t * kb);
+static inline uint16_t lv_keyboard_get_selected_btn(const lv_obj_t * obj);
+static inline const char * lv_keyboard_get_btn_text(const lv_obj_t * obj, uint16_t btn_id);
+
+void lv_keyboard_def_event_cb(lv_event_t * e);
+"""
+
+
+class KEYBOARD_MODE:
+    TEXT_LOWER: int
+    TEXT_UPPER: int
+    SPECIAL: int
+    NUMBER: int
+    USER_1: int
+    USER_2: int
+    USER_3: int
+    USER_4: int
+    def __init__(self): ...
+
+
+class keyboard(lv_obj):
+    MODE: KEYBOARD_MODE
+    def __init__(self, parent: lv_obj): ...
+    def set_textarea(self, ta: lv_obj): ...
+    def set_mode(self, mode: int): ...
+    def set_popovers(self, en: int): ...
+    # def set_map(self, mode: int, map: any, ctrl_map: any): ...
+    def get_textarea(self) -> lv_obj: ...
+    def get_mode(self) -> int: ...
+    # def get_popovers(self) -> int: ...
+    # def get_map_array(self) -> any: ...
+    def get_selected_btn(self) -> int: ...
+    def get_btn_text(self, btn_id: int) -> str: ...
+
 
 def scr_act() -> lv_obj: ...
 def pct(x: int) -> int: ...
 def timer_create_basic() -> lv_timer_t: ...
 
+
 def color_black() -> lv_color_t: ...
 def color_white() -> lv_color_t: ...
-
-

@@ -1329,4 +1329,21 @@ int pika_lvgl_lv_obj_get_scroll_right(PikaObj* self) {
 //     return lv_obj_get_scroll_propagation(obj_getPtr(self, "lv_obj"));
 // }
 
+void pika_lvgl_lv_obj_remove_style_all(PikaObj* self) {
+    lv_obj_remove_style_all(obj_getPtr(self, "lv_obj"));
+}
+
+/*
+    def move_foreground(self): ...
+    def move_background(self): ...
+*/
+
+void pika_lvgl_lv_obj_move_foreground(PikaObj* self) {
+    lv_obj_move_foreground(obj_getPtr(self, "lv_obj"));
+}
+
+void pika_lvgl_lv_obj_move_background(PikaObj* self) {
+    lv_obj_move_background(obj_getPtr(self, "lv_obj"));
+}
+
 #endif
