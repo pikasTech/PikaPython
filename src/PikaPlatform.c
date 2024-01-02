@@ -156,6 +156,15 @@ PIKA_WEAK int64_t pika_platform_get_tick(void) {
 #elif PIKA_RTTHREAD_ENABLE
     uint32_t tick = rt_tick_get() * 1000;
     return (uint32_t)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
+#elif defined(_WIN32) && !defined(CROSS_BUILD)
+    FILETIME ft;
+    ULARGE_INTEGER ull;
+    GetSystemTimeAsFileTime(&ft); // 获取当前时间
+    ull.LowPart = ft.dwLowDateTime;
+    ull.HighPart = ft.dwHighDateTime;
+    ull.QuadPart -= 116444736000000000; 
+    ull.QuadPart /= 10000; 
+    return ull.QuadPart;
 #else
     return -1;
 #endif

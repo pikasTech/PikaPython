@@ -1,4 +1,4 @@
-#include "_time.h"
+﻿#include "_time.h"
 #include "PikaVM.h"
 #if defined(__linux)
 #include <unistd.h>
@@ -415,19 +415,6 @@ int64_t time_mktime(const _tm* this_tm, int locale) {
     return unix_time;
 }
 
-void time_asctime(const _tm* this_tm) {
-    const char* week[] = {"Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"};
-    const char* month[] = {"Jan", "Feb", "Mar",  "Apr", "May", "Jun",
-                           "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"};
-
-    char str[100];
-
-    sprintf(str, "%s %s %d %02d:%02d:%02d %d", week[this_tm->tm_wday],
-            month[this_tm->tm_mon], this_tm->tm_mday, this_tm->tm_hour,
-            this_tm->tm_min, this_tm->tm_sec, this_tm->tm_year);
-    time_printf("%s\n", str);
-}
-
 pika_float _time_time(PikaObj* self) {
     /* run platformGetTick() */
     PIKA_PYTHON_BEGIN
@@ -535,17 +522,17 @@ int _time_mktime(PikaObj* self) {
 #endif
 }
 
-void _time_asctime(PikaObj* self) {
+char* _time_asctime(PikaObj* self) {
 #if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
     obj_setErrorCode(self, 1);
     obj_setSysOut(
         self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
 #else
-    _time_ctime(self, _time_time(self));
+    return _time_ctime(self, _time_time(self));
 #endif
 }
 
-void _time_ctime(PikaObj* self, pika_float unix_time) {
+char* _time_ctime(PikaObj* self, pika_float unix_time) {
 #if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
     obj_setErrorCode(self, 1);
     obj_setSysOut(
@@ -554,7 +541,17 @@ void _time_ctime(PikaObj* self, pika_float unix_time) {
     _tm this_tm;
     int locale = g_pika_local_timezone;
     time_localtime(unix_time, &this_tm, locale);
-    time_asctime(&this_tm);
+    const char* week[] = { "Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat" };
+    const char* month[] = { "Jan", "Feb", "Mar",  "Apr", "May", "Jun",
+                               "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" };
+
+    char str[100];
+
+    sprintf(str, "%s %s %d %02d:%02d:%02d %d", week[this_tm.tm_wday],
+        month[this_tm.tm_mon], this_tm.tm_mday, this_tm.tm_hour,
+        this_tm.tm_min, this_tm.tm_sec, this_tm.tm_year);
+    // time_printf("%s\n", str);
+    return obj_cacheStr(self, str);
 #endif
 }
 

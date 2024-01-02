@@ -1,4 +1,4 @@
-from PikaObj import *
+﻿from PikaObj import *
 
 
 def __init__(self): ...
@@ -30,12 +30,12 @@ def mktime(self) -> int:
 
 
 @PIKA_C_MACRO_IF("PIKA_STD_DEVICE_UNIX_TIME_ENABLE")
-def asctime(self):
+def asctime(self) -> str:
     """Convert struct_time to string."""
 
 
 @PIKA_C_MACRO_IF("PIKA_STD_DEVICE_UNIX_TIME_ENABLE")
-def ctime(self, unix_time: float):
+def ctime(self, unix_time: float) -> str:
     """Convert unix time to string."""
 
 
