@@ -527,6 +527,7 @@ char* _time_asctime(PikaObj* self) {
     obj_setErrorCode(self, 1);
     obj_setSysOut(
         self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
+    return NULL;
 #else
     return _time_ctime(self, _time_time(self));
 #endif
@@ -537,6 +538,7 @@ char* _time_ctime(PikaObj* self, pika_float unix_time) {
     obj_setErrorCode(self, 1);
     obj_setSysOut(
         self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
+    return NULL;
 #else
     _tm this_tm;
     int locale = g_pika_local_timezone;

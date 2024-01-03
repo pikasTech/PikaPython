@@ -6,6 +6,7 @@
 
 #ifdef PIKASCRIPT
 
+#include "pika_lvgl.h"
 #include "pika_lvgl_lv_timer_t.h"
 
 PikaEventListener* g_pika_lv_timer_event_listener;

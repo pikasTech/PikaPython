@@ -536,7 +536,9 @@ void pika_lvgl_CHART_DRAW_PART___init__(PikaObj* self) {
 }
 
 void pika_lvgl_task_handler(PikaObj* self) {
+    pika_lvgl_lock(NULL);
     lv_task_handler();
+    pika_lvgl_unlock(NULL);
 }
 
 void pika_lvgl_deinit(PikaObj* self) {
