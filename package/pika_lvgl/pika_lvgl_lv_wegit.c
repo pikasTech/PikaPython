@@ -1,4 +1,4 @@
-﻿#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
 #include "lvgl.h"
 #else
 #include "../../lvgl.h"
@@ -368,15 +368,215 @@ void pika_lvgl_table_set_cell_value(PikaObj* self,
     lv_table_set_cell_value(lv_obj, row, col, txt);
 }
 
+/*
+class textarea(lv_obj):
+    def __init__(self, parent: lv_obj): ...
+    def add_char(self, c: int): ...
+    def add_text(self, txt: str): ...
+    def del_char(self): ...
+    def del_char_forward(self): ...
+    def set_text(self, txt: str): ...
+    def set_placeholder_text(self, txt: str): ...
+    def set_cursor_pos(self, pos: int): ...
+    def set_cursor_click_pos(self, en: int): ...
+    def set_password_mode(self, en: int): ...
+    def set_one_line(self, en: int): ...
+    def set_accepted_chars(self, list: str): ...
+    def set_max_length(self, num: int): ...
+    def set_insert_replace(self, txt: str): ...
+    def set_text_selection(self, en: int): ...
+    def set_password_show_time(self, time: int): ...
+    def set_align(self, align: int): ...
+    def get_text(self) -> str: ...
+    def get_placeholder_text(self) -> str: ...
+    def get_label(self) -> lv_obj: ...
+    def get_cursor_pos(self) -> int: ...
+    def get_cursor_click_pos(self) -> int: ...
+    def get_password_mode(self) -> int: ...
+    def get_one_line(self) -> int: ...
+    def get_accepted_chars(self) -> str: ...
+    def get_max_length(self) -> int: ...
+    def text_is_selected(self) -> int: ...
+    def get_text_selection(self) -> int: ...
+    def get_password_show_time(self) -> int: ...
+    def clear_selection(self): ...
+    def cursor_right(self): ...
+    def cursor_left(self): ...
+    def cursor_down(self): ...
+    def cursor_up(self): ...
+*/
+
 void pika_lvgl_textarea___init__(PikaObj* self, PikaObj* parent) {
     lv_obj_t* lv_parent = obj_getPtr(parent, "lv_obj");
     lv_obj_t* lv_obj = lv_textarea_create(lv_parent);
     obj_setPtr(self, "lv_obj", lv_obj);
 }
 
+void pika_lvgl_textarea_add_char(PikaObj* self, int c) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_add_char(lv_obj, c);
+}
+
+void pika_lvgl_textarea_add_text(PikaObj* self, char* txt) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_add_text(lv_obj, txt);
+}
+
+void pika_lvgl_textarea_del_char(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_del_char(lv_obj);
+}
+
+void pika_lvgl_textarea_del_char_forward(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_del_char_forward(lv_obj);
+}
+
+void pika_lvgl_textarea_set_text(PikaObj* self, char* txt) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_set_text(lv_obj, txt);
+}
+
+void pika_lvgl_textarea_set_placeholder_text(PikaObj* self, char* txt) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_set_placeholder_text(lv_obj, txt);
+}
+
+void pika_lvgl_textarea_set_cursor_pos(PikaObj* self, int pos) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_set_cursor_pos(lv_obj, pos);
+}
+
+void pika_lvgl_textarea_set_cursor_click_pos(PikaObj* self, int en) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_set_cursor_click_pos(lv_obj, en);
+}
+
+void pika_lvgl_textarea_set_password_mode(PikaObj* self, int en) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_set_password_mode(lv_obj, en);
+}
+
 void pika_lvgl_textarea_set_one_line(PikaObj* self, int en) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_textarea_set_one_line(lv_obj, en);
+}
+
+void pika_lvgl_textarea_set_accepted_chars(PikaObj* self, char* list) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_set_accepted_chars(lv_obj, list);
+}
+
+void pika_lvgl_textarea_set_max_length(PikaObj* self, int num) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_set_max_length(lv_obj, num);
+}
+
+void pika_lvgl_textarea_set_insert_replace(PikaObj* self, char* txt) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_set_insert_replace(lv_obj, txt);
+}
+
+void pika_lvgl_textarea_set_text_selection(PikaObj* self, int en) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_set_text_selection(lv_obj, en);
+}
+
+void pika_lvgl_textarea_set_password_show_time(PikaObj* self, int time) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_set_password_show_time(lv_obj, time);
+}
+
+void pika_lvgl_textarea_set_align(PikaObj* self, int align) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_set_align(lv_obj, align);
+}
+
+char* pika_lvgl_textarea_get_text(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return (char*)lv_textarea_get_text(lv_obj);
+}
+
+char* pika_lvgl_textarea_get_placeholder_text(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return (char*)lv_textarea_get_placeholder_text(lv_obj);
+}
+
+PikaObj* pika_lvgl_textarea_get_label(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_label);
+    obj_setPtr(new_obj, "lv_obj", lv_textarea_get_label(lv_obj));
+    return new_obj;
+}
+
+int pika_lvgl_textarea_get_cursor_pos(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_textarea_get_cursor_pos(lv_obj);
+}
+
+int pika_lvgl_textarea_get_cursor_click_pos(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_textarea_get_cursor_click_pos(lv_obj);
+}
+
+int pika_lvgl_textarea_get_password_mode(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_textarea_get_password_mode(lv_obj);
+}
+
+int pika_lvgl_textarea_get_one_line(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_textarea_get_one_line(lv_obj);
+}
+
+char* pika_lvgl_textarea_get_accepted_chars(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return (char*)lv_textarea_get_accepted_chars(lv_obj);
+}
+
+int pika_lvgl_textarea_get_max_length(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_textarea_get_max_length(lv_obj);
+}
+
+int pika_lvgl_textarea_text_is_selected(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_textarea_text_is_selected(lv_obj);
+}
+
+int pika_lvgl_textarea_get_text_selection(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_textarea_get_text_selection(lv_obj);
+}
+
+int pika_lvgl_textarea_get_password_show_time(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_textarea_get_password_show_time(lv_obj);
+}
+
+void pika_lvgl_textarea_clear_selection(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_clear_selection(lv_obj);
+}
+
+void pika_lvgl_textarea_cursor_right(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_cursor_right(lv_obj);
+}
+
+void pika_lvgl_textarea_cursor_left(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_cursor_left(lv_obj);
+}
+
+void pika_lvgl_textarea_cursor_down(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_cursor_down(lv_obj);
+}
+
+void pika_lvgl_textarea_cursor_up(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_textarea_cursor_up(lv_obj);
 }
 
 void pika_lvgl_cf_t___init__(PikaObj* self) {
@@ -1047,21 +1247,6 @@ PikaObj* pika_lvgl_meter_add_needle_line(PikaObj* self,
     return new_obj;
 }
 
-PikaObj* pika_lvgl_meter_add_needle_img(PikaObj* self,
-                                        PikaObj* scale,
-                                        PikaObj* src,
-                                        int pivot_x,
-                                        int pivot_y) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
-    lv_meter_scale_t* lv_scale = obj_getPtr(scale, "scale");
-    lv_img_dsc_t* img_dsc = obj_getStruct(src, "img_dsc");
-    lv_meter_indicator_t* indic =
-        lv_meter_add_needle_img(lv_obj, lv_scale, img_dsc, pivot_x, pivot_y);
-    PikaObj* new_obj = newNormalObj(New_pika_lvgl_meter_indicator_t);
-    obj_setPtr(new_obj, "indicator", indic);
-    return new_obj;
-}
-
 PikaObj* pika_lvgl_meter_add_arc(PikaObj* self,
                                  PikaObj* scale,
                                  int width,
@@ -1200,9 +1385,5 @@ int pika_lvgl_keyboard_get_selected_btn(PikaObj* self) {
     return lv_keyboard_get_selected_btn(lv_obj);
 }
 
-char* pika_lvgl_keyboard_get_btn_text(PikaObj* self, int btn_id) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
-    return lv_keyboard_get_btn_text(lv_obj, btn_id);
-}
 
 #endif

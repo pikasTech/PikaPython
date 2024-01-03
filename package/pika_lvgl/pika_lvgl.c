@@ -227,7 +227,9 @@ PikaObj* pika_lvgl_scr_act(PikaObj* self) {
     return new_obj;
 }
 
+void user_lvgl_init(void);
 void pika_lvgl___init__(PikaObj* self) {
+    user_lvgl_init();
     if (!lv_is_initialized()) {
         pika_debug("Error: lvgl is not initialized");
         return;

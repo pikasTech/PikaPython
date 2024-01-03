@@ -63,7 +63,8 @@ int pika_putchar(char ch) {
 }
 
 PIKA_WEAK void pika_platform_clear(void) {
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
+    pika_platform_remove(PIKA_SHELL_SAVE_APP_PATH);
+    pika_platform_reboot();
 }
 
 #if !PIKA_PLATFORM_NO_WEAK
@@ -730,7 +731,10 @@ PIKA_WEAK int pika_platform_thread_mutex_lock(pika_platform_thread_mutex_t* m) {
 #ifdef __linux
     return pthread_mutex_lock(&(m->mutex));
 #elif PIKA_FREERTOS_ENABLE
-    return xSemaphoreTake(m->mutex, portMAX_DELAY);
+    if (pdTRUE == xSemaphoreTake(m->mutex, portMAX_DELAY)) {
+        return 0;
+    }
+    return -1;
 #elif PIKA_RTTHREAD_ENABLE
     return rt_mutex_take((m->mutex), RT_WAITING_FOREVER);
 #else
@@ -744,7 +748,10 @@ PIKA_WEAK int pika_platform_thread_mutex_trylock(
 #ifdef __linux
     return pthread_mutex_trylock(&(m->mutex));
 #elif PIKA_FREERTOS_ENABLE
-    return xSemaphoreTake(m->mutex, 0);
+    if (pdTRUE == xSemaphoreTake(m->mutex, 0)) {
+        return 0;
+    }
+    return -1;
 #elif PIKA_RTTHREAD_ENABLE
     return rt_mutex_take((m->mutex), 0);
 #else

@@ -1,4 +1,4 @@
-﻿#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
 #include "lvgl.h"
 #else
 #include "../../lvgl.h"
@@ -116,21 +116,5 @@ void pika_lvgl_indev_t_wait_release(PikaObj* self) {
     lv_indev_wait_release(lv_indev);
 }
 
-PikaObj* pika_lvgl_indev_t_get_obj_act(PikaObj* self, PikaObj* obj) {
-    lv_indev_t* lv_indev = obj_getPtr(self, "lv_indev");
-    lv_obj_t* lv_obj = lv_indev_get_obj_act(lv_indev);
-    PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_obj);
-    obj_setPtr(new_obj, "lv_obj", lv_obj);
-    return new_obj;
-}
-
-PikaObj* pika_lvgl_indev_t_search_obj(PikaObj* self, PikaObj* point) {
-    lv_indev_t* lv_indev = obj_getPtr(self, "lv_indev");
-    lv_point_t* lv_point = obj_getPtr(point, "lv_point");
-    lv_obj_t* lv_obj = lv_indev_search_obj(lv_indev, lv_point);
-    PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_obj);
-    obj_setPtr(new_obj, "lv_obj", lv_obj);
-    return new_obj;
-}
 
 #endif

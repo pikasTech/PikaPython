@@ -77,7 +77,8 @@ static void __pika_event_cb(lv_event_t* e) {
         eventListener_getHandler(pika_lv_event_listener_g, (uintptr_t)target);
     PikaObj* evt = obj_getObj(event_handler, "_event_evt");
     obj_setPtr(evt, "lv_event", e);
-    obj_run(event_handler, "_event_cb(_event_evt)");
+    // obj_run(event_handler, "_event_cb(_event_evt)");
+    obj_runMethod1(event_handler, "_event_cb", arg_copy(obj_getArg(event_handler, "_event_evt")));
 }
 
 void eventListener_registEvent(PikaObj* self,
@@ -842,14 +843,6 @@ void pika_lvgl_lv_obj_set_style_bg_dither_mode(PikaObj* self,
     lv_obj_set_style_bg_dither_mode(lv_obj, value, selector);
 }
 
-void pika_lvgl_lv_obj_set_style_bg_img_src(PikaObj* self,
-                                           PikaObj* value,
-                                           int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
-    lv_img_dsc_t* lv_img_dsc = obj_getPtr(value, "lv_img_dsc");
-    lv_obj_set_style_bg_img_src(lv_obj, lv_img_dsc, selector);
-}
-
 void pika_lvgl_lv_obj_set_style_bg_img_opa(PikaObj* self,
                                            int value,
                                            int selector) {
@@ -1081,13 +1074,6 @@ void pika_lvgl_lv_obj_set_style_arc_opa(PikaObj* self,
     lv_obj_set_style_arc_opa(lv_obj, value, selector);
 }
 
-void pika_lvgl_lv_obj_set_style_arc_img_src(PikaObj* self,
-                                            PikaObj* value,
-                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
-    lv_img_dsc_t* lv_img_dsc = obj_getPtr(value, "lv_img_dsc");
-    lv_obj_set_style_arc_img_src(lv_obj, lv_img_dsc, selector);
-}
 
 void pika_lvgl_lv_obj_set_style_text_color(PikaObj* self,
                                            PikaObj* value,
@@ -1171,14 +1157,6 @@ void pika_lvgl_lv_obj_set_style_color_filter_opa(PikaObj* self,
                                                  int selector) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_obj_set_style_color_filter_opa(lv_obj, value, selector);
-}
-
-void pika_lvgl_lv_obj_set_style_anim(PikaObj* self,
-                                     PikaObj* value,
-                                     int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
-    lv_anim_t* lv_anim = obj_getPtr(value, "lv_anim");
-    lv_obj_set_style_anim(lv_obj, lv_anim, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_anim_time(PikaObj* self,
