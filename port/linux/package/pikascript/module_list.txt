@@ -42,3 +42,4 @@ fsm
 subsrc.mod1
 flashdb
 fuzzypid
+pika_lvgl

@@ -10,4 +10,7 @@ SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
 
 # 链接src生成的lib库和gtest库
 target_link_libraries(${BINARY} PUBLIC 
-        -Wl,--whole-archive ${CMAKE_PROJECT_NAME}-core -Wl,--no-whole-archive)
+        -Wl,--whole-archive 
+        ${CMAKE_PROJECT_NAME}-core 
+        ${CMAKE_PROJECT_NAME}-lvgl
+        -Wl,--no-whole-archive)

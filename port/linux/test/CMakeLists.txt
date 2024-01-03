@@ -20,5 +20,8 @@ add_test(NAME ${BINARY} COMMAND ${BINARY})
 
 # 链接src生成的lib库和gtest库
 target_link_libraries(${BINARY} PUBLIC 
-        -Wl,--whole-archive ${CMAKE_PROJECT_NAME}-core -Wl,--no-whole-archive
+        -Wl,--whole-archive 
+        ${CMAKE_PROJECT_NAME}-core 
+        ${CMAKE_PROJECT_NAME}-lvgl
+        -Wl,--no-whole-archive
         gtest)
