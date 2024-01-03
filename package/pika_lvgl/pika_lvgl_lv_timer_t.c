@@ -11,7 +11,7 @@
 PikaEventListener* g_pika_lv_timer_event_listener;
 void __pika_timer_cb(lv_timer_t* timer) {
     PikaObj* eventHandleObj = pks_eventLisener_getEventHandleObj(
-        g_pika_lv_timer_event_listener, (uint32_t)timer);
+        g_pika_lv_timer_event_listener, (uintptr_t)timer);
     obj_newDirectObj(eventHandleObj, "timer", New_pika_lvgl_lv_timer_t);
     obj_setPtr(obj_getPtr(eventHandleObj, "timer"), "lv_timer", timer);
     obj_run(eventHandleObj, "eventCallBack(timer)");
@@ -32,8 +32,7 @@ void pika_lvgl_lv_timer_t_set_cb(PikaObj* self, Arg* cb) {
         pks_eventLisener_init(&g_pika_lv_timer_event_listener);
     }
     pks_eventLicener_registEvent(g_pika_lv_timer_event_listener,
-                                 (uint32_t)lv_timer, self);
-
+                                 (uintptr_t)lv_timer, self);
 }
 
 void pika_lvgl_lv_timer_t__del(PikaObj* self) {

@@ -1385,5 +1385,4 @@ int pika_lvgl_keyboard_get_selected_btn(PikaObj* self) {
     return lv_keyboard_get_selected_btn(lv_obj);
 }
 
-
 #endif

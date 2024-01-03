@@ -58,12 +58,12 @@ void pika_lvgl_canvas_set_buffer(PikaObj* self,
                                  int h,
                                  int cf) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
-    if (arg_getType(buf) == ARG_TYPE_BYTES){
+    if (arg_getType(buf) == ARG_TYPE_BYTES) {
         pika_debug("lv_canvas_set_buffer, buf: %p", arg_getBytes(buf));
         lv_canvas_set_buffer(lv_obj, arg_getBytes(buf), w, h, cf);
         return;
     }
-    if (arg_getType(buf) == ARG_TYPE_INT){
+    if (arg_getType(buf) == ARG_TYPE_INT) {
         pika_debug("lv_canvas_set_buffer, buf: %p", (void*)arg_getInt(buf));
         lv_canvas_set_buffer(lv_obj, (void*)arg_getInt(buf), w, h, cf);
         return;

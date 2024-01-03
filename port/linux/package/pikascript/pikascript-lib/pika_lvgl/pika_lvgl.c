@@ -1,4 +1,4 @@
-﻿#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
 #include "lvgl.h"
 #else
 #include "../../lvgl.h"
@@ -250,7 +250,10 @@ void pika_lvgl___init__(PikaObj* self) {
 }
 
 void pika_lvgl___del__(PikaObj* self) {
-    args_deinit(pika_lv_id_register_g);
+    if (NULL != pika_lv_id_register_g) {
+        args_deinit(pika_lv_id_register_g);
+        pika_lv_id_register_g = NULL;
+    }
 }
 
 void pika_lvgl_obj___init__(PikaObj* self, PikaTuple* parent) {

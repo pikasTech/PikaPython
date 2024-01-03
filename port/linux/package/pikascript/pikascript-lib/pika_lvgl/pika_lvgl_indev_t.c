@@ -116,5 +116,4 @@ void pika_lvgl_indev_t_wait_release(PikaObj* self) {
     lv_indev_wait_release(lv_indev);
 }
 
-
 #endif

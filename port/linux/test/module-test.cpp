@@ -862,4 +862,6 @@ TEST(fuzzypid, base) {
 
 TEST_RUN_SINGLE_FILE(fuzzypid, fuzzypid1, "test/python/fuzzypid/fuzzypid1.py");
 
+TEST_RUN_SINGLE_FILE(lvgl, base, "test/python/pika_lvgl/base.py");
+
 TEST_END

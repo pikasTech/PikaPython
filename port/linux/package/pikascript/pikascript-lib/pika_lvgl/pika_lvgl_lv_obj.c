@@ -78,7 +78,8 @@ static void __pika_event_cb(lv_event_t* e) {
     PikaObj* evt = obj_getObj(event_handler, "_event_evt");
     obj_setPtr(evt, "lv_event", e);
     // obj_run(event_handler, "_event_cb(_event_evt)");
-    obj_runMethod1(event_handler, "_event_cb", arg_copy(obj_getArg(event_handler, "_event_evt")));
+    obj_runMethod1(event_handler, "_event_cb",
+                   arg_copy(obj_getArg(event_handler, "_event_evt")));
 }
 
 void eventListener_registEvent(PikaObj* self,
@@ -1073,7 +1074,6 @@ void pika_lvgl_lv_obj_set_style_arc_opa(PikaObj* self,
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_obj_set_style_arc_opa(lv_obj, value, selector);
 }
-
 
 void pika_lvgl_lv_obj_set_style_text_color(PikaObj* self,
                                            PikaObj* value,

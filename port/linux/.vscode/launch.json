@@ -19,7 +19,8 @@
                 // "--gtest_filter=vm.run_file"
                 // "--gtest_filter=stddata.encode_decode"
                 // "--gtest_filter=packtool.packfiles_txt"
-                "--gtest_filter=cmodule.class_attr_obj"
+                // "--gtest_filter=cmodule.class_attr_obj"
+                "--gtest_filter=lvgl.base"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
