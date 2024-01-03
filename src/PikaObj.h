@@ -591,30 +591,30 @@ enum shellCTRL obj_runChar(PikaObj* self, char inputChar);
 typedef PikaObj PikaEventListener;
 
 void pika_eventListener_registEventHandler(PikaEventListener* self,
-                                           uint32_t eventId,
+                                           uintptr_t eventId,
                                            PikaObj* eventHandleObj);
 
 void pika_eventListener_registEventCallback(PikaEventListener* listener_p,
-                                            uint32_t eventId,
+                                            uintptr_t eventId,
                                             Arg* eventCallback);
 
-void pika_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId);
+void pika_eventListener_removeEvent(PikaEventListener* self, uintptr_t eventId);
 
 PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
-                                     uint32_t eventId,
+                                     uintptr_t eventId,
                                      Arg* eventData,
                                      pika_bool pickupWhenNoVM);
 
 PIKA_RES pika_eventListener_sendSignal(PikaEventListener* self,
-                                       uint32_t eventId,
+                                       uintptr_t eventId,
                                        int eventSignal);
 
 PIKA_RES pika_eventListener_send(PikaEventListener* self,
-                                 uint32_t eventId,
+                                 uintptr_t eventId,
                                  Arg* eventData);
 
 PikaObj* pika_eventListener_getEventHandleObj(PikaEventListener* self,
-                                              uint32_t eventId);
+                                              uintptr_t eventId);
 
 void pika_eventListener_init(PikaEventListener** p_self);
 void pika_eventListener_deinit(PikaEventListener** p_self);
@@ -765,15 +765,15 @@ void _obj_updateProxyFlag(PikaObj* self);
 
 Arg* _obj_getPropArg(PikaObj* obj, char* name);
 Arg* __eventListener_runEvent_dataInt(PikaEventListener* lisener,
-                                      uint32_t eventId,
+                                      uintptr_t eventId,
                                       int eventSignal);
 
 Arg* __eventListener_runEvent(PikaEventListener* lisener,
-                              uint32_t eventId,
+                              uintptr_t eventId,
                               Arg* eventData);
 
 Arg* pika_eventListener_sendSignalAwaitResult(PikaEventListener* self,
-                                              uint32_t eventId,
+                                              uintptr_t eventId,
                                               int eventSignal);
 
 void obj_printModules(PikaObj* self);
@@ -928,7 +928,7 @@ PikaTuple* args_getTuple(Args* self, char* name);
 PikaDict* args_getDict(Args* self, char* name);
 char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list);
 PIKA_RES obj_setEventCallback(PikaObj* self,
-                              uint32_t eventId,
+                              uintptr_t eventId,
                               Arg* eventCallback,
                               PikaEventListener* eventListener);
 

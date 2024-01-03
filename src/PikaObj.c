@@ -2759,7 +2759,7 @@ char* obj_toStr(PikaObj* self) {
 }
 
 void pika_eventListener_registEventHandler(PikaEventListener* self,
-                                           uint32_t eventId,
+                                           uintptr_t eventId,
                                            PikaObj* eventHandleObj) {
     Args buffs = {0};
     char* event_name =
@@ -2771,7 +2771,7 @@ void pika_eventListener_registEventHandler(PikaEventListener* self,
 }
 
 PIKA_RES obj_setEventCallback(PikaObj* self,
-                              uint32_t eventId,
+                              uintptr_t eventId,
                               Arg* eventCallback,
                               PikaEventListener* listener) {
     obj_setArg(self, "eventCallBack", eventCallback);
@@ -2780,7 +2780,7 @@ PIKA_RES obj_setEventCallback(PikaObj* self,
 }
 
 void pika_eventListener_registEventCallback(PikaEventListener* listener,
-                                            uint32_t eventId,
+                                            uintptr_t eventId,
                                             Arg* eventCallback) {
     pika_assert(NULL != listener);
     char hash_str[32] = {0};
@@ -2791,7 +2791,8 @@ void pika_eventListener_registEventCallback(PikaEventListener* listener,
 }
 
 Args buffs = {0};
-void pika_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId) {
+void pika_eventListener_removeEvent(PikaEventListener* self,
+                                    uintptr_t eventId) {
     char* event_name =
         strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, "%ld", eventId);
     obj_removeArg(self, event_name);
@@ -2799,7 +2800,7 @@ void pika_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId) {
 }
 
 PikaObj* pika_eventListener_getEventHandleObj(PikaEventListener* self,
-                                              uint32_t eventId) {
+                                              uintptr_t eventId) {
     Args buffs = {0};
     char* event_name =
         strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, "%ld", eventId);
@@ -2901,7 +2902,7 @@ Arg* obj_runMethodArg1(PikaObj* self, Arg* methodArg, Arg* arg1) {
 }
 
 Arg* __eventListener_runEvent(PikaEventListener* lisener,
-                              uint32_t eventId,
+                              uintptr_t eventId,
                               Arg* eventData) {
     PikaObj* handler = pika_eventListener_getEventHandleObj(lisener, eventId);
     pika_debug("event handler: %p", handler);
@@ -2917,7 +2918,7 @@ Arg* __eventListener_runEvent(PikaEventListener* lisener,
 }
 
 Arg* __eventListener_runEvent_dataInt(PikaEventListener* lisener,
-                                      uint32_t eventId,
+                                      uintptr_t eventId,
                                       int eventSignal) {
     return __eventListener_runEvent(lisener, eventId, arg_newInt(eventSignal));
 }
@@ -2940,7 +2941,7 @@ static void _thread_event(void* arg) {
 }
 
 PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
-                                     uint32_t eventId,
+                                     uintptr_t eventId,
                                      Arg* eventData,
                                      PIKA_BOOL pickupWhenNoVM) {
 #if !PIKA_EVENT_ENABLE
@@ -2981,13 +2982,13 @@ __exit:
 }
 
 PIKA_RES pika_eventListener_send(PikaEventListener* self,
-                                 uint32_t eventId,
+                                 uintptr_t eventId,
                                  Arg* eventData) {
     return _do_pika_eventListener_send(self, eventId, eventData, pika_true);
 }
 
 PIKA_RES pika_eventListener_sendSignal(PikaEventListener* self,
-                                       uint32_t eventId,
+                                       uintptr_t eventId,
                                        int eventSignal) {
     _RETURN_WHEN_NOT_ZERO(pika_GIL_ENTER(), (PIKA_RES)-1);
     Arg* eventData = arg_newInt(eventSignal);
@@ -2996,7 +2997,7 @@ PIKA_RES pika_eventListener_sendSignal(PikaEventListener* self,
 }
 
 Arg* pika_eventListener_sendSignalAwaitResult(PikaEventListener* self,
-                                              uint32_t eventId,
+                                              uintptr_t eventId,
                                               int eventSignal) {
     /*
      * Await result from event.

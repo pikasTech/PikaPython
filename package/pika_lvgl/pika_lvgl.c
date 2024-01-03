@@ -28,6 +28,7 @@
 
 PikaObj* pika_lv_event_listener_g;
 Args* pika_lv_id_register_g;
+extern PikaEventListener* g_pika_lv_timer_event_listener;
 pika_platform_thread_mutex_t pika_lv_global_mutex_g = {0};
 
 #if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 13, 1)
@@ -532,6 +533,18 @@ void pika_lvgl_CHART_DRAW_PART___init__(PikaObj* self) {
     obj_setInt(self, "BAR", LV_CHART_DRAW_PART_BAR);
     obj_setInt(self, "CURSOR", LV_CHART_DRAW_PART_CURSOR);
     obj_setInt(self, "TICK_LABEL", LV_CHART_DRAW_PART_TICK_LABEL);
+}
+
+void pika_lvgl_task_handler(PikaObj* self) {
+    lv_task_handler();
+}
+
+void pika_lvgl_deinit(PikaObj* self) {
+    if (g_lvgl_inited) {
+        lv_deinit();
+        g_lvgl_inited = 0;
+        pika_eventListener_deinit(&g_pika_lv_timer_event_listener);
+    }
 }
 
 #endif

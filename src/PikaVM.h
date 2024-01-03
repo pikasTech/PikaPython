@@ -348,11 +348,11 @@ void pika_vm_exit(void);
 void pika_vm_exit_await(void);
 void pika_vmSignal_setCtrlClear(void);
 PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
-                                  uint32_t* id,
+                                  uintptr_t* id,
                                   Arg** signal,
                                   int* head);
 PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
-                                   uint32_t eventId,
+                                   uintptr_t eventId,
                                    Arg* eventData);
 int _VMEvent_getVMCnt(void);
 void __VMEvent_pickupEvent(char* info);

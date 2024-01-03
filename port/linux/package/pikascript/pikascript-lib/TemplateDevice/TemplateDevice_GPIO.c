@@ -1,7 +1,7 @@
 #include "TemplateDevice_GPIO.h"
 #include "../PikaStdDevice/pika_hal.h"
 
-const uint32_t GPIO_PA8_EVENT_ID = 0x08;
+const uintptr_t GPIO_PA8_EVENT_ID = 0x08;
 void TemplateDevice_GPIO_platformGetEventId(PikaObj* self) {
     char* pin = obj_getStr(self, "pin");
     if (strEqu(pin, "PA8")) {

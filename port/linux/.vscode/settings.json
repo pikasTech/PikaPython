@@ -124,7 +124,8 @@
         "_fuzzypid_pidparams.h": "c",
         "_fuzzypid_rulebase.h": "c",
         "fuzzy_pid.h": "c",
-        "_fuzzypid_piddirect.h": "c"
+        "_fuzzypid_piddirect.h": "c",
+        "pika_lvgl_lv_event.h": "c"
     },
     "python.formatting.provider": "none",
     "clangd.arguments": [

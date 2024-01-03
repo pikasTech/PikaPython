@@ -73,25 +73,15 @@ PikaObj* eventListener_getHandler(PikaObj* self, uintptr_t event_id) {
 
 static void __pika_event_cb(lv_event_t* e) {
     lv_obj_t* target = lv_event_get_target(e);
-    PikaObj* event_handler =
-        eventListener_getHandler(pika_lv_event_listener_g, (uintptr_t)target);
-    PikaObj* evt = obj_getObj(event_handler, "_event_evt");
-    obj_setPtr(evt, "lv_event", e);
-    // obj_run(event_handler, "_event_cb(_event_evt)");
-    obj_runMethod1(event_handler, "_event_cb",
-                   arg_copy(obj_getArg(event_handler, "_event_evt")));
-}
-
-void eventListener_registEvent(PikaObj* self,
-                               uintptr_t event_id,
-                               PikaObj* event_handler) {
-    Args buffs = {0};
-    char* event_name =
-        strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, "%d", event_id);
-    obj_newDirectObj(self, event_name, New_TinyObj);
-    PikaObj* event_item = obj_getObj(self, event_name);
-    obj_setPtr(event_item, "handler", event_handler);
-    strsDeinit(&buffs);
+    PikaObj* oEevent = newNormalObj(New_pika_lvgl_lv_event);
+    obj_setPtr(oEevent, "lv_event", e);
+    Arg* aEvent = arg_newObj(oEevent);
+    Arg* aRes = __eventListener_runEvent(pika_lv_event_listener_g,
+                                         (uintptr_t)target, aEvent);
+    if (NULL != aRes) {
+        arg_deinit(aRes);
+    }
+    arg_deinit(aEvent);
 }
 
 void pika_lvgl_lv_obj_add_event_cb(PikaObj* self,
@@ -100,11 +90,8 @@ void pika_lvgl_lv_obj_add_event_cb(PikaObj* self,
                                    void* user_data) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_obj_add_event_cb(lv_obj, __pika_event_cb, filter, NULL);
-    obj_setArg(self, "_event_cb", event_cb);
-    obj_setPtr(self, "_event_user_data", user_data);
-    obj_newDirectObj(self, "_event_evt", New_pika_lvgl_lv_event);
-    eventListener_registEvent(pika_lv_event_listener_g, (uintptr_t)lv_obj,
-                              self);
+    pika_eventListener_registEventCallback(pika_lv_event_listener_g,
+                                           (uintptr_t)lv_obj, event_cb);
 }
 
 void pika_lvgl_lv_obj_add_style(PikaObj* self, PikaObj* style, int selector) {

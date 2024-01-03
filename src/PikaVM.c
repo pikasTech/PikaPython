@@ -236,7 +236,7 @@ void _VMEvent_deinit(void) {
 }
 
 PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
-                                   uint32_t eventId,
+                                   uintptr_t eventId,
                                    Arg* eventData) {
 #if !PIKA_EVENT_ENABLE
     pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
@@ -269,7 +269,7 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
 }
 
 PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
-                                  uint32_t* id,
+                                  uintptr_t* id,
                                   Arg** data,
                                   int* head) {
 #if !PIKA_EVENT_ENABLE
@@ -300,7 +300,7 @@ void __VMEvent_pickupEvent(char* info) {
         return;
     }
     PikaObj* event_lisener;
-    uint32_t event_id;
+    uintptr_t event_id;
     Arg* event_data;
     int head;
     if (PIKA_RES_OK == __eventListener_popEvent(&event_lisener, &event_id,

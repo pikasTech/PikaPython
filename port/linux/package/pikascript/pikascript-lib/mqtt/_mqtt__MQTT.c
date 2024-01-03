@@ -12,7 +12,7 @@ PikaEventListener* g_mqtt_event_listener = NULL;
 
 void Subscribe_Handler(void* client, message_data_t* msg);
 
-const uint32_t MQTT_RECONNECTION_EVENT_ID = 0xFFAA0088;
+const uintptr_t MQTT_RECONNECTION_EVENT_ID = 0xFFAA0088;
 
 void _mqtt__MQTT___init__(PikaObj* self,
                           char* ip,
@@ -448,7 +448,7 @@ int _mqtt__MQTT_subscribe(PikaObj* self, char* topic, Arg* cb, int qos) {
             if (NULL == g_mqtt_event_listener) {
                 pika_eventListener_init(&g_mqtt_event_listener);
             }
-            uint32_t eventId = hash_time33(topic_str);
+            uintptr_t eventId = hash_time33(topic_str);
             // __platform_printf("hash_time33(topic_str):%d
             // \r\n",hash_time33(topic_str));
             pika_eventListener_registEventCallback(g_mqtt_event_listener,
@@ -552,7 +552,7 @@ int _mqtt__MQTT_setDisconnectHandler(PikaObj* self, Arg* cb) {
     if (NULL == g_mqtt_event_listener) {
         pika_eventListener_init(&g_mqtt_event_listener);
     }
-    // uint32_t eventId = hash_time33(topic_str);
+    // uintptr_t eventId = hash_time33(topic_str);
     // __platform_printf("hash_time33(topic_str):%d
     // \r\n",hash_time33(topic_str));
     pika_eventListener_registEventHandler(g_mqtt_event_listener,

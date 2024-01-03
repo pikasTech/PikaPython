@@ -8,7 +8,7 @@ void _PikaStdDevice_event_handler(pika_dev* dev, int signal) {
 
 void _PikaStdDevice_setCallback(PikaObj* self,
                                 Arg* eventCallback,
-                                uint32_t eventId) {
+                                uintptr_t eventId) {
     if (NULL == g_pika_device_event_listener) {
         pika_eventListener_init(&g_pika_device_event_listener);
     }
