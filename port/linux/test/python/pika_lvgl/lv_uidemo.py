@@ -3,8 +3,6 @@ import pika_lvgl as lv
 import time
 
 global_dict = {}
-global_list = []
-
 
 class MyMeter:
     def __init__(self,
@@ -86,7 +84,6 @@ class MyMeter:
 class InputBox:
     def __init__(self, parent, label_text="label", value='0.0', unit="", box_num=1, box_width=80):
         self.input_box_list = []
-        global_list.append(self)
         container = lv.obj(parent)
         container.set_size(110 + box_width * box_num, 50)
         container.clear_flag(lv.obj.FLAG.SCROLLABLE)
@@ -494,7 +491,6 @@ def main():
     global_dict["datetime_label"] = datetime_label
 
     timer = lv.timer_create_basic()
-    global_list.append(timer)
     timer.set_period(1)
     timer.set_cb(date_time_update_cb)
 
