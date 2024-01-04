@@ -3,6 +3,7 @@ import pika_lvgl as lv
 import time
 
 global_dict = {}
+global_list= []
 
 class MyMeter:
     def __init__(self,
@@ -221,6 +222,7 @@ class Button:
         label = lv.label(btn)
         label.set_text(label_text)
         label.align(lv.ALIGN.CENTER, 0, 0)
+        # global_list.append(self)
         self.is_on = False
         self.btn = btn
         self.label = label
@@ -235,6 +237,7 @@ class Button:
         self.is_on = is_on
 
     def _event_cb_adapter(self, e):
+        print("btn event:", self.label.get_text())
         self.event_cb(self, e)
 
     def add_event_cb(self, event_cb, event_type, user_data=None):
@@ -501,8 +504,7 @@ def main():
     keyboard_btn = Button(status_bar, label_text="keyboard")
     keyboard_btn.align(lv.ALIGN.RIGHT_MID, -20, 0)
     keyboard_btn.set_size(60, 30)
-    global_dict["keyboard_btn"] = keyboard_btn
-    keyboard_btn.add_event_cb(kb_btn_event_cb, lv.EVENT.CLICKED, None)
+    keyboard_btn.add_event_cb(kb_btn_event_cb, lv.EVENT.ALL, None)
 
     # 创建一个tabview对象
     tabview = lv.tabview(lv.scr_act(), lv.DIR.TOP, TABVIEW_HEIGHT)
@@ -549,7 +551,6 @@ def main():
     tab1_process_bar = BtnProcessBar(tab1, label_text="start")
     tab1_process_bar.align(lv.ALIGN.BOTTOM_LEFT, 0, 0)
     tab1_process_bar.add_event_cb(tab1_btnbar1_event_cb, lv.EVENT.CLICKED)
-    global_dict["tab1_process_bar"] = tab1_process_bar
 
     # tab2
     timer_segment.align(lv.ALIGN.BOTTOM_RIGHT, -220, -20)
@@ -589,7 +590,7 @@ def main():
 
 main()
 
-for i in range(10):
+for i in range(1):
     time.sleep(0.1)
     lv.task_handler()
 
