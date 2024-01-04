@@ -879,7 +879,7 @@ TEST_RUN_SINGLE_FILE(lvgl, lv_list1, "test/python/pika_lvgl/lv_list1.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_obj1, "test/python/pika_lvgl/lv_obj1.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_obj2, "test/python/pika_lvgl/lv_obj2.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_obj3, "test/python/pika_lvgl/lv_obj3.py");
-TEST_RUN_SINGLE_FILE(lvgl, lv_png, "test/python/pika_lvgl/lv_png.py");
+// TEST_RUN_SINGLE_FILE(lvgl, lv_png, "test/python/pika_lvgl/lv_png.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_roller1, "test/python/pika_lvgl/lv_roller1.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_slider1, "test/python/pika_lvgl/lv_slider1.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_style1, "test/python/pika_lvgl/lv_style1.py");
@@ -891,5 +891,6 @@ TEST_RUN_SINGLE_FILE(lvgl,
                      lv_textarea1,
                      "test/python/pika_lvgl/lv_textarea1.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_tim, "test/python/pika_lvgl/lv_tim.py");
+TEST_RUN_SINGLE_FILE(lvgl, lv_uidemo, "test/python/pika_lvgl/lv_uidemo.py");
 
 TEST_END

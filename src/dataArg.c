@@ -657,39 +657,39 @@ void arg_deinitHeap(Arg* self) {
     // }
 }
 
-/* load file as byte array */
 Arg* arg_loadFile(Arg* self, char* filename) {
     size_t file_size = 0;
-    char* file_buff = pika_platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
-    Arg* res = New_arg(NULL);
-    pika_platform_memset(file_buff, 0, PIKA_READ_FILE_BUFF_SIZE);
     FILE* input_file = pika_platform_fopen(filename, "rb");
     if (NULL == input_file) {
-        if (NULL != res) {
-            arg_deinit(res);
-        }
-        res = NULL;
-        goto __exit;
+        return NULL;
     }
-    file_size =
-        pika_platform_fread(file_buff, 1, PIKA_READ_FILE_BUFF_SIZE, input_file);
 
-    if (file_size >= PIKA_READ_FILE_BUFF_SIZE) {
-        pika_platform_printf("Error: Not enough buff for input file.\r\n");
-        pika_platform_printf("Info: file size: %d\r\n", file_size);
-        pika_platform_printf("Info: buff size: %d\r\n",
-                             PIKA_READ_FILE_BUFF_SIZE);
-        arg_deinit(res);
-        res = NULL;
-        goto __exit;
-    }
-    /* should not add '\0' to the end of the string */
-    res = arg_setBytes(res, "", (uint8_t*)file_buff, file_size);
-__exit:
-    pika_platform_free(file_buff);
-    if (NULL != input_file) {
+    // Move the file pointer to the end of the file
+    pika_platform_fseek(input_file, 0, SEEK_END);
+    // Get the current file pointer position which is the file size
+    file_size = pika_platform_ftell(input_file);
+    // Move the file pointer back to the beginning of the file
+    pika_platform_fseek(input_file, 0, SEEK_SET);
+
+    // Allocate buffer based on file size
+    Arg* res = arg_newBytes(NULL, file_size);
+    char* file_buff = (char*)arg_getBytes(res);
+    if (file_buff == NULL) {
         pika_platform_fclose(input_file);
+        return NULL;
     }
+
+    pika_platform_memset(file_buff, 0, file_size);
+    // Read the file into the buffer
+    if (pika_platform_fread(file_buff, 1, file_size, input_file) != file_size) {
+        // Handle read error or file size mismatch
+        arg_deinit(res);
+        pika_platform_fclose(input_file);
+        return NULL;
+    }
+
+    // Clean up
+    pika_platform_fclose(input_file);
     return res;
 }
 
