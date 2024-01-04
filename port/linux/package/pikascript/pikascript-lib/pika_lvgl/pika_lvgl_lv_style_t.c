@@ -14,9 +14,7 @@ void pika_lvgl_style_t_init(PikaObj* self) {
 }
 
 void pika_lvgl_style_t___init__(PikaObj* self) {
-    lv_style_t lv_style_stack = {0};
-    args_setStruct(self->list, "lv_style_struct", lv_style_stack);
-    lv_style_t* lv_style = args_getStruct(self->list, "lv_style_struct");
+    lv_style_t* lv_style = lv_mem_alloc(sizeof(lv_style_t));
     obj_setPtr(self, "lv_style", lv_style);
 }
 

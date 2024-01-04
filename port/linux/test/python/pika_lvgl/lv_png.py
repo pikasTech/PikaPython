@@ -1,6 +1,6 @@
 import pika_lvgl as lv
 
-f = open('/test/assets/pic1.jpg', 'rb')
+f = open('test/assets/pic1.jpg', 'rb')
 img_data = f.read()
 f.close()  
 

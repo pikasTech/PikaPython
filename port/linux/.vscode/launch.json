@@ -20,7 +20,7 @@
                 // "--gtest_filter=stddata.encode_decode"
                 // "--gtest_filter=packtool.packfiles_txt"
                 // "--gtest_filter=cmodule.class_attr_obj"
-                "--gtest_filter=lvgl.lv_tim"
+                "--gtest_filter=lvgl.lv_png"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

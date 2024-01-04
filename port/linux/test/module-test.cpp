@@ -870,29 +870,26 @@ TEST_RUN_SINGLE_FILE(lvgl, lv_btn1, "test/python/pika_lvgl/lv_btn1.py");
 TEST_RUN_SINGLE_FILE(lvgl,
                      lv_callback1,
                      "test/python/pika_lvgl/lv_callback1.py");
-/* TEST_RUN_SINGLE_FILE(lvgl,
-                     lv_checkbox1,
-                     "test/python/pika_lvgl/lv_checkbox1.py"); */
+TEST_RUN_SINGLE_FILE(lvgl,
+                     lv_checkbox,
+                     "test/python/pika_lvgl/lv_checkbox1.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_drag, "test/python/pika_lvgl/lv_drag.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_label1, "test/python/pika_lvgl/lv_label1.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_list1, "test/python/pika_lvgl/lv_list1.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_obj1, "test/python/pika_lvgl/lv_obj1.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_obj2, "test/python/pika_lvgl/lv_obj2.py");
-// TEST_RUN_SINGLE_FILE(lvgl, lv_obj3, "test/python/pika_lvgl/lv_obj3.py");
+TEST_RUN_SINGLE_FILE(lvgl, lv_obj3, "test/python/pika_lvgl/lv_obj3.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_png, "test/python/pika_lvgl/lv_png.py");
-// TEST_RUN_SINGLE_FILE(lvgl, lv_roller1,
-// "test/python/pika_lvgl/lv_roller1.py"); TEST_RUN_SINGLE_FILE(lvgl,
-// lv_slider1, "test/python/pika_lvgl/lv_slider1.py");
-// TEST_RUN_SINGLE_FILE(lvgl, lv_style1, "test/python/pika_lvgl/lv_style1.py");
-// TEST_RUN_SINGLE_FILE(lvgl, lv_switch1,
-// "test/python/pika_lvgl/lv_switch1.py");
+TEST_RUN_SINGLE_FILE(lvgl, lv_roller1, "test/python/pika_lvgl/lv_roller1.py");
+TEST_RUN_SINGLE_FILE(lvgl, lv_slider1, "test/python/pika_lvgl/lv_slider1.py");
+TEST_RUN_SINGLE_FILE(lvgl, lv_style1, "test/python/pika_lvgl/lv_style1.py");
+TEST_RUN_SINGLE_FILE(lvgl, lv_switch1, "test/python/pika_lvgl/lv_switch1.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_table1, "test/python/pika_lvgl/lv_table1.py");
-// TEST_RUN_SINGLE_FILE(lvgl, lv_tabview1,
-// "test/python/pika_lvgl/lv_tabview1.py"); TEST_RUN_SINGLE_FILE(lvgl,
-// lv_tabview2, "test/python/pika_lvgl/lv_tabview2.py");
-// TEST_RUN_SINGLE_FILE(lvgl,
-//                      lv_textarea1,
-//                      "test/python/pika_lvgl/lv_textarea1.py");
+TEST_RUN_SINGLE_FILE(lvgl, lv_tabview1, "test/python/pika_lvgl/lv_tabview1.py");
+TEST_RUN_SINGLE_FILE(lvgl, lv_tabview2, "test/python/pika_lvgl/lv_tabview2.py");
+TEST_RUN_SINGLE_FILE(lvgl,
+                     lv_textarea1,
+                     "test/python/pika_lvgl/lv_textarea1.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_tim, "test/python/pika_lvgl/lv_tim.py");
 
 TEST_END
