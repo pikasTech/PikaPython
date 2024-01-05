@@ -570,7 +570,17 @@ Arg* arg_copy(Arg* arg_src) {
         return NULL;
     }
     pika_assert(arg_src->flag < ARG_FLAG_MAX);
-    arg_refcntInc(arg_src);
+    if (ARG_TYPE_OBJECT == arg_getType(arg_src)) {
+        arg_refcntInc(arg_src);
+    }
+#if 0
+    if (argType_isObjectMethodActive(arg_getType(arg_src))) {
+        PikaObj* hostObj = methodArg_getHostObj(arg_src);
+        if (NULL != hostObj) {
+            obj_refcntInc(hostObj);
+        }
+    }
+#endif
     Arg* arg_dict = New_arg(NULL);
     arg_dict = arg_copy_content(arg_dict, arg_src);
     return arg_dict;
@@ -649,12 +659,14 @@ void arg_deinitHeap(Arg* self) {
         obj_GC(subObj);
         return;
     }
-    // if (ARG_TYPE_METHOD_OBJECT == type) {
-    //     PikaObj* hostObj = methodArg_getHostObj(self);
-    //     if (NULL != hostObj) {
-    //         obj_GC(hostObj);
-    //     }
-    // }
+#if 0
+    if (argType_isObjectMethodActive(arg_getType(self))) {
+        PikaObj* hostObj = methodArg_getHostObj(self);
+        if (NULL != hostObj) {
+            obj_GC(hostObj);
+        }
+    }
+#endif
 }
 
 Arg* arg_loadFile(Arg* self, char* filename) {

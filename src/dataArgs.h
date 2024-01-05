@@ -40,6 +40,7 @@ typedef Link Args;
 /* operation */
 void args_deinit(Args* self);
 void args_deinit_stack(Args* self);
+void args_deinit_ex(Args* self, pika_bool is_object);
 void args_init(Args* self, Args* args);
 int32_t args_getSize(Args* self);
 LinkNode* args_getNode(Args* self, char* name);

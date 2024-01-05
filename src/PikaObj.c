@@ -161,7 +161,7 @@ char* fast_itoa(char* buf, uint32_t val) {
 static int32_t obj_deinit_no_del(PikaObj* self) {
     /* free the list */
     Locals_deinit(self);
-    args_deinit(self->list);
+    args_deinit_ex(self->list, pika_true);
 #if PIKA_KERNAL_DEBUG_ENABLE
     if (NULL != self->aName) {
         arg_deinit(self->aName);
@@ -425,6 +425,10 @@ static PIKA_RES _obj_setArg(PikaObj* self,
         }
 #endif
         obj_setName(oNew, sArgName);
+    }
+    if (argType_isObjectMethodActive(arg_getType(arg))) {
+        PikaObj* host_self = methodArg_getHostObj(arg);
+        // obj_refcntInc(host_self);
     }
     args_setArg(host->list, aNew);
     /* enable mark sweep to collect this object */
@@ -936,6 +940,7 @@ static PikaObj* _obj_getObjWithKeepDeepth(PikaObj* self,
             }
             obj_deinit(objThis);
         }
+        pika_assert_obj_alive(objNext);
         objThis = objNext;
         bThisIsTemp = *pIsTemp;
     }
@@ -1018,15 +1023,20 @@ PikaObj* methodArg_getHostObj(Arg* method_arg) {
 }
 
 Arg* methodArg_active(Arg* method_arg) {
-    pika_assert(arg_getType(method_arg) == ARG_TYPE_METHOD_NATIVE);
-    Arg* aActive = New_arg(NULL);
-    MethodPropNative* propNative =
-        (MethodPropNative*)arg_getContent(method_arg);
-    MethodProp prop = {0};
-    /* active the method */
-    pika_platform_memcpy(&prop, propNative, sizeof(MethodPropNative));
-    aActive = arg_setStruct(aActive, "", (uint8_t*)&prop, sizeof(MethodProp));
-    arg_setType(aActive, ARG_TYPE_METHOD_NATIVE_ACTIVE);
+    Arg* aActive = method_arg;
+    if (arg_getType(method_arg) == ARG_TYPE_METHOD_NATIVE) {
+        pika_assert(arg_getType(method_arg) == ARG_TYPE_METHOD_NATIVE);
+        Arg* aActive = New_arg(NULL);
+        MethodPropNative* propNative =
+            (MethodPropNative*)arg_getContent(method_arg);
+        MethodProp prop = {0};
+        /* active the method */
+        pika_platform_memcpy(&prop, propNative, sizeof(MethodPropNative));
+        aActive =
+            arg_setStruct(aActive, "", (uint8_t*)&prop, sizeof(MethodProp));
+        arg_setType(aActive, ARG_TYPE_METHOD_NATIVE_ACTIVE);
+    }
+
     return aActive;
 }
 
@@ -1034,12 +1044,13 @@ Arg* methodArg_setHostObj(Arg* method_arg, PikaObj* host_obj) {
     if (!argType_isObjectMethod(arg_getType(method_arg))) {
         return method_arg;
     }
-    if (arg_getType(method_arg) == ARG_TYPE_METHOD_NATIVE) {
-        method_arg = methodArg_active(method_arg);
-    }
+    method_arg = methodArg_active(method_arg);
     MethodProp* prop = (MethodProp*)arg_getContent(method_arg);
     if (prop->host_obj == NULL) {
         prop->host_obj = host_obj;
+#if 0
+        obj_refcntInc(host_obj);
+#endif
         return method_arg;
     }
     return method_arg;
@@ -2775,6 +2786,10 @@ PIKA_RES obj_setEventCallback(PikaObj* self,
                               Arg* eventCallback,
                               PikaEventListener* listener) {
     obj_setArg(self, "eventCallBack", eventCallback);
+    if (argType_isObjectMethodActive(arg_getType(eventCallback))) {
+        PikaObj* method_self = methodArg_getHostObj(eventCallback);
+        obj_setRef(self, "eventCallBackHost", method_self);
+    }
     pika_eventListener_registEventHandler(listener, eventId, self);
     return PIKA_RES_OK;
 }
@@ -3796,7 +3811,8 @@ Arg* _type(Arg* arg) {
         goto __exit;
     }
 
-    if (ARG_TYPE_METHOD_OBJECT == type) {
+    if (ARG_TYPE_METHOD_OBJECT == type ||
+        ARG_TYPE_METHOD_OBJECT_ACTIVE == type) {
         result = arg_newStr("<class 'method'>");
         goto __exit;
     }

@@ -32,9 +32,13 @@
 #include "dataString.h"
 #include "dataStrs.h"
 
-void args_deinit(Args* self) {
+void args_deinit_ex(Args* self, pika_bool is_object) {
     pika_assert(self != NULL);
-    link_deinit(self);
+    link_deinit_ex(self, is_object);
+}
+
+void args_deinit(Args* self) {
+    return args_deinit_ex(self, 0);
 }
 
 void args_deinit_stack(Args* self) {
@@ -609,4 +613,22 @@ PikaDict* args_getDict(Args* self, char* name) {
 char* args_cacheStr(Args* self, char* str) {
     args_setStr(self, "@sc", str);
     return args_getStr(self, "@sc");
+}
+
+void _link_deinit_pyload(Link* self, pika_bool is_object) {
+    LinkNode* nowNode = self->firstNode;
+    Arg* nowArg = (Arg*)nowNode;
+    while (NULL != nowNode) {
+        LinkNode* nodeNext = (LinkNode*)arg_getNext(nowArg);
+        if (is_object) {
+            if (argType_isObjectMethodActive(arg_getType(nowArg))) {
+                PikaObj* host = methodArg_getHostObj(nowArg);
+                // obj_GC(host);
+            }
+        }
+        linkNode_deinit(nowNode);
+        nowNode = nodeNext;
+        nowArg = (Arg*)nowNode;
+    }
+    pika_platform_memset(self, 0, sizeof(Link));
 }

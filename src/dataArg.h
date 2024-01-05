@@ -55,6 +55,7 @@ typedef enum {
     ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR,
     ARG_TYPE_METHOD_CONSTRUCTOR,
     ARG_TYPE_METHOD_OBJECT,
+    ARG_TYPE_METHOD_OBJECT_ACTIVE,
     ARG_TYPE_METHOD_STATIC,
     ARG_TYPE_STRUCT,
     ARG_TYPE_STRUCT_HEAP,
@@ -289,8 +290,8 @@ static inline uint8_t arg_getIsDoubleStarred(Arg* self) {
 }
 
 static inline uint8_t* arg_getContent(Arg* self) {
-    pika_assert(self->flag <= ARG_FLAG_MAX);
     pika_assert(NULL != self);
+    pika_assert(self->flag <= ARG_FLAG_MAX);
     return (arg_isSerialized(self)) ? (self)->content : ((self)->_.buffer);
 }
 
@@ -302,6 +303,7 @@ static inline uint8_t argType_isObject(ArgType type) {
 static inline uint8_t argType_isCallable(ArgType type) {
     return ((type) == ARG_TYPE_METHOD_CONSTRUCTOR ||
             (type) == ARG_TYPE_METHOD_OBJECT ||
+            (type) == ARG_TYPE_METHOD_OBJECT_ACTIVE ||
             (type) == ARG_TYPE_METHOD_STATIC ||
             (type) == ARG_TYPE_METHOD_NATIVE ||
             (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
@@ -310,11 +312,12 @@ static inline uint8_t argType_isCallable(ArgType type) {
 
 static inline uint8_t argType_isObjectMethod(ArgType type) {
     return ((type) == ARG_TYPE_METHOD_OBJECT ||
+            (type) == ARG_TYPE_METHOD_OBJECT_ACTIVE ||
             (type) == ARG_TYPE_METHOD_NATIVE);
 }
 
 static inline uint8_t argType_isObjectMethodActive(ArgType type) {
-    return ((type) == ARG_TYPE_METHOD_OBJECT ||
+    return ((type) == ARG_TYPE_METHOD_OBJECT_ACTIVE ||
             (type) == ARG_TYPE_METHOD_NATIVE_ACTIVE);
 }
 

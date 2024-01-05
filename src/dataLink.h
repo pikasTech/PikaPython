@@ -44,6 +44,7 @@ struct Link {
 };
 
 void link_deinit(Link* self);
+void link_deinit_ex(Link* self, pika_bool is_object);
 void link_deinit_stack(Link* self);
 void link_init(Link* self, void* args);
 void link_addNode(Link* self, void* content);

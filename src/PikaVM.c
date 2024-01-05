@@ -1062,6 +1062,9 @@ __exit:
         aRes = methodArg_setHostObj(aRes, oHost);
         if ((arg_getType(aRes) != ARG_TYPE_METHOD_NATIVE_ACTIVE) && !is_alloc) {
             aRes = arg_copy_noalloc(aRes, aRetReg);
+            if (arg_getType(aRes) == ARG_TYPE_METHOD_OBJECT) {
+                arg_setType(aRes, ARG_TYPE_METHOD_OBJECT_ACTIVE);
+            }
         }
         pika_assert_arg_alive(aRes);
     }
@@ -1455,7 +1458,8 @@ static int PikaVMFrame_loadArgsFromMethodArg(PikaVMFrame* vm,
 
     /* get arg_num_pos */
     _type_list_parse(&f);
-    if (f.method_type == ARG_TYPE_METHOD_OBJECT) {
+    if (f.method_type == ARG_TYPE_METHOD_OBJECT ||
+        f.method_type == ARG_TYPE_METHOD_OBJECT_ACTIVE) {
         /* delete the 'self' */
         f.n_positional--;
     }
@@ -1610,9 +1614,12 @@ static int PikaVMFrame_loadArgsFromMethodArg(PikaVMFrame* vm,
     }
 
     /* load 'self' as the first arg when call object method */
-    if (f.method_type == ARG_TYPE_METHOD_OBJECT) {
-        PikaObj* method_self = methodArg_getHostObj(aMethod);
-        if (NULL == method_self) {
+    if (f.method_type == ARG_TYPE_METHOD_OBJECT ||
+        f.method_type == ARG_TYPE_METHOD_OBJECT_ACTIVE) {
+        PikaObj* method_self = NULL;
+        if (f.method_type == ARG_TYPE_METHOD_OBJECT_ACTIVE) {
+            method_self = methodArg_getHostObj(aMethod);
+        } else {
             method_self = oMethodHost;
         }
         Arg* call_arg = arg_setRef(NULL, "self", method_self);

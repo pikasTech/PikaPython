@@ -2,9 +2,6 @@ import PikaStdLib
 import pika_lvgl as lv
 import time
 
-global_dict = {}
-global_list= []
-
 class MyMeter:
     def __init__(self,
                  parent,
@@ -116,12 +113,12 @@ class InputBox:
     def event_cb(self, e):
         code = e.get_code()
         ta = e.get_target()
-        kb: KeyBoard = global_dict["keyboard"]
-        if code == lv.EVENT.FOCUSED:
-            kb.set_hiden(False)
-            kb.set_textarea(ta)
-        if code == lv.EVENT.DEFOCUSED:
-            kb.set_textarea(None)
+        # kb: KeyBoard = global_dict["keyboard"]
+        # if code == lv.EVENT.FOCUSED:
+            # kb.set_hiden(False)
+            # kb.set_textarea(ta)
+        # if code == lv.EVENT.DEFOCUSED:
+            # kb.set_textarea(None)
 
 
 class ProcessCount:
@@ -222,7 +219,6 @@ class Button:
         label = lv.label(btn)
         label.set_text(label_text)
         label.align(lv.ALIGN.CENTER, 0, 0)
-        # global_list.append(self)
         self.is_on = False
         self.btn = btn
         self.label = label
@@ -237,7 +233,8 @@ class Button:
         self.is_on = is_on
 
     def _event_cb_adapter(self, e):
-        print("btn event:", self.label.get_text())
+        code = e.get_code()
+        print("btn event:", self.label.get_text(), code)
         self.event_cb(self, e)
 
     def add_event_cb(self, event_cb, event_type, user_data=None):
@@ -366,7 +363,6 @@ class KeyBoard:
             kb.set_mode(lv.keyboard.MODE.NUMBER)
         else:
             kb.set_mode(lv.keyboard.MODE.TEXT_LOWER)
-        global_dict["keyboard"] = self
         close_btn = Button(container, label_text="close")
         close_btn.set_size(40, 40)
         close_btn.align(lv.ALIGN.TOP_RIGHT, 0, -10)
@@ -437,14 +433,15 @@ class KeyBoard:
 
 def kb_btn_event_cb(self, e):
     # print("kb_btn_event_cb")
-    kb: KeyBoard = global_dict["keyboard"]
-    kb.switch_hidden()
+    # kb: KeyBoard = global_dict["keyboard"]
+    # kb.switch_hidden()
+    pass
 
 
 def date_time_update_cb(timer):
-    datetime_label = global_dict["datetime_label"]
+    # datetime_label = global_dict["datetime_label"]
     asctime = time.asctime()
-    datetime_label.set_text(asctime)
+    # datetime_label.set_text(asctime)
     print(asctime)
 
 
@@ -491,7 +488,6 @@ def main():
     datetime_label = lv.label(status_bar)
     datetime_label.set_text("2023.12.20 16:20:08")
     datetime_label.align(lv.ALIGN.LEFT_MID, LOGO_WIDTH, 0)
-    global_dict["datetime_label"] = datetime_label
 
     timer = lv.timer_create_basic()
     timer.set_period(1)
