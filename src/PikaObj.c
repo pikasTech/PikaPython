@@ -426,10 +426,12 @@ static PIKA_RES _obj_setArg(PikaObj* self,
 #endif
         obj_setName(oNew, sArgName);
     }
+#if 0
     if (argType_isObjectMethodActive(arg_getType(arg))) {
         PikaObj* host_self = methodArg_getHostObj(arg);
-        // obj_refcntInc(host_self);
+        obj_refcntInc(host_self);
     }
+#endif
     args_setArg(host->list, aNew);
     /* enable mark sweep to collect this object */
     if (bNew) {
@@ -1023,20 +1025,15 @@ PikaObj* methodArg_getHostObj(Arg* method_arg) {
 }
 
 Arg* methodArg_active(Arg* method_arg) {
-    Arg* aActive = method_arg;
-    if (arg_getType(method_arg) == ARG_TYPE_METHOD_NATIVE) {
-        pika_assert(arg_getType(method_arg) == ARG_TYPE_METHOD_NATIVE);
-        Arg* aActive = New_arg(NULL);
-        MethodPropNative* propNative =
-            (MethodPropNative*)arg_getContent(method_arg);
-        MethodProp prop = {0};
-        /* active the method */
-        pika_platform_memcpy(&prop, propNative, sizeof(MethodPropNative));
-        aActive =
-            arg_setStruct(aActive, "", (uint8_t*)&prop, sizeof(MethodProp));
-        arg_setType(aActive, ARG_TYPE_METHOD_NATIVE_ACTIVE);
-    }
-
+    pika_assert(arg_getType(method_arg) == ARG_TYPE_METHOD_NATIVE);
+    Arg* aActive = New_arg(NULL);
+    MethodPropNative* propNative =
+        (MethodPropNative*)arg_getContent(method_arg);
+    MethodProp prop = {0};
+    /* active the method */
+    pika_platform_memcpy(&prop, propNative, sizeof(MethodPropNative));
+    aActive = arg_setStruct(aActive, "", (uint8_t*)&prop, sizeof(MethodProp));
+    arg_setType(aActive, ARG_TYPE_METHOD_NATIVE_ACTIVE);
     return aActive;
 }
 
@@ -1044,7 +1041,9 @@ Arg* methodArg_setHostObj(Arg* method_arg, PikaObj* host_obj) {
     if (!argType_isObjectMethod(arg_getType(method_arg))) {
         return method_arg;
     }
-    method_arg = methodArg_active(method_arg);
+    if (arg_getType(method_arg) == ARG_TYPE_METHOD_NATIVE) {
+        method_arg = methodArg_active(method_arg);
+    }
     MethodProp* prop = (MethodProp*)arg_getContent(method_arg);
     if (prop->host_obj == NULL) {
         prop->host_obj = host_obj;
@@ -3811,8 +3810,7 @@ Arg* _type(Arg* arg) {
         goto __exit;
     }
 
-    if (ARG_TYPE_METHOD_OBJECT == type ||
-        ARG_TYPE_METHOD_OBJECT_ACTIVE == type) {
+    if (ARG_TYPE_METHOD_OBJECT == type) {
         result = arg_newStr("<class 'method'>");
         goto __exit;
     }

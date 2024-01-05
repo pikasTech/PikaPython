@@ -621,10 +621,12 @@ void _link_deinit_pyload(Link* self, pika_bool is_object) {
     while (NULL != nowNode) {
         LinkNode* nodeNext = (LinkNode*)arg_getNext(nowArg);
         if (is_object) {
+#if 0
             if (argType_isObjectMethodActive(arg_getType(nowArg))) {
                 PikaObj* host = methodArg_getHostObj(nowArg);
-                // obj_GC(host);
+                obj_GC(host);
             }
+#endif
         }
         linkNode_deinit(nowNode);
         nowNode = nodeNext;
