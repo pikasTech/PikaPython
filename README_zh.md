@@ -42,6 +42,22 @@ PikaPython 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松�
 
 # 最新资讯
 
+- [【回放来了！】首届PikaPython开发者大会精彩回放，可以在线观看！](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484966&idx=1&sn=7151a529c07955d932173916370af8da&chksm=fdebd14fca9c5859c41cb5a4f2884e1413ccb401221f61c8eb879512969a808411c95b392896&token=1783213956&lang=zh_CN#rd)
+
+<img src="assets/6546.png" width="50%" height="auto">
+
+- [发布公告：PikaPython v1.13.0 发布](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484923&idx=1&sn=5ee5e6913161ea37a04221c1fa138830&chksm=fdebd292ca9c5b84c8925da87daa97a3228717c31f861fb18a5b0f7cf89d73ccab0273ad5083&token=1783213956&lang=zh_CN#rd)
+
+- [STM32嵌入式Python快速应用公开课](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484911&idx=1&sn=b8c465bb85aaa5e890d99951dc04657b&chksm=fdebd286ca9c5b90e1c3facd4f9f8b2b7fae074b2e10ad9d7548b139eeef7cfaf47dba65080f&token=1783213956&lang=zh_CN#rd)
+
+- [发布公告：PikaPython v1.12.6 发布](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484881&idx=1&sn=84a9935ebd1fae90c5d2a3332f3019b9&chksm=fdebd2b8ca9c5bae3bf35c9f052989cc3410fae89388ea40f4011cfc93365c9a452c0b505e9b&token=1783213956&lang=zh_CN#rd)
+
+- [【新品上架】PIKA 派 - WIRELESS 开发板！PikaPython官方力作!](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484877&idx=1&sn=d400f7a122ecc9f816392da209103413&chksm=fdebd2a4ca9c5bb24c59a65a73fb8980be273d5596a0696ed0a1ff006542e5f3dd9c045a4b02&token=1783213956&lang=zh_CN#rd)
+
+- [PikaPython 两周年纪念——感谢您的伴随与支持](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484840&idx=1&sn=1724e2517e930dd8d2d96872f9e7f7ae&chksm=fdebd2c1ca9c5bd7ed832294e89f1fc03378af15cbac8f7d4eab867fb555ac3c7c588aa10c66&token=1783213956&lang=zh_CN#rd)
+
+- [再创辉煌！PikaPython荣获2022年中国开源创新大赛优秀奖](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484796&idx=1&sn=d3bdf4c09e9456e929e95b7db15c9bb0&chksm=fdebd215ca9c5b03b40c7b0b490fc1e767d8c910174ef03c65fc188267710a4ccd2023656e31&token=1783213956&lang=zh_CN#rd)
+
 - [📢 发布公告：PikaPython v1.12.2 发布 🚀](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484789&idx=1&sn=bedfc580932a4bd286264110a065de2a&chksm=fdebd21cca9c5b0a4654a394f48fb3cb0e743b4ad72fef4d96e4cf28fa4357349b4862f0be7e&token=2116766907&lang=zh_CN#rd)
 
 - [万元结项奖金！学生报名开启！PikaPython 开源之夏 2023](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484785&idx=1&sn=1cf983057765198f53c4f6c8aa04e516&chksm=fdebd218ca9c5b0e3444112a5a033dc295c63482bcb8934422a199784e900c2cd95f633da5b4&token=2116766907&lang=zh_CN#rd)
