@@ -13,13 +13,8 @@ PikaEventListener* g_pika_lv_timer_event_listener;
 void __pika_timer_cb(lv_timer_t* timer) {
     PikaObj* oTimer = newNormalObj(New_pika_lvgl_lv_timer_t);
     obj_setPtr(oTimer, "lv_timer", timer);
-    Arg* aTimer = arg_newObj(oTimer);
-    Arg* aRes = __eventListener_runEvent(g_pika_lv_timer_event_listener,
-                                         (uintptr_t)timer, aTimer);
-    if (NULL != aRes) {
-        arg_deinit(aRes);
-    }
-    arg_deinit(aTimer);
+    pika_eventListener_syncSend(g_pika_lv_timer_event_listener,
+                                (uintptr_t)timer, arg_newObj(oTimer));
 }
 
 void pika_lvgl_lv_timer_t_set_period(PikaObj* self, int period) {

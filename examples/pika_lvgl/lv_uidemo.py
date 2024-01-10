@@ -2,8 +2,6 @@ import PikaStdLib
 import pika_lvgl as lv
 import time
 
-global_dict = {}
-
 class MyMeter:
     def __init__(self,
                  parent,
@@ -115,12 +113,12 @@ class InputBox:
     def event_cb(self, e):
         code = e.get_code()
         ta = e.get_target()
-        kb: KeyBoard = global_dict["keyboard"]
-        if code == lv.EVENT.FOCUSED:
-            kb.set_hiden(False)
-            kb.set_textarea(ta)
-        if code == lv.EVENT.DEFOCUSED:
-            kb.set_textarea(None)
+        # kb: KeyBoard = global_dict["keyboard"]
+        # if code == lv.EVENT.FOCUSED:
+            # kb.set_hiden(False)
+            # kb.set_textarea(ta)
+        # if code == lv.EVENT.DEFOCUSED:
+            # kb.set_textarea(None)
 
 
 class ProcessCount:
@@ -235,6 +233,8 @@ class Button:
         self.is_on = is_on
 
     def _event_cb_adapter(self, e):
+        code = e.get_code()
+        print("btn event:", self.label.get_text(), code)
         self.event_cb(self, e)
 
     def add_event_cb(self, event_cb, event_type, user_data=None):
@@ -363,7 +363,6 @@ class KeyBoard:
             kb.set_mode(lv.keyboard.MODE.NUMBER)
         else:
             kb.set_mode(lv.keyboard.MODE.TEXT_LOWER)
-        global_dict["keyboard"] = self
         close_btn = Button(container, label_text="close")
         close_btn.set_size(40, 40)
         close_btn.align(lv.ALIGN.TOP_RIGHT, 0, -10)
@@ -434,14 +433,15 @@ class KeyBoard:
 
 def kb_btn_event_cb(self, e):
     # print("kb_btn_event_cb")
-    kb: KeyBoard = global_dict["keyboard"]
-    kb.switch_hidden()
+    # kb: KeyBoard = global_dict["keyboard"]
+    # kb.switch_hidden()
+    pass
 
 
 def date_time_update_cb(timer):
-    datetime_label = global_dict["datetime_label"]
+    # datetime_label = global_dict["datetime_label"]
     asctime = time.asctime()
-    datetime_label.set_text(asctime)
+    # datetime_label.set_text(asctime)
     print(asctime)
 
 
@@ -488,7 +488,6 @@ def main():
     datetime_label = lv.label(status_bar)
     datetime_label.set_text("2023.12.20 16:20:08")
     datetime_label.align(lv.ALIGN.LEFT_MID, LOGO_WIDTH, 0)
-    global_dict["datetime_label"] = datetime_label
 
     timer = lv.timer_create_basic()
     timer.set_period(1)
@@ -501,8 +500,7 @@ def main():
     keyboard_btn = Button(status_bar, label_text="keyboard")
     keyboard_btn.align(lv.ALIGN.RIGHT_MID, -20, 0)
     keyboard_btn.set_size(60, 30)
-    global_dict["keyboard_btn"] = keyboard_btn
-    keyboard_btn.add_event_cb(kb_btn_event_cb, lv.EVENT.CLICKED, None)
+    keyboard_btn.add_event_cb(kb_btn_event_cb, lv.EVENT.ALL, None)
 
     # 创建一个tabview对象
     tabview = lv.tabview(lv.scr_act(), lv.DIR.TOP, TABVIEW_HEIGHT)
@@ -549,7 +547,6 @@ def main():
     tab1_process_bar = BtnProcessBar(tab1, label_text="start")
     tab1_process_bar.align(lv.ALIGN.BOTTOM_LEFT, 0, 0)
     tab1_process_bar.add_event_cb(tab1_btnbar1_event_cb, lv.EVENT.CLICKED)
-    global_dict["tab1_process_bar"] = tab1_process_bar
 
     # tab2
     timer_segment.align(lv.ALIGN.BOTTOM_RIGHT, -220, -20)
@@ -589,7 +586,7 @@ def main():
 
 main()
 
-for i in range(10):
+for i in range(1):
     time.sleep(0.1)
     lv.task_handler()
 

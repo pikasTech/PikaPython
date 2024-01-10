@@ -75,13 +75,8 @@ static void __pika_event_cb(lv_event_t* e) {
     lv_obj_t* target = lv_event_get_target(e);
     PikaObj* oEevent = newNormalObj(New_pika_lvgl_lv_event);
     obj_setPtr(oEevent, "lv_event", e);
-    Arg* aEvent = arg_newObj(oEevent);
-    Arg* aRes = __eventListener_runEvent(pika_lv_event_listener_g,
-                                         (uintptr_t)target, aEvent);
-    if (NULL != aRes) {
-        arg_deinit(aRes);
-    }
-    arg_deinit(aEvent);
+    pika_eventListener_syncSend(pika_lv_event_listener_g, (uintptr_t)target,
+                                arg_newObj(oEevent));
 }
 
 void pika_lvgl_lv_obj_add_event_cb(PikaObj* self,

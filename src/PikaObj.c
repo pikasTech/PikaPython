@@ -3034,6 +3034,34 @@ Arg* pika_eventListener_sendSignalAwaitResult(PikaEventListener* self,
 #endif
 }
 
+Arg* pika_eventListener_syncSendAwaitResult(PikaEventListener* self,
+                                            uintptr_t eventId,
+                                            Arg* eventData) {
+    return __eventListener_runEvent(self, eventId, eventData);
+}
+
+PIKA_RES pika_eventListener_syncSend(PikaEventListener* self,
+                                     uintptr_t eventId,
+                                     Arg* eventData) {
+    Arg* res = __eventListener_runEvent(self, eventId, eventData);
+    PIKA_RES ret = PIKA_RES_OK;
+    if (NULL == res) {
+        ret = PIKA_RES_ERR_RUNTIME_ERROR;
+    } else {
+        arg_deinit(res);
+    }
+    arg_deinit(eventData);
+    return ret;
+}
+
+PIKA_RES pika_eventListener_syncSendSignal(PikaEventListener* self,
+                                           uintptr_t eventId,
+                                           int eventSignal) {
+    Arg* eventData = arg_newInt(eventSignal);
+    PIKA_RES res = pika_eventListener_syncSend(self, eventId, eventData);
+    return res;
+}
+
 /* print major version info */
 void pika_printVersion(void) {
     pika_platform_printf("pikascript-core==v%d.%d.%d (%s)\r\n",

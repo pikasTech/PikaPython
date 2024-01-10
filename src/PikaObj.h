@@ -609,12 +609,25 @@ PIKA_RES pika_eventListener_sendSignal(PikaEventListener* self,
                                        uintptr_t eventId,
                                        int eventSignal);
 
+Arg* pika_eventListener_sendSignalAwaitResult(PikaEventListener* self,
+                                              uintptr_t eventId,
+                                              int eventSignal);
+
 PIKA_RES pika_eventListener_send(PikaEventListener* self,
                                  uintptr_t eventId,
                                  Arg* eventData);
 
-PikaObj* pika_eventListener_getEventHandleObj(PikaEventListener* self,
-                                              uintptr_t eventId);
+Arg* pika_eventListener_syncSendAwaitResult(PikaEventListener* self,
+                                            uintptr_t eventId,
+                                            Arg* eventData);
+
+PIKA_RES pika_eventListener_syncSend(PikaEventListener* self,
+                                     uintptr_t eventId,
+                                     Arg* eventData);
+
+PIKA_RES pika_eventListener_syncSendSignal(PikaEventListener* self,
+                                           uintptr_t eventId,
+                                           int eventSignal);
 
 void pika_eventListener_init(PikaEventListener** p_self);
 void pika_eventListener_deinit(PikaEventListener** p_self);
@@ -771,10 +784,6 @@ Arg* __eventListener_runEvent_dataInt(PikaEventListener* lisener,
 Arg* __eventListener_runEvent(PikaEventListener* lisener,
                               uintptr_t eventId,
                               Arg* eventData);
-
-Arg* pika_eventListener_sendSignalAwaitResult(PikaEventListener* self,
-                                              uintptr_t eventId,
-                                              int eventSignal);
 
 void obj_printModules(PikaObj* self);
 #if PIKA_DEBUG_ENABLE

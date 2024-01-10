@@ -298,20 +298,32 @@ void pika_lvgl_dropdown_set_text(PikaObj* self, char* txt) {
     lv_dropdown_set_text(lv_obj, txt);
 }
 
+/*
+class label(lv_obj):
+    def __init__(self, parent: lv_obj): ...
+    def set_text(self, txt: str): ...
+#    def set_text_fmt(self, fmt: str, *args): ...
+    def set_text_static(self, txt: str): ...
+    def set_long_mode(self, long_mode: int): ...
+    def set_recolor(self, en: int): ...
+    def set_text_sel_start(self, index: int): ...
+    def set_text_sel_end(self, index: int): ...
+    def get_text(self) -> str: ...
+    def get_long_mode(self) -> int: ...
+    def get_recolor(self) -> int: ...
+    def get_letter_pos(self, char_id: int) -> point_t: ...
+    def get_letter_on(self, pos_in: point_t) -> int: ...
+    def is_char_under_pos(self, pos: point_t) -> int: ...
+    def get_text_selection_start(self) -> int: ...
+    def get_text_selection_end(self) -> int: ...
+    def ins_text(self, pos: int, txt: str): ...
+    def cut_text(self, pos: int, cnt: int): ...
+*/
+
 void pika_lvgl_label___init__(PikaObj* self, PikaObj* parent) {
     lv_obj_t* lv_parent = obj_getPtr(parent, "lv_obj");
     lv_obj_t* lv_obj = lv_label_create(lv_parent);
     obj_setPtr(self, "lv_obj", lv_obj);
-}
-
-void pika_lvgl_label_set_long_mode(PikaObj* self, int mode) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
-    lv_label_set_long_mode(lv_obj, mode);
-}
-
-void pika_lvgl_label_set_recolor(PikaObj* self, int en) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
-    lv_label_set_recolor(lv_obj, en);
 }
 
 void pika_lvgl_label_set_text(PikaObj* self, char* txt) {
@@ -319,11 +331,86 @@ void pika_lvgl_label_set_text(PikaObj* self, char* txt) {
     lv_label_set_text(lv_obj, txt);
 }
 
-void pika_lvgl_label_set_style_text_align(PikaObj* self,
-                                          int value,
-                                          int selector) {
+void pika_lvgl_label_set_text_static(PikaObj* self, char* txt) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
-    lv_obj_set_style_text_align(lv_obj, value, selector);
+    lv_label_set_text_static(lv_obj, txt);
+}
+
+void pika_lvgl_label_set_long_mode(PikaObj* self, int long_mode) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_label_set_long_mode(lv_obj, long_mode);
+}
+
+void pika_lvgl_label_set_recolor(PikaObj* self, int en) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_label_set_recolor(lv_obj, en);
+}
+
+void pika_lvgl_label_set_text_sel_start(PikaObj* self, int index) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_label_set_text_sel_start(lv_obj, index);
+}
+
+void pika_lvgl_label_set_text_sel_end(PikaObj* self, int index) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_label_set_text_sel_end(lv_obj, index);
+}
+
+char* pika_lvgl_label_get_text(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return (char*)lv_label_get_text(lv_obj);
+}
+
+int pika_lvgl_label_get_long_mode(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_label_get_long_mode(lv_obj);
+}
+
+int pika_lvgl_label_get_recolor(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_label_get_recolor(lv_obj);
+}
+
+PikaObj* pika_lvgl_label_get_letter_pos(PikaObj* self, int char_id) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_point_t);
+    lv_point_t lv_point = {0};
+    lv_label_get_letter_pos(lv_obj, char_id, &lv_point);
+    obj_setStruct(new_obj, "lv_point_struct", lv_point);
+    obj_setPtr(new_obj, "lv_point", obj_getStruct(new_obj, "lv_point_struct"));
+    return new_obj;
+}
+
+int pika_lvgl_label_get_letter_on(PikaObj* self, PikaObj* pos_in) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_point_t* lv_pos_in = obj_getPtr(pos_in, "lv_point_t");
+    return lv_label_get_letter_on(lv_obj, lv_pos_in);
+}
+
+int pika_lvgl_label_is_char_under_pos(PikaObj* self, PikaObj* pos) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_point_t* lv_pos = obj_getPtr(pos, "lv_point_t");
+    return lv_label_is_char_under_pos(lv_obj, lv_pos);
+}
+
+int pika_lvgl_label_get_text_selection_start(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_label_get_text_selection_start(lv_obj);
+}
+
+int pika_lvgl_label_get_text_selection_end(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_label_get_text_selection_end(lv_obj);
+}
+
+void pika_lvgl_label_ins_text(PikaObj* self, int pos, char* txt) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_label_ins_text(lv_obj, pos, txt);
+}
+
+void pika_lvgl_label_cut_text(PikaObj* self, int pos, int cnt) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_label_cut_text(lv_obj, pos, cnt);
 }
 
 void pika_lvgl_roller___init__(PikaObj* self, PikaObj* parent) {

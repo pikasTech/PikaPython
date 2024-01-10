@@ -31,8 +31,8 @@ Args* pika_lv_id_register_g;
 extern PikaEventListener* g_pika_lv_timer_event_listener;
 pika_platform_thread_mutex_t pika_lv_global_mutex_g = {0};
 
-#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 13, 1)
-#error "pikascript version must be greater than 1.13.1"
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 13, 2)
+#error "pikascript version must be greater than 1.13.2"
 #endif
 
 volatile int g_lvgl_inited = 0;
