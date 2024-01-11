@@ -124,14 +124,10 @@ PIKA_WEAK uint8_t pika_is_locked_pikaMemory(void) {
 /* time support */
 #if PIKA_FREERTOS_ENABLE
 static uint32_t platform_uptime_ms(void) {
-#if (configTICK_RATE_HZ == 1000)
-    return (uint32_t)xTaskGetTickCount();
-#else
     TickType_t tick = 0u;
 
     tick = xTaskGetTickCount() * 1000;
     return (uint32_t)((tick + configTICK_RATE_HZ - 1) / configTICK_RATE_HZ);
-#endif
 }
 #endif
 
