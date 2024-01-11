@@ -48,6 +48,12 @@ volatile VMState g_PikaVMState = {
             .tail = 0,
             .res = {0},
         },
+    .sq =
+        {
+            .head = 0,
+            .tail = 0,
+            .res = {0},
+        },
     .event_pickup_cnt = 0,
     .event_thread = NULL,
     .event_thread_exit = pika_false,
@@ -143,11 +149,11 @@ int _VMEvent_getEventPickupCnt(void) {
 }
 
 #if PIKA_EVENT_ENABLE
-static pika_bool _ecq_isEmpty(volatile EventCQ* cq) {
+static pika_bool _ecq_isEmpty(volatile PikaEventQueue* cq) {
     return (pika_bool)(cq->head == cq->tail);
 }
 
-static pika_bool _ecq_isFull(volatile EventCQ* cq) {
+static pika_bool _ecq_isFull(volatile PikaEventQueue* cq) {
     return (pika_bool)((cq->tail + 1) % PIKA_EVENT_LIST_SIZE == cq->head);
 }
 #endif
@@ -217,9 +223,13 @@ void _VMEvent_deinit(void) {
             arg_deinit(g_PikaVMState.cq.res[i]);
             g_PikaVMState.cq.res[i] = NULL;
         }
-        if (NULL != g_PikaVMState.cq.data[i]) {
-            arg_deinit(g_PikaVMState.cq.data[i]);
-            g_PikaVMState.cq.data[i] = NULL;
+        if (NULL != g_PikaVMState.cq.data[i].arg) {
+            arg_deinit(g_PikaVMState.cq.data[i].arg);
+            g_PikaVMState.cq.data[i].arg = NULL;
+        }
+        if (NULL != g_PikaVMState.sq.res[i]) {
+            arg_deinit(g_PikaVMState.sq.res[i]);
+            g_PikaVMState.sq.res[i] = NULL;
         }
     }
     if (NULL != g_PikaVMState.event_thread) {
@@ -256,14 +266,43 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
         arg_deinit(g_PikaVMState.cq.res[g_PikaVMState.cq.tail]);
         g_PikaVMState.cq.res[g_PikaVMState.cq.tail] = NULL;
     }
-    if (g_PikaVMState.cq.data[g_PikaVMState.cq.tail] != NULL) {
-        arg_deinit(g_PikaVMState.cq.data[g_PikaVMState.cq.tail]);
-        g_PikaVMState.cq.data[g_PikaVMState.cq.tail] = NULL;
+    if (g_PikaVMState.cq.data[g_PikaVMState.cq.tail].arg != NULL) {
+        arg_deinit(g_PikaVMState.cq.data[g_PikaVMState.cq.tail].arg);
+        g_PikaVMState.cq.data[g_PikaVMState.cq.tail].arg = NULL;
     }
     g_PikaVMState.cq.id[g_PikaVMState.cq.tail] = eventId;
-    g_PikaVMState.cq.data[g_PikaVMState.cq.tail] = eventData;
+    g_PikaVMState.cq.data[g_PikaVMState.cq.tail].arg = eventData;
     g_PikaVMState.cq.listener[g_PikaVMState.cq.tail] = lisener;
     g_PikaVMState.cq.tail = (g_PikaVMState.cq.tail + 1) % PIKA_EVENT_LIST_SIZE;
+    return PIKA_RES_OK;
+#endif
+}
+
+PIKA_RES __eventListener_pushSignal(PikaEventListener* lisener,
+                                    uintptr_t eventId,
+                                    int signal) {
+#if !PIKA_EVENT_ENABLE
+    pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
+    pika_platform_panic_handle();
+    return PIKA_RES_ERR_OPERATION_FAILED;
+#else
+    /* push to event_cq_buff */
+    if (_ecq_isFull(&g_PikaVMState.sq)) {
+        // pika_debug("event_cq_buff is full");
+        return PIKA_RES_ERR_SIGNAL_EVENT_FULL;
+    }
+    g_PikaVMState.sq.id[g_PikaVMState.sq.tail] = eventId;
+    g_PikaVMState.sq.data[g_PikaVMState.sq.tail].signal = signal;
+    g_PikaVMState.sq.listener[g_PikaVMState.sq.tail] = lisener;
+    g_PikaVMState.sq.tail = (g_PikaVMState.sq.tail + 1) % PIKA_EVENT_LIST_SIZE;
+    if (_VM_is_first_lock()) {
+        pika_GIL_ENTER();
+        if (g_PikaVMState.sq.res[g_PikaVMState.sq.tail] != NULL) {
+            arg_deinit(g_PikaVMState.sq.res[g_PikaVMState.sq.tail]);
+            g_PikaVMState.sq.res[g_PikaVMState.sq.tail] = NULL;
+        }
+        pika_GIL_EXIT();
+    }
     return PIKA_RES_OK;
 #endif
 }
@@ -271,21 +310,55 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
 PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
                                   uintptr_t* id,
                                   Arg** data,
+                                  int* signal,
                                   int* head) {
 #if !PIKA_EVENT_ENABLE
     pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
     pika_platform_panic_handle();
     return PIKA_RES_ERR_OPERATION_FAILED;
 #else
+    PikaEventQueue* cq = NULL;
     /* pop from event_cq_buff */
-    if (_ecq_isEmpty(&g_PikaVMState.cq)) {
+    if (!_ecq_isEmpty(&g_PikaVMState.cq)) {
+        cq = (PikaEventQueue*)&g_PikaVMState.cq;
+    } else if (!_ecq_isEmpty(&g_PikaVMState.sq)) {
+        cq = (PikaEventQueue*)&g_PikaVMState.sq;
+    }
+    if (NULL == cq) {
         return PIKA_RES_ERR_SIGNAL_EVENT_EMPTY;
     }
-    *id = g_PikaVMState.cq.id[g_PikaVMState.cq.head];
-    *data = g_PikaVMState.cq.data[g_PikaVMState.cq.head];
-    *lisener_p = g_PikaVMState.cq.listener[g_PikaVMState.cq.head];
-    *head = g_PikaVMState.cq.head;
-    g_PikaVMState.cq.head = (g_PikaVMState.cq.head + 1) % PIKA_EVENT_LIST_SIZE;
+    *id = cq->id[g_PikaVMState.cq.head];
+    if (cq == &g_PikaVMState.cq) {
+        *data = cq->data[g_PikaVMState.cq.head].arg;
+    } else {
+        *signal = cq->data[g_PikaVMState.cq.head].signal;
+        *data = NULL;
+    }
+    *lisener_p = cq->listener[g_PikaVMState.cq.head];
+    *head = cq->head;
+    cq->head = (cq->head + 1) % PIKA_EVENT_LIST_SIZE;
+    return PIKA_RES_OK;
+#endif
+}
+
+PIKA_RES __eventListener_popSignalEvent(PikaEventListener** lisener_p,
+                                        uintptr_t* id,
+                                        int* signal,
+                                        int* head) {
+#if !PIKA_EVENT_ENABLE
+    pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
+    pika_platform_panic_handle();
+    return PIKA_RES_ERR_OPERATION_FAILED;
+#else
+    /* pop from event_cq_buff */
+    if (_ecq_isEmpty(&g_PikaVMState.sq)) {
+        return PIKA_RES_ERR_SIGNAL_EVENT_EMPTY;
+    }
+    *id = g_PikaVMState.sq.id[g_PikaVMState.sq.head];
+    *signal = g_PikaVMState.sq.data[g_PikaVMState.sq.head].signal;
+    *lisener_p = g_PikaVMState.sq.listener[g_PikaVMState.sq.head];
+    *head = g_PikaVMState.sq.head;
+    g_PikaVMState.sq.head = (g_PikaVMState.sq.head + 1) % PIKA_EVENT_LIST_SIZE;
     return PIKA_RES_OK;
 #endif
 }
@@ -302,15 +375,36 @@ void __VMEvent_pickupEvent(char* info) {
     PikaObj* event_lisener;
     uintptr_t event_id;
     Arg* event_data;
+    int signal;
     int head;
     if (PIKA_RES_OK == __eventListener_popEvent(&event_lisener, &event_id,
-                                                &event_data, &head)) {
+                                                &event_data, &signal, &head)) {
         g_PikaVMState.event_pickup_cnt++;
         pika_debug("pickup_info: %s", info);
         pika_debug("pickup_cnt: %d", g_PikaVMState.event_pickup_cnt);
-        Arg* res =
-            __eventListener_runEvent(event_lisener, event_id, event_data);
-        g_PikaVMState.cq.res[head] = res;
+        Arg* res = NULL;
+        if (NULL != event_data) {
+            res = __eventListener_runEvent(event_lisener, event_id, event_data);
+        } else {
+            event_data = arg_newInt(signal);
+            res = __eventListener_runEvent(event_lisener, event_id, event_data);
+            arg_deinit(event_data);
+            event_data = NULL;
+        }
+        // only on muti thread, keep the res
+        if (_VM_is_first_lock()) {
+            if (NULL == event_data) {
+                // from signal
+                g_PikaVMState.sq.res[head] = res;
+            } else {
+                // from event
+                g_PikaVMState.cq.res[head] = res;
+            }
+        } else {
+            if (NULL != res) {
+                arg_deinit(res);
+            }
+        }
         g_PikaVMState.event_pickup_cnt--;
     }
 #endif
@@ -1956,7 +2050,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         uint32_t n_arg = PikaVMFrame_getInputArgNum(vm);
         if (n_arg > PIKA_ARG_NUM_MAX) {
             pika_platform_printf(
-                "[ERROR] Too many args in RUN instruction, please use bigger "
+                "[ERROR] Too many args in RUN instruction, please use "
+                "bigger "
                 "#define PIKA_ARG_NUM_MAX\n");
             pika_platform_panic_handle();
         }
@@ -2891,9 +2986,9 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                     goto __exit;
                 }
                 PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-                PikaVMFrame_setSysOut(
-                    vm,
-                    "TypeError: unsupported operand type(s) for &: 'float'");
+                PikaVMFrame_setSysOut(vm,
+                                      "TypeError: unsupported operand "
+                                      "type(s) for &: 'float'");
                 op.res = NULL;
                 goto __exit;
             case '|':
@@ -2902,9 +2997,9 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                     goto __exit;
                 }
                 PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-                PikaVMFrame_setSysOut(
-                    vm,
-                    "TypeError: unsupported operand type(s) for |: 'float'");
+                PikaVMFrame_setSysOut(vm,
+                                      "TypeError: unsupported operand "
+                                      "type(s) for |: 'float'");
                 op.res = NULL;
                 goto __exit;
             case '~':
@@ -2913,9 +3008,9 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                     goto __exit;
                 }
                 PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-                PikaVMFrame_setSysOut(
-                    vm,
-                    "TypeError: unsupported operand type(s) for ~: 'float'");
+                PikaVMFrame_setSysOut(vm,
+                                      "TypeError: unsupported operand "
+                                      "type(s) for ~: 'float'");
                 op.res = NULL;
                 goto __exit;
             case '/':
@@ -2937,9 +3032,9 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                     goto __exit;
                 }
                 PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-                PikaVMFrame_setSysOut(
-                    vm,
-                    "TypeError: unsupported operand type(s) for ^: 'float'");
+                PikaVMFrame_setSysOut(vm,
+                                      "TypeError: unsupported operand "
+                                      "type(s) for ^: 'float'");
                 op.res = NULL;
                 goto __exit;
         }
@@ -4282,7 +4377,8 @@ void instructUnit_print(InstructUnit* self) {
 static void instructUnit_printWithConst(InstructUnit* self,
                                         ConstPool* const_pool) {
     // if (instructUnit_getIsNewLine(self)) {
-    //     pika_platform_printf("B%d\r\n", instructUnit_getBlockDeepth(self));
+    //     pika_platform_printf("B%d\r\n",
+    //     instructUnit_getBlockDeepth(self));
     // }
     pika_platform_printf(
         "%s %s \t\t(#%d)\r\n", instructUnit_getInstructStr(self),
@@ -4666,8 +4762,9 @@ void _pikaVM_yield(void) {
     }
 #endif
     /*
-     * [Warning!] Can not use pika_GIL_ENTER() and pika_GIL_EXIT() here, because
-     * yield() is called not atomically, and it will cause data race.
+     * [Warning!] Can not use pika_GIL_ENTER() and pika_GIL_EXIT() here,
+     * because yield() is called not atomically, and it will cause data
+     * race.
      */
     // pika_GIL_EXIT();
     // pika_GIL_ENTER();

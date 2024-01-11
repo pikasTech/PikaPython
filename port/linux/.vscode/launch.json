@@ -20,7 +20,7 @@
                 // "--gtest_filter=stddata.encode_decode"
                 // "--gtest_filter=packtool.packfiles_txt"
                 // "--gtest_filter=cmodule.class_attr_obj"
-                // "--gtest_filter=vm.cb_local1"
+                "--gtest_filter=event.event_thread"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

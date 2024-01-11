@@ -2931,12 +2931,6 @@ Arg* __eventListener_runEvent(PikaEventListener* lisener,
     return res;
 }
 
-Arg* __eventListener_runEvent_dataInt(PikaEventListener* lisener,
-                                      uintptr_t eventId,
-                                      int eventSignal) {
-    return __eventListener_runEvent(lisener, eventId, arg_newInt(eventSignal));
-}
-
 static void _thread_event(void* arg) {
     pika_assert(_VM_is_first_lock());
     while (1) {
@@ -2957,40 +2951,57 @@ static void _thread_event(void* arg) {
 PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
                                      uintptr_t eventId,
                                      Arg* eventData,
+                                     int eventSignal,
                                      PIKA_BOOL pickupWhenNoVM) {
 #if !PIKA_EVENT_ENABLE
     pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
     while (1) {
     };
 #else
-    _RETURN_WHEN_NOT_ZERO(pika_GIL_ENTER(), (PIKA_RES)-1);
+    if (NULL != eventData && !_VM_is_first_lock()) {
+        pika_platform_printf(
+            "Error: can not send arg event data without thread support\r\n");
+        arg_deinit(eventData);
+        return PIKA_RES_ERR_RUNTIME_ERROR;
+    }
+    if (NULL == eventData) {
+        // for event signal
+        if (PIKA_RES_OK !=
+            __eventListener_pushSignal(self, eventId, eventSignal)) {
+            return PIKA_RES_ERR_RUNTIME_ERROR;
+        }
+    }
+    /* using multi thread */
+    if (_VM_is_first_lock()) {
+        pika_GIL_ENTER();
 #if PIKA_EVENT_THREAD_ENABLE
-    if (!g_PikaVMState.event_thread) {
-        /* using multi thread */
-        if (_VM_is_first_lock()) {
+        if (!g_PikaVMState.event_thread) {
             // avoid _VMEvent_pickupEvent() in _time.c as soon as possible
             g_PikaVMState.event_thread = pika_platform_thread_init(
                 "pika_event", _thread_event, NULL, PIKA_EVENT_THREAD_STACK_SIZE,
                 PIKA_THREAD_PRIO, PIKA_THREAD_TICK);
             pika_debug("event thread init");
         }
-    }
 #endif
 
-    /* push event handler to vm event list */
-    if (PIKA_RES_OK != __eventListener_pushEvent(self, eventId, eventData)) {
-        goto __exit;
-    }
-    if (pickupWhenNoVM) {
-        int vmCnt = _VMEvent_getVMCnt();
-        if (0 == vmCnt) {
-            /* no vm running, pick up event imediately */
-            pika_debug("vmCnt: %d, pick up imediately", vmCnt);
-            _VMEvent_pickupEvent();
+        if (NULL != eventData) {
+            if (PIKA_RES_OK !=
+                __eventListener_pushEvent(self, eventId, eventData)) {
+                goto __gil_exit;
+            }
         }
+
+        if (pickupWhenNoVM) {
+            int vmCnt = _VMEvent_getVMCnt();
+            if (0 == vmCnt) {
+                /* no vm running, pick up event imediately */
+                pika_debug("vmCnt: %d, pick up imediately", vmCnt);
+                _VMEvent_pickupEvent();
+            }
+        }
+    __gil_exit:
+        pika_GIL_EXIT();
     }
-__exit:
-    pika_GIL_EXIT();
     return (PIKA_RES)0;
 #endif
 }
@@ -2998,16 +3009,14 @@ __exit:
 PIKA_RES pika_eventListener_send(PikaEventListener* self,
                                  uintptr_t eventId,
                                  Arg* eventData) {
-    return _do_pika_eventListener_send(self, eventId, eventData, pika_true);
+    return _do_pika_eventListener_send(self, eventId, eventData, 0, pika_false);
 }
 
 PIKA_RES pika_eventListener_sendSignal(PikaEventListener* self,
                                        uintptr_t eventId,
                                        int eventSignal) {
-    _RETURN_WHEN_NOT_ZERO(pika_GIL_ENTER(), (PIKA_RES)-1);
-    Arg* eventData = arg_newInt(eventSignal);
-    pika_GIL_EXIT();
-    return pika_eventListener_send(self, eventId, eventData);
+    return _do_pika_eventListener_send(self, eventId, NULL, eventSignal,
+                                       pika_false);
 }
 
 Arg* pika_eventListener_sendSignalAwaitResult(PikaEventListener* self,
@@ -3060,6 +3069,15 @@ PIKA_RES pika_eventListener_syncSendSignal(PikaEventListener* self,
     Arg* eventData = arg_newInt(eventSignal);
     PIKA_RES res = pika_eventListener_syncSend(self, eventId, eventData);
     return res;
+}
+
+Arg* pika_eventListener_syncSendSignalAwaitResult(PikaEventListener* self,
+                                                  uintptr_t eventId,
+                                                  int eventSignal) {
+    Arg* eventData = arg_newInt(eventSignal);
+    Arg* ret = pika_eventListener_syncSendAwaitResult(self, eventId, eventData);
+    arg_deinit(eventData);
+    return ret;
 }
 
 /* print major version info */

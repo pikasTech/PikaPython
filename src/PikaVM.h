@@ -78,14 +78,19 @@ typedef enum VM_SIGNAL_CTRL {
     VM_SIGNAL_CTRL_EXIT,
 } VM_SIGNAL_CTRL;
 
-typedef struct EventCQ {
+typedef union _EventDataType {
+    int signal;
+    Arg* arg;
+} EventDataType;
+
+typedef struct PikaArgEventQueue {
     uint32_t id[PIKA_EVENT_LIST_SIZE];
-    Arg* data[PIKA_EVENT_LIST_SIZE];
+    EventDataType data[PIKA_EVENT_LIST_SIZE];
     PikaEventListener* listener[PIKA_EVENT_LIST_SIZE];
     Arg* res[PIKA_EVENT_LIST_SIZE];
     int head;
     int tail;
-} EventCQ;
+} PikaEventQueue;
 
 #if PIKA_SETJMP_ENABLE
 typedef struct JmpBufCQ {
@@ -100,7 +105,8 @@ struct VMState {
     VM_SIGNAL_CTRL signal_ctrl;
     int vm_cnt;
 #if PIKA_EVENT_ENABLE
-    EventCQ cq;
+    PikaEventQueue cq;
+    PikaEventQueue sq;
     int event_pickup_cnt;
     pika_platform_thread_t* event_thread;
     pika_bool event_thread_exit;
@@ -349,11 +355,15 @@ void pika_vm_exit_await(void);
 void pika_vmSignal_setCtrlClear(void);
 PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
                                   uintptr_t* id,
-                                  Arg** signal,
+                                  Arg** eventData,
+                                  int* signal,
                                   int* head);
 PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
                                    uintptr_t eventId,
                                    Arg* eventData);
+PIKA_RES __eventListener_pushSignal(PikaEventListener* lisener,
+                                    uintptr_t eventId,
+                                    int signal);
 int _VMEvent_getVMCnt(void);
 void __VMEvent_pickupEvent(char* info);
 void _pikaVM_yield(void);

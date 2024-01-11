@@ -603,6 +603,7 @@ void pika_eventListener_removeEvent(PikaEventListener* self, uintptr_t eventId);
 PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
                                      uintptr_t eventId,
                                      Arg* eventData,
+                                     int eventSignal,
                                      pika_bool pickupWhenNoVM);
 
 PIKA_RES pika_eventListener_sendSignal(PikaEventListener* self,
@@ -628,6 +629,10 @@ PIKA_RES pika_eventListener_syncSend(PikaEventListener* self,
 PIKA_RES pika_eventListener_syncSendSignal(PikaEventListener* self,
                                            uintptr_t eventId,
                                            int eventSignal);
+
+Arg* pika_eventListener_syncSendSignalAwaitResult(PikaEventListener* self,
+                                                  uintptr_t eventId,
+                                                  int eventSignal);
 
 void pika_eventListener_init(PikaEventListener** p_self);
 void pika_eventListener_deinit(PikaEventListener** p_self);
@@ -777,9 +782,6 @@ void _obj_updateProxyFlag(PikaObj* self);
     _obj_updateProxyFlag((_self))
 
 Arg* _obj_getPropArg(PikaObj* obj, char* name);
-Arg* __eventListener_runEvent_dataInt(PikaEventListener* lisener,
-                                      uintptr_t eventId,
-                                      int eventSignal);
 
 Arg* __eventListener_runEvent(PikaEventListener* lisener,
                               uintptr_t eventId,
