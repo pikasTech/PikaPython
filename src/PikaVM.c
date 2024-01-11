@@ -231,7 +231,17 @@ void _VMEvent_deinit(void) {
             arg_deinit(g_PikaVMState.sq.res[i]);
             g_PikaVMState.sq.res[i] = NULL;
         }
+        g_PikaVMState.cq.id[i] = 0;
+        g_PikaVMState.cq.data[i].arg = NULL;
+        g_PikaVMState.cq.listener[i] = NULL;
+        g_PikaVMState.sq.id[i] = 0;
+        g_PikaVMState.sq.data[i].signal = 0;
+        g_PikaVMState.sq.listener[i] = NULL;
     }
+    g_PikaVMState.cq.head = 0;
+    g_PikaVMState.cq.tail = 0;
+    g_PikaVMState.sq.head = 0;
+    g_PikaVMState.sq.tail = 0;
     if (NULL != g_PikaVMState.event_thread) {
         g_PikaVMState.event_thread_exit = 1;
         pika_platform_thread_destroy(g_PikaVMState.event_thread);
@@ -372,22 +382,24 @@ void __VMEvent_pickupEvent(char* info) {
     if (evt_pickup_cnt >= PIKA_EVENT_PICKUP_MAX) {
         return;
     }
-    PikaObj* event_lisener;
+    PikaObj* event_listener;
     uintptr_t event_id;
     Arg* event_data;
     int signal;
     int head;
-    if (PIKA_RES_OK == __eventListener_popEvent(&event_lisener, &event_id,
+    if (PIKA_RES_OK == __eventListener_popEvent(&event_listener, &event_id,
                                                 &event_data, &signal, &head)) {
         g_PikaVMState.event_pickup_cnt++;
         pika_debug("pickup_info: %s", info);
         pika_debug("pickup_cnt: %d", g_PikaVMState.event_pickup_cnt);
         Arg* res = NULL;
         if (NULL != event_data) {
-            res = __eventListener_runEvent(event_lisener, event_id, event_data);
+            res =
+                __eventListener_runEvent(event_listener, event_id, event_data);
         } else {
             event_data = arg_newInt(signal);
-            res = __eventListener_runEvent(event_lisener, event_id, event_data);
+            res =
+                __eventListener_runEvent(event_listener, event_id, event_data);
             arg_deinit(event_data);
             event_data = NULL;
         }

@@ -2915,10 +2915,10 @@ Arg* obj_runMethodArg1(PikaObj* self, Arg* methodArg, Arg* arg1) {
     return pika_runFunction1_ex(self, methodArg, arg1);
 }
 
-Arg* __eventListener_runEvent(PikaEventListener* lisener,
+Arg* __eventListener_runEvent(PikaEventListener* listener,
                               uintptr_t eventId,
                               Arg* eventData) {
-    PikaObj* handler = pika_eventListener_getEventHandleObj(lisener, eventId);
+    PikaObj* handler = pika_eventListener_getEventHandleObj(listener, eventId);
     pika_debug("event handler: %p", handler);
     if (NULL == handler) {
         pika_platform_printf(
