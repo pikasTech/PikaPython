@@ -431,13 +431,13 @@ static int32_t PikaVMFrame_getAddrOffsetOfJmpBack(PikaVMFrame* vm) {
         uint16_t invokeDeepth = instructUnit_getInvokeDeepth(insUnitThis);
         enum InstructIndex ins = instructUnit_getInstructIndex(insUnitThis);
         char* data = PikaVMFrame_getConstWithInstructUnit(vm, insUnitThis);
-        if ((0 == invokeDeepth) && (JEZ == ins) && data[0] == '2') {
+        if ((0 == invokeDeepth) && (PIKA_INS(JEZ) == ins) && data[0] == '2') {
             InstructUnit* insUnitLast = PikaVMFrame_getInstructUnitWithOffset(
                 vm, offset - instructUnit_getSize());
             enum InstructIndex insLast =
                 instructUnit_getInstructIndex(insUnitLast);
             /* skip try stmt */
-            if (GER == insLast) {
+            if (PIKA_INS(GER) == insLast) {
                 continue;
             }
             /* skip inner break */
@@ -458,7 +458,7 @@ static int32_t PikaVMFrame_getAddrOffsetOfJmpBack(PikaVMFrame* vm) {
         enum InstructIndex ins = instructUnit_getInstructIndex(insUnitThis);
         char* data = PikaVMFrame_getConstWithInstructUnit(vm, insUnitThis);
         int blockDeepthThis = instructUnit_getBlockDeepth(insUnitThis);
-        if ((blockDeepthThis == blockDeepthGot) && (JMP == ins) &&
+        if ((blockDeepthThis == blockDeepthGot) && (PIKA_INS(JMP) == ins) &&
             data[0] == '-' && data[1] == '1') {
             return offset;
         }
@@ -530,11 +530,11 @@ static int32_t PikaVMFrame_getAddrOffsetOfRaise(PikaVMFrame* vm) {
         }
         ins_unit_now = PikaVMFrame_getInstructUnitWithOffset(vm, offset);
         enum InstructIndex ins = instructUnit_getInstructIndex(ins_unit_now);
-        if (NTR == ins) {
+        if (PIKA_INS(NTR) == ins) {
             return offset;
         }
         /* if not found except, return */
-        if (RET == ins) {
+        if (PIKA_INS(RET) == ins) {
             return 0;
         }
     }
@@ -1788,9 +1788,9 @@ char* _find_super_class_name(ByteCodeFrame* bcframe, int32_t pc_start) {
     /* find super class */
     int32_t offset = 0;
     char* super_class_name = NULL;
-    byteCodeFrame_findInsForward(bcframe, pc_start, CLS, &offset);
-    InstructUnit* unit_run =
-        byteCodeFrame_findInsUnitBackward(bcframe, pc_start, RUN, &offset);
+    byteCodeFrame_findInsForward(bcframe, pc_start, PIKA_INS(CLS), &offset);
+    InstructUnit* unit_run = byteCodeFrame_findInsUnitBackward(
+        bcframe, pc_start, PIKA_INS(RUN), &offset);
     super_class_name = constPool_getByOffset(
         &(bcframe->const_pool), instructUnit_getConstPoolIndex(unit_run));
     return super_class_name;
@@ -1806,7 +1806,7 @@ static char* _find_self_name(PikaVMFrame* vm) {
         if (vm->pc + offset >= (int)PikaVMFrame_getInstructArraySize(vm)) {
             return 0;
         }
-        if ((CLS == PikaVMFrame_getInstructWithOffset(vm, offset))) {
+        if ((PIKA_INS(CLS) == PikaVMFrame_getInstructWithOffset(vm, offset))) {
             break;
         }
     }
@@ -1816,8 +1816,9 @@ static char* _find_self_name(PikaVMFrame* vm) {
         if (vm->pc + offset >= (int)PikaVMFrame_getInstructArraySize(vm)) {
             return 0;
         }
-        if ((OUT == instructUnit_getInstructIndex(
-                        PikaVMFrame_getInstructUnitWithOffset(vm, offset)))) {
+        if ((PIKA_INS(OUT) ==
+             instructUnit_getInstructIndex(
+                 PikaVMFrame_getInstructUnitWithOffset(vm, offset)))) {
             self_name = PikaVMFrame_getConstWithOffset(vm, offset);
             return self_name;
         }
@@ -1899,8 +1900,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
 
     /* inhert */
     if (vm->pc - 2 * (int)instructUnit_getSize() >= 0) {
-        if (CLS == PikaVMFrame_getInstructWithOffset(
-                       vm, -2 * (int)instructUnit_getSize())) {
+        if (PIKA_INS(CLS) == PikaVMFrame_getInstructWithOffset(
+                                 vm, -2 * (int)instructUnit_getSize())) {
             bSkipInit = pika_true;
         }
     }
@@ -2463,10 +2464,10 @@ static uint32_t PikaVMFrame_getInputArgNum(PikaVMFrame* vm) {
             break;
         }
         if (invode_deepth == invoke_deepth_this + 1) {
-            if (instructUnit_getInstructIndex(ins_unit_now) == OUT) {
+            if (instructUnit_getInstructIndex(ins_unit_now) == PIKA_INS(OUT)) {
                 continue;
             }
-            if (instructUnit_getInstructIndex(ins_unit_now) == NLS) {
+            if (instructUnit_getInstructIndex(ins_unit_now) == PIKA_INS(NLS)) {
                 continue;
             }
             num++;
@@ -3413,8 +3414,8 @@ const VMInstructionSet VM_default_instruction_set = {
 #include "__instruction_table.h"
         },
     .count = __INSTRUCTION_CNT,
-    .op_idx_start = NON,
-    .op_idx_end = NON + __INSTRUCTION_CNT - 1,
+    .op_idx_start = PIKA_INS(NON),
+    .op_idx_end = PIKA_INS(NON) + __INSTRUCTION_CNT - 1,
 };
 
 #ifndef PIKA_INSTRUCT_SIGNATURE_DICT
@@ -3546,7 +3547,7 @@ enum InstructIndex pikaVM_getInstructFromAsm(char* ins_str) {
             item = item->next;
         } while (NULL != item->next);
 
-        return NON;
+        return PIKA_INS(NON);
     }
 
     return ins_idx;
@@ -3817,7 +3818,8 @@ __exit:
 
 static ByteCodeFrame* _cache_bcf_fn_bc(PikaObj* self, uint8_t* bytecode) {
     /* save 'def' and 'class' to heap */
-    if (NULL == _get_data_from_bytecode2(bytecode, DEF, CLS)) {
+    if (NULL ==
+        _get_data_from_bytecode2(bytecode, PIKA_INS(DEF), PIKA_INS(CLS))) {
         return NULL;
     }
     return _cache_bytecodeframe(self);

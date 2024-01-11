@@ -366,6 +366,7 @@ pika_bool pika_debug_check_break_hash(Hash module_hash, int pc_break);
 pika_bool pika_debug_check_break(char* module_name, int pc_break);
 
 #define _VMEvent_pickupEvent() __VMEvent_pickupEvent(__FILE__)
+#define PIKA_INS(__INS_NAME) _##PIKA_VM_INS_##__INS_NAME
 
 typedef struct {
     PikaObj* lreg[PIKA_REGIST_SIZE];
