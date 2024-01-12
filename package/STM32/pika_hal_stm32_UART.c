@@ -1863,7 +1863,7 @@ static void uart_clock_init(void){
 #endif
 }
 
-static int stricmp(const char *s1, const char *s2) {
+static int pika_hal_stricmp(const char *s1, const char *s2) {
     while (*s1 && *s2) {
         int diff = tolower((unsigned char)*s1) - tolower((unsigned char)*s2);
         if (diff != 0) {
@@ -1920,7 +1920,7 @@ int pika_hal_platform_UART_open(pika_dev* dev, char* name) {
         uart_inited = 1;
     }
     for (rt_size_t i = 0; i < sizeof(uart_obj) / sizeof(struct stm32_uart); i++){
-        if (0 == stricmp(name, uart_obj[i].config->name)){
+        if (0 == pika_hal_stricmp(name, uart_obj[i].config->name)){
             platform_UART* uart = (platform_UART*)pikaMalloc(sizeof(platform_UART));
             pika_platform_memset(uart, 0, sizeof(platform_UART));
             if (NULL == uart){
