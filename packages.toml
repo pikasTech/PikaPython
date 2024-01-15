@@ -85,6 +85,7 @@ releases = [
     "v1.12.6 81369a66cea42d79c888e64fd15ecb0025aeac75",
     "v1.13.0 f0348211734e6057b4bfef27864588c549edf5a8",
     "v1.13.1 758a80dd8d6d93e9e91dc822f06777efebf8cd61",
+    "v1.13.2 49cfed3ef77002d2bab2a373e2c9748a27bcb89d",
 ]
 
 [[packages]]
@@ -162,6 +163,7 @@ releases = [
     "v1.12.6 81369a66cea42d79c888e64fd15ecb0025aeac75",
     "v1.13.0 f0348211734e6057b4bfef27864588c549edf5a8",
     "v1.13.1 758a80dd8d6d93e9e91dc822f06777efebf8cd61",
+    "v1.13.2 49cfed3ef77002d2bab2a373e2c9748a27bcb89d",
 ]
 
 [[packages]]
@@ -421,6 +423,7 @@ name = "STM32"
 releases = [
     "v0.1.0 5ab725046d868d7a1fa14749c866d5378cdac706",
     "v0.1.1 eeeb164588daf2522d1a50d2e897eea277c142c0",
+    "v0.1.2 49cfed3ef77002d2bab2a373e2c9748a27bcb89d",
 ]
 
 [[packages]]
