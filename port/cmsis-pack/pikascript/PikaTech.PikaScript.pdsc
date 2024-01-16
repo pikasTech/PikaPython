@@ -16,8 +16,8 @@
   <repository type="git">https://github.com/pikasTech/pikascript.git</repository>
 
   <releases>
-    <release date="2023-12-16" version="1.13.0" tag="1.13.0">
-        - PikaScript v1.13.0
+    <release date="2024-12-16" version="1.13.1" tag="1.13.1">
+        - PikaScript v1.13.1
     </release>
 
   </releases>
@@ -142,11 +142,11 @@
   -->
 
   <components>
-    <bundle Cbundle="PikaScript" Cclass="PikaScript" Cversion="1.13.0">
+    <bundle Cbundle="PikaScript" Cclass="PikaScript" Cversion="1.13.1">
       <description>an ultra-lightweight Python engine</description>
       <doc>https://pikadoc-en.readthedocs.io/en/latest/index.html</doc>
 
-      <component Cgroup="PikaScript" Csub="Core" Cversion="1.13.0">
+      <component Cgroup="PikaScript" Csub="Core" Cversion="1.13.1">
         <description>PikaScript Kernel</description>
         <files>
 <file attr="config" category="sourceC"  name="pikascript-core/PikaObj.c" />
@@ -213,7 +213,7 @@
         </RTE_Components_h>
       </component>
 
-      <component Cgroup="PikaScript" Csub="PikaStdLib" Cversion="1.13.0" condition="Kernel">
+      <component Cgroup="PikaScript" Csub="PikaStdLib" Cversion="1.13.1" condition="Kernel">
         <description>The standard library for PikaScript</description>
         <Pre_Include_Local_Component_h>
 
