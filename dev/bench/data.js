@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1705395776240,
+  "lastUpdate": 1705396055833,
   "repoUrl": "https://github.com/pikasTech/PikaPython",
   "entries": {
     "Benchmark": [
@@ -108647,6 +108647,66 @@ window.BENCHMARK_DATA = {
             "value": 0.00500012503981786,
             "unit": "ms/iter",
             "extra": "iterations: 354846\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "88232613+pikasTech@users.noreply.github.com",
+            "name": "Lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "eebd7c1724e245ae15ac05016797cfec4cd7b41d",
+          "message": "Merge pull request #335 from GorgonMeducer/update-cmsis-pack\n\ngenerate cmsis-pack for v1.13.1",
+          "timestamp": "2024-01-16T16:24:49+08:00",
+          "tree_id": "13aaa2a2196e0b0d1d31e422ddb306a398213a30",
+          "url": "https://github.com/pikasTech/PikaPython/commit/eebd7c1724e245ae15ac05016797cfec4cd7b41d"
+        },
+        "date": 1705396048417,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 16196.223191491657,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 16196.223191491657 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 24.277915241042574,
+            "unit": "ms/iter",
+            "extra": "iterations: 73\ncpu: 24.2771870757361 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 13.218375194884848,
+            "unit": "ms/iter",
+            "extra": "iterations: 135\ncpu: 13.218299684019387 ms\nthreads: 1"
+          },
+          {
+            "name": "for_print_1000",
+            "value": 12.407980652466017,
+            "unit": "ms/iter",
+            "extra": "iterations: 143\ncpu: 12.407724541949085 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 3.0872138520782495,
+            "unit": "ms/iter",
+            "extra": "iterations: 574\ncpu: 3.087139477447214 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000052280178432,
+            "unit": "ms/iter",
+            "extra": "iterations: 354650\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
