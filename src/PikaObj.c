@@ -2608,13 +2608,11 @@ PikaObj* obj_importModuleWithByteCode(PikaObj* self,
         obj_newHostObj((PikaObj*)__pikaMain, name);
         obj_newDirectObj((PikaObj*)__pikaMain, name, New_TinyObj);
         PikaObj* module_obj = obj_getObj((PikaObj*)__pikaMain, name);
-        PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
-                                  .try_result = TRY_RESULT_NONE};
         pikaVM_runBytecode_ex_cfg cfg = {0};
         cfg.globals = module_obj;
         cfg.locals = module_obj;
         cfg.name = name;
-        cfg.vm_thread = &vm_thread;
+        cfg.vm_thread = self->vmFrame->vm_thread;
         cfg.is_const_bytecode = pika_true;
         pikaVM_runByteCode_ex(module_obj, byteCode, &cfg);
     }

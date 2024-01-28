@@ -3461,20 +3461,19 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self,
                                        char* data,
                                        Arg* arg_ret_reg) {
     Args buffs = {0};
-    char* module_name_redirect = NULL;
+    char* sModuleNameRedirect = NULL;
     if (NULL == data) {
         goto __exit;
     }
-    module_name_redirect =
-        LibObj_redirectModule(pika_getLibObj(), &buffs, data);
-    if (NULL != module_name_redirect) {
-        data = module_name_redirect;
+    sModuleNameRedirect = LibObj_redirectModule(pika_getLibObj(), &buffs, data);
+    if (NULL != sModuleNameRedirect) {
+        data = sModuleNameRedirect;
     }
     /* the module is already imported, skip. */
     if (obj_isArgExist(self, data)) {
         goto __exit;
     }
-    if (NULL == module_name_redirect) {
+    if (NULL == sModuleNameRedirect) {
         /* find cmodule in root object */
         extern volatile PikaObj* __pikaMain;
         char* cmodule_try = strsGetFirstToken(&buffs, data, '.');
