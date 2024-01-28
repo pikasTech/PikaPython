@@ -37,7 +37,7 @@ void link_deinit_ex(Link* self, pika_bool is_object) {
 }
 
 void link_deinit(Link* self) {
-    return link_deinit_ex(self, 0);
+    link_deinit_ex(self, 0);
 }
 
 void link_deinit_stack(Link* self) {

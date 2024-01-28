@@ -38,7 +38,7 @@ void args_deinit_ex(Args* self, pika_bool is_object) {
 }
 
 void args_deinit(Args* self) {
-    return args_deinit_ex(self, 0);
+    args_deinit_ex(self, 0);
 }
 
 void args_deinit_stack(Args* self) {
