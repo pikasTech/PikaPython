@@ -93,6 +93,7 @@ typedef char* (*fn_parser_Ast2Target)(Parser* self, AST* ast);
 typedef char* (*fn_parser_Lines2Target)(Parser* self, char* sPyLines);
 
 #define _VAL_NEED_INIT -1
+#define PIKA_BLOCK_SPACE 4
 
 struct Parser {
     Args lineBuffs;

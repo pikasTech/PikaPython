@@ -327,3 +327,40 @@ char* strsRepeat(Args* buffs, char* str, int num) {
     buff[size] = '\0';
     return buff;
 }
+
+static void _add_indentation(const char* input, int spaces, char* output) {
+    if (input == NULL || output == NULL || spaces < 0) {
+        return;
+    }
+
+    const char* current = input;
+    int output_index = 0;
+
+    // Iterate over the input string
+    while (*current) {
+        // Add spaces at the beginning of each new line
+        if (current == input || *(current - 1) == '\n') {
+            for (int i = 0; i < spaces; ++i) {
+                output[output_index++] = ' ';
+            }
+        }
+        // Copy the current character
+        output[output_index++] = *current++;
+    }
+
+    // Add the null terminator to the string
+    output[output_index] = '\0';
+}
+
+char* strsAddIndentation(Args* buffs, char* str, int spaces) {
+    int lines = 1;
+    for (const char* current = str; *current; current++) {
+        if (*current == '\n') {
+            lines++;
+        }
+    }
+    int output_length = strGetSize(str) + spaces * lines;
+    char* buff = args_getBuff(buffs, output_length + 1);
+    _add_indentation(str, spaces, buff);
+    return buff;
+}

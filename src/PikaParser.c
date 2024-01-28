@@ -2024,8 +2024,8 @@ __exit:
 
 static int32_t Parser_getPyLineBlockDeepth(char* sLine) {
     int32_t iSpaceNum = strGetIndent(sLine);
-    if (0 == iSpaceNum % 4) {
-        return iSpaceNum / 4;
+    if (0 == iSpaceNum % PIKA_BLOCK_SPACE) {
+        return iSpaceNum / PIKA_BLOCK_SPACE;
     }
     /* space Num is not 4N, error*/
     return -1;
@@ -2708,6 +2708,11 @@ static char* Suger_import(Args* outbuffs, char* sLine) {
 
 static char* Parser_sugerProcess(Args* outbuffs, char* sLine) {
     /* process import */
+    int32_t block_deepth = Parser_getPyLineBlockDeepth(sLine);
+    if (block_deepth < 0) {
+        return NULL;
+    }
+    sLine = sLine + block_deepth * PIKA_BLOCK_SPACE;
     sLine = Suger_import(outbuffs, sLine);
     /* process multi assign */
     int iLineNum = strCountSign(sLine, '\n') + 1;
@@ -2721,6 +2726,8 @@ static char* Parser_sugerProcess(Args* outbuffs, char* sLine) {
         aLine = arg_strAppend(aLine, sSingleLine);
     }
     sLine = strsCopy(outbuffs, arg_getStr(aLine));
+    sLine =
+        strsAddIndentation(outbuffs, sLine, block_deepth * PIKA_BLOCK_SPACE);
     if (NULL != aLine) {
         arg_deinit(aLine);
     }

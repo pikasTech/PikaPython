@@ -58,6 +58,7 @@ char* strsFilePreProcess(Args* outbuffs, char* lines);
 char* strsFilePreProcess_ex(Args* outbuffs, char* lines, char* endwith);
 char* strsSubStr(Args* buffs_p, char* name_start, char* name_end);
 char* strsRepeat(Args* buffs, char* str, int num);
+char* strsAddIndentation(Args* buffs, char* str, int spaces);
 
 #endif
 #ifdef __cplusplus
