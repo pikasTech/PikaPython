@@ -21,11 +21,13 @@ jobs:
 
     - name: INSTALL_PACKAGE
       run: |
+        sudo apt update
         sudo apt install ninja-build
         sudo apt install liblua5.3-dev
         sudo apt install valgrind
         sudo apt install upx
         sudo apt install libmbedtls-dev
+        sudo apt install lcov
         sudo apt install clang-tidy
   
     - name: install_google_benchmark
