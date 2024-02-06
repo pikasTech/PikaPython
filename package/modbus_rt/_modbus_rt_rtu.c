@@ -88,7 +88,7 @@ int _modbus_rt__rtu__set_over_type(PikaObj *self, int over_type) {
     pika_platform_printf("modbus rtu is not activated.\n");
     return 0;
 #elif (!MODBUS_SERIAL_OVER_TCP_ENABLE) && (!MODBUS_SERIAL_OVER_UDP_ENABLE)
-    pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n", ret);
+    pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n");
     return 0;
 #else
     int ret = 0;
@@ -120,7 +120,7 @@ int _modbus_rt__rtu__set_net(PikaObj *self, char* ip, int port, int type) {
     pika_platform_printf("modbus rtu is not activated.\n");
     return 0;
 #elif (!MODBUS_SERIAL_OVER_TCP_ENABLE) && (!MODBUS_SERIAL_OVER_UDP_ENABLE)
-    pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n", ret);
+    pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n");
     return 0;
 #else
     int ret = 0;
@@ -151,7 +151,7 @@ int _modbus_rt__rtu__set_ip(PikaObj *self, char* ip) {
     pika_platform_printf("modbus rtu is not activated.\n");
     return 0;
 #elif (!MODBUS_SERIAL_OVER_TCP_ENABLE) && (!MODBUS_SERIAL_OVER_UDP_ENABLE)
-    pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n", ret);
+    pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n");
     return 0;
 #else
     int ret = 0;
@@ -182,7 +182,7 @@ int _modbus_rt__rtu__set_port(PikaObj *self, int port) {
     pika_platform_printf("modbus rtu is not activated.\n");
     return 0;
 #elif (!MODBUS_SERIAL_OVER_TCP_ENABLE) && (!MODBUS_SERIAL_OVER_UDP_ENABLE)
-    pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n", ret);
+    pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n");
     return 0;
 #else
     int ret = 0;
@@ -213,7 +213,7 @@ int _modbus_rt__rtu__set_type(PikaObj *self, int type) {
     pika_platform_printf("modbus rtu is not activated.\n");
     return 0;
 #elif (!MODBUS_SERIAL_OVER_TCP_ENABLE) && (!MODBUS_SERIAL_OVER_UDP_ENABLE)
-    pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n", ret);
+    pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n");
     return 0;
 #else
     int ret = 0;
@@ -586,7 +586,7 @@ int _modbus_rt__rtu__master_set_server(PikaObj *self, char* saddr, int sport) {
     pika_platform_printf("modbus rtu is not activated.\n");
     return 0;
 #elif (!MODBUS_SERIAL_OVER_TCP_ENABLE) && (!MODBUS_SERIAL_OVER_UDP_ENABLE)
-    pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n", ret);
+    pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n");
     return 0;
 #else
     int ret = 0;
@@ -613,7 +613,7 @@ char* _modbus_rt__rtu__master_get_saddr(PikaObj *self) {
     pika_platform_printf("modbus rtu is not activated.\n");
     return NULL;
 #elif (!MODBUS_SERIAL_OVER_TCP_ENABLE) && (!MODBUS_SERIAL_OVER_UDP_ENABLE)
-    pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n", ret);
+    pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n");
     return NULL;
 #else
     int ret = 0;
