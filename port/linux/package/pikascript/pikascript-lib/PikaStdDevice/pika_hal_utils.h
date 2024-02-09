@@ -28,8 +28,16 @@ int pika_hal_utils_UART_config(pika_dev* dev, pika_hal_UART_config* cfg);
 
 /* IIC utils */
 int pika_hal_utils_IIC_config(pika_dev* dev, pika_hal_IIC_config* cfg);
-int pika_hal_utils_IIC_mem_read(pika_dev* dev, uint32_t mem_addr, uint32_t mem_addr_size, uint8_t* data, uint32_t size);
-int pika_hal_utils_IIC_mem_write(pika_dev* dev, uint32_t mem_addr, uint32_t mem_addr_size, uint8_t* data, uint32_t size);
+int pika_hal_utils_IIC_mem_read(pika_dev* dev,
+                                uint32_t mem_addr,
+                                uint32_t mem_addr_size,
+                                uint8_t* data,
+                                uint32_t size);
+int pika_hal_utils_IIC_mem_write(pika_dev* dev,
+                                 uint32_t mem_addr,
+                                 uint32_t mem_addr_size,
+                                 uint8_t* data,
+                                 uint32_t size);
 int pika_hal_utils_IIC_set_slave_addr(pika_dev* dev, uint32_t slave_addr);
 
 /* SPI utils */

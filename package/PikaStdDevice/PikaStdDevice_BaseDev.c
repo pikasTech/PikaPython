@@ -17,7 +17,7 @@ void PikaStdDevice_BaseDev_addEventCallback(PikaObj* self, Arg* eventCallBack) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "Error: Method %s no found.", "platformGetEventId");
     }
-    uint32_t eventId = obj_getInt(self, "eventId");
+    uintptr_t eventId = obj_getInt(self, "eventId");
     pika_eventListener_registEventCallback(g_pika_device_event_listener,
                                            eventId, eventCallBack);
 #else

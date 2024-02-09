@@ -642,7 +642,6 @@ typedef struct {
     void* user_data;
 } pika_hal_SG_config;
 
-
 typedef struct {
     /* parent start */
     PIKA_HAL_GPIO_DIR dir;

@@ -72,10 +72,10 @@ static pika_bool _IIC_SendByte(pika_hal_SOFT_IIC_config* cfg, uint8_t byte) {
 
     int timeout = 500;
     uint32_t ack = 0;
-    
-    while (timeout--){
+
+    while (timeout--) {
         ack = !_GPIO_read(cfg->SDA);
-        if (ack != 0){
+        if (ack != 0) {
             break;
         }
         pika_sleep_ms(1);

@@ -105,7 +105,7 @@ static inline void sleep_us(uint32_t us) {
     pika_platform_sleep_us(us);
 }
 
-static inline void _SPI_delay(void){
+static inline void _SPI_delay(void) {
     sleep_us(1);
 }
 
@@ -115,30 +115,28 @@ static inline int SPIv_WriteData(pika_hal_SOFT_SPI_config* cfg,
     unsigned char i = 0;
     if (is_msb) {
         for (i = 0; i < 8; i++) {
-            if (Data & 0x80){
+            if (Data & 0x80) {
                 _GPIO_write(cfg->MOSI, 1);
-            }
-            else{
+            } else {
                 _GPIO_write(cfg->MOSI, 0);
             }
             _GPIO_write(cfg->SCK, 0);
-            _SPI_delay();  // 插入延时
+            _SPI_delay();
             _GPIO_write(cfg->SCK, 1);
-            _SPI_delay();  // 插入延时
+            _SPI_delay();
             Data <<= 1;
         }
     } else {
         for (i = 0; i < 8; i++) {
-            if (Data & 0x01){
+            if (Data & 0x01) {
                 _GPIO_write(cfg->MOSI, 1);
-            }
-            else{
+            } else {
                 _GPIO_write(cfg->MOSI, 0);
             }
             _GPIO_write(cfg->SCK, 0);
-            _SPI_delay();  // 插入延时
+            _SPI_delay();
             _GPIO_write(cfg->SCK, 1);
-            _SPI_delay();  // 插入延时
+            _SPI_delay();
             Data >>= 1;
         }
     }
@@ -152,23 +150,23 @@ static inline int SPIv_ReadData(pika_hal_SOFT_SPI_config* cfg, int is_msb) {
         for (i = 0; i < 8; i++) {
             Data <<= 1;
             _GPIO_write(cfg->SCK, 0);
-            _SPI_delay();  // 插入延时
-            if (_GPIO_read(cfg->MISO)){
+            _SPI_delay();
+            if (_GPIO_read(cfg->MISO)) {
                 Data++;
             }
             _GPIO_write(cfg->SCK, 1);
-            _SPI_delay();  // 插入延时
+            _SPI_delay();
         }
     } else {
         for (i = 0; i < 8; i++) {
             Data >>= 1;
             _GPIO_write(cfg->SCK, 0);
-            _SPI_delay();  // 插入延时
-            if (_GPIO_read(cfg->MISO)){
+            _SPI_delay();
+            if (_GPIO_read(cfg->MISO)) {
                 Data |= 0x80;
             }
             _GPIO_write(cfg->SCK, 1);
-            _SPI_delay();  // 插入延时
+            _SPI_delay();
         }
     }
     return Data;

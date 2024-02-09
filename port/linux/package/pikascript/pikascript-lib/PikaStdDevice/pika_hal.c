@@ -215,9 +215,10 @@ int pika_hal_GPIO_ioctl_merge_config(pika_hal_GPIO_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
     return 0;
 }
-                                     
-int pika_hal_GPIO_PCA9555_ioctl_merge_config(pika_hal_GPIO_PCA9555_config* dst,
-                                     pika_hal_GPIO_PCA9555_config* src) {
+
+int pika_hal_GPIO_PCA9555_ioctl_merge_config(
+    pika_hal_GPIO_PCA9555_config* dst,
+    pika_hal_GPIO_PCA9555_config* src) {
     // printf("before merge: dst->dir=%d, src->dir=%d\r\n", dst->dir, src->dir);
     _IOCTL_CONFIG_USE_DEFAULT(dir, PIKA_HAL_GPIO_DIR_IN);
     // printf("after merge: dst->dir=%d, src->dir=%d\r\n", dst->dir, src->dir);

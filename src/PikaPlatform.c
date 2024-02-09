@@ -147,9 +147,9 @@ PIKA_WEAK void pika_platform_sleep_ms(uint32_t ms) {
 
 PIKA_WEAK void pika_platform_sleep_us(uint32_t us) {
     volatile uint32_t i = 0;
-    for (i = 0; i < us; i++){
-        volatile uint32_t timeout=100;
-        while(timeout--){
+    for (i = 0; i < us; i++) {
+        volatile uint32_t timeout = 100;
+        while (timeout--) {
         }
     }
 }
