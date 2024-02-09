@@ -101,18 +101,77 @@ int pika_hal_platform_SOFT_SPI_ioctl_disable(pika_dev* dev) {
     return 0;
 }
 
-static inline int SPIv_WriteData(pika_hal_SOFT_SPI_config* cfg, uint8_t Data) {
+static inline void sleep_us(uint32_t us) {
+    pika_platform_sleep_us(us);
+}
+
+static inline void _SPI_delay(void){
+    sleep_us(1);
+}
+
+static inline int SPIv_WriteData(pika_hal_SOFT_SPI_config* cfg,
+                                 uint8_t Data,
+                                 int is_msb) {
     unsigned char i = 0;
-    for (i = 8; i > 0; i--) {
-        if (Data & 0x80)
-            _GPIO_write(cfg->MOSI, 1);
-        else
-            _GPIO_write(cfg->MOSI, 0);
-        _GPIO_write(cfg->SCK, 0);
-        _GPIO_write(cfg->SCK, 1);
-        Data <<= 1;
+    if (is_msb) {
+        for (i = 0; i < 8; i++) {
+            if (Data & 0x80){
+                _GPIO_write(cfg->MOSI, 1);
+            }
+            else{
+                _GPIO_write(cfg->MOSI, 0);
+            }
+            _GPIO_write(cfg->SCK, 0);
+            _SPI_delay();  // 插入延时
+            _GPIO_write(cfg->SCK, 1);
+            _SPI_delay();  // 插入延时
+            Data <<= 1;
+        }
+    } else {
+        for (i = 0; i < 8; i++) {
+            if (Data & 0x01){
+                _GPIO_write(cfg->MOSI, 1);
+            }
+            else{
+                _GPIO_write(cfg->MOSI, 0);
+            }
+            _GPIO_write(cfg->SCK, 0);
+            _SPI_delay();  // 插入延时
+            _GPIO_write(cfg->SCK, 1);
+            _SPI_delay();  // 插入延时
+            Data >>= 1;
+        }
     }
     return 0;
+}
+
+static inline int SPIv_ReadData(pika_hal_SOFT_SPI_config* cfg, int is_msb) {
+    unsigned char i = 0;
+    unsigned char Data = 0;
+    if (is_msb) {
+        for (i = 0; i < 8; i++) {
+            Data <<= 1;
+            _GPIO_write(cfg->SCK, 0);
+            _SPI_delay();  // 插入延时
+            if (_GPIO_read(cfg->MISO)){
+                Data++;
+            }
+            _GPIO_write(cfg->SCK, 1);
+            _SPI_delay();  // 插入延时
+        }
+    } else {
+        for (i = 0; i < 8; i++) {
+            Data >>= 1;
+            _GPIO_write(cfg->SCK, 0);
+            _SPI_delay();  // 插入延时
+            if (_GPIO_read(cfg->MISO)){
+                Data |= 0x80;
+            }
+            _GPIO_write(cfg->SCK, 1);
+            _SPI_delay();  // 插入延时
+        }
+    }
+    return Data;
 }
 
 int pika_hal_platform_SOFT_SPI_write(pika_dev* dev, void* buf, size_t count) {
@@ -121,12 +180,15 @@ int pika_hal_platform_SOFT_SPI_write(pika_dev* dev, void* buf, size_t count) {
     uint8_t* data = (uint8_t*)buf;
     if (NULL != cfg->CS) {
         _GPIO_write(cfg->CS, 0);
+        _SPI_delay();
     }
+    int is_msb = cfg->lsb_or_msb == PIKA_HAL_SPI_MSB ? 1 : 0;
     for (int i = 0; i < count; i++) {
-        SPIv_WriteData(cfg, data[i]);
+        SPIv_WriteData(cfg, data[i], is_msb);
     }
     if (NULL != cfg->CS) {
         _GPIO_write(cfg->CS, 1);
+        _SPI_delay();
     }
     return count;
 }
@@ -141,15 +203,15 @@ int pika_hal_platform_SOFT_SPI_read(pika_dev* dev, void* buf, size_t count) {
     uint8_t* data = (uint8_t*)buf;
     if (NULL != cfg->CS) {
         _GPIO_write(cfg->CS, 0);
+        _SPI_delay();
     }
+    int is_msb = cfg->lsb_or_msb == PIKA_HAL_SPI_MSB ? 1 : 0;
     for (int i = 0; i < count; i++) {
-        data[i] = 0;
-        for (int j = 0; j < 8; j++) {
-            _GPIO_write(cfg->SCK, 0);
-            _GPIO_write(cfg->SCK, 1);
-            data[i] |= (_GPIO_read(cfg->MISO) << (7 - j));
-        }
+        data[i] = SPIv_ReadData(cfg, is_msb);
     }
-    _GPIO_write(cfg->CS, 1);
+    if (NULL != cfg->CS) {
+        _GPIO_write(cfg->CS, 1);
+        _SPI_delay();
+    }
     return count;
 }

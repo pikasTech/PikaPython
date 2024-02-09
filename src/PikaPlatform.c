@@ -138,9 +138,20 @@ PIKA_WEAK void pika_platform_sleep_ms(uint32_t ms) {
     Sleep(ms);
 #elif PIKA_RTTHREAD_ENABLE
     rt_thread_mdelay(ms);
+#elif PIKA_FREERTOS_ENABLE
+    vTaskDelay(ms / portTICK_PERIOD_MS);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR_LOWLEVEL(_);
 #endif
+}
+
+PIKA_WEAK void pika_platform_sleep_us(uint32_t us) {
+    volatile uint32_t i = 0;
+    for (i = 0; i < us; i++){
+        volatile uint32_t timeout=100;
+        while(timeout--){
+        }
+    }
 }
 
 PIKA_WEAK int64_t pika_platform_get_tick(void) {

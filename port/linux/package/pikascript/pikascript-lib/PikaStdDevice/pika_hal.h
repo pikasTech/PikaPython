@@ -234,8 +234,6 @@ typedef struct {
 } pika_hal_IIC_config;
 
 typedef struct {
-    pika_dev* SDA;
-    pika_dev* SCL;
     PIKA_HAL_IIC_ADDRESS_WIDTH address_width;
     PIKA_HAL_IIC_MASTER_OR_SLAVE master_or_slave;
     PIKA_HAL_IIC_SLAVE_ADDR slave_addr;
@@ -245,6 +243,9 @@ typedef struct {
     PIKA_HAL_IIC_SPEED speed;
     PIKA_HAL_IIC_TIMEOUT timeout;
     void* user_data;
+    // Uper must be the same with IIC_config;
+    pika_dev* SDA;
+    pika_dev* SCL;
 } pika_hal_SOFT_IIC_config;
 
 typedef enum PIKA_HAL_SPI_TIMEOUT {
@@ -317,11 +318,12 @@ typedef struct {
     PIKA_HAL_SPI_DATA_WIDTH data_width;
     PIKA_HAL_SPI_SPEED speed;
     PIKA_HAL_SPI_TIMEOUT timeout;
+    void* user_data;
+    // Uper must be the same with SPI_config
     pika_dev* CS;
     pika_dev* SCK;
     pika_dev* MOSI;
     pika_dev* MISO;
-    void* user_data;
 } pika_hal_SOFT_SPI_config;
 
 typedef enum {
@@ -558,6 +560,7 @@ typedef struct pika_hal_SOFT_TIM_config {
     PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;
     PIKA_HAL_TIM_EVENT_SIGNAL event_callback_filter;
     void (*event_callback)(pika_dev* dev, PIKA_HAL_TIM_EVENT_SIGNAL signal);
+    // Uper must be the same with TIM_config
 } pika_hal_SOFT_TIM_config;
 
 typedef enum {
@@ -638,6 +641,21 @@ typedef struct {
     PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;
     void* user_data;
 } pika_hal_SG_config;
+
+
+typedef struct {
+    /* parent start */
+    PIKA_HAL_GPIO_DIR dir;
+    PIKA_HAL_GPIO_PULL pull;
+    PIKA_HAL_GPIO_SPEED speed;
+    void (*event_callback)(pika_dev* dev, PIKA_HAL_GPIO_EVENT_SIGNAL signal);
+    PIKA_HAL_GPIO_EVENT_SIGNAL event_callback_filter;
+    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;
+    void* user_data;
+    /* parent end */
+    pika_dev* iic_port;
+    uint32_t slave_addr;
+} pika_hal_GPIO_PCA9555_config;
 
 /* impl typedef */
 
