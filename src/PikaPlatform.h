@@ -227,6 +227,7 @@ void pika_platform_panic_handle(void);
 int64_t pika_platform_get_tick(void);
 
 void pika_platform_sleep_ms(uint32_t ms);
+void pika_platform_sleep_us(uint32_t us);
 
 void pika_hook_instruct(void);
 void pika_thread_idle_hook(void);

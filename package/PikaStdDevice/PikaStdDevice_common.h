@@ -5,7 +5,7 @@
 #include "pika_hal.h"
 void _PikaStdDevice_setCallback(PikaObj* self,
                                 Arg* eventCallback,
-                                uint32_t eventId);
+                                uintptr_t eventId);
 
 void _PikaStdDevice_event_handler(pika_dev* dev, int signal);
 

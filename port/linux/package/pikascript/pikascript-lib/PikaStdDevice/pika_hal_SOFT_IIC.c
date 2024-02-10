@@ -24,7 +24,7 @@ static uint32_t _GPIO_read(pika_dev* dev) {
 }
 
 static void _IIC_Delay(void) {
-    pika_sleep_ms(3);
+    pika_platform_sleep_us(10);
 }
 
 static void _IIC_Start(pika_hal_SOFT_IIC_config* cfg) {
@@ -70,14 +70,18 @@ static pika_bool _IIC_SendByte(pika_hal_SOFT_IIC_config* cfg, uint8_t byte) {
     _IIC_SDA_input(cfg);
     _GPIO_write(cfg->SCL, 1);
 
-    int timeout = 1000;
+    int timeout = 500;
     uint32_t ack = 0;
-    do {
-        _IIC_Delay();
-        ack = !_GPIO_read(cfg->SDA);
-    } while (ack == 0 && timeout-- > 0);
 
-    // pika_debug("ack timeout:%d", timeout);
+    while (timeout--) {
+        ack = !_GPIO_read(cfg->SDA);
+        if (ack != 0) {
+            break;
+        }
+        pika_sleep_ms(1);
+    }
+
+    pika_debug("ack timeout:%d", timeout);
     if (timeout <= 0) {
         pika_platform_printf("Error: IIC write byte timeout\r\n");
     }

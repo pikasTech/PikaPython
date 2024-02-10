@@ -216,6 +216,25 @@ int pika_hal_GPIO_ioctl_merge_config(pika_hal_GPIO_config* dst,
     return 0;
 }
 
+int pika_hal_GPIO_PCA9555_ioctl_merge_config(
+    pika_hal_GPIO_PCA9555_config* dst,
+    pika_hal_GPIO_PCA9555_config* src) {
+    // printf("before merge: dst->dir=%d, src->dir=%d\r\n", dst->dir, src->dir);
+    _IOCTL_CONFIG_USE_DEFAULT(dir, PIKA_HAL_GPIO_DIR_IN);
+    // printf("after merge: dst->dir=%d, src->dir=%d\r\n", dst->dir, src->dir);
+    _IOCTL_CONFIG_USE_DEFAULT(pull, PIKA_HAL_GPIO_PULL_NONE);
+    _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_GPIO_SPEED_10M);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_filter,
+                              PIKA_HAL_GPIO_EVENT_SIGNAL_RISING);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_ena,
+                              PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE);
+    _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(iic_port, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(slave_addr, 0);
+    return 0;
+}
+
 int pika_hal_UART_ioctl_merge_config(pika_hal_UART_config* dst,
                                      pika_hal_UART_config* src) {
     _IOCTL_CONFIG_USE_DEFAULT(baudrate, PIKA_HAL_UART_BAUDRATE_115200);
