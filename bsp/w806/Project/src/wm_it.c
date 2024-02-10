@@ -61,11 +61,11 @@ __attribute__((isr)) void CORET_IRQHandler(void)
 //}
 ///*********************End**********************/
 //
-extern ADC_HandleTypeDef hadc;
+//extern ADC_HandleTypeDef hadc;
 ///********************ADC IRQ******************/
 __attribute__((isr)) void ADC_IRQHandler(void)
 {
- 	HAL_ADC_IRQHandler(&hadc);
+ 	// HAL_ADC_IRQHandler(&hadc);
 }
 ///*********************End**********************/
 //

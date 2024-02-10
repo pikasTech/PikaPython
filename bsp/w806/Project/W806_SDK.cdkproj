@@ -159,38 +159,6 @@
       </VirtualDirectory>
       <VirtualDirectory Name="pikascript">
         <VirtualDirectory Name="pikascript-lib">
-          <VirtualDirectory Name="W801Device">
-            <File Name="pikascript/pikascript-lib/W801Device/fifo.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/fifo.h">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/W801_ADC.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/W801_common.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/W801_common.h">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/W801_GPIO.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/W801_IIC.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/W801_PWM.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/W801_Time.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/W801_Uart.c">
-              <FileOption/>
-            </File>
-          </VirtualDirectory>
           <VirtualDirectory Name="PikaStdDevice">
             <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_ADC.c">
               <FileOption/>
