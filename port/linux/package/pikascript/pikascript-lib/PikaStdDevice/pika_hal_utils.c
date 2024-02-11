@@ -159,6 +159,53 @@ int pika_hal_utils_SPI_config(pika_dev* dev, pika_hal_SPI_config* cfg) {
     return ret;
 }
 
+int pika_hal_utils_SPI_transfer(pika_dev* dev,
+                                uint8_t* txbuff,
+                                uint8_t* rxbuff,
+                                uint32_t size) {
+    // Modify parameter check logic: allow unidirectional transfer
+    if (dev == NULL || (txbuff == NULL && rxbuff == NULL)) {
+        return -1;  // Parameter check failed
+    }
+
+    pika_hal_SPI_config* cfg = (pika_hal_SPI_config*)dev->ioctl_config;
+    uint32_t transferred = 0;   // Amount of data transferred
+    uint32_t remaining = size;  // Amount of data remaining
+    uint32_t chunkSize;         // Amount of data for the current batch transfer
+
+    while (remaining > 0) {
+        chunkSize = remaining > PIKA_HAL_SPI_RX_BUFFER_SIZE
+                        ? PIKA_HAL_SPI_RX_BUFFER_SIZE
+                        : remaining;
+
+        // Call SPI_write to transfer data only if txbuff is not NULL
+        if (txbuff != NULL) {
+            pika_hal_write(dev, &txbuff[transferred], chunkSize);
+        }
+
+        // Call hal_read instead of directly retrieving data from
+        // transfer_rx_buffer only if rxbuff is not NULL
+        if (rxbuff != NULL) {
+            if (txbuff == NULL) {
+                // Perform data reception only
+                pika_hal_read(dev, &rxbuff[transferred], chunkSize);
+            } else {
+                // Handle both data sending and receiving, assuming hal_write
+                // already includes reading logic
+                for (uint32_t i = 0; i < chunkSize; i++) {
+                    rxbuff[transferred + i] =
+                        cfg->tranfer_rx_buffer[i % PIKA_HAL_SPI_RX_BUFFER_SIZE];
+                }
+            }
+        }
+
+        transferred += chunkSize;  // Update the amount of data transferred
+        remaining -= chunkSize;    // Update the amount of data remaining
+    }
+
+    return 0;  // Successfully completed the transfer
+}
+
 /* ADC utils */
 int pika_hal_utils_ADC_config(pika_dev* dev, pika_hal_ADC_config* cfg) {
     int ret = pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, cfg);

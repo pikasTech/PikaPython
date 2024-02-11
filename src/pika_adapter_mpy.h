@@ -44,7 +44,7 @@ extern "C" {
 #define STATIC static
 #define NORETURN
 typedef unsigned char byte;
-typedef unsigned int uint;
+typedef unsigned int uint32_t;
 #define mp_uint_t size_t
 #define mp_int_t int
 typedef uint32_t unichar;
@@ -727,7 +727,7 @@ static inline long long mp_binary_get_int(size_t size,
     if (is_signed && *src & 0x80) {
         val = -1;
     }
-    for (uint i = 0; i < size; i++) {
+    for (uint32_t i = 0; i < size; i++) {
         val <<= 8;
         val |= *src;
         src += delta;
