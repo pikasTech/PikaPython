@@ -34,16 +34,11 @@ int pika_hal_platform_SOFT_SPI_close(pika_dev* dev) {
 
 int pika_hal_platform_SOFT_SPI_ioctl_config(pika_dev* dev,
                                             pika_hal_SOFT_SPI_config* cfg) {
-    if (cfg->SCK == NULL || cfg->MOSI == NULL) {
-        __platform_printf(
-            "Error: SOFT SPI config error, CS, SCK, MOSI, MISO must be "
-            "set\r\n");
-        return -1;
-    }
     return 0;
 }
 
 int pika_hal_platform_SOFT_SPI_ioctl_enable(pika_dev* dev) {
+    pika_debug("SOFT_SPI_ioctl_enable, dev[0x%p]", dev);
     pika_hal_SOFT_SPI_config* cfg =
         (pika_hal_SOFT_SPI_config*)dev->ioctl_config;
     if (cfg->SCK == NULL || cfg->MOSI == NULL) {
@@ -62,20 +57,28 @@ int pika_hal_platform_SOFT_SPI_ioctl_enable(pika_dev* dev) {
     cfg_MISO.dir = PIKA_HAL_GPIO_DIR_IN;
 
     if (NULL != cfg->CS) {
+        pika_debug("CS[0x%p] config", cfg->CS);
         pika_hal_ioctl(cfg->CS, PIKA_HAL_IOCTL_CONFIG, &cfg_CS);
     }
+    pika_debug("SCK[0x%p] config", cfg->SCK);
     pika_hal_ioctl(cfg->SCK, PIKA_HAL_IOCTL_CONFIG, &cfg_SCK);
+    pika_debug("MOSI[0x%p] config", cfg->MOSI);
     pika_hal_ioctl(cfg->MOSI, PIKA_HAL_IOCTL_CONFIG, &cfg_MOSI);
     if (NULL != cfg->MISO) {
+        pika_debug("MISO[0x%p] config", cfg->MISO);
         pika_hal_ioctl(cfg->MISO, PIKA_HAL_IOCTL_CONFIG, &cfg_MISO);
     }
 
     if (NULL != cfg->CS) {
+        pika_debug("CS[0x%p] enable", cfg->CS);
         pika_hal_ioctl(cfg->CS, PIKA_HAL_IOCTL_ENABLE);
     }
+    pika_debug("SCK[0x%p] enable", cfg->SCK);
     pika_hal_ioctl(cfg->SCK, PIKA_HAL_IOCTL_ENABLE);
+    pika_debug("MOSI[0x%p] enable", cfg->MOSI);
     pika_hal_ioctl(cfg->MOSI, PIKA_HAL_IOCTL_ENABLE);
     if (NULL != cfg->MISO) {
+        pika_debug("MISO[0x%p] enable", cfg->MISO);
         pika_hal_ioctl(cfg->MISO, PIKA_HAL_IOCTL_ENABLE);
     }
 
@@ -109,41 +112,63 @@ static inline void _SPI_delay(void) {
     sleep_us(1);
 }
 
-static inline int SPIv_WriteData(pika_hal_SOFT_SPI_config* cfg,
-                                 uint8_t Data,
-                                 int is_msb) {
+static inline int SPIv_TransferByte(pika_hal_SOFT_SPI_config* cfg,
+                                    uint8_t tx,
+                                    uint8_t* rx,
+                                    int is_msb) {
     unsigned char i = 0;
+    uint8_t received_data = 0;  // Used to store the received data
+
     if (is_msb) {
         for (i = 0; i < 8; i++) {
-            if (Data & 0x80) {
+            if (tx & 0x80) {
                 _GPIO_write(cfg->MOSI, 1);
             } else {
                 _GPIO_write(cfg->MOSI, 0);
             }
             _GPIO_write(cfg->SCK, 0);
             _SPI_delay();
+            received_data <<=
+                1;  // Shift received data left, preparing for the new bit
+            if (NULL != cfg->MISO) {
+                if (_GPIO_read(cfg->MISO)) {  // Read data from the MISO line
+                    received_data |= 0x01;    // If MISO is high, set the lowest
+                                              // bit of the received data to 1
+                }
+            }
             _GPIO_write(cfg->SCK, 1);
             _SPI_delay();
-            Data <<= 1;
+            tx <<= 1;
         }
     } else {
         for (i = 0; i < 8; i++) {
-            if (Data & 0x01) {
+            if (tx & 0x01) {
                 _GPIO_write(cfg->MOSI, 1);
             } else {
                 _GPIO_write(cfg->MOSI, 0);
             }
             _GPIO_write(cfg->SCK, 0);
             _SPI_delay();
+            received_data >>=
+                1;  // Shift received data right, preparing for the new bit
+            if (NULL != cfg->MISO) {
+                if (_GPIO_read(cfg->MISO)) {  // Read data from the MISO line
+                    received_data |= 0x80;  // If MISO is high, set the highest
+                                            // bit of the received data to 1
+                }
+            }
             _GPIO_write(cfg->SCK, 1);
             _SPI_delay();
-            Data >>= 1;
+            tx >>= 1;
         }
     }
+
+    *rx = received_data;  // Store the received data into the variable pointed
+                          // to by rx
     return 0;
 }
 
-static inline int SPIv_ReadData(pika_hal_SOFT_SPI_config* cfg, int is_msb) {
+static inline int SPIv_ReadByte(pika_hal_SOFT_SPI_config* cfg, int is_msb) {
     unsigned char i = 0;
     unsigned char Data = 0;
     if (is_msb) {
@@ -182,7 +207,9 @@ int pika_hal_platform_SOFT_SPI_write(pika_dev* dev, void* buf, size_t count) {
     }
     int is_msb = cfg->lsb_or_msb == PIKA_HAL_SPI_MSB ? 1 : 0;
     for (int i = 0; i < count; i++) {
-        SPIv_WriteData(cfg, data[i], is_msb);
+        SPIv_TransferByte(
+            cfg, data[i],
+            &cfg->tranfer_rx_buffer[i % PIKA_HAL_SPI_RX_BUFFER_SIZE], is_msb);
     }
     if (NULL != cfg->CS) {
         _GPIO_write(cfg->CS, 1);
@@ -205,7 +232,7 @@ int pika_hal_platform_SOFT_SPI_read(pika_dev* dev, void* buf, size_t count) {
     }
     int is_msb = cfg->lsb_or_msb == PIKA_HAL_SPI_MSB ? 1 : 0;
     for (int i = 0; i < count; i++) {
-        data[i] = SPIv_ReadData(cfg, is_msb);
+        data[i] = SPIv_ReadByte(cfg, is_msb);
     }
     if (NULL != cfg->CS) {
         _GPIO_write(cfg->CS, 1);

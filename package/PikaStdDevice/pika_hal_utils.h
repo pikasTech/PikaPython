@@ -42,6 +42,10 @@ int pika_hal_utils_IIC_set_slave_addr(pika_dev* dev, uint32_t slave_addr);
 
 /* SPI utils */
 int pika_hal_utils_SPI_config(pika_dev* dev, pika_hal_SPI_config* cfg);
+int pika_hal_utils_SPI_transfer(pika_dev* dev,
+                                uint8_t* txbuff,
+                                uint8_t* rxbuff,
+                                uint32_t size);
 
 /* ADC utils */
 int pika_hal_utils_ADC_config(pika_dev* dev, pika_hal_ADC_config* cfg);

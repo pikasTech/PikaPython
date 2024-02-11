@@ -435,6 +435,9 @@ class SPI(BaseDev):
 
     def setPinMISO(self, pin: str):
         """Set the MISO pin."""
+    
+    def setPinCS(self, pin: str):
+        """Set the CS pin."""
 
     def setName(self, name: str):
         """Use the device name to select the SPI pin.
@@ -472,25 +475,6 @@ class SPI(BaseDev):
 
     def readBytes(self, length: int) -> bytes:
         """Read bytes from the SPI."""
-
-    @abstractmethod
-    def platformEnable(self): ...
-
-    @abstractmethod
-    def platformWrite(self): ...
-
-    @abstractmethod
-    def platformWriteBytes(self): ...
-
-    @abstractmethod
-    def platformRead(self): ...
-
-    @abstractmethod
-    def platformReadBytes(self): ...
-
-    @abstractmethod
-    def platformDisable(self): ...
-
 
 class CAN(BaseDev):
     def __init__(self): ...

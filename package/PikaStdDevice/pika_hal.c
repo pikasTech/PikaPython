@@ -42,6 +42,8 @@ pika_dev* pika_hal_open(PIKA_HAL_DEV_TYPE dev_type, char* name) {
     if (dev == NULL) {
         goto __exit;
     }
+    pika_debug("pika_hal_open, dev[0x%p], type[%d], name[%s]", dev, dev_type,
+               name);
     memset(dev, 0, sizeof(pika_dev));
     dev->type = dev_type;
     dev->ioctl_config = pikaMalloc(_pika_hal_dev_config_size(dev_type));
@@ -90,10 +92,16 @@ __exit:
 
 int pika_hal_read(pika_dev* dev, void* buf, size_t len) {
     if (dev == NULL) {
+        pika_platform_printf("Error: dev is NULL.\r\n");
+        return -1;
+    }
+    if (!dev->is_enabled) {
+        pika_platform_printf("Error: dev is not enabled.\r\n");
         return -1;
     }
     pika_dev_impl* impl = _pika_dev_get_impl(dev->type);
     if (impl->read == NULL) {
+        pika_platform_printf("Error: read not support.\r\n");
         return -1;
     }
     return impl->read(dev, buf, len);
@@ -101,10 +109,16 @@ int pika_hal_read(pika_dev* dev, void* buf, size_t len) {
 
 int pika_hal_write(pika_dev* dev, void* buf, size_t len) {
     if (dev == NULL) {
+        pika_platform_printf("Error: dev is NULL.\r\n");
+        return -1;
+    }
+    if (!dev->is_enabled) {
+        pika_platform_printf("Error: dev is not enabled.\r\n");
         return -1;
     }
     pika_dev_impl* impl = _pika_dev_get_impl(dev->type);
     if (impl->write == NULL) {
+        pika_platform_printf("Error: write not support.\r\n");
         return -1;
     }
     return impl->write(dev, buf, len);
@@ -133,14 +147,19 @@ int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
     int ret = -1;
     PIKA_HAL_IOCTL_CMD cmd_origin = cmd;
     if (dev == NULL) {
+        pika_platform_printf("Error: dev is NULL.\r\n");
         return -1;
     }
+    pika_debug("pika_hal_ioctl, dev[0x%p], type[%d], cmd[%d]", dev, dev->type,
+               cmd);
     cmd = _pika_hal_get_arg_cnt(cmd_origin);
     if (cmd < 0) {
+        pika_platform_printf("Error: cmd invalied.\r\n");
         return -1;
     }
     pika_dev_impl* impl = _pika_dev_get_impl(dev->type);
     if (impl->ioctl == NULL) {
+        pika_platform_printf("Error: ioctl not support.\r\n");
         return -1;
     }
     void* arg_in = NULL;
@@ -155,6 +174,7 @@ int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
         }
         va_end(args);
         if (0 != ret) {
+            pika_platform_printf("Error: ioctl merge config failed.\r\n");
             return ret;
         }
     }
@@ -263,6 +283,10 @@ int pika_hal_SPI_ioctl_merge_config(pika_hal_SPI_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(data_width, PIKA_HAL_SPI_DATA_WIDTH_8);
     _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_SPI_SPEED_2M);
     _IOCTL_CONFIG_USE_DEFAULT(timeout, PIKA_HAL_SPI_TIMEOUT_1000MS);
+    _IOCTL_CONFIG_USE_DEFAULT(CS, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(SCK, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(MOSI, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(MISO, NULL);
     _IOCTL_CONFIG_USE_DEFAULT(user_data, NULL);
     return 0;
 }

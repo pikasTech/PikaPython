@@ -301,6 +301,8 @@ typedef enum {
     PIKA_HAL_SPI_SPEED_100M = 100000000,
 } PIKA_HAL_SPI_SPEED;
 
+#define PIKA_HAL_SPI_RX_BUFFER_SIZE 32
+
 typedef struct {
     PIKA_HAL_SPI_LSB_OR_MSB lsb_or_msb;
     PIKA_HAL_SPI_MASTER_OR_SLAVE master_or_slave;
@@ -308,6 +310,11 @@ typedef struct {
     PIKA_HAL_SPI_DATA_WIDTH data_width;
     PIKA_HAL_SPI_SPEED speed;
     PIKA_HAL_SPI_TIMEOUT timeout;
+    pika_dev* CS;    // Just for MCU with pin mux like ESP32
+    pika_dev* SCK;   // Just for MCU with pin mux like ESP32
+    pika_dev* MOSI;  // Just for MCU with pin mux like ESP32
+    pika_dev* MISO;  // Just for MCU with pin mux like ESP32
+    uint8_t tranfer_rx_buffer[PIKA_HAL_SPI_RX_BUFFER_SIZE];
     void* user_data;
 } pika_hal_SPI_config;
 
@@ -318,12 +325,13 @@ typedef struct {
     PIKA_HAL_SPI_DATA_WIDTH data_width;
     PIKA_HAL_SPI_SPEED speed;
     PIKA_HAL_SPI_TIMEOUT timeout;
-    void* user_data;
-    // Uper must be the same with SPI_config
     pika_dev* CS;
     pika_dev* SCK;
     pika_dev* MOSI;
     pika_dev* MISO;
+    uint8_t tranfer_rx_buffer[PIKA_HAL_SPI_RX_BUFFER_SIZE];
+    void* user_data;
+    // Uper must be the same with SPI_config
 } pika_hal_SOFT_SPI_config;
 
 typedef enum {
