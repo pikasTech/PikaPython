@@ -44,7 +44,7 @@ extern "C" {
 #define STATIC static
 #define NORETURN
 typedef unsigned char byte;
-typedef unsigned int uint32_t;
+typedef unsigned int uint;
 #define mp_uint_t size_t
 #define mp_int_t int
 typedef uint32_t unichar;
