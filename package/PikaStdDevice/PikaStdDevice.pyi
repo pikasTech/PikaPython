@@ -94,18 +94,6 @@ class GPIO(BaseDev):
 
     def close(self): ...
 
-    def platformHigh(self): ...
-
-    def platformLow(self): ...
-
-    def platformEnable(self): ...
-
-    def platformDisable(self): ...
-
-    def platformSetMode(self): ...
-
-    def platformRead(self): ...
-
 
 def Time() -> time:
     """ deprecated use time module instead """
@@ -173,15 +161,6 @@ class ADC(BaseDev):
         """Read the ADC value."""
 
     def close(self): ...
-
-    @abstractmethod
-    def platformEnable(self): ...
-
-    @abstractmethod
-    def platformRead(self): ...
-
-    @abstractmethod
-    def platformDisable(self): ...
 
 
 class DAC(BaseDev):
@@ -298,24 +277,6 @@ class UART:
         deprecated, you can use `setCallback` instead.
         """
 
-    @abstractmethod
-    def platformEnable(self): ...
-
-    @abstractmethod
-    def platformWrite(self): ...
-
-    @abstractmethod
-    def platformWriteBytes(self): ...
-
-    @abstractmethod
-    def platformRead(self): ...
-
-    @abstractmethod
-    def platformReadBytes(self): ...
-
-    @abstractmethod
-    def platformDisable(self): ...
-
 
 class IIC(BaseDev):
     def __init__(self): ...
@@ -347,23 +308,6 @@ class IIC(BaseDev):
     def readBytes(self, addr: int, length: int) -> bytes:
         """Read bytes from the IIC."""
 
-    @abstractmethod
-    def platformEnable(self): ...
-
-    @abstractmethod
-    def platformWrite(self): ...
-
-    @abstractmethod
-    def platformWriteBytes(self): ...
-
-    @abstractmethod
-    def platformRead(self): ...
-
-    @abstractmethod
-    def platformReadBytes(self): ...
-
-    @abstractmethod
-    def platformDisable(self): ...
 
 
 class PWM(BaseDev):
@@ -411,17 +355,6 @@ class PWM(BaseDev):
 
     def close(self): ...
 
-    @abstractmethod
-    def platformEnable(self): ...
-
-    @abstractmethod
-    def platformSetFrequency(self): ...
-
-    @abstractmethod
-    def platformSetDuty(self): ...
-
-    @abstractmethod
-    def platformDisable(self): ...
 
 
 class SPI(BaseDev):
@@ -517,24 +450,6 @@ class CAN(BaseDev):
 
     def addFilter(self, id: int, ide: int, rtr: int, mode: int, mask: int, hdr: int):
         """Add a filter."""
-
-    @abstractmethod
-    def platformEnable(self): ...
-
-    @abstractmethod
-    def platformWrite(self): ...
-
-    @abstractmethod
-    def platformWriteBytes(self): ...
-
-    @abstractmethod
-    def platformRead(self): ...
-
-    @abstractmethod
-    def platformReadBytes(self): ...
-
-    @abstractmethod
-    def platformDisable(self): ...
 
 
 class BaseDev:

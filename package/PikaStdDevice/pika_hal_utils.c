@@ -144,6 +144,27 @@ int pika_hal_utils_IIC_mem_write(pika_dev* dev,
     return pika_hal_write(dev, data, size);
 }
 
+int pika_hal_utils_IIC_read(pika_dev* dev, uint8_t* data, uint32_t size) {
+    pika_hal_IIC_config* iic_config = (pika_hal_IIC_config*)dev->ioctl_config;
+    iic_config->mem_addr_ena = PIKA_HAL_IIC_MEM_ADDR_ENA_DISABLE;
+    if (pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, dev->ioctl_config) < 0) {
+        return -1;
+    }
+
+    return pika_hal_read(dev, data, size);
+}
+
+int pika_hal_utils_IIC_write(pika_dev* dev, uint8_t* data, uint32_t size) {
+    pika_hal_IIC_config* iic_config = (pika_hal_IIC_config*)dev->ioctl_config;
+    iic_config->mem_addr_ena = PIKA_HAL_IIC_MEM_ADDR_ENA_DISABLE;
+
+    if (pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, dev->ioctl_config) < 0) {
+        return -1;
+    }
+
+    return pika_hal_write(dev, data, size);
+}
+
 int pika_hal_utils_IIC_set_slave_addr(pika_dev* dev, uint32_t slave_addr) {
     pika_hal_IIC_config* iic_config = (pika_hal_IIC_config*)dev->ioctl_config;
     iic_config->slave_addr = slave_addr;
