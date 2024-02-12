@@ -38,7 +38,10 @@ int pika_hal_utils_IIC_mem_write(pika_dev* dev,
                                  uint32_t mem_addr_size,
                                  uint8_t* data,
                                  uint32_t size);
+
 int pika_hal_utils_IIC_set_slave_addr(pika_dev* dev, uint32_t slave_addr);
+int pika_hal_utils_IIC_write(pika_dev* dev, uint8_t* data, uint32_t size);
+int pika_hal_utils_IIC_read(pika_dev* dev, uint8_t* data, uint32_t size);
 
 /* SPI utils */
 int pika_hal_utils_SPI_config(pika_dev* dev, pika_hal_SPI_config* cfg);
