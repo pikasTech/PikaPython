@@ -1,4 +1,4 @@
-#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+﻿#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
 #include "lvgl.h"
 #else
 #include "../../lvgl.h"
@@ -12,52 +12,53 @@
 #include "pika_lvgl_arc.h"
 #include "pika_lvgl_lv_event.h"
 #include "pika_lvgl_lv_obj.h"
+#include "pika_lvgl_common.h"
 
 extern PikaObj* pika_lv_event_listener_g;
 
 void pika_lvgl_lv_obj___init__(PikaObj* self, PikaObj* parent) {
-    lv_obj_t* lv_parent = obj_getPtr(parent, "lv_obj");
+    lv_obj_t* lv_parent = PIKA_LV_OBJ(parent);
     lv_obj_t* lv_obj = lv_obj_create(lv_parent);
-    obj_setPtr(self, "lv_obj", lv_obj);
+    PIKA_LV_OBJ_SET(self, lv_obj);
 }
 
 void pika_lvgl_lv_obj_center(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_center(lv_obj);
 }
 
 void pika_lvgl_lv_obj_set_size(PikaObj* self, int w, int h) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_size(lv_obj, w, h);
 }
 
 void pika_lvgl_lv_obj_set_style_size(PikaObj* self, int value, int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_size(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_align(PikaObj* self, int align, int x_ofs, int y_ofs) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_align(lv_obj, align, x_ofs, y_ofs);
 }
 
 void pika_lvgl_lv_obj_set_height(PikaObj* self, int h) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_height(lv_obj, h);
 }
 
 void pika_lvgl_lv_obj_update_layout(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_update_layout(lv_obj);
 }
 
 void pika_lvgl_lv_obj_set_width(PikaObj* self, int w) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_width(lv_obj, w);
 }
 
 void pika_lvgl_lv_obj_add_state(PikaObj* self, int state) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_add_state(lv_obj, state);
 }
 
@@ -83,14 +84,14 @@ void pika_lvgl_lv_obj_add_event_cb(PikaObj* self,
                                    Arg* event_cb,
                                    int filter,
                                    void* user_data) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_add_event_cb(lv_obj, __pika_event_cb, filter, NULL);
     pika_eventListener_registEventCallback(pika_lv_event_listener_g,
                                            (uintptr_t)lv_obj, event_cb);
 }
 
 void pika_lvgl_lv_obj_add_style(PikaObj* self, PikaObj* style, int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_style_t* lv_style = obj_getPtr(style, "lv_style");
     lv_obj_add_style(lv_obj, lv_style, selector);
     char sytle_ref_name[] = "_stylex";
@@ -99,17 +100,17 @@ void pika_lvgl_lv_obj_add_style(PikaObj* self, PikaObj* style, int selector) {
 }
 
 int pika_lvgl_lv_obj_get_x(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_get_x(lv_obj);
 }
 
 int pika_lvgl_lv_obj_get_y(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_get_y(lv_obj);
 }
 
 void pika_lvgl_lv_obj_set_pos(PikaObj* self, int x, int y) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_pos(lv_obj, x, y);
 }
 
@@ -118,89 +119,89 @@ void pika_lvgl_lv_obj_align_to(PikaObj* self,
                                int align,
                                int x_ofs,
                                int y_ofs) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
-    lv_obj_t* lv_base = obj_getPtr(base, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
+    lv_obj_t* lv_base = PIKA_LV_OBJ(base);
     lv_obj_align_to(lv_obj, lv_base, align, x_ofs, y_ofs);
 }
 
 int pika_lvgl_lv_obj_get_content_height(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_get_content_height(lv_obj);
 }
 
 int pika_lvgl_lv_obj_get_content_width(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_get_content_width(lv_obj);
 }
 
 int pika_lvgl_lv_obj_get_height(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_get_height(lv_obj);
 }
 
 int pika_lvgl_lv_obj_get_self_height(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_get_self_height(lv_obj);
 }
 
 int pika_lvgl_lv_obj_get_self_width(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_get_self_width(lv_obj);
 }
 
 int pika_lvgl_lv_obj_get_width(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_get_width(lv_obj);
 }
 
 int pika_lvgl_lv_obj_get_x2(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_get_x2(lv_obj);
 }
 
 int pika_lvgl_lv_obj_get_x_aligned(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_get_x_aligned(lv_obj);
 }
 
 int pika_lvgl_lv_obj_get_y2(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_get_y2(lv_obj);
 }
 
 int pika_lvgl_lv_obj_get_y_aligned(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_get_y_aligned(lv_obj);
 }
 
 int pika_lvgl_lv_obj_hit_test(PikaObj* self, PikaObj* point) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_point_t* lv_point = obj_getPtr(point, "lv_point");
     return lv_obj_hit_test(lv_obj, lv_point);
 }
 
 void pika_lvgl_lv_obj_invalidate(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_invalidate(lv_obj);
 }
 
 int pika_lvgl_lv_obj_is_layout_positioned(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_is_layout_positioned(lv_obj);
 }
 
 int pika_lvgl_lv_obj_is_visible(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_is_visible(lv_obj);
 }
 
 void pika_lvgl_lv_obj_mark_layout_as_dirty(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_mark_layout_as_dirty(lv_obj);
 }
 
 void pika_lvgl_lv_obj_move_to(PikaObj* self, int x, int y) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_move_to(lv_obj, x, y);
 }
 
@@ -208,57 +209,57 @@ void pika_lvgl_lv_obj_move_children_by(PikaObj* self,
                                        int x_diff,
                                        int y_diff,
                                        int ignore_floating) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_move_children_by(lv_obj, x_diff, y_diff, ignore_floating);
 }
 
 void pika_lvgl_lv_obj_refr_pos(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_refr_pos(lv_obj);
 }
 
 int pika_lvgl_lv_obj_refr_size(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_refr_size(lv_obj);
 }
 
 int pika_lvgl_lv_obj_refresh_self_size(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     return lv_obj_refresh_self_size(lv_obj);
 }
 
 void pika_lvgl_lv_obj_set_align(PikaObj* self, int align) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_align(lv_obj, align);
 }
 
 void pika_lvgl_lv_obj_set_content_height(PikaObj* self, int h) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_content_height(lv_obj, h);
 }
 
 void pika_lvgl_lv_obj_set_content_width(PikaObj* self, int w) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_content_width(lv_obj, w);
 }
 
 void pika_lvgl_lv_obj_set_ext_click_area(PikaObj* self, int size) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_ext_click_area(lv_obj, size);
 }
 
 void pika_lvgl_lv_obj_set_layout(PikaObj* self, int layout) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_layout(lv_obj, layout);
 }
 
 void pika_lvgl_lv_obj_set_x(PikaObj* self, int x) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_x(lv_obj, x);
 }
 
 void pika_lvgl_lv_obj_set_y(PikaObj* self, int y) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_y(lv_obj, y);
 }
 
@@ -266,18 +267,18 @@ void pika_lvgl_lv_obj_transform_point(PikaObj* self,
                                       PikaObj* p,
                                       int recursive,
                                       int inv) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_point_t* lv_point = obj_getPtr(p, "lv_point");
     lv_obj_transform_point(lv_obj, lv_point, recursive, inv);
 }
 
 void pika_lvgl_lv_obj_add_flag(PikaObj* self, int flag) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_add_flag(lv_obj, flag);
 }
 
 void pika_lvgl_lv_obj_clear_flag(PikaObj* self, int flag) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_clear_flag(lv_obj, flag);
 }
 
@@ -285,18 +286,18 @@ void pika_lvgl_lv_obj_set_flex_align(PikaObj* self,
                                      int main_place,
                                      int cross_place,
                                      int align) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_flex_align(lv_obj, main_place, cross_place, align);
 }
 
 void pika_lvgl_lv_obj_set_flex_flow(PikaObj* self, int flow) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_flex_flow(lv_obj, flow);
 }
 
 extern Args* pika_lv_id_register_g;
 void pika_lvgl_lv_obj_set_id(PikaObj* self, char* id) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     uintptr_t id_key = (uintptr_t)lv_obj;
     Arg* id_arg = arg_newStr(id);
     id_arg->name_hash = (Hash)id_key;
@@ -304,7 +305,7 @@ void pika_lvgl_lv_obj_set_id(PikaObj* self, char* id) {
 }
 
 char* pika_lvgl_lv_obj_get_id(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     uintptr_t id_key = (uintptr_t)lv_obj;
     Arg* id_arg = args_getArg_hash(pika_lv_id_register_g, (Hash)id_key);
     if (NULL == id_arg) {
@@ -314,17 +315,17 @@ char* pika_lvgl_lv_obj_get_id(PikaObj* self) {
 }
 
 void pika_lvgl_lv_obj_set_flex_grow(PikaObj* self, int value) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_flex_grow(lv_obj, value);
 }
 
 void pika_lvgl_lv_obj_clean(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_clean(lv_obj);
 }
 
 void pika_lvgl_lv_obj_del_(PikaObj* self) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     Args buffs = {0};
     char* event_name =
         strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, "%d", (uintptr_t)lv_obj);
@@ -617,183 +618,183 @@ set_style_transition(self, value: lv_style_transition_dsc_t, selector: int): ...
 */
 
 void pika_lvgl_lv_obj_scroll_to_view(PikaObj* self, int anim_en) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_scroll_to_view(lv_obj, anim_en);
 }
 
 void pika_lvgl_lv_obj_scroll_to_view_recursive(PikaObj* self, int anim_en) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_scroll_to_view_recursive(lv_obj, anim_en);
 }
 
 void pika_lvgl_lv_obj_set_style_width(PikaObj* self, int value, int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_width(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_min_width(PikaObj* self,
                                           int value,
                                           int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_min_width(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_max_width(PikaObj* self,
                                           int value,
                                           int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_max_width(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_height(PikaObj* self, int value, int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_height(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_min_height(PikaObj* self,
                                            int value,
                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_min_height(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_max_height(PikaObj* self,
                                            int value,
                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_max_height(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_x(PikaObj* self, int value, int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_x(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_y(PikaObj* self, int value, int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_y(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_align(PikaObj* self, int value, int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_align(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_transform_width(PikaObj* self,
                                                 int value,
                                                 int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_transform_width(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_transform_height(PikaObj* self,
                                                  int value,
                                                  int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_transform_height(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_translate_x(PikaObj* self,
                                             int value,
                                             int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_translate_x(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_translate_y(PikaObj* self,
                                             int value,
                                             int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_translate_y(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_transform_zoom(PikaObj* self,
                                                int value,
                                                int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_transform_zoom(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_transform_angle(PikaObj* self,
                                                 int value,
                                                 int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_transform_angle(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_transform_pivot_x(PikaObj* self,
                                                   int value,
                                                   int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_transform_pivot_x(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_transform_pivot_y(PikaObj* self,
                                                   int value,
                                                   int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_transform_pivot_y(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_pad_top(PikaObj* self,
                                         int value,
                                         int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_pad_top(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_pad_bottom(PikaObj* self,
                                            int value,
                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_pad_bottom(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_pad_left(PikaObj* self,
                                          int value,
                                          int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_pad_left(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_pad_right(PikaObj* self,
                                           int value,
                                           int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_pad_right(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_pad_row(PikaObj* self,
                                         int value,
                                         int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_pad_row(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_pad_column(PikaObj* self,
                                            int value,
                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_pad_column(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_bg_color(PikaObj* self,
                                          PikaObj* value,
                                          int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_color_t* lv_color = obj_getPtr(value, "lv_color");
     lv_obj_set_style_bg_color(lv_obj, *lv_color, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_bg_opa(PikaObj* self, int value, int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_bg_opa(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_bg_grad_color(PikaObj* self,
                                               PikaObj* value,
                                               int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_color_t* lv_color = obj_getPtr(value, "lv_color");
     lv_obj_set_style_bg_grad_color(lv_obj, *lv_color, selector);
 }
@@ -801,42 +802,42 @@ void pika_lvgl_lv_obj_set_style_bg_grad_color(PikaObj* self,
 void pika_lvgl_lv_obj_set_style_bg_grad_dir(PikaObj* self,
                                             int value,
                                             int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_bg_grad_dir(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_bg_main_stop(PikaObj* self,
                                              int value,
                                              int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_bg_main_stop(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_bg_grad_stop(PikaObj* self,
                                              int value,
                                              int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_bg_grad_stop(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_bg_dither_mode(PikaObj* self,
                                                int value,
                                                int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_bg_dither_mode(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_bg_img_opa(PikaObj* self,
                                            int value,
                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_bg_img_opa(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_bg_img_recolor(PikaObj* self,
                                                PikaObj* value,
                                                int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_color_t* lv_color = obj_getPtr(value, "lv_color");
     lv_obj_set_style_bg_img_recolor(lv_obj, *lv_color, selector);
 }
@@ -844,21 +845,21 @@ void pika_lvgl_lv_obj_set_style_bg_img_recolor(PikaObj* self,
 void pika_lvgl_lv_obj_set_style_bg_img_recolor_opa(PikaObj* self,
                                                    int value,
                                                    int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_bg_img_recolor_opa(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_bg_img_tiled(PikaObj* self,
                                              int value,
                                              int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_bg_img_tiled(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_border_color(PikaObj* self,
                                              PikaObj* value,
                                              int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_color_t* lv_color = obj_getPtr(value, "lv_color");
     lv_obj_set_style_border_color(lv_obj, *lv_color, selector);
 }
@@ -866,42 +867,42 @@ void pika_lvgl_lv_obj_set_style_border_color(PikaObj* self,
 void pika_lvgl_lv_obj_set_style_border_opa(PikaObj* self,
                                            int value,
                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_border_opa(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_border_width(PikaObj* self,
                                              int value,
                                              int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_border_width(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_border_side(PikaObj* self,
                                             int value,
                                             int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_border_side(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_border_post(PikaObj* self,
                                             int value,
                                             int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_border_post(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_outline_width(PikaObj* self,
                                               int value,
                                               int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_outline_width(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_outline_color(PikaObj* self,
                                               PikaObj* value,
                                               int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_color_t* lv_color = obj_getPtr(value, "lv_color");
     lv_obj_set_style_outline_color(lv_obj, *lv_color, selector);
 }
@@ -909,49 +910,49 @@ void pika_lvgl_lv_obj_set_style_outline_color(PikaObj* self,
 void pika_lvgl_lv_obj_set_style_outline_opa(PikaObj* self,
                                             int value,
                                             int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_outline_opa(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_outline_pad(PikaObj* self,
                                             int value,
                                             int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_outline_pad(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_shadow_width(PikaObj* self,
                                              int value,
                                              int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_shadow_width(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_shadow_ofs_x(PikaObj* self,
                                              int value,
                                              int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_shadow_ofs_x(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_shadow_ofs_y(PikaObj* self,
                                              int value,
                                              int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_shadow_ofs_y(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_shadow_spread(PikaObj* self,
                                               int value,
                                               int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_shadow_spread(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_shadow_color(PikaObj* self,
                                              PikaObj* value,
                                              int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_color_t* lv_color = obj_getPtr(value, "lv_color");
     lv_obj_set_style_shadow_color(lv_obj, *lv_color, selector);
 }
@@ -959,21 +960,21 @@ void pika_lvgl_lv_obj_set_style_shadow_color(PikaObj* self,
 void pika_lvgl_lv_obj_set_style_shadow_opa(PikaObj* self,
                                            int value,
                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_shadow_opa(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_img_opa(PikaObj* self,
                                         int value,
                                         int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_img_opa(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_img_recolor(PikaObj* self,
                                             PikaObj* value,
                                             int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_color_t* lv_color = obj_getPtr(value, "lv_color");
     lv_obj_set_style_img_recolor(lv_obj, *lv_color, selector);
 }
@@ -981,42 +982,42 @@ void pika_lvgl_lv_obj_set_style_img_recolor(PikaObj* self,
 void pika_lvgl_lv_obj_set_style_img_recolor_opa(PikaObj* self,
                                                 int value,
                                                 int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_img_recolor_opa(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_line_width(PikaObj* self,
                                            int value,
                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_line_width(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_line_dash_width(PikaObj* self,
                                                 int value,
                                                 int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_line_dash_width(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_line_dash_gap(PikaObj* self,
                                               int value,
                                               int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_line_dash_gap(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_line_rounded(PikaObj* self,
                                              int value,
                                              int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_line_rounded(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_line_color(PikaObj* self,
                                            PikaObj* value,
                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_color_t* lv_color = obj_getPtr(value, "lv_color");
     lv_obj_set_style_line_color(lv_obj, *lv_color, selector);
 }
@@ -1024,28 +1025,28 @@ void pika_lvgl_lv_obj_set_style_line_color(PikaObj* self,
 void pika_lvgl_lv_obj_set_style_line_opa(PikaObj* self,
                                          int value,
                                          int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_line_opa(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_arc_width(PikaObj* self,
                                           int value,
                                           int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_arc_width(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_arc_rounded(PikaObj* self,
                                             int value,
                                             int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_arc_rounded(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_arc_color(PikaObj* self,
                                           PikaObj* value,
                                           int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_color_t* lv_color = obj_getPtr(value, "lv_color");
     lv_obj_set_style_arc_color(lv_obj, *lv_color, selector);
 }
@@ -1053,14 +1054,14 @@ void pika_lvgl_lv_obj_set_style_arc_color(PikaObj* self,
 void pika_lvgl_lv_obj_set_style_arc_opa(PikaObj* self,
                                         int value,
                                         int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_arc_opa(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_text_color(PikaObj* self,
                                            PikaObj* value,
                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_color_t* lv_color = obj_getPtr(value, "lv_color");
     lv_obj_set_style_text_color(lv_obj, *lv_color, selector);
 }
@@ -1068,14 +1069,14 @@ void pika_lvgl_lv_obj_set_style_text_color(PikaObj* self,
 void pika_lvgl_lv_obj_set_style_text_opa(PikaObj* self,
                                          int value,
                                          int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_text_opa(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_text_font(PikaObj* self,
                                           PikaObj* value,
                                           int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_font_t* lv_font = obj_getPtr(value, "lv_font");
     lv_obj_set_style_text_font(lv_obj, lv_font, selector);
 }
@@ -1083,52 +1084,52 @@ void pika_lvgl_lv_obj_set_style_text_font(PikaObj* self,
 void pika_lvgl_lv_obj_set_style_text_letter_space(PikaObj* self,
                                                   int value,
                                                   int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_text_letter_space(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_text_line_space(PikaObj* self,
                                                 int value,
                                                 int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_text_line_space(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_text_decor(PikaObj* self,
                                            int value,
                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_text_decor(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_text_align(PikaObj* self,
                                            int value,
                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_text_align(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_radius(PikaObj* self, int value, int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_radius(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_clip_corner(PikaObj* self,
                                             int value,
                                             int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_clip_corner(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_opa(PikaObj* self, int value, int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_opa(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_color_filter_dsc(PikaObj* self,
                                                  PikaObj* value,
                                                  int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_color_filter_dsc_t* lv_color_filter_dsc =
         obj_getPtr(value, "lv_color_filter_dsc");
     lv_obj_set_style_color_filter_dsc(lv_obj, lv_color_filter_dsc, selector);
@@ -1137,28 +1138,28 @@ void pika_lvgl_lv_obj_set_style_color_filter_dsc(PikaObj* self,
 void pika_lvgl_lv_obj_set_style_color_filter_opa(PikaObj* self,
                                                  int value,
                                                  int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_color_filter_opa(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_anim_time(PikaObj* self,
                                           int value,
                                           int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_anim_time(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_anim_speed(PikaObj* self,
                                            int value,
                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_anim_speed(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_transition(PikaObj* self,
                                            PikaObj* value,
                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_style_transition_dsc_t* lv_style_transition_dsc =
         obj_getPtr(value, "lv_style_transition_dsc");
     lv_obj_set_style_transition(lv_obj, lv_style_transition_dsc, selector);
@@ -1167,19 +1168,19 @@ void pika_lvgl_lv_obj_set_style_transition(PikaObj* self,
 void pika_lvgl_lv_obj_set_style_blend_mode(PikaObj* self,
                                            int value,
                                            int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_blend_mode(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_layout(PikaObj* self, int value, int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_layout(lv_obj, value, selector);
 }
 
 void pika_lvgl_lv_obj_set_style_base_dir(PikaObj* self,
                                          int value,
                                          int selector) {
-    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(self);
     lv_obj_set_style_base_dir(lv_obj, value, selector);
 }
 
@@ -1221,76 +1222,76 @@ void pika_lvgl_lv_obj_set_style_base_dir(PikaObj* self,
 */
 
 void pika_lvgl_lv_obj_set_scrollbar_mode(PikaObj* self, int mode) {
-    lv_obj_set_scrollbar_mode(obj_getPtr(self, "lv_obj"), mode);
+    lv_obj_set_scrollbar_mode(PIKA_LV_OBJ(self), mode);
 }
 
 void pika_lvgl_lv_obj_set_scroll_dir(PikaObj* self, int dir) {
-    lv_obj_set_scroll_dir(obj_getPtr(self, "lv_obj"), dir);
+    lv_obj_set_scroll_dir(PIKA_LV_OBJ(self), dir);
 }
 
 void pika_lvgl_lv_obj_set_scroll_snap_x(PikaObj* self, int align) {
-    lv_obj_set_scroll_snap_x(obj_getPtr(self, "lv_obj"), align);
+    lv_obj_set_scroll_snap_x(PIKA_LV_OBJ(self), align);
 }
 
 void pika_lvgl_lv_obj_set_scroll_snap_y(PikaObj* self, int align) {
-    lv_obj_set_scroll_snap_y(obj_getPtr(self, "lv_obj"), align);
+    lv_obj_set_scroll_snap_y(PIKA_LV_OBJ(self), align);
 }
 
 int pika_lvgl_lv_obj_get_scrollbar_mode(PikaObj* self) {
-    return lv_obj_get_scrollbar_mode(obj_getPtr(self, "lv_obj"));
+    return lv_obj_get_scrollbar_mode(PIKA_LV_OBJ(self));
 }
 
 int pika_lvgl_lv_obj_get_scroll_dir(PikaObj* self) {
-    return lv_obj_get_scroll_dir(obj_getPtr(self, "lv_obj"));
+    return lv_obj_get_scroll_dir(PIKA_LV_OBJ(self));
 }
 
 int pika_lvgl_lv_obj_get_scroll_snap_x(PikaObj* self) {
-    return lv_obj_get_scroll_snap_x(obj_getPtr(self, "lv_obj"));
+    return lv_obj_get_scroll_snap_x(PIKA_LV_OBJ(self));
 }
 
 int pika_lvgl_lv_obj_get_scroll_snap_y(PikaObj* self) {
-    return lv_obj_get_scroll_snap_y(obj_getPtr(self, "lv_obj"));
+    return lv_obj_get_scroll_snap_y(PIKA_LV_OBJ(self));
 }
 
 int pika_lvgl_lv_obj_get_scroll_x(PikaObj* self) {
-    return lv_obj_get_scroll_x(obj_getPtr(self, "lv_obj"));
+    return lv_obj_get_scroll_x(PIKA_LV_OBJ(self));
 }
 
 int pika_lvgl_lv_obj_get_scroll_y(PikaObj* self) {
-    return lv_obj_get_scroll_y(obj_getPtr(self, "lv_obj"));
+    return lv_obj_get_scroll_y(PIKA_LV_OBJ(self));
 }
 
 int pika_lvgl_lv_obj_get_scroll_top(PikaObj* self) {
-    return lv_obj_get_scroll_top(obj_getPtr(self, "lv_obj"));
+    return lv_obj_get_scroll_top(PIKA_LV_OBJ(self));
 }
 
 int pika_lvgl_lv_obj_get_scroll_bottom(PikaObj* self) {
-    return lv_obj_get_scroll_bottom(obj_getPtr(self, "lv_obj"));
+    return lv_obj_get_scroll_bottom(PIKA_LV_OBJ(self));
 }
 
 int pika_lvgl_lv_obj_get_scroll_left(PikaObj* self) {
-    return lv_obj_get_scroll_left(obj_getPtr(self, "lv_obj"));
+    return lv_obj_get_scroll_left(PIKA_LV_OBJ(self));
 }
 
 int pika_lvgl_lv_obj_get_scroll_right(PikaObj* self) {
-    return lv_obj_get_scroll_right(obj_getPtr(self, "lv_obj"));
+    return lv_obj_get_scroll_right(PIKA_LV_OBJ(self));
 }
 
 // void pika_lvgl_lv_obj_get_scroll_end(PikaObj* self, PikaObj* end) {
 //     lv_point_t* lv_end = args_getStruct(end->list, "lv_point_t");
-//     lv_obj_get_scroll_end(obj_getPtr(self, "lv_obj"), lv_end);
+//     lv_obj_get_scroll_end(PIKA_LV_OBJ(self), lv_end);
 // }
 
 // void pika_lvgl_lv_obj_set_scroll_propagation(PikaObj* self, int en) {
-//     lv_obj_set_scroll_propagation(obj_getPtr(self, "lv_obj"), en);
+//     lv_obj_set_scroll_propagation(PIKA_LV_OBJ(self), en);
 // }
 
 // int pika_lvgl_lv_obj_get_scroll_propagation(PikaObj* self) {
-//     return lv_obj_get_scroll_propagation(obj_getPtr(self, "lv_obj"));
+//     return lv_obj_get_scroll_propagation(PIKA_LV_OBJ(self));
 // }
 
 void pika_lvgl_lv_obj_remove_style_all(PikaObj* self) {
-    lv_obj_remove_style_all(obj_getPtr(self, "lv_obj"));
+    lv_obj_remove_style_all(PIKA_LV_OBJ(self));
 }
 
 /*
@@ -1299,11 +1300,11 @@ void pika_lvgl_lv_obj_remove_style_all(PikaObj* self) {
 */
 
 void pika_lvgl_lv_obj_move_foreground(PikaObj* self) {
-    lv_obj_move_foreground(obj_getPtr(self, "lv_obj"));
+    lv_obj_move_foreground(PIKA_LV_OBJ(self));
 }
 
 void pika_lvgl_lv_obj_move_background(PikaObj* self) {
-    lv_obj_move_background(obj_getPtr(self, "lv_obj"));
+    lv_obj_move_background(PIKA_LV_OBJ(self));
 }
 
 #endif
