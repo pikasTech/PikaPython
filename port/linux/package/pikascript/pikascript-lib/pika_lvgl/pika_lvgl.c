@@ -224,7 +224,7 @@ void pika_lvgl_PALETTE___init__(PikaObj* self) {
 PikaObj* pika_lvgl_scr_act(PikaObj* self) {
     PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_obj);
     lv_obj_t* lv_obj = lv_scr_act();
-    obj_setPtr(new_obj, "lv_obj", lv_obj);
+    PIKA_LV_OBJ_SET(new_obj, lv_obj);
     return new_obj;
 }
 
@@ -266,9 +266,9 @@ void pika_lvgl_obj___init__(PikaObj* self, PikaTuple* parent) {
     }
     if (pikaTuple_getSize(parent) == 1) {
         parent_obj = pikaTuple_getPtr(parent, 0);
-        lv_obj_t* lv_parent = obj_getPtr(parent_obj, "lv_obj");
+        lv_obj_t* lv_parent = PIKA_LV_OBJ(parent_obj);
         lv_obj_t* lv_obj = lv_obj_create(lv_parent);
-        obj_setPtr(self, "lv_obj", lv_obj);
+        PIKA_LV_OBJ_SET(self, lv_obj);
         return;
     }
 }

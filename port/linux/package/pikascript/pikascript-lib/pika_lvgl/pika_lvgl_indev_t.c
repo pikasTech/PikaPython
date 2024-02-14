@@ -1,4 +1,4 @@
-#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+﻿#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
 #include "lvgl.h"
 #else
 #include "../../lvgl.h"
@@ -9,6 +9,7 @@
 #include "pika_lvgl_indev_t.h"
 #include "pika_lvgl_lv_obj.h"
 #include "pika_lvgl_point_t.h"
+#include "pika_lvgl_common.h"
 
 /*
 class indev_t:
@@ -49,7 +50,7 @@ int pika_lvgl_indev_t_get_type(PikaObj* self) {
 
 void pika_lvgl_indev_t_reset(PikaObj* self, PikaObj* obj) {
     lv_indev_t* lv_indev = obj_getPtr(self, "lv_indev");
-    lv_obj_t* lv_obj = obj_getPtr(obj, "lv_obj");
+    lv_obj_t* lv_obj = PIKA_LV_OBJ(obj);
     lv_indev_reset(lv_indev, lv_obj);
 }
 
@@ -60,7 +61,7 @@ void pika_lvgl_indev_t_reset_long_press(PikaObj* self) {
 
 void pika_lvgl_indev_t_set_cursor(PikaObj* self, PikaObj* cur_obj) {
     lv_indev_t* lv_indev = obj_getPtr(self, "lv_indev");
-    lv_obj_t* lv_cur_obj = obj_getPtr(cur_obj, "lv_obj");
+    lv_obj_t* lv_cur_obj = PIKA_LV_OBJ(cur_obj);
     lv_indev_set_cursor(lv_indev, lv_cur_obj);
 }
 
@@ -99,7 +100,7 @@ PikaObj* pika_lvgl_indev_t_get_scroll_obj(PikaObj* self) {
     lv_indev_t* lv_indev = obj_getPtr(self, "lv_indev");
     lv_obj_t* lv_obj = lv_indev_get_scroll_obj(lv_indev);
     PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_obj);
-    obj_setPtr(new_obj, "lv_obj", lv_obj);
+    PIKA_LV_OBJ_SET(new_obj, lv_obj);
     return new_obj;
 }
 
