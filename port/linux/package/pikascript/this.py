@@ -1,3 +1,4 @@
+from i18n import _
 print("Python之禅，Tim Peters著，blueloveTH译")
 print(' ')
 # Beautiful is better than ugly.

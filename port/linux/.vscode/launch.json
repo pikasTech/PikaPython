@@ -20,7 +20,9 @@
                 // "--gtest_filter=stddata.encode_decode"
                 // "--gtest_filter=packtool.packfiles_txt"
                 // "--gtest_filter=cmodule.class_attr_obj"
-                "--gtest_filter=except.try_import_except"
+                // "--gtest_filter=except.try_import_except"
+                "--gtest_filter=vm.test_cmodule_import_as"
+                // "--gtest_filter=vm.subsrc_import"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
