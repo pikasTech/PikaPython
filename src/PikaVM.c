@@ -37,7 +37,7 @@
 #include <math.h>
 #endif
 
-static pika_platform_thread_mutex_t g_pikaGIL = {0};
+static pika_thread_recursive_mutex_t g_pikaGIL = {0};
 volatile VMState g_PikaVMState = {
     .signal_ctrl = VM_SIGNAL_CTRL_NONE,
     .vm_cnt = 0,
@@ -73,47 +73,34 @@ static PikaObj* New_Locals(Args* args);
 char* string_slice(Args* outBuffs, char* str, int start, int end);
 
 pika_bool pika_GIL_isInit(void) {
-    return g_pikaGIL.is_init;
+    return g_pikaGIL.mutex.is_init;
 }
 
 int pika_GIL_ENTER(void) {
-    if (!g_pikaGIL.is_init) {
-        if (g_pikaGIL.bare_lock > 0) {
+    if (!g_pikaGIL.mutex.is_init) {
+        if (g_pikaGIL.mutex.bare_lock > 0) {
             return -1;
         }
-        g_pikaGIL.bare_lock = 1;
+        g_pikaGIL.mutex.bare_lock = 1;
         return 0;
     }
-    int ret = pika_platform_thread_mutex_lock(&g_pikaGIL);
+    int ret = pika_thread_recursive_mutex_lock(&g_pikaGIL);
     // pika_debug("pika_GIL_ENTER");
-    if (!g_pikaGIL.is_first_lock) {
-        g_pikaGIL.is_first_lock = 1;
+    if (!g_pikaGIL.mutex.is_first_lock) {
+        g_pikaGIL.mutex.is_first_lock = 1;
     }
-    g_pikaGIL.lock_times++;
-    // pika_assert(g_pikaGIL.look_times == 1);
-    if (g_pikaGIL.lock_times != 1) {
-        pika_debug("ENTER: pika_GIL lock_times:%d", g_pikaGIL.lock_times);
-        return -1;
-    }
-    pika_assert(g_pikaGIL.lock_times == 1);
     return ret;
 }
 
 int pika_GIL_EXIT(void) {
-    if (!g_pikaGIL.is_init) {
-        g_pikaGIL.bare_lock = 0;
+    if (!g_pikaGIL.mutex.is_init) {
+        g_pikaGIL.mutex.bare_lock = 0;
         return 0;
     }
-    if (!g_pikaGIL.is_first_lock) {
+    if (!g_pikaGIL.mutex.is_first_lock) {
         return 0;
     }
-    // pika_debug("pika_GIL_EXIT");
-    g_pikaGIL.lock_times--;
-    if (g_pikaGIL.lock_times != 0) {
-        pika_debug("EXIT: pika_GIL lock_times:%d", g_pikaGIL.lock_times);
-        return -1;
-    }
-    return pika_platform_thread_mutex_unlock(&g_pikaGIL);
+    return pika_thread_recursive_mutex_unlock(&g_pikaGIL);
 }
 
 int pika_GIL_deinit(void) {
@@ -122,18 +109,18 @@ int pika_GIL_deinit(void) {
 }
 
 int _VM_lock_init(void) {
-    if (g_pikaGIL.is_init) {
+    if (g_pikaGIL.mutex.is_init) {
         return 0;
     }
-    int ret = pika_platform_thread_mutex_init(&g_pikaGIL);
+    int ret = pika_thread_recursive_mutex_init(&g_pikaGIL);
     if (0 == ret) {
-        g_pikaGIL.is_init = 1;
+        g_pikaGIL.mutex.is_init = 1;
     }
     return ret;
 }
 
 int _VM_is_first_lock(void) {
-    return g_pikaGIL.is_first_lock;
+    return g_pikaGIL.mutex.is_first_lock;
 }
 
 int _VMEvent_getVMCnt(void) {

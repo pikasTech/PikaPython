@@ -308,7 +308,6 @@ typedef struct pika_platform_thread_mutex {
     pika_mutex_platform_data_t mutex;
     volatile int is_init;
     volatile int is_first_lock;
-    volatile int lock_times;
     volatile int bare_lock;
 } pika_platform_thread_mutex_t;
 
