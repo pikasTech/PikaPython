@@ -29,7 +29,7 @@
 PikaObj* pika_lv_event_listener_g;
 Args* pika_lv_id_register_g;
 extern PikaEventListener* g_pika_lv_timer_event_listener;
-pika_platform_thread_mutex_t pika_lv_global_mutex_g = {0};
+pika_thread_recursive_mutex_t pika_lv_global_mutex_g = {0};
 
 #if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 13, 2)
 #error "pikascript version must be greater than 1.13.2"
@@ -59,7 +59,7 @@ void pika_lvgl_lock(PikaObj* self) {
     if (!g_lvgl_inited) {
         return;
     }
-    pika_platform_thread_mutex_lock(&pika_lv_global_mutex_g);
+    pika_thread_recursive_mutex_lock(&pika_lv_global_mutex_g);
 #else
     return;
 #endif
@@ -70,7 +70,7 @@ void pika_lvgl_unlock(PikaObj* self) {
     if (!g_lvgl_inited) {
         return;
     }
-    pika_platform_thread_mutex_unlock(&pika_lv_global_mutex_g);
+    pika_thread_recursive_mutex_unlock(&pika_lv_global_mutex_g);
 #else
     return;
 #endif
@@ -241,7 +241,7 @@ void pika_lvgl___init__(PikaObj* self) {
     if (!g_lvgl_inited) {
 #if PIKA_LVGL_THREAD_LOCK_ENABLE
         pika_debug("Init pika_lv_global_mutex_g");
-        pika_platform_thread_mutex_init(&pika_lv_global_mutex_g);
+        pika_thread_recursive_mutex_init(&pika_lv_global_mutex_g);
 #endif
         pika_lvgl_lock(NULL);
         lv_png_init();

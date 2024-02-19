@@ -803,7 +803,7 @@ PIKA_WEAK int pika_platform_thread_mutex_destroy(
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
     return -1;
 #endif
-}
+}   
 
 int pika_thread_recursive_mutex_init(pika_thread_recursive_mutex_t* m) {
     int ret = pika_platform_thread_mutex_init(&m->mutex);
