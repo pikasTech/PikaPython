@@ -318,6 +318,18 @@ int pika_platform_thread_mutex_trylock(pika_platform_thread_mutex_t* m);
 int pika_platform_thread_mutex_unlock(pika_platform_thread_mutex_t* m);
 int pika_platform_thread_mutex_destroy(pika_platform_thread_mutex_t* m);
 
+typedef struct pika_thread_recursive_mutex {
+    pika_platform_thread_mutex_t mutex;
+    uint64_t owner;
+    volatile int lock_times;
+} pika_thread_recursive_mutex_t;
+
+int pika_thread_recursive_mutex_init(pika_thread_recursive_mutex_t* m);
+int pika_thread_recursive_mutex_lock(pika_thread_recursive_mutex_t* m);
+int pika_thread_recursive_mutex_trylock(pika_thread_recursive_mutex_t* m);
+int pika_thread_recursive_mutex_unlock(pika_thread_recursive_mutex_t* m);
+int pika_thread_recursive_mutex_destroy(pika_thread_recursive_mutex_t* m);
+
 #ifdef __linux
 #include <sys/time.h>
 typedef struct pika_platform_timer {

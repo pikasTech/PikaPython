@@ -805,6 +805,62 @@ PIKA_WEAK int pika_platform_thread_mutex_destroy(
 #endif
 }
 
+int pika_thread_recursive_mutex_init(pika_thread_recursive_mutex_t* m) {
+    int ret = pika_platform_thread_mutex_init(&m->mutex);
+    if (ret != 0) {
+        return ret;
+    }
+    m->owner = 0;
+    m->lock_times = 0;
+    return 0;
+}
+
+int pika_thread_recursive_mutex_lock(pika_thread_recursive_mutex_t* m) {
+    uint64_t self = pika_platform_thread_self();
+    if (m->owner == self) {
+        m->lock_times++;
+        return 0;
+    }
+    int ret = pika_platform_thread_mutex_lock(&m->mutex);
+    if (ret != 0) {
+        return ret;
+    }
+    m->owner = self;
+    m->lock_times = 1;
+    return 0;
+}
+
+int pika_thread_recursive_mutex_trylock(pika_thread_recursive_mutex_t* m) {
+    uint64_t self = pika_platform_thread_self();
+    if (m->owner == self) {
+        m->lock_times++;
+        return 0;
+    }
+    int ret = pika_platform_thread_mutex_trylock(&m->mutex);
+    if (ret != 0) {
+        return ret;
+    }
+    m->owner = self;
+    m->lock_times = 1;
+    return 0;
+}
+
+int pika_thread_recursive_mutex_unlock(pika_thread_recursive_mutex_t* m) {
+    if (m->owner != pika_platform_thread_self()) {
+        return -1;
+    }
+    m->lock_times--;
+    if (m->lock_times == 0) {
+        m->owner = 0;
+        return pika_platform_thread_mutex_unlock(&m->mutex);
+    }
+    return 0;
+}
+
+int pika_thread_recursive_mutex_destroy(pika_thread_recursive_mutex_t* m) {
+    return pika_platform_thread_mutex_destroy(&m->mutex);
+}
+
 PIKA_WEAK void pika_platform_thread_timer_init(pika_platform_timer_t* timer) {
 #ifdef __linux
     timer->time = (struct timeval){0, 0};

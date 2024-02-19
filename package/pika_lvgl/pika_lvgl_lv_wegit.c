@@ -1,4 +1,4 @@
-﻿#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
 #include "lvgl.h"
 #else
 #include "../../lvgl.h"
@@ -1490,7 +1490,6 @@ int pika_lvgl_keyboard_get_selected_btn(PikaObj* self) {
     return lv_keyboard_get_selected_btn(lv_obj);
 }
 
-
 /*
 class ime_pinyin(lv_obj):
     def __init__(self, parent: lv_obj): ...
@@ -1533,6 +1532,5 @@ PikaObj* pika_lvgl_ime_pinyin_get_cand_panel(PikaObj* self) {
     PIKA_LV_OBJ_SET(new_obj, lv_panel);
     return new_obj;
 }
-
 
 #endif
