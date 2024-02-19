@@ -1,4 +1,3 @@
-from tkinter import HIDDEN
 from PikaObj import *
 
 
