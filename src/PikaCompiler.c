@@ -1500,7 +1500,8 @@ int pikafs_fread(void* buf, size_t size, size_t count, pikafs_FILE* f) {
     }
     __platform_memcpy(buf, f->addr + f->pos, read_len);
     f->pos += read_len;
-    return count;
+    size_t actual_count = read_len / size;
+    return actual_count;
 }
 
 /*
