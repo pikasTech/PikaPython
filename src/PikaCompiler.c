@@ -704,6 +704,7 @@ int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
                                  &bytecode_addr, &bytecode_size);
         LibObj_dynamicLink(self, module_name, bytecode_addr);
     }
+    obj_setPtr(self, "@libraw", library_bytes);
     return PIKA_RES_OK;
 }
 
@@ -1428,8 +1429,7 @@ pikafs_FILE* pikafs_fopen(char* file_name, char* mode) {
         return NULL;
     }
     memset(f, 0, sizeof(pikafs_FILE));
-    extern volatile PikaObj* __pikaMain;
-    uint8_t* library_bytes = obj_getPtr((PikaObj*)__pikaMain, "@libraw");
+    uint8_t* library_bytes = obj_getPtr(pika_getLibObj(), "@libraw");
     if (NULL == library_bytes) {
         goto __error;
     }
