@@ -1,5 +1,6 @@
 #include "PikaObj.h"
 #include "ff.h"
+#include "freertos.h"
 
 typedef FIL _INNER_FILE;
 
@@ -24,13 +25,13 @@ FILE* pika_platform_fopen(const char* filename, const char* modes) {
     /* Compute the flags to pass to open() */
     flags = __fmodeflags(modes);
 
-    _INNER_FILE *_f = malloc(sizeof(*_f));
+    _INNER_FILE *_f = pika_platform_malloc(sizeof(*_f));
     if(NULL == _f){
         return NULL;
     }
     res = f_open(_f, filename, flags);
     if (res) {
-        free(_f);
+        pika_platform_free(_f);
         return NULL;
     }
 
@@ -54,7 +55,7 @@ size_t pika_platform_fread(void* ptr, size_t size, size_t n, FILE* stream) {
 int pika_platform_fclose(FILE* stream) {
     _INNER_FILE* _f = (_INNER_FILE*)stream;
     f_close(_f);
-    free(_f);
+    pika_platform_free(_f);
     return 0;
 }
 
