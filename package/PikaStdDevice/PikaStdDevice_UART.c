@@ -28,7 +28,7 @@ void PikaStdDevice_UART_enable(PikaObj* self) {
     cfg.baudrate = obj_getInt(self, "baudRate");
     cfg.flow_control = obj_getInt(self, "flowControl");
     cfg.stop_bits = obj_getInt(self, "stopBits");
-    cfg.parity = obj_getInt(self, "parity");
+    cfg.parity = (PIKA_HAL_UART_PARITY)obj_getInt(self, "parity");
     cfg.data_bits = obj_getInt(self, "dataBits");
     if (!strEqu(obj_getStr(self, "TXpin"), "none")) {
         cfg.TX = pika_hal_open(PIKA_HAL_GPIO, obj_getStr(self, "TXpin"));
@@ -183,7 +183,7 @@ void PikaStdDevice_UART_setCallback(PikaObj* self,
     _PikaStdDevice_setCallback(self, eventCallBack, (uintptr_t)dev);
     /* regist event to pika_hal */
     pika_hal_UART_config cfg_cb = {0};
-    cfg_cb.event_callback = (void*)_PikaStdDevice_event_handler;
+    cfg_cb.event_callback = _PikaStdDevice_UART_event_handler;
     cfg_cb.event_callback_filter = filter;
     cfg_cb.event_callback_ena = PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE;
     pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, &cfg_cb);

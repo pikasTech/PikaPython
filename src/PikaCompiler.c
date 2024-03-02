@@ -379,9 +379,8 @@ static int32_t __foreach_handler_libWriteIndex(Arg* argEach,
         pika_platform_memcpy(block_buff, module_name,
                              name_size + 1); /* add '\0' after name */
         /* should write the size without align */
-        pika_platform_memcpy(
-            block_buff + linker->block_size - sizeof(uint32_t),
-            &bytecode_size, sizeof(uint32_t));
+        pika_platform_memcpy(block_buff + linker->block_size - sizeof(uint32_t),
+                             &bytecode_size, sizeof(uint32_t));
 
         /* write the block to file */
         linker_fwrite(linker, (uint8_t*)block_buff, linker->block_size);

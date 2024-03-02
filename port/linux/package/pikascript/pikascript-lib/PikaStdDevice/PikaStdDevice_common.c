@@ -1,17 +1,20 @@
 #include "PikaStdDevice_common.h"
 
 extern PikaEventListener* g_pika_device_event_listener;
-void _PikaStdDevice_GPIO_event_handler(pika_dev* dev, PIKA_HAL_GPIO_EVENT_SIGNAL signal) {
+void _PikaStdDevice_GPIO_event_handler(pika_dev* dev,
+                                       PIKA_HAL_GPIO_EVENT_SIGNAL signal) {
     pika_eventListener_sendSignal(g_pika_device_event_listener, (uintptr_t)dev,
                                   signal);
 }
 
-void _PikaStdDevice_TIM_event_handler(pika_dev* dev, PIKA_HAL_TIM_EVENT_SIGNAL signal) {
+void _PikaStdDevice_TIM_event_handler(pika_dev* dev,
+                                      PIKA_HAL_TIM_EVENT_SIGNAL signal) {
     pika_eventListener_sendSignal(g_pika_device_event_listener, (uintptr_t)dev,
                                   signal);
 }
 
-void _PikaStdDevice_UART_event_handler(pika_dev* dev, PIKA_HAL_UART_EVENT_SIGNAL signal) {
+void _PikaStdDevice_UART_event_handler(pika_dev* dev,
+                                       PIKA_HAL_UART_EVENT_SIGNAL signal) {
     pika_eventListener_sendSignal(g_pika_device_event_listener, (uintptr_t)dev,
                                   signal);
 }

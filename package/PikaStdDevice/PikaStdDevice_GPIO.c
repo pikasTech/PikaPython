@@ -131,7 +131,7 @@ void PikaStdDevice_GPIO_setCallback(PikaObj* self,
     _PikaStdDevice_setCallback(self, eventCallback, (uintptr_t)dev);
     /* regist event to pika_hal */
     pika_hal_GPIO_config cfg_cb = {0};
-    cfg_cb.event_callback = (void*)_PikaStdDevice_event_handler;
+    cfg_cb.event_callback = _PikaStdDevice_GPIO_event_handler;
     cfg_cb.event_callback_filter = filter;
     cfg_cb.event_callback_ena = PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE;
     pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, &cfg_cb);

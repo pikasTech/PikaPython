@@ -37,7 +37,6 @@ static pika_dev* _get_dev(PikaObj* self) {
         obj_setPtr(self, "pika_dev", dev);
         return dev;
     }
-    return dev;
 }
 
 void PikaStdDevice_Timer___init__(PikaObj* self) {
@@ -94,7 +93,7 @@ void PikaStdDevice_Timer_setCallback(PikaObj* self, Arg* callback, int filter) {
         _PikaStdDevice_setCallback(self, callback, (uintptr_t)dev);
         /* regist event to pika_hal */
         pika_hal_TIM_config cfg_cb = {0};
-        cfg_cb.event_callback = (void*)_PikaStdDevice_event_handler;
+        cfg_cb.event_callback = _PikaStdDevice_TIM_event_handler;
         cfg_cb.event_callback_filter = filter;
         cfg_cb.event_callback_ena = PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE;
         pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, &cfg_cb);
