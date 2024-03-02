@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the PikaPython project.
  * http://github.com/pikastech/pikapython
  *
@@ -262,6 +262,14 @@ typedef struct pika_platform_thread {
     pthread_mutex_t mutex;
     pthread_cond_t cond;
 } pika_platform_thread_t;
+#elif PIKA_WIN_PTHREAD_ENABLE
+#define HAVE_STRUCT_TIMESPEC
+#include <pthread.h>
+typedef struct pika_platform_thread {
+    pthread_t thread;          
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
+} pika_platform_thread_t;
 #elif PIKA_FREERTOS_ENABLE
 #include "FreeRTOS.h"
 #include "task.h"
@@ -298,7 +306,7 @@ void pika_platform_thread_start(pika_platform_thread_t* thread);
 void pika_platform_thread_destroy(pika_platform_thread_t* thread);
 void pika_platform_thread_exit(pika_platform_thread_t* thread);
 
-#ifdef __linux
+#if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
 #include <pthread.h>
 typedef pthread_mutex_t pika_mutex_platform_data_t;
 #elif PIKA_FREERTOS_ENABLE
