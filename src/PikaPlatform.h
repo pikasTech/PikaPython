@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the PikaPython project.
  * http://github.com/pikastech/pikapython
  *
@@ -266,7 +266,7 @@ typedef struct pika_platform_thread {
 #define HAVE_STRUCT_TIMESPEC
 #include <pthread.h>
 typedef struct pika_platform_thread {
-    pthread_t thread;          
+    pthread_t thread;
     pthread_mutex_t mutex;
     pthread_cond_t cond;
 } pika_platform_thread_t;

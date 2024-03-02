@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the PikaPython project.
  * http://github.com/pikastech/pikapython
  *
@@ -50,13 +50,12 @@
 
 #if PIKA_WIN_PTHREAD_ENABLE
 
-struct timeval
-{
-    long tv_sec;     // 秒
-    long tv_usec;    // 微秒
+struct timeval {
+    long tv_sec;   // Seconds
+    long tv_usec;  // Microseconds
 };
 
-void  usleep(unsigned long usec){
+void usleep(unsigned long usec) {
     HANDLE timer;
     LARGE_INTEGER interval;
     interval.QuadPart = (10 * usec);
@@ -66,25 +65,25 @@ void  usleep(unsigned long usec){
     CloseHandle(timer);
 }
 
-int gettimeofday(struct timeval *tp, void *tzp){
-  time_t clock;
-  struct tm tm;
-  SYSTEMTIME wtm;
-  GetLocalTime(&wtm);
-  tm.tm_year   = wtm.wYear - 1900;
-  tm.tm_mon   = wtm.wMonth - 1;
-  tm.tm_mday   = wtm.wDay;
-  tm.tm_hour   = wtm.wHour;
-  tm.tm_min   = wtm.wMinute;
-  tm.tm_sec   = wtm.wSecond;
-  tm. tm_isdst  = -1;
-  clock = mktime(&tm);
-  tp->tv_sec = clock;
-  tp->tv_usec = wtm.wMilliseconds * 1000;
-  return (0);
+int gettimeofday(struct timeval* tp, void* tzp) {
+    time_t clock;
+    struct tm tm;
+    SYSTEMTIME wtm;
+    GetLocalTime(&wtm);
+    tm.tm_year = wtm.wYear - 1900;
+    tm.tm_mon = wtm.wMonth - 1;
+    tm.tm_mday = wtm.wDay;
+    tm.tm_hour = wtm.wHour;
+    tm.tm_min = wtm.wMinute;
+    tm.tm_sec = wtm.wSecond;
+    tm.tm_isdst = -1;
+    clock = mktime(&tm);
+    tp->tv_sec = clock;
+    tp->tv_usec = wtm.wMilliseconds * 1000;
+    return (0);
 }
 
-void timeradd(struct timeval *a, struct timeval *b, struct timeval *res){
+void timeradd(struct timeval* a, struct timeval* b, struct timeval* res) {
     res->tv_sec = a->tv_sec + b->tv_sec;
     res->tv_usec = a->tv_usec + b->tv_usec;
     if (res->tv_usec >= 1000000) {
@@ -93,7 +92,7 @@ void timeradd(struct timeval *a, struct timeval *b, struct timeval *res){
     }
 }
 
-void timersub(struct timeval *a, struct timeval *b, struct timeval *res){
+void timersub(struct timeval* a, struct timeval* b, struct timeval* res) {
     res->tv_sec = a->tv_sec - b->tv_sec;
     res->tv_usec = a->tv_usec - b->tv_usec;
     if (res->tv_usec < 0) {
@@ -924,7 +923,7 @@ PIKA_WEAK void pika_platform_thread_timer_init(pika_platform_timer_t* timer) {
     timer->time = (struct timeval){0, 0};
 #elif PIKA_WIN_PTHREAD_ENABLE
     timer->platform_data = pikaMalloc(sizeof(struct timeval));
-    *((struct timeval *)(timer->platform_data)) = (struct timeval){0, 0};
+    *((struct timeval*)(timer->platform_data)) = (struct timeval){0, 0};
 #elif PIKA_FREERTOS_ENABLE
     timer->time = 0;
 #elif PIKA_RTTHREAD_ENABLE
@@ -942,7 +941,7 @@ PIKA_WEAK void pika_platform_thread_timer_cutdown(pika_platform_timer_t* timer,
     struct timeval interval = {timeout / 1000, (timeout % 1000) * 1000};
     timeradd(&now, &interval, &timer->time);
 #elif PIKA_WIN_PTHREAD_ENABLE
-    struct timeval *timer_temp = (struct timeval *)timer->platform_data;
+    struct timeval* timer_temp = (struct timeval*)timer->platform_data;
     struct timeval now;
     gettimeofday(&now, NULL);
     struct timeval interval = {timeout / 1000, (timeout % 1000) * 1000};
@@ -968,7 +967,7 @@ PIKA_WEAK char pika_platform_thread_timer_is_expired(
     timersub(&timer->time, &now, &res);
     return ((res.tv_sec < 0) || (res.tv_sec == 0 && res.tv_usec <= 0));
 #elif PIKA_WIN_PTHREAD_ENABLE
-    struct timeval *timer_temp = (struct timeval *)timer->platform_data;
+    struct timeval* timer_temp = (struct timeval*)timer->platform_data;
     struct timeval now, res;
     gettimeofday(&now, NULL);
     timersub(timer_temp, &now, &res);
@@ -993,7 +992,7 @@ PIKA_WEAK int pika_platform_thread_timer_remain(pika_platform_timer_t* timer) {
     timersub(&timer->time, &now, &res);
     return (res.tv_sec < 0) ? 0 : res.tv_sec * 1000 + res.tv_usec / 1000;
 #elif PIKA_WIN_PTHREAD_ENABLE
-    struct timeval *timer_temp = (struct timeval *)timer->platform_data;
+    struct timeval* timer_temp = (struct timeval*)timer->platform_data;
     struct timeval now, res;
     gettimeofday(&now, NULL);
     timersub(timer_temp, &now, &res);
