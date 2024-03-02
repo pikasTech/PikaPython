@@ -87,15 +87,22 @@ class rtu(_modbus_rt._rtu):
     # 该函数仅对从机有效
     def add_block(self, name: str, type: int, addr: int, nums: int):
         return self._slave_add_block(name, type, addr, nums)
+    # 该函数仅对从机有效
+    def regs_binding(self, regs: bytes, type: int, addr: int, nums: int):
+        return self._slave_regs_binding(regs, type, addr, nums)
+    # 该函数仅对从机有效
     def set_pre_ans_callback(self, cb):
         return self._slave_set_pre_ans_callback(cb)
+    # 该函数仅对从机有效
     def set_done_callback(self, cb):
         return self._slave_set_done_callback(cb)
+    # 该函数仅对从机有效
     def set_dev_binding(self, flag: int):
         return self._slave_set_dev_binding(flag)
     # 该函数仅对主机有效
     def set_server(self, saddr: str,sport: int):
         return self._master_set_server(saddr,sport)
+    # 该函数仅对主机有效
     def get_saddr(self):
         return self._master_get_saddr()
     def excuse(self, dir_slave: int, type_function: int, addr: int, *val):
@@ -158,15 +165,22 @@ class tcp(_modbus_rt._tcp):
     # 该函数仅对从机有效
     def add_block(self, name: str, type: int, addr: int, nums: int):
         return self._slave_add_block(name, type, addr, nums)
+    # 该函数仅对从机有效
+    def regs_binding(self, regs: bytes, type: int, addr: int, nums: int):
+        return self._slave_regs_binding(regs, type, addr, nums)
+    # 该函数仅对从机有效
     def set_pre_ans_callback(self, cb):
         return self._slave_set_pre_ans_callback(cb)
+    # 该函数仅对从机有效
     def set_done_callback(self, cb):
         return self._slave_set_done_callback(cb)
+    # 该函数仅对从机有效
     def set_dev_binding(self, flag: int):
         return self._slave_set_dev_binding(flag)
     # 该函数仅对主机有效
     def set_server(self, saddr: str,sport: int):
         return self._master_set_server(saddr,sport)
+    # 该函数仅对主机有效
     def get_saddr(self):
         return self._master_get_saddr()
     def excuse(self, dir_slave: int, type_function: int, addr: int, *val):

@@ -503,6 +503,10 @@ extern "C" {
         #define PIKA_PLATFORM_NO_WEAK 0
     #endif
 
+    #ifndef PIKA_WIN_PTHREAD_ENABLE
+        #define PIKA_WIN_PTHREAD_ENABLE 0
+    #endif
+
     /* configuration validation */
 
 #endif

@@ -330,8 +330,8 @@ int _modbus_rt__rtu__close(PikaObj *self) {
 }
 
 int _modbus_rt__rtu__slave_set_addr(PikaObj *self, int addr) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_SLAVE_ENABLE)
+    pika_platform_printf("modbus rtu slave is not activated.\n");
     return 0;
 #else
     int ret = 0;
@@ -358,8 +358,8 @@ int _modbus_rt__rtu__slave_set_addr(PikaObj *self, int addr) {
 }
 
 int _modbus_rt__rtu__slave_set_strict(PikaObj *self, int strict) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_SLAVE_ENABLE)
+    pika_platform_printf("modbus rtu slave is not activated.\n");
     return 0;
 #else
     int ret = 0;
@@ -386,8 +386,8 @@ int _modbus_rt__rtu__slave_set_strict(PikaObj *self, int strict) {
 }
 
 int _modbus_rt__rtu__slave_add_block(PikaObj *self, char* name, int type, int addr, int nums) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_SLAVE_ENABLE)
+    pika_platform_printf("modbus rtu slave is not activated.\n");
     return 0;
 #else
     int ret = 0;
@@ -416,7 +416,7 @@ int _modbus_rt__rtu__slave_add_block(PikaObj *self, char* name, int type, int ad
     }
     obj_setBytes(self, name, NULL, len);
     uint8_t* block = obj_getBytes(self, name);
-    ret = modbus_rtu_add_block(dev,type, addr, block, nums);
+    ret = modbus_rtu_add_block(dev, type, addr, block, nums);
     if(MODBUS_RT_EOK != ret){
         pika_platform_printf("modbus_rtu_add_block error, code: %d.\n", ret);
         return 0;
@@ -425,13 +425,60 @@ int _modbus_rt__rtu__slave_add_block(PikaObj *self, char* name, int type, int ad
 #endif
 }
 
+int _modbus_rt__rtu__slave_regs_binding(PikaObj *self, Arg* regs, int type, int addr, int nums) {
+#if (!MODBUS_RTU_SLAVE_ENABLE)
+    pika_platform_printf("modbus rtu slave is not activated.\n");
+    return 0;
+#else
+    int ret = 0;
+    ArgType t = arg_getType(regs);
+    if (ARG_TYPE_BYTES != t) {
+        pika_platform_printf("modbus_rtu_regs_binding: the regs buf type is only for bytes.\n");
+        return 0;
+    }
+    rtu_modbus_device_t dev = (rtu_modbus_device_t)obj_getPtr(self, "dev");
+    if(NULL == dev) {
+        pika_platform_printf("modbus_rtu_regs_binding error, dev is NULL.\n");
+        return 0;
+    }
+    if(MODBUS_SLAVE != dev->mode){
+        pika_platform_printf("modbus_rtu_regs_binding is only for slave.\n");
+        return 0;
+    }
+    if(0 != dev->status) {
+        pika_platform_printf("modbus_rtu_regs_binding error, dev is opened.\n");
+        return 0;
+    }
+    size_t regs_size = arg_getBytesSize(regs);
+    if((CIOLS == type) || (INPUTS == type)) {
+        if(regs_size < nums) {
+            pika_platform_printf("modbus_rtu_regs_binding: For CIOLS and INPUTS, the length of regs buf must be greater than nums.\n");
+            return 0;
+        }
+    } else if((INPUT_REGISTERS == type) || (REGISTERS == type)) {
+        if(regs_size < nums) {
+            pika_platform_printf("modbus_rtu_regs_binding: For INPUT_REGISTERS and REGISTERS, the length of regs buf must be greater than 2 * nums.\n");
+            return 0;
+        }
+    }
+    uint8_t* block = arg_getBytes(regs);
+    ret = modbus_rtu_add_block(dev, type, addr, block, nums);
+    if(MODBUS_RT_EOK != ret){
+        pika_platform_printf("modbus_rtu_regs_binding error, code: %d.\n", ret);
+        return 0;
+    }
+    return 1;
+#endif
+    return 0;
+}
+
 #if (MODBUS_RTU_SLAVE_ENABLE) || (MODBUS_RTU_MASTER_ENABLE)
 PikaEventListener* g_modbus_rt_rtu_event_listener = NULL;
 #endif
 
 int _modbus_rt__rtu__slave_pre_ans_handler(agile_modbus_t *ctx, int slave, int function,int addr, int quantity) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_SLAVE_ENABLE)
+    pika_platform_printf("modbus rtu slave is not activated.\n");
     return 0;
 #else
     char hash_str[32] = {0};
@@ -450,8 +497,8 @@ int _modbus_rt__rtu__slave_pre_ans_handler(agile_modbus_t *ctx, int slave, int f
 }
 
 int _modbus_rt__rtu__slave_set_pre_ans_callback(PikaObj *self, Arg* cb) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_SLAVE_ENABLE)
+    pika_platform_printf("modbus rtu slave is not activated.\n");
     return 0;
 #else
     int ret = 0;
@@ -490,8 +537,8 @@ int _modbus_rt__rtu__slave_set_pre_ans_callback(PikaObj *self, Arg* cb) {
 }
 
 int _modbus_rt__rtu__slave_done_handler(agile_modbus_t *ctx, int slave, int function,int addr, int quantity) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_SLAVE_ENABLE)
+    pika_platform_printf("modbus rtu slave is not activated.\n");
     return 0;
 #else
     char hash_str[32] = {0};
@@ -510,8 +557,8 @@ int _modbus_rt__rtu__slave_done_handler(agile_modbus_t *ctx, int slave, int func
 }
 
 int _modbus_rt__rtu__slave_set_done_callback(PikaObj *self, Arg* cb) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_SLAVE_ENABLE)
+    pika_platform_printf("modbus rtu slave is not activated.\n");
     return 0;
 #else
     int ret = 0;
@@ -550,8 +597,8 @@ int _modbus_rt__rtu__slave_set_done_callback(PikaObj *self, Arg* cb) {
 }
 
 int _modbus_rt__rtu__slave_set_dev_binding(PikaObj *self, int flag) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_SLAVE_ENABLE)
+    pika_platform_printf("modbus rtu slave is not activated.\n");
     return 0;
 #elif (!SLAVE_DATA_DEVICE_BINDING)
     pika_platform_printf("SLAVE_DATA_DEVICE_BINDING is not activated.\n");
@@ -582,8 +629,8 @@ int _modbus_rt__rtu__slave_set_dev_binding(PikaObj *self, int flag) {
 
 
 int _modbus_rt__rtu__master_set_server(PikaObj *self, char* saddr, int sport) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_MASTER_ENABLE)
+    pika_platform_printf("modbus rtu master is not activated.\n");
     return 0;
 #elif (!MODBUS_SERIAL_OVER_TCP_ENABLE) && (!MODBUS_SERIAL_OVER_UDP_ENABLE)
     pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n");
@@ -609,8 +656,8 @@ int _modbus_rt__rtu__master_set_server(PikaObj *self, char* saddr, int sport) {
 }
 
 char* _modbus_rt__rtu__master_get_saddr(PikaObj *self) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_MASTER_ENABLE)
+    pika_platform_printf("modbus rtu master is not activated.\n");
     return NULL;
 #elif (!MODBUS_SERIAL_OVER_TCP_ENABLE) && (!MODBUS_SERIAL_OVER_UDP_ENABLE)
     pika_platform_printf("modbus_rtu_set_over_type error, MODBUS_SERIAL_OVER_XXX_ENABLE is not ENABLE.\n");
@@ -638,8 +685,8 @@ char* _modbus_rt__rtu__master_get_saddr(PikaObj *self) {
 }
 
 PikaObj* _modbus_rt__rtu__slave_read_regs(PikaObj *self, int type, int addr, PikaTuple* val){
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_SLAVE_ENABLE)
+    pika_platform_printf("modbus rtu slave is not activated.\n");
     return NULL;
 #else
     int ret = 0;
@@ -707,8 +754,8 @@ PikaObj* _modbus_rt__rtu__slave_read_regs(PikaObj *self, int type, int addr, Pik
 }
 
 int _modbus_rt__rtu__slave_write_regs(PikaObj *self, int type, int addr, PikaTuple* val) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_SLAVE_ENABLE)
+    pika_platform_printf("modbus rtu slave is not activated.\n");
     return 0;
 #else
     int ret = 0;
@@ -794,8 +841,8 @@ int _modbus_rt__rtu__slave_write_regs(PikaObj *self, int type, int addr, PikaTup
 }
 
 PikaObj* _modbus_rt__rtu__master_read_list(PikaObj *self, int slave, int fuction, int addr, PikaTuple* val) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_MASTER_ENABLE)
+    pika_platform_printf("modbus rtu master is not activated.\n");
     return NULL;
 #else
     int ret = 0;
@@ -864,8 +911,8 @@ PikaObj* _modbus_rt__rtu__master_read_list(PikaObj *self, int slave, int fuction
 }
 
 int _modbus_rt__rtu__master_write_int(PikaObj *self, int slave, int fuction, int addr, PikaTuple* val) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_MASTER_ENABLE)
+    pika_platform_printf("modbus rtu master is not activated.\n");
     return 0;
 #else
     int ret = 0;
@@ -904,8 +951,8 @@ int _modbus_rt__rtu__master_write_int(PikaObj *self, int slave, int fuction, int
 }
 
 int _modbus_rt__rtu__master_write_list(PikaObj *self, int slave, int fuction, int addr, PikaTuple* val) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_MASTER_ENABLE)
+    pika_platform_printf("modbus rtu master is not activated.\n");
     return 0;
 #else
     int ret = 0;
@@ -991,8 +1038,8 @@ int _modbus_rt__rtu__master_write_list(PikaObj *self, int slave, int fuction, in
 }
 
 int _modbus_rt__rtu__master_download(PikaObj *self, int slave, char* file_dev, char* file_master) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_MASTER_ENABLE)
+    pika_platform_printf("modbus rtu master is not activated.\n");
     return 0;
 #elif  (!MODBUS_P2P_ENABLE) || (!MODBUS_P2P_MASTER_ENABLE)
     pika_platform_printf("MODBUS_P2P_ENABLE and MODBUS_P2P_MASTER_ENABLE is not enabled.\n");
@@ -1027,8 +1074,8 @@ int _modbus_rt__rtu__master_download(PikaObj *self, int slave, char* file_dev, c
 
 
 int _modbus_rt__rtu__master_upload(PikaObj *self, int slave, char* file_dev, char* file_master) {
-#if (!MODBUS_RTU_SLAVE_ENABLE) && (!MODBUS_RTU_MASTER_ENABLE)
-    pika_platform_printf("modbus rtu is not activated.\n");
+#if (!MODBUS_RTU_MASTER_ENABLE)
+    pika_platform_printf("modbus rtu master is not activated.\n");
     return 0;
 #elif  (!MODBUS_P2P_ENABLE) || (!MODBUS_P2P_MASTER_ENABLE)
     pika_platform_printf("MODBUS_P2P_ENABLE and MODBUS_P2P_MASTER_ENABLE is not enabled.\n");
