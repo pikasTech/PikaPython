@@ -104,7 +104,8 @@ extern "C" {
 #pragma warning(disable : 4113)
 #endif
 
-#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 5000000) && (__ARMCC_VERSION < 6000000)
+#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 5000000) && \
+    (__ARMCC_VERSION < 6000000)
 #pragma diag_suppress 66
 #pragma diag_suppress 188
 #pragma diag_suppress 546
