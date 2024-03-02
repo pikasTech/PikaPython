@@ -9,7 +9,6 @@
  * @brief configuration file
  */
 
-
 #ifndef _FDB_CFG_H_
 #define _FDB_CFG_H_
 

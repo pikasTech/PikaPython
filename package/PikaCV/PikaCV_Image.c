@@ -125,6 +125,8 @@ void PikaCV_Image_read(PikaObj* self, char* path) {
     }
     Arg* data_arg = arg_loadFile(NULL, path);
     if (NULL == data_arg) {
+        pika_platform_printf("PikaCV_Image_read: failed to load file: %s\n",
+                             path);
         return;
     }
     Args buffs = {0};
