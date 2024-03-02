@@ -365,7 +365,6 @@ static int32_t __foreach_handler_libWriteIndex(Arg* argEach,
     if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
         uint32_t bytecode_size = obj_getInt(module_obj, "bytesize");
-        uint32_t bytecode_size_align = align_by(bytecode_size, 4);
         char* module_name = obj_getStr(module_obj, "name");
         module_name = strsReplace(&buffs, module_name, "|", ".");
         uint32_t name_size = strGetSize(module_name);
@@ -381,8 +380,8 @@ static int32_t __foreach_handler_libWriteIndex(Arg* argEach,
                              name_size + 1); /* add '\0' after name */
         /* should write the size without align */
         pika_platform_memcpy(
-            block_buff + linker->block_size - sizeof(bytecode_size_align),
-            &bytecode_size, sizeof(bytecode_size_align));
+            block_buff + linker->block_size - sizeof(uint32_t),
+            &bytecode_size, sizeof(uint32_t));
 
         /* write the block to file */
         linker_fwrite(linker, (uint8_t*)block_buff, linker->block_size);

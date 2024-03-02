@@ -153,10 +153,6 @@ int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
     pika_debug("pika_hal_ioctl, dev[0x%p], type[%d], cmd[%d]", dev, dev->type,
                cmd);
     cmd = _pika_hal_get_arg_cnt(cmd_origin);
-    if (cmd < 0) {
-        pika_platform_printf("Error: cmd invalied.\r\n");
-        return -1;
-    }
     pika_dev_impl* impl = _pika_dev_get_impl(dev->type);
     if (impl->ioctl == NULL) {
         pika_platform_printf("Error: ioctl not support.\r\n");

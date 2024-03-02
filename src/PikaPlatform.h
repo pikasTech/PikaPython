@@ -104,6 +104,13 @@ extern "C" {
 #pragma warning(disable : 4113)
 #endif
 
+#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 5000000)
+#pragma diag_suppress 66
+#pragma diag_suppress 188
+#pragma diag_suppress 546
+#pragma diag_suppress 177
+#endif
+
 /* OS */
 #if defined(__RTTHREAD__) && PIKA_RTTHREAD_ENABLE
 #include <rtthread.h>
