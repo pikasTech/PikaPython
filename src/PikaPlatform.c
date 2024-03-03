@@ -694,7 +694,7 @@ PIKA_WEAK uint64_t pika_platform_thread_self(void) {
 #elif PIKA_FREERTOS_ENABLE
     return (uint64_t)xTaskGetCurrentTaskHandle();
 #elif PIKA_RTTHREAD_ENABLE
-    return (uint64_t)rt_thread_self();
+    return (uint64_t)(uintptr_t)rt_thread_self();
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
     return 0;
@@ -1053,7 +1053,7 @@ PIKA_WEAK void pika_platform_thread_timer_usleep(unsigned long usec) {
         if (tick == 0)
             tick = 1;
     }
-    vTaskDelay(tick);
+    rt_thread_mdelay(tick);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
 #endif
