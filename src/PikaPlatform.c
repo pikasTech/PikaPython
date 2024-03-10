@@ -55,7 +55,7 @@ struct timeval {
     long tv_usec;  // Microseconds
 };
 
-void usleep(unsigned long usec) {
+static void usleep(unsigned long usec) {
     HANDLE timer;
     LARGE_INTEGER interval;
     interval.QuadPart = (10 * usec);
@@ -65,7 +65,7 @@ void usleep(unsigned long usec) {
     CloseHandle(timer);
 }
 
-int gettimeofday(struct timeval* tp, void* tzp) {
+static int gettimeofday(struct timeval* tp, void* tzp) {
     time_t clock;
     struct tm tm;
     SYSTEMTIME wtm;
@@ -83,7 +83,7 @@ int gettimeofday(struct timeval* tp, void* tzp) {
     return (0);
 }
 
-void timeradd(struct timeval* a, struct timeval* b, struct timeval* res) {
+static void timeradd(struct timeval* a, struct timeval* b, struct timeval* res) {
     res->tv_sec = a->tv_sec + b->tv_sec;
     res->tv_usec = a->tv_usec + b->tv_usec;
     if (res->tv_usec >= 1000000) {
@@ -92,7 +92,7 @@ void timeradd(struct timeval* a, struct timeval* b, struct timeval* res) {
     }
 }
 
-void timersub(struct timeval* a, struct timeval* b, struct timeval* res) {
+static void timersub(struct timeval* a, struct timeval* b, struct timeval* res) {
     res->tv_sec = a->tv_sec - b->tv_sec;
     res->tv_usec = a->tv_usec - b->tv_usec;
     if (res->tv_usec < 0) {

@@ -263,7 +263,9 @@ typedef struct pika_platform_thread {
     pthread_cond_t cond;
 } pika_platform_thread_t;
 #elif PIKA_WIN_PTHREAD_ENABLE
+#ifndef HAVE_STRUCT_TIMESPEC
 #define HAVE_STRUCT_TIMESPEC
+#endif
 #include <pthread.h>
 typedef struct pika_platform_thread {
     pthread_t thread;
