@@ -28,6 +28,7 @@
 
 #include "PikaObj.h"
 #include <stdint.h>
+#include <inttypes.h>
 #include "BaseObj.h"
 #include "PikaCompiler.h"
 #include "PikaParser.h"
@@ -2795,7 +2796,7 @@ void pika_eventListener_registEventCallback(PikaEventListener* listener,
                                             Arg* eventCallback) {
     pika_assert(NULL != listener);
     char hash_str[32] = {0};
-    pika_sprintf(hash_str, "C%d", eventId);
+    pika_sprintf(hash_str, "C%" PRIuPTR, eventId);
     obj_newDirectObj(listener, hash_str, New_TinyObj);
     PikaObj* oHandle = obj_getPtr(listener, hash_str);
     obj_setEventCallback(oHandle, eventId, eventCallback, listener);
@@ -2919,7 +2920,7 @@ Arg* __eventListener_runEvent(PikaEventListener* listener,
     pika_debug("event handler: %p", handler);
     if (NULL == handler) {
         pika_platform_printf(
-            "Error: can not find event handler by id: [0x%02x]\r\n", eventId);
+            "Error: can not find event handler by id: [0x%02" PRIxPTR "]\r\n", eventId);
         return NULL;
     }
     Arg* eventCallBack = obj_getArg(handler, "eventCallBack");
