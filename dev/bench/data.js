@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1710817224054,
+  "lastUpdate": 1711596532797,
   "repoUrl": "https://github.com/pikasTech/PikaPython",
   "entries": {
     "Benchmark": [
@@ -109967,6 +109967,66 @@ window.BENCHMARK_DATA = {
             "value": 0.005000315590308696,
             "unit": "ms/iter",
             "extra": "iterations: 352061\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "88232613+pikasTech@users.noreply.github.com",
+            "name": "Lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0d3c90db73b6c5adce29a5a25e3d48beefc84e95",
+          "message": "Merge pull request #338 from IVOES/cpp/non-constant-format\n\nFix non-constant format string",
+          "timestamp": "2024-03-28T10:47:39+08:00",
+          "tree_id": "cbaf52f6b116b71e905bb9f8486d6c10efaa70f6",
+          "url": "https://github.com/pikasTech/PikaPython/commit/0d3c90db73b6c5adce29a5a25e3d48beefc84e95"
+        },
+        "date": 1711596524927,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 16329.06368174106,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 16329.06368174106 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 24.25549784461171,
+            "unit": "ms/iter",
+            "extra": "iterations: 73\ncpu: 24.254966953454684 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 13.453172348205063,
+            "unit": "ms/iter",
+            "extra": "iterations: 132\ncpu: 13.45298890397689 ms\nthreads: 1"
+          },
+          {
+            "name": "for_print_1000",
+            "value": 12.856373660534448,
+            "unit": "ms/iter",
+            "extra": "iterations: 138\ncpu: 12.85621917723849 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 3.062165077837243,
+            "unit": "ms/iter",
+            "extra": "iterations: 573\ncpu: 3.0620249252814986 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.00500009006037383,
+            "unit": "ms/iter",
+            "extra": "iterations: 353262\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
