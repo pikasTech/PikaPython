@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1711596532797,
+  "lastUpdate": 1711596671898,
   "repoUrl": "https://github.com/pikasTech/PikaPython",
   "entries": {
     "Benchmark": [
@@ -110027,6 +110027,66 @@ window.BENCHMARK_DATA = {
             "value": 0.00500009006037383,
             "unit": "ms/iter",
             "extra": "iterations: 353262\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "88232613+pikasTech@users.noreply.github.com",
+            "name": "Lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5673ca2132e04b2cf96f8d1e3154fef8ba397455",
+          "message": "Merge pull request #339 from IVOES/cpp/constant-comparison\n\nFix incorrect check for error of tcsetattr()",
+          "timestamp": "2024-03-28T10:47:18+08:00",
+          "tree_id": "a85733e47dae2ceff61c1b829ee1b30382e53c50",
+          "url": "https://github.com/pikasTech/PikaPython/commit/5673ca2132e04b2cf96f8d1e3154fef8ba397455"
+        },
+        "date": 1711596664480,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 16223.109557853393,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 16223.109557853393 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 25.196279031632827,
+            "unit": "ms/iter",
+            "extra": "iterations: 71\ncpu: 25.194733608779934 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 13.591530607666625,
+            "unit": "ms/iter",
+            "extra": "iterations: 130\ncpu: 13.591473834982581 ms\nthreads: 1"
+          },
+          {
+            "name": "for_print_1000",
+            "value": 12.432425354501266,
+            "unit": "ms/iter",
+            "extra": "iterations: 142\ncpu: 12.43209354416677 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 3.0820639354002255,
+            "unit": "ms/iter",
+            "extra": "iterations: 561\ncpu: 3.082023197938379 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.00500002988967296,
+            "unit": "ms/iter",
+            "extra": "iterations: 352278\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
