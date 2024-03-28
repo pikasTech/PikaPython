@@ -1739,7 +1739,7 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
         shell->lineBuff[shell->line_position] = 0;
         if (shell->line_curpos != shell->line_position) {
             /* update screen */
-            pika_platform_printf(shell->lineBuff + shell->line_curpos);
+            pika_platform_printf("%s", shell->lineBuff + shell->line_curpos);
             pika_platform_printf(" ");
             _putc_cmd(PIKA_KEY_LEFT,
                       shell->line_position - shell->line_curpos + 1);
@@ -1762,7 +1762,7 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
                                   shell->line_position - shell->line_curpos);
             shell->lineBuff[shell->line_position + 1] = 0;
             if (shell->line_curpos != shell->line_position) {
-                pika_platform_printf(shell->lineBuff + shell->line_curpos + 1);
+                pika_platform_printf("%s", shell->lineBuff + shell->line_curpos + 1);
                 _putc_cmd(PIKA_KEY_LEFT,
                           shell->line_position - shell->line_curpos);
             }
