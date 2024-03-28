@@ -715,7 +715,7 @@ static int set_disp_mode(int fd, int option) {
     else
         term.c_lflag &= ~ECHOFLAGS;
     err = tcsetattr(fd, TCSAFLUSH, &term);
-    if (err == -1 && err == EINTR) {
+    if (err == -1) {
         perror("Cannot set the attribution of the terminal");
         return 1;
     }
