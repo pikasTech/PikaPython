@@ -119,32 +119,32 @@ char** pika_platform_listdir(const char* path, int* count) {
     // LittleFS doesn't have a direct listdir function, so we'll need to
     // implement this.
     lfs_dir_t dir;
-    lfs_info_t info;
+    struct lfs_info info;
 
     char** filenames = NULL;
     int index = 0;
     *count = 0;
 
-    if (lfs_opendir(&pika_lfs_handle, &dir, path) == LFS_ERR_OK) {
-        while (lfs_readdir(&pika_lfs_handle, &dir, &info) == LFS_ERR_OK) {
+    if (lfs_dir_open(&pika_lfs_handle, &dir, path) == LFS_ERR_OK) {
+        while (lfs_dir_read(&pika_lfs_handle, &dir, &info) == LFS_ERR_OK) {
             if (info.name[0] != 0) {
                 (*count)++;
             }
         }
-        lfs_closedir(&pika_lfs_handle, &dir);
+        lfs_dir_close(&pika_lfs_handle, &dir);
 
         // Allocate space for filenames
         filenames = (char**)pika_platform_malloc(sizeof(char*) * (*count));
 
         // Read filenames
-        lfs_opendir(&pika_lfs_handle, &dir, path);
-        while (lfs_readdir(&pika_lfs_handle, &dir, &info) == LFS_ERR_OK) {
+        lfs_dir_open(&pika_lfs_handle, &dir, path);
+        while (lfs_dir_read(&pika_lfs_handle, &dir, &info) == LFS_ERR_OK) {
             if (info.name[0] != 0) {
                 filenames[index] = pika_platform_strdup(info.name);
                 index++;
             }
         }
-        lfs_closedir(&pika_lfs_handle, &dir);
+        lfs_dir_close(&pika_lfs_handle, &dir);
     }
 
     return filenames;

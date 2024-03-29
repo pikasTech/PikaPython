@@ -696,6 +696,7 @@ name = "pika_littlefs"
 releases = [
     "v0.0.1 301105f2f3976d320c361aff4b2743cbbdeaa693",
     "v0.0.2 c7621827d9c762250716727986d4d3d4c1778067",
+    "v0.0.3 7f05b4de3a0572f4e82fff70a5453def737ba99e",
 ]
 
 [[packages]]
