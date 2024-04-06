@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file    _modbus_rt.c
  * @brief   modbus_rt的pika层的API实现
  * @author  SenySunny (senysunny@163.com)
@@ -24,7 +24,7 @@
 void _modbus_rt__tcp___del__(PikaObj *self) {
 #if (!MODBUS_TCP_SLAVE_ENABLE) && (!MODBUS_TCP_MASTER_ENABLE)
     pika_platform_printf("modbus tcp is not activated.\n");
-    return 0;
+    return ;
 #else
     int ret = 0;
     tcp_modbus_device_t dev = (tcp_modbus_device_t)obj_getPtr(self, "dev");

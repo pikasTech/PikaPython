@@ -2928,6 +2928,17 @@ Arg* __eventListener_runEvent(PikaEventListener* listener,
     Arg* res = pika_runFunction1(arg_copy(eventCallBack), arg_copy(eventData));
     return res;
 }
+                              
+void pika_debug_bytes(uint8_t* buff, size_t len) {
+    pika_debug_raw("[");
+    for (size_t i = 0; i < len; i++) {
+        pika_debug_raw("0x%02X", buff[i]);
+        if (i < len - 1) {
+            printf(",");
+        }
+    }
+    pika_debug_raw("]\n");
+}
 
 static void _thread_event(void* arg) {
     pika_assert(_VM_is_first_lock());
