@@ -167,9 +167,9 @@ static void* pika_cJSON_CDECL internal_realloc(void* pointer, size_t size) {
     return realloc(pointer, size);
 }
 #else
-#define internal_malloc malloc
-#define internal_free free
-#define internal_realloc realloc
+#define internal_malloc pika_platform_malloc
+#define internal_free pika_platform_free
+#define internal_realloc pika_platform_realloc
 #endif
 
 /* strlen of character literals resolved at compile time */
@@ -200,27 +200,27 @@ static unsigned char* pika_cJSON_strdup(const unsigned char* string,
 pika_cJSON_PUBLIC(void) pika_cJSON_InitHooks(pika_cJSON_Hooks* hooks) {
     if (hooks == NULL) {
         /* Reset hooks */
-        global_hooks.allocate = malloc;
-        global_hooks.deallocate = free;
-        global_hooks.reallocate = realloc;
+        global_hooks.allocate = pika_platform_malloc;
+        global_hooks.deallocate = pika_platform_free;
+        global_hooks.reallocate = pika_platform_realloc;
         return;
     }
 
-    global_hooks.allocate = malloc;
+    global_hooks.allocate = pika_platform_malloc;
     if (hooks->malloc_fn != NULL) {
         global_hooks.allocate = hooks->malloc_fn;
     }
 
-    global_hooks.deallocate = free;
+    global_hooks.deallocate = pika_platform_free;
     if (hooks->free_fn != NULL) {
         global_hooks.deallocate = hooks->free_fn;
     }
 
     /* use realloc only if both free and malloc are used */
     global_hooks.reallocate = NULL;
-    if ((global_hooks.allocate == malloc) &&
-        (global_hooks.deallocate == free)) {
-        global_hooks.reallocate = realloc;
+    if ((global_hooks.allocate == pika_platform_malloc) &&
+        (global_hooks.deallocate == pika_platform_free)) {
+        global_hooks.reallocate = pika_platform_realloc;
     }
 }
 
