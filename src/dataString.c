@@ -434,11 +434,17 @@ int strGetIndent(char* string) {
     return indent;
 }
 
+int charIsBlank(char ch) {
+    if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n') {
+        return 1;
+    }
+    return 0;
+}
+
 int strIsBlank(char* string) {
     int len = strGetSize(string);
     for (int j = 0; j < len; j++) {
-        if (string[j] != ' ' && string[j] != '\t' && string[j] != '\r' &&
-            string[j] != '\n') {
+        if (!charIsBlank(string[j])) {
             return 0;
         }
     }

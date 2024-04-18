@@ -2827,6 +2827,9 @@ static uint8_t Parser_checkIsDocstring(char* line,
     while (i + 2 < uLineSize) {
         /* not match ' or " */
         if ((line[i] != '\'') && (line[i] != '"')) {
+            if (!bIsDocstring && !bIsInDocstring && !charIsBlank(line[i])) {
+                break;
+            }
             i++;
             continue;
         }
@@ -3118,6 +3121,7 @@ int parser_file2TargetFile(Parser* self,
     if (NULL == fp) {
         return -1;
     }
+    pika_assert(NULL != sBackendCode);
     pika_platform_fwrite(sBackendCode, 1, strGetSize(sBackendCode), fp);
     pika_platform_fclose(fp);
     return 0;

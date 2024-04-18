@@ -71,6 +71,7 @@ int strPathJoin(char* input1, char* input2, char* output);
 int strPathGetFolder(char* input, char* output);
 int strPathGetFileName(char* input, char* output);
 int strGetIndent(char* string);
+int charIsBlank(char ch);
 int strIsBlank(char* string);
 int strOnly(char* string, char ch);
 int _strCountSign(char* strIn, char sign, pika_bool bracketDepth0);

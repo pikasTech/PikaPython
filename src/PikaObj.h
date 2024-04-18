@@ -793,22 +793,11 @@ void obj_printModules(PikaObj* self);
     pika_platform_printf(ANSI_COLOR_GREEN "[PikaDBG] " fmt         \
                                           "\r\n" ANSI_COLOR_RESET, \
                          ##__VA_ARGS__)
-    
-#define pika_debug_raw(fmt, ...)                                       \
-    pika_platform_printf(ANSI_COLOR_GREEN  fmt         \
-                                           ANSI_COLOR_RESET, \
-                         ##__VA_ARGS__)
 #else
 #define pika_debug(...) \
     do {                \
     } while (0)
-    
-#define pika_debug_raw(...) \
-    do {                \
-    } while (0)
 #endif
-
-void pika_debug_bytes(uint8_t* buff, size_t len);
 
 #define pika_assert_arg_alive(__arg)                              \
     do {                                                          \
