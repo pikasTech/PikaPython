@@ -306,6 +306,11 @@ PIKA_WEAK char pika_platform_getchar(void) {
 #endif
 }
 
+/* return -1 for no char received, 0 for received */
+PIKA_WEAK int pika_platform_getchar_noblock(char* ch){
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR_LOWLEVEL();
+}
+
 PIKA_WEAK int pika_platform_repl_recv(uint8_t* buff,
                                       size_t size,
                                       uint32_t timeout) {
