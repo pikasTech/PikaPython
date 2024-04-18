@@ -1905,9 +1905,16 @@ static void _save_file(char* file_name, uint8_t* buff, size_t size) {
         pika_platform_printf("[  Error] Open file '%s' error!\r\n", file_name);
         pika_platform_fclose(fp);
     } else {
-        pika_platform_fwrite(buff, 1, size, fp);
-        pika_platform_printf("[   Info] Writing %d bytes to '%s'...\r\n",
-                             (int)(size), file_name);
+        if (pika_platform_fwrite(buff, 1, size, fp) != size){
+            pika_platform_printf("[  Error] Failed to write to '%s'...\r\n", file_name);
+            pika_platform_fclose(fp);
+            pika_platform_printf("[   Info] Removing '%s'...\r\n", file_name);
+            pika_platform_remove(file_name);
+            return;
+        }else{
+            pika_platform_printf("[   Info] Writing %d bytes to '%s'...\r\n",
+                                 (int)(size), file_name);
+        }
         pika_platform_fclose(fp);
         pika_platform_printf("[    OK ] Writing to '%s' succeed!\r\n",
                              file_name);
@@ -2029,8 +2036,8 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
                 /* eat 'yo' */
                 magic_code[2 + i] = cfg->fn_getchar();
             }
-            uint8_t* buff = NULL;
-            uint32_t size = _pikaShell_recv_file(cfg, magic_code, &buff);
+            uint8_t* recv = NULL;
+            uint32_t size = _pikaShell_recv_file(cfg, magic_code, &recv);
             pika_platform_printf(
                 "\r\n=============== [File] ===============\r\n");
             pika_platform_printf("[   Info] Recived size: %d\r\n", size);
@@ -2040,16 +2047,16 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
 #endif
                 pika_platform_printf(
                     "=============== [ RUN] ===============\r\n");
-                pikaVM_runByteCodeInconstant(self, buff);
-                pikaFree(buff, size);
+                pikaVM_runByteCodeInconstant(self, recv);
+                pikaFree(recv, size);
                 return;
             }
             if (magic_code[3] == 'a') {
-                _save_file(PIKA_SHELL_SAVE_APP_PATH, (uint8_t*)buff, size);
+                _save_file(PIKA_SHELL_SAVE_APP_PATH, (uint8_t*)recv, size);
                 pika_platform_printf(
                     "=============== [REBOOT] ===============\r\n");
                 pika_platform_reboot();
-                pikaFree(buff, size);
+                pikaFree(recv, size);
                 return;
             }
         }
