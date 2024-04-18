@@ -1905,13 +1905,14 @@ static void _save_file(char* file_name, uint8_t* buff, size_t size) {
         pika_platform_printf("[  Error] Open file '%s' error!\r\n", file_name);
         pika_platform_fclose(fp);
     } else {
-        if (pika_platform_fwrite(buff, 1, size, fp) != size){
-            pika_platform_printf("[  Error] Failed to write to '%s'...\r\n", file_name);
+        if (pika_platform_fwrite(buff, 1, size, fp) != size) {
+            pika_platform_printf("[  Error] Failed to write to '%s'...\r\n",
+                                 file_name);
             pika_platform_fclose(fp);
             pika_platform_printf("[   Info] Removing '%s'...\r\n", file_name);
             pika_platform_remove(file_name);
             return;
-        }else{
+        } else {
             pika_platform_printf("[   Info] Writing %d bytes to '%s'...\r\n",
                                  (int)(size), file_name);
         }
@@ -1931,7 +1932,9 @@ char _await_getchar(sh_getchar fn_getchar) {
 #define PIKA_MAGIC_CODE_LEN 4
 
 /* return file size */
-PIKA_WEAK uint32_t _pikaShell_recv_file(ShellConfig* cfg, uint8_t *magic_code, uint8_t **pbuff){
+PIKA_WEAK uint32_t _pikaShell_recv_file(ShellConfig* cfg,
+                                        uint8_t* magic_code,
+                                        uint8_t** pbuff) {
     uint32_t size = 0;
     for (int i = 0; i < 4; i++) {
         uint8_t* size_byte = (uint8_t*)&size;
@@ -2943,6 +2946,17 @@ Arg* __eventListener_runEvent(PikaEventListener* listener,
     pika_debug("run event handler: %p", handler);
     Arg* res = pika_runFunction1(arg_copy(eventCallBack), arg_copy(eventData));
     return res;
+}
+
+void pika_debug_bytes(uint8_t* buff, size_t len) {
+    pika_debug_raw("[");
+    for (size_t i = 0; i < len; i++) {
+        pika_debug_raw("0x%02X", buff[i]);
+        if (i < len - 1) {
+            printf(",");
+        }
+    }
+    pika_debug_raw("]\n");
 }
 
 static void _thread_event(void* arg) {
