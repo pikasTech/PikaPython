@@ -1921,6 +1921,30 @@ char _await_getchar(sh_getchar fn_getchar) {
     return ret;
 }
 
+#define PIKA_MAGIC_CODE_LEN 4
+
+/* return file size */
+PIKA_WEAK uint32_t _pikaShell_recv_file(ShellConfig* cfg, uint8_t *magic_code, uint8_t **pbuff){
+    uint32_t size = 0;
+    for (int i = 0; i < 4; i++) {
+        uint8_t* size_byte = (uint8_t*)&size;
+        size_byte[i] = cfg->fn_getchar();
+    }
+    if (magic_code[3] == 'o') {
+        size += sizeof(uint32_t) * 2;
+    }
+    uint8_t* buff = pikaMalloc(size);
+    /* save magic code and size */
+    memcpy(buff, magic_code, PIKA_MAGIC_CODE_LEN);
+    memcpy(buff + PIKA_MAGIC_CODE_LEN, &size, sizeof(size));
+
+    for (uint32_t i = sizeof(uint32_t) * 2; i < size; i++) {
+        buff[i] = cfg->fn_getchar();
+    }
+    *pbuff = buff;
+    return size;
+}
+
 void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
     /* init the shell */
     _obj_runChar_beforeRun(self, cfg);
@@ -2000,28 +2024,13 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
 
         /* run xx.py.o */
         if (inputChar[0] == 'p' && inputChar[1] == 0x0f) {
-            uint8_t magic_code[4] = {0x0f, 'p', 0x00, 0x00};
+            uint8_t magic_code[PIKA_MAGIC_CODE_LEN] = {0x0f, 'p', 0x00, 0x00};
             for (int i = 0; i < 2; i++) {
                 /* eat 'yo' */
                 magic_code[2 + i] = cfg->fn_getchar();
             }
-            uint32_t size = 0;
-            for (int i = 0; i < 4; i++) {
-                uint8_t* size_byte = (uint8_t*)&size;
-                size_byte[i] = cfg->fn_getchar();
-            }
-            if (magic_code[3] == 'o') {
-                size += sizeof(uint32_t) * 2;
-            }
-            uint8_t* buff = pikaMalloc(size);
-            /* save magic code and size */
-            memcpy(buff, magic_code, sizeof(magic_code));
-            memcpy(buff + sizeof(magic_code), &size, sizeof(size));
-
-            for (uint32_t i = sizeof(uint32_t) * 2; i < size; i++) {
-                buff[i] = cfg->fn_getchar();
-            }
-
+            uint8_t* buff = NULL;
+            uint32_t size = _pikaShell_recv_file(cfg, magic_code, &buff);
             pika_platform_printf(
                 "\r\n=============== [File] ===============\r\n");
             pika_platform_printf("[   Info] Recived size: %d\r\n", size);
