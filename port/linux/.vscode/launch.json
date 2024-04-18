@@ -24,7 +24,7 @@
                 // "--gtest_filter=vm.test_cmodule_import_as"
                 // "--gtest_filter=vm.subsrc_import"
                 // "--gtest_filter=event.event_thread"
-                "--gtest_filter=vm.run_no_file"
+                "--gtest_filter=parser.common_issue_1b23f4c1bf"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
