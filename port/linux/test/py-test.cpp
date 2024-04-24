@@ -104,6 +104,9 @@ TEST_RUN_SINGLE_FILE(modbus, rtu_request, "test/python/modbus/rtu_request.py")
 TEST_RUN_SINGLE_FILE(PikaStdDevice,
                      inhert,
                      "test/python/PikaStdDevice/inhert.py")
+TEST_RUN_SINGLE_FILE(socket,
+                     socket_download,
+                     "test/python/socket/socket_download.py")
 
 #endif
 

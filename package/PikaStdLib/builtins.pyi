@@ -147,6 +147,8 @@ class bytearray:
 
     def __contains__(self, others: any) -> int: ...
 
+    def split(self, *vars) -> list: ...
+
 
 class BaseException:
     pass

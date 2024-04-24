@@ -4395,11 +4395,85 @@ char* builtins_bytearray___str__(PikaObj* self) {
 
 char* builtins_bytearray_decode(PikaObj* self) {
     uint8_t* data = obj_getBytes(self, "raw");
-    Arg* str_arg = arg_newStr((char*)data);
-    obj_removeArg(self, "_buf");
-    obj_setStr(self, "_buf", arg_getStr(str_arg));
-    arg_deinit(str_arg);
-    return obj_getStr(self, "_buf");
+    return obj_cacheStr(self, (char*)data);
+}
+
+PikaObj* builtins_bytearray_split(PikaObj* self, PikaTuple* vars) {
+    int max_splite = -1;
+    Arg* sep = NULL;
+    pika_bool sep_need_free = pika_false;
+    if (pikaTuple_getSize(vars) >= 1) {
+        sep = pikaTuple_getArg(vars, 0);
+    } else {
+        sep = arg_newBytes((uint8_t*)" ", 1);
+        sep_need_free = pika_true;
+    }
+    if (pikaTuple_getSize(vars) == 2) {
+        max_splite = pikaTuple_getInt(vars, 1);
+    }
+    if (arg_getType(sep) != ARG_TYPE_BYTES) {
+        obj_setErrorCode(self, 1);
+        obj_setSysOut(self, "TypeError: bytes is required");
+        return NULL;
+    }
+    PikaList* list = New_PikaList();
+    uint8_t* data = obj_getBytes(self, "raw");
+    size_t len = obj_getBytesSize(self, "raw");
+    if (len == 0) {
+        pikaList_append(list, arg_newBytes((uint8_t*)"", 0));
+        goto __exit;
+    }
+    uint8_t* sep_data = arg_getBytes(sep);
+    size_t sep_len = arg_getBytesSize(sep);
+
+    if (sep_len == 0) {
+        obj_setErrorCode(self, 1);
+        obj_setSysOut(self, "ValueError: empty separator");
+        goto __exit;
+    }
+
+    size_t start = 0;
+    int splits = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        // Check if the current position can accommodate the separator
+        if (i <= len - sep_len && memcmp(data + i, sep_data, sep_len) == 0) {
+            // Found a separator, slice the bytearray from start to current
+            // position
+            uint8_t* target_data = data + start;
+            size_t target_len = i - start;
+            pikaList_append(list, arg_newBytes(target_data, target_len));
+
+            // Move the start index past the separator
+            start = i + sep_len;
+            i = start - 1;  // Adjust `i` as it will be incremented by the loop
+
+            // Increment the split count and check if we've reached the maximum
+            // number of splits
+            splits++;
+            if (max_splite != -1 && splits >= max_splite) {
+                break;
+            }
+        }
+    }
+
+    // Add the last segment if any remains
+    if (start < len) {
+        uint8_t* target_data = data + start;
+        size_t target_len = len - start;
+        pikaList_append(list, arg_newBytes(target_data, target_len));
+    }
+
+    // After loop
+    if (sep_len > 0 && start == len) {
+        pikaList_append(list, arg_newBytes((uint8_t*)"", 0));
+    }
+
+__exit:
+    if (sep_need_free) {
+        arg_deinit(sep);
+    }
+    return list;
 }
 
 int32_t pikaDict_forEach(PikaObj* self,
