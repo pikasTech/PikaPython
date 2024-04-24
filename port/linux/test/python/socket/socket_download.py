@@ -31,12 +31,18 @@ def http_download_file(url: str, file_path: str, buff_size=1024):
     # Open file to write
     f = open(file_path, 'wb')  # Manually open the file
     data_received = False
-    # try:
+    head_received = False
     while True:
-        data = sock.recv(buff_size)
+        try:
+            data = sock.recv(buff_size)
+        except:
+            print('End of data')
+            break
         print("[Data received:", len(data), ']')
-        sz = f.write(data)
-        print(data.decode())
+        if head_received:
+            sz = f.write(data)
+            # print("Data written:", sz)
+        # print(data.decode())
         if len(data) == 0:
             print("Length of data:", len(data))
             if not data_received:
@@ -48,16 +54,13 @@ def http_download_file(url: str, file_path: str, buff_size=1024):
         data_received = True
 
         # Handle the end of the HTTP header if it's still present
-        if b'\r\n\r\n' in data:
-            print(data.split(b'\r\n\r\n', 1))
-            header, data = data.split(b'\r\n\r\n')
-            print("Header:", header.decode())
-            print("Data:", data.decode())
-    # except:
-    #     print("Error while receiving data")
-    #     f.close()
-    #     sock.close()
-    #     return -1
+        if head_received == False:
+            if b'\r\n\r\n' in data:
+                # print("Header received", data)
+                head_received = True
+                aplited = data.split(b'\r\n\r\n', 1)
+                if len(aplited) == 2:
+                    sz = f.write(aplited[1])
 
     # Close file and socket manually
     f.close()
@@ -66,4 +69,5 @@ def http_download_file(url: str, file_path: str, buff_size=1024):
     return 0
 
 
-http_download_file("http://pikapython.com", "pikapython.html")
+assert http_download_file("http://pikapython.com", "pikapython.html") == 0
+print("PASS")
