@@ -12,6 +12,7 @@ EVENT_SIGAL_IO_RISING_EDGE = 0x01
 EVENT_SIGAL_IO_FALLING_EDGE = 0x02
 
 callback_times = 0
+loop_times = 0
 
 
 def callBack1(signal):
@@ -42,4 +43,4 @@ def insert_task():
 
 
 # launch a thread to enable evnet_thread
-_thread.start_new_thread(thread_test, ())
+# _thread.start_new_thread(thread_test, ())

@@ -2987,10 +2987,14 @@ PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
     };
 #else
     if (NULL != eventData && !_VM_is_first_lock()) {
+#if PIKA_EVENT_THREAD_ENABLE
+        _VM_lock_init();
+#else
         pika_platform_printf(
             "Error: can not send arg event data without thread support\r\n");
         arg_deinit(eventData);
         return PIKA_RES_ERR_RUNTIME_ERROR;
+#endif
     }
     if (NULL == eventData) {
         // for event signal
@@ -3000,11 +3004,19 @@ PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
         }
     }
     /* using multi thread */
-    if (_VM_is_first_lock()) {
+    if (pika_GIL_isInit()) {
+        /* python thread is running */
+        if (g_PikaVMState.vm_cnt != 0) {
+            /* wait python thread get first lock */
+            while (!_VM_is_first_lock()) {
+                pika_platform_thread_yield();
+            }
+        }
         pika_GIL_ENTER();
 #if PIKA_EVENT_THREAD_ENABLE
         if (!g_PikaVMState.event_thread) {
-            // avoid _VMEvent_pickupEvent() in _time.c as soon as possible
+            // avoid _VMEvent_pickupEvent() in _time.c as soon as
+            // possible
             g_PikaVMState.event_thread = pika_platform_thread_init(
                 "pika_event", _thread_event, NULL, PIKA_EVENT_THREAD_STACK_SIZE,
                 PIKA_THREAD_PRIO, PIKA_THREAD_TICK);

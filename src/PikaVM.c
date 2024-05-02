@@ -237,6 +237,8 @@ void _VMEvent_deinit(void) {
         while (!g_PikaVMState.event_thread_exit_done) {
             pika_platform_thread_yield();
         }
+        g_PikaVMState.event_thread_exit = 0;
+        g_PikaVMState.event_thread_exit_done = 0;
         pika_GIL_ENTER();
     }
 #endif
