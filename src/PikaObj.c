@@ -3006,11 +3006,9 @@ PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
     /* using multi thread */
     if (pika_GIL_isInit()) {
         /* python thread is running */
-        if (g_PikaVMState.vm_cnt != 0) {
-            /* wait python thread get first lock */
-            while (!_VM_is_first_lock()) {
-                pika_platform_thread_yield();
-            }
+        /* wait python thread get first lock */
+        while (!_VM_is_first_lock() && g_PikaVMState.vm_cnt != 0) {
+            pika_platform_thread_yield();
         }
         pika_GIL_ENTER();
 #if PIKA_EVENT_THREAD_ENABLE
