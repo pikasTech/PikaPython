@@ -1,4 +1,4 @@
-﻿from PikaObj import *
+from PikaObj import *
 
 
 def __init__(self): ...

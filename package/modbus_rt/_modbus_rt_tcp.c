@@ -644,7 +644,9 @@ PikaObj* _modbus_rt__tcp__slave_read_regs(PikaObj *self, int type, int addr, Pik
             return NULL;
         }
     }
+    pika_GIL_EXIT();
     ret = modbus_tcp_excuse(dev, MODBUS_READ, type, addr, quantity, dest);
+    pika_GIL_ENTER();
     if(MODBUS_RT_EOK != ret) {
         modbus_rt_free(dest);
         pika_platform_printf("modbus_tcp_read_regs: modbus_tcp_excuse error, code: %d.\n", ret);
@@ -728,7 +730,9 @@ int _modbus_rt__tcp__slave_write_regs(PikaObj *self, int type, int addr, PikaTup
         for(int i = 0; i < len_list; i++) {
             dest[i] =  pikaList_getInt(_list, i);
         }
+        pika_GIL_EXIT();
         ret = modbus_tcp_excuse(dev, MODBUS_WRITE, type, addr, quantity, dest);
+        pika_GIL_ENTER();
         if(MODBUS_RT_EOK != ret) {
             modbus_rt_free(dest);
             pika_platform_printf("modbus_tcp_write_regs: modbus_tcp_excuse error, code: %d.\n", ret);
@@ -739,7 +743,9 @@ int _modbus_rt__tcp__slave_write_regs(PikaObj *self, int type, int addr, PikaTup
         for(int i = 0; i < len_list; i++){
             dest_r[i] =  pikaList_getInt(_list, i);
         }
+        pika_GIL_EXIT();
         ret = modbus_tcp_excuse(dev, MODBUS_WRITE, type, addr, quantity, dest_r);
+        pika_GIL_ENTER();
         if(MODBUS_RT_EOK != ret) {
             modbus_rt_free(dest);
             pika_platform_printf("modbus_tcp_write_regs: modbus_tcp_excuse error, code: %d.\n", ret);
@@ -801,7 +807,9 @@ PikaObj* _modbus_rt__tcp__master_read_list(PikaObj *self, int slave, int fuction
             return NULL;
         }
     }
+    pika_GIL_EXIT();
     ret = modbus_tcp_excuse(dev, slave, fuction, addr, quantity, dest);
+    pika_GIL_ENTER();
     if(MODBUS_RT_EOK != ret) {
         modbus_rt_free(dest);
         pika_platform_printf("modbus_tcp_read_list: modbus_tcp_excuse error, code: %d.\n", ret);
@@ -852,7 +860,9 @@ int _modbus_rt__tcp__master_write_int(PikaObj *self, int slave, int fuction, int
         return 0;
     }
     int value = arg_getInt(arg_0);
+    pika_GIL_EXIT();
     ret = modbus_tcp_excuse(dev, slave, fuction, addr, 1, &value);
+    pika_GIL_ENTER();
     if(MODBUS_RT_EOK != ret) {
         pika_platform_printf("modbus_tcp_write_int: modbus_tcp_excuse error, code: %d.\n", ret);
         return 0;
@@ -925,7 +935,9 @@ int _modbus_rt__tcp__master_write_list(PikaObj *self, int slave, int fuction, in
         for(int i = 0; i < len_list; i++) {
             dest[i] =  pikaList_getInt(_list, i);
         }
+        pika_GIL_EXIT();
         ret = modbus_tcp_excuse(dev, slave, fuction, addr, quantity, dest);
+        pika_GIL_ENTER();
         if(MODBUS_RT_EOK != ret) {
             modbus_rt_free(dest);
             pika_platform_printf("modbus_tcp_write_int: modbus_tcp_excuse error, code: %d.\n", ret);
@@ -936,7 +948,9 @@ int _modbus_rt__tcp__master_write_list(PikaObj *self, int slave, int fuction, in
         for(int i = 0; i < len_list; i++){
             dest_r[i] =  pikaList_getInt(_list, i);
         }
+        pika_GIL_EXIT();
         ret = modbus_tcp_excuse(dev, slave, fuction, addr, quantity, dest_r);
+        pika_GIL_ENTER();
         if(MODBUS_RT_EOK != ret) {
             modbus_rt_free(dest);
             pika_platform_printf("modbus_tcp_write_int: modbus_tcp_excuse error, code: %d.\n", ret);

@@ -806,6 +806,8 @@ void obj_printModules(PikaObj* self);
     } while (0)
 #endif
 
+void pika_debug_bytes(uint8_t* buff, size_t len);
+
 #define pika_assert_arg_alive(__arg)                              \
     do {                                                          \
         if (NULL != (__arg)) {                                    \
