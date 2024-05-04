@@ -2046,7 +2046,7 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
             pika_platform_printf("[   Info] Recived size: %d\r\n", size);
             if (magic_code[3] == 'o') {
 #if PIKA_SHELL_SAVE_BYTECODE_ENABLE
-                _save_file(PIKA_SHELL_SAVE_BYTECODE_PATH, (uint8_t*)buff, size);
+                _save_file(PIKA_SHELL_SAVE_BYTECODE_PATH, (uint8_t*)recv, size);
 #endif
                 pika_platform_printf(
                     "=============== [ RUN] ===============\r\n");
