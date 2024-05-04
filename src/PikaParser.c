@@ -2351,13 +2351,10 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
         AST_setNodeAttr(oAst, "global", sGlobalList);
         goto __block_matched;
     }
-    if (strIsStartWith(sLineStart, "del ") ||
-        strIsStartWith(sLineStart, "del(")) {
+    if (strIsStartWith(sLineStart, "del")) {
         sStmt = "";
-        char* sDelDir = NULL;
-        if (sLineStart[3] == '(') {
-            sDelDir = strsCut(&buffs, sLineStart, '(', ')');
-        } else {
+        char* sDelDir = strsCut(&buffs, sLineStart, '(', ')');
+        if (!sDelDir){
             sDelDir = sLineStart + sizeof("del ") - 1;
         }
         sDelDir = Cursor_getCleanStmt(&buffs, sDelDir);
