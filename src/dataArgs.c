@@ -58,7 +58,6 @@ void* args_getPtr(Args* self, char* name) {
     if (NULL == arg) {
         return NULL;
     }
-
     pointer = arg_getPtr(arg);
     return pointer;
 }

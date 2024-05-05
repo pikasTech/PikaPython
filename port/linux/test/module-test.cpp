@@ -30,10 +30,11 @@ TEST(module, while_loop) {
     /* run */
     obj_run(pikaMain,
             "import test_module1\n"
-            "test_module1.while_loop()\n");
+            "test_module1.while_loop()\n"
+            "test_module1");
     /* collect */
     /* assert */
-    EXPECT_STREQ("4\r\n", log_buff[0]);
+    EXPECT_STREQ("4\r\n", log_buff[1]);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

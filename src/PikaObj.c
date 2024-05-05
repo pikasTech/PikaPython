@@ -559,14 +559,23 @@ PikaObj* _pika_dict_new(int num_args, ...) {
 }
 
 NativeProperty* obj_getProp(PikaObj* self) {
-    NativeProperty* prop = obj_getPtr(self, "@p");
+    Arg* aProp = obj_getArg(self, "@p");
     PikaObj* class_obj = NULL;
-    if (NULL == prop) {
+    if (NULL == aProp) {
         if (NULL != self->constructor) {
             class_obj = obj_getClassObj(self);
-            prop = obj_getPtr(class_obj, "@p");
+            aProp = obj_getArg(class_obj, "@p");
         }
     }
+    NativeProperty* prop = NULL;
+    if (aProp == NULL) {
+        goto __exit;
+    }
+    if (arg_getType(aProp) != ARG_TYPE_POINTER) {
+        goto __exit;
+    }
+    prop = (NativeProperty*)arg_getPtr(aProp);
+__exit:
     if (NULL != class_obj) {
         obj_deinit_no_del(class_obj);
     }

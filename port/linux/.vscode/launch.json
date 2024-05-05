@@ -24,7 +24,7 @@
                 // "--gtest_filter=vm.test_cmodule_import_as"
                 // "--gtest_filter=vm.subsrc_import"
                 // "--gtest_filter=event.event_thread"
-                "--gtest_filter=*mqtt*"
+                // "--gtest_filter=module.while_loop"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
