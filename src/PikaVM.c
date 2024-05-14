@@ -92,6 +92,10 @@ int pika_GIL_ENTER(void) {
     return ret;
 }
 
+int pika_GIL_getBareLock(void){
+    return g_pikaGIL.mutex.bare_lock;
+}
+
 int pika_GIL_EXIT(void) {
     if (!g_pikaGIL.mutex.is_init) {
         g_pikaGIL.mutex.bare_lock = 0;

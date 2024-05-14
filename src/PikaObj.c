@@ -559,12 +559,12 @@ PikaObj* _pika_dict_new(int num_args, ...) {
 }
 
 NativeProperty* obj_getProp(PikaObj* self) {
-    Arg* aProp = obj_getArg(self, "@p");
+    Arg* aProp = obj_getArg(self, "@p_");
     PikaObj* class_obj = NULL;
     if (NULL == aProp) {
         if (NULL != self->constructor) {
             class_obj = obj_getClassObj(self);
-            aProp = obj_getArg(class_obj, "@p");
+            aProp = obj_getArg(class_obj, "@p_");
         }
     }
     NativeProperty* prop = NULL;
@@ -694,7 +694,7 @@ void* getNewClassObjFunByName(PikaObj* obj, char* name) {
 PikaObj* removeMethodInfo(PikaObj* thisClass) {
 #if PIKA_METHOD_CACHE_ENABLE
 #else
-    args_removeArg(thisClass->list, args_getArg(thisClass->list, "@p"));
+    args_removeArg(thisClass->list, args_getArg(thisClass->list, "@p_"));
 #endif
     return thisClass;
 }
@@ -2962,7 +2962,7 @@ void pika_debug_bytes(uint8_t* buff, size_t len) {
     for (size_t i = 0; i < len; i++) {
         pika_debug_raw("0x%02X", buff[i]);
         if (i < len - 1) {
-            printf(",");
+            pika_debug_raw(",");
         }
     }
     pika_debug_raw("]\n");
@@ -3016,7 +3016,16 @@ PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
     if (pika_GIL_isInit()) {
         /* python thread is running */
         /* wait python thread get first lock */
-        while (!_VM_is_first_lock() && g_PikaVMState.vm_cnt != 0) {
+        while (1){
+            if (_VM_is_first_lock()){
+                break;
+            }
+            if (pika_GIL_getBareLock() == 0){
+                break;
+            }
+            if (g_PikaVMState.vm_cnt == 0){
+                break;
+            }
             pika_platform_thread_yield();
         }
         pika_GIL_ENTER();

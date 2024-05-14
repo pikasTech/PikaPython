@@ -207,7 +207,7 @@ extern "C" {
     #endif
 
     #ifndef PIKA_STACK_BUFF_SIZE
-        #define PIKA_STACK_BUFF_SIZE 256
+        #define PIKA_STACK_BUFF_SIZE 512
     #endif
 
     #ifndef PIKA_NAME_BUFF_SIZE

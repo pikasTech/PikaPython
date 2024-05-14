@@ -778,7 +778,7 @@ const MethodProp floatMethod = {
 
 void _obj_updateProxyFlag(PikaObj* self);
 #define obj_setClass(_self, _method)                        \
-    obj_setPtr((_self), "@p", (void*)&pika_class(_method)); \
+    obj_setPtr((_self), "@p_", (void*)&pika_class(_method)); \
     _obj_updateProxyFlag((_self))
 
 Arg* _obj_getPropArg(PikaObj* obj, char* name);
@@ -840,6 +840,8 @@ uint32_t pikaGC_printFreeList(void);
 
 int pika_GIL_EXIT(void);
 int pika_GIL_ENTER(void);
+int pika_GIL_getBareLock(void);
+
 
 int32_t pika_debug_find_break_point_pc(char* pyFile, uint32_t pyLine);
 
