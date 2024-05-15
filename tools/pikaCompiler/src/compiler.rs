@@ -238,6 +238,23 @@ impl Compiler {
         Err(std::io::Error::from(std::io::ErrorKind::NotFound))
     }
 
+    // Check if a given path is a folder.
+    fn check_is_folder(&self, folder_name: &str) -> bool {
+        let folder_path = format!("{}{}", self.source_path, folder_name);
+        Compiler::is_folder(folder_path).is_ok()
+    }
+
+    // Function to check if the given path is a folder.
+    fn is_folder(path: String) -> io::Result<()> {
+        let new_path = transform_path(&path);
+        let path = Path::new(&new_path);
+        if path.exists() && path.is_dir() {
+            Ok(())
+        } else {
+            Err(io::Error::from(io::ErrorKind::NotFound))
+        }
+    }
+
     pub fn analyse_py_package_main(self: Compiler, file_name: String) -> Compiler {
         return self.__do_analyse_file(file_name, PackageType::PyPackageTop);
     }
@@ -272,6 +289,12 @@ impl Compiler {
     }
 
     pub fn import_module_ex(self, file_name: String, from_scan: bool) -> Compiler {
+        // Check for folder
+        if self.check_is_folder(&file_name) {
+            println!("    skip folder: {}{}...", self.source_path, file_name);
+            return self;
+        }
+
         // Check for py.o file.
         if self.try_open_file(&file_name, "py.o") {
             println!("    found {}{}.py.o...", self.source_path, file_name);

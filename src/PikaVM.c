@@ -92,16 +92,13 @@ int pika_GIL_ENTER(void) {
     return ret;
 }
 
-int pika_GIL_getBareLock(void){
+int pika_GIL_getBareLock(void) {
     return g_pikaGIL.mutex.bare_lock;
 }
 
 int pika_GIL_EXIT(void) {
-    if (!g_pikaGIL.mutex.is_init) {
+    if (!g_pikaGIL.mutex.is_first_lock || !g_pikaGIL.mutex.is_init) {
         g_pikaGIL.mutex.bare_lock = 0;
-        return 0;
-    }
-    if (!g_pikaGIL.mutex.is_first_lock) {
         return 0;
     }
     return pika_thread_recursive_mutex_unlock(&g_pikaGIL);
@@ -2658,6 +2655,15 @@ static void _OPT_ADD(OperatorInfo* op) {
         return;
     }
 #endif
+    // Check if either argument is a string and the other is not a string
+    if ((op->t1 == ARG_TYPE_STRING && op->t2 != ARG_TYPE_STRING) ||
+        (op->t2 == ARG_TYPE_STRING && op->t1 != ARG_TYPE_STRING)) {
+        PikaVMFrame_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
+        PikaVMFrame_setSysOut(
+            op->vm, "TypeError: unsupported operand + between str and non-str");
+        op->res = NULL;
+        return;
+    }
     if ((op->t1 == ARG_TYPE_STRING) && (op->t2 == ARG_TYPE_STRING)) {
         char* num1_s = NULL;
         char* num2_s = NULL;

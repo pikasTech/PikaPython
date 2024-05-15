@@ -3016,14 +3016,14 @@ PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
     if (pika_GIL_isInit()) {
         /* python thread is running */
         /* wait python thread get first lock */
-        while (1){
-            if (_VM_is_first_lock()){
+        while (1) {
+            if (_VM_is_first_lock()) {
                 break;
             }
-            if (pika_GIL_getBareLock() == 0){
+            if (g_PikaVMState.vm_cnt == 0) {
                 break;
             }
-            if (g_PikaVMState.vm_cnt == 0){
+            if (pika_GIL_getBareLock() == 0) {
                 break;
             }
             pika_platform_thread_yield();
