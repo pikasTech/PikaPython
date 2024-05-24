@@ -565,7 +565,8 @@ char* Lexer_getTokenStream(Args* outBuffs, char* sStmt) {
 
         /* match devider*/
         if (('(' == c0) || (')' == c0) || (',' == c0) || ('[' == c0) ||
-            (']' == c0) || (':' == c0) || ('{' == c0) || ('}' == c0)) {
+            (']' == c0) || (':' == c0) || ('{' == c0) || ('}' == c0) ||
+            (';' == c0)) {
             aTokenStream =
                 Lexer_setSymbel(aTokenStream, sStmt, i, &iSymbolStartIndex);
             char sContent[2] = {0};
@@ -2704,14 +2705,54 @@ static char* Suger_import(Args* outbuffs, char* sLine) {
     return sLineAfter;
 }
 
+static char* Suger_semicolon(Args* outbuffs, char* sLine) {
+    Args buffs = {0};
+    char* sStmt = sLine;
+    char* sStmtAfter = "";
+    if (Cursor_count(sLine, TOKEN_devider, ";") < 1) {
+        return sLine;
+    }
+    while (1) {
+        char* sStmtItem = Cursor_popToken(&buffs, &sStmt, ";");
+        if (sStmtItem[0] == '\0') {
+            break;
+        };
+        sStmtItem = strsAppend(&buffs, sStmtItem, "\n");
+        sStmtAfter = strsAppend(&buffs, sStmtAfter, sStmtItem);
+    }
+    sStmtAfter[strGetSize(sStmtAfter) - 1] = '\0';
+    sStmtAfter = strsCopy(outbuffs, sStmtAfter);
+    strsDeinit(&buffs);
+    return sStmtAfter;
+}
+
+typedef char* (*Suger_processor)(Args*, char*);
+const Suger_processor Suger_processor_list[] = {Suger_import, Suger_semicolon,
+                                                Suger_multiAssign};
+
+static char* Parser_sugerProcessOnce(Args* outbuffs, char* sLine) {
+    for (uint32_t i = 0; i < sizeof(Suger_processor_list) / sizeof(void*);
+         i++) {
+        sLine = Suger_processor_list[i](outbuffs, sLine);
+        if (strCountSign(sLine, '\n') > 1) {
+            break;
+        }
+    }
+    return sLine;
+}
+
 static char* Parser_sugerProcess(Args* outbuffs, char* sLine) {
     /* process import */
     int32_t block_deepth = Parser_getPyLineBlockDeepth(sLine);
     if (block_deepth < 0) {
         return NULL;
     }
+    char* sLineOrigin = sLine;
     sLine = sLine + block_deepth * PIKA_BLOCK_SPACE;
-    sLine = Suger_import(outbuffs, sLine);
+    sLine = Parser_sugerProcessOnce(outbuffs, sLine);
+    if (strEqu(sLineOrigin, sLine)) {
+        return sLine;
+    }
     /* process multi assign */
     int iLineNum = strCountSign(sLine, '\n') + 1;
     Arg* aLine = arg_newStr("");
@@ -2720,7 +2761,7 @@ static char* Parser_sugerProcess(Args* outbuffs, char* sLine) {
             aLine = arg_strAppend(aLine, "\n");
         }
         char* sSingleLine = strsPopToken(outbuffs, &sLine, '\n');
-        sSingleLine = Suger_multiAssign(outbuffs, sSingleLine);
+        sSingleLine = Parser_sugerProcess(outbuffs, sSingleLine);
         aLine = arg_strAppend(aLine, sSingleLine);
     }
     sLine = strsCopy(outbuffs, arg_getStr(aLine));
