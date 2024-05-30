@@ -617,7 +617,7 @@ PIKA_WEAK void pika_platform_thread_yield(void) {
 #elif PIKA_RTTHREAD_ENABLE
     rt_thread_yield();
 #elif PIKA_ZeusOS_ENABLE
-    zos_task_yield();
+    zos_task_msleep(1);
 #else
     return;
 #endif
@@ -848,7 +848,10 @@ PIKA_WEAK int pika_platform_thread_mutex_init(pika_platform_thread_mutex_t* m) {
     m->mutex = rt_mutex_create("pika_platform_mutex", RT_IPC_FLAG_PRIO);
     return 0;
 #elif PIKA_ZeusOS_ENABLE
-    m->mutex = zos_mutex_create("pika_platform_mutex",ZOS_FALSE);
+    static int mutex_count = 0;
+    char mutex_name[ZOS_NAME_MAX+1] = {0};
+    zos_sprintf(mutex_name, "pika_mutex%d", mutex_count++);
+    m->mutex = zos_mutex_create(mutex_name,ZOS_FALSE);
     return 0;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
@@ -927,10 +930,23 @@ PIKA_WEAK int pika_platform_thread_mutex_destroy(
 }
 
 int pika_thread_recursive_mutex_init(pika_thread_recursive_mutex_t* m) {
-    int ret = pika_platform_thread_mutex_init(&m->mutex);
+    int ret = 0;
+#if PIKA_ZeusOS_ENABLE
+    static int mutex_count = 0;
+    char mutex_name[ZOS_NAME_MAX+1] = {0};
+    zos_sprintf(mutex_name, "pika_rec_mutex%d", mutex_count++);
+    m->mutex.mutex = zos_mutex_create(mutex_name,ZOS_TRUE);
+    if (m->mutex.mutex == ZOS_NULL)
+    {
+        return -1;
+    }
+#else
+    ret = pika_platform_thread_mutex_init(&m->mutex);
+
     if (ret != 0) {
         return ret;
     }
+#endif
     m->owner = 0;
     m->lock_times = 0;
     return 0;
@@ -942,7 +958,12 @@ int pika_thread_recursive_mutex_lock(pika_thread_recursive_mutex_t* m) {
         m->lock_times++;
         return 0;
     }
-    int ret = pika_platform_thread_mutex_lock(&m->mutex);
+    int ret = 0;
+#if PIKA_ZeusOS_ENABLE
+    ret = zos_mutex_recursive_lock(m->mutex.mutex,ZOS_WAIT_FOREVER);
+#else
+    ret = pika_platform_thread_mutex_lock(&m->mutex);
+#endif
     if (ret != 0) {
         return ret;
     }
@@ -957,7 +978,12 @@ int pika_thread_recursive_mutex_trylock(pika_thread_recursive_mutex_t* m) {
         m->lock_times++;
         return 0;
     }
-    int ret = pika_platform_thread_mutex_trylock(&m->mutex);
+    int ret = 0;
+#if PIKA_ZeusOS_ENABLE
+    ret = zos_mutex_recursive_lock(m->mutex.mutex,0);
+#else
+    ret = pika_platform_thread_mutex_trylock(&m->mutex);
+#endif
     if (ret != 0) {
         return ret;
     }
@@ -973,13 +999,23 @@ int pika_thread_recursive_mutex_unlock(pika_thread_recursive_mutex_t* m) {
     m->lock_times--;
     if (m->lock_times == 0) {
         m->owner = 0;
-        return pika_platform_thread_mutex_unlock(&m->mutex);
+#if PIKA_ZeusOS_ENABLE
+    return zos_mutex_recursive_unlock(m->mutex.mutex);
+#else
+    return pika_platform_thread_mutex_unlock(&m->mutex);
+#endif
+        
     }
     return 0;
 }
 
 int pika_thread_recursive_mutex_destroy(pika_thread_recursive_mutex_t* m) {
+#if PIKA_ZeusOS_ENABLE
+    return zos_mutex_destroy(m->mutex.mutex);
+#else
     return pika_platform_thread_mutex_destroy(&m->mutex);
+#endif
+    
 }
 
 PIKA_WEAK void pika_platform_thread_timer_init(pika_platform_timer_t* timer) {
