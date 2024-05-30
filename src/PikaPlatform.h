@@ -116,6 +116,9 @@ extern "C" {
 #if defined(__RTTHREAD__) && PIKA_RTTHREAD_ENABLE
 #include <rtthread.h>
 #define pika_platform_printf(...) rt_kprintf(__VA_ARGS__)
+#elif defined(__ZeusOS__) && PIKA_ZeusOS_ENABLE
+#include "zos.h"
+#define pika_platform_printf(...) zos_kprintf(__VA_ARGS__)
 #endif
 
 typedef enum {
@@ -289,6 +292,11 @@ typedef struct pika_platform_thread {
 typedef struct pika_platform_thread {
     rt_thread_t thread;
 } pika_platform_thread_t;
+#elif PIKA_ZeusOS_ENABLE
+#include "zos.h"
+typedef struct pika_platform_thread {
+    zos_task_t thread;
+} pika_platform_thread_t;
 #else
 typedef struct pika_platform_thread {
     void* platform_data;
@@ -319,6 +327,9 @@ typedef SemaphoreHandle_t pika_mutex_platform_data_t;
 #elif PIKA_RTTHREAD_ENABLE
 #include <rtthread.h>
 typedef rt_mutex_t pika_mutex_platform_data_t;
+#elif PIKA_ZeusOS_ENABLE
+#include "zos.h"
+typedef zos_mutex_t pika_mutex_platform_data_t;
 #else
 typedef void* pika_mutex_platform_data_t;
 #endif
@@ -361,6 +372,11 @@ typedef struct pika_platform_timer {
 } pika_platform_timer_t;
 #elif PIKA_RTTHREAD_ENABLE
 #include <rtthread.h>
+typedef struct pika_platform_timer {
+    uint32_t time;
+} pika_platform_timer_t;
+#elif PIKA_ZeusOS_ENABLE
+#include "zos.h"
 typedef struct pika_platform_timer {
     uint32_t time;
 } pika_platform_timer_t;
