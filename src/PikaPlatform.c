@@ -197,7 +197,7 @@ PIKA_WEAK void pika_platform_sleep_ms(uint32_t ms) {
     Sleep(ms);
 #elif PIKA_RTTHREAD_ENABLE
     rt_thread_mdelay(ms);
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     zos_task_msleep(ms);
 #elif PIKA_FREERTOS_ENABLE
     vTaskDelay(ms / portTICK_PERIOD_MS);
@@ -225,7 +225,7 @@ PIKA_WEAK int64_t pika_platform_get_tick(void) {
 #elif PIKA_RTTHREAD_ENABLE
     uint32_t tick = rt_tick_get() * 1000;
     return (uint32_t)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     uint32_t tick = zos_tick_get() * 1000;
     return (uint32_t)((tick + ZOS_TICK_PER_SECOND - 1) / ZOS_TICK_PER_SECOND);
 #elif defined(_WIN32) && !defined(CROSS_BUILD)
@@ -616,7 +616,7 @@ PIKA_WEAK void pika_platform_thread_yield(void) {
     return;
 #elif PIKA_RTTHREAD_ENABLE
     rt_thread_yield();
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     zos_task_msleep(1);
 #else
     return;
@@ -696,7 +696,7 @@ PIKA_WEAK pika_platform_thread_t* pika_platform_thread_init(
     } else {
         return thread;
     }
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     pika_platform_thread_t* thread;
     static int thread_count = 0;
     char task_name[ZOS_NAME_MAX+1] = {0};
@@ -727,7 +727,7 @@ PIKA_WEAK uint64_t pika_platform_thread_self(void) {
     return (uint64_t)xTaskGetCurrentTaskHandle();
 #elif PIKA_RTTHREAD_ENABLE
     return (uint64_t)(uintptr_t)rt_thread_self();
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     return (uint64_t)zos_task_self();
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
@@ -739,7 +739,7 @@ PIKA_WEAK void pika_platform_thread_startup(pika_platform_thread_t* thread) {
     (void)thread;
 #if PIKA_RTTHREAD_ENABLE
     rt_thread_startup(thread->thread);
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     zos_task_startup(thread->thread);
 #endif
 }
@@ -753,7 +753,7 @@ PIKA_WEAK void pika_platform_thread_stop(pika_platform_thread_t* thread) {
     vTaskSuspend(thread->thread);
 #elif PIKA_RTTHREAD_ENABLE
     rt_thread_suspend(thread->thread);
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     zos_task_suspend(thread->thread);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
@@ -769,7 +769,7 @@ PIKA_WEAK void pika_platform_thread_start(pika_platform_thread_t* thread) {
     vTaskResume(thread->thread);
 #elif PIKA_RTTHREAD_ENABLE
     rt_thread_resume(thread->thread);
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     zos_task_resume(thread->thread);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
@@ -797,7 +797,7 @@ PIKA_WEAK void pika_platform_thread_destroy(pika_platform_thread_t* thread) {
         pikaFree(thread, sizeof(pika_platform_thread_t));
         return;
     }
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     if (NULL != thread) {
         zos_task_destroy(thread->thread);
         pikaFree(thread, sizeof(pika_platform_thread_t));
@@ -826,7 +826,7 @@ PIKA_WEAK void pika_platform_thread_exit(pika_platform_thread_t* thread) {
     }
     rt_thread_delete(thread->thread);
     return;
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     if (NULL == thread) {
         zos_task_exit();
         return;
@@ -847,7 +847,7 @@ PIKA_WEAK int pika_platform_thread_mutex_init(pika_platform_thread_mutex_t* m) {
 #elif PIKA_RTTHREAD_ENABLE
     m->mutex = rt_mutex_create("pika_platform_mutex", RT_IPC_FLAG_PRIO);
     return 0;
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     static int mutex_count = 0;
     char mutex_name[ZOS_NAME_MAX+1] = {0};
     zos_sprintf(mutex_name, "pika_mutex%d", mutex_count++);
@@ -869,7 +869,7 @@ PIKA_WEAK int pika_platform_thread_mutex_lock(pika_platform_thread_mutex_t* m) {
     return -1;
 #elif PIKA_RTTHREAD_ENABLE
     return rt_mutex_take((m->mutex), RT_WAITING_FOREVER);
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     return zos_mutex_lock(m->mutex,ZOS_WAIT_FOREVER);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
@@ -888,7 +888,7 @@ PIKA_WEAK int pika_platform_thread_mutex_trylock(
     return -1;
 #elif PIKA_RTTHREAD_ENABLE
     return rt_mutex_take((m->mutex), 0);
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     return zos_mutex_lock(m->mutex,0);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
@@ -904,7 +904,7 @@ PIKA_WEAK int pika_platform_thread_mutex_unlock(
     return xSemaphoreGive(m->mutex);
 #elif PIKA_RTTHREAD_ENABLE
     return rt_mutex_release((m->mutex));
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     return zos_mutex_unlock(m->mutex);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
@@ -921,7 +921,7 @@ PIKA_WEAK int pika_platform_thread_mutex_destroy(
     return 0;
 #elif PIKA_RTTHREAD_ENABLE
     return rt_mutex_delete((m->mutex));
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     return zos_mutex_destroy(m->mutex);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
@@ -931,7 +931,7 @@ PIKA_WEAK int pika_platform_thread_mutex_destroy(
 
 int pika_thread_recursive_mutex_init(pika_thread_recursive_mutex_t* m) {
     int ret = 0;
-#if PIKA_ZeusOS_ENABLE
+#if PIKA_ZEUSOS_ENABLE
     static int mutex_count = 0;
     char mutex_name[ZOS_NAME_MAX+1] = {0};
     zos_sprintf(mutex_name, "pika_rec_mutex%d", mutex_count++);
@@ -959,7 +959,7 @@ int pika_thread_recursive_mutex_lock(pika_thread_recursive_mutex_t* m) {
         return 0;
     }
     int ret = 0;
-#if PIKA_ZeusOS_ENABLE
+#if PIKA_ZEUSOS_ENABLE
     ret = zos_mutex_recursive_lock(m->mutex.mutex,ZOS_WAIT_FOREVER);
 #else
     ret = pika_platform_thread_mutex_lock(&m->mutex);
@@ -979,7 +979,7 @@ int pika_thread_recursive_mutex_trylock(pika_thread_recursive_mutex_t* m) {
         return 0;
     }
     int ret = 0;
-#if PIKA_ZeusOS_ENABLE
+#if PIKA_ZEUSOS_ENABLE
     ret = zos_mutex_recursive_lock(m->mutex.mutex,0);
 #else
     ret = pika_platform_thread_mutex_trylock(&m->mutex);
@@ -999,7 +999,7 @@ int pika_thread_recursive_mutex_unlock(pika_thread_recursive_mutex_t* m) {
     m->lock_times--;
     if (m->lock_times == 0) {
         m->owner = 0;
-#if PIKA_ZeusOS_ENABLE
+#if PIKA_ZEUSOS_ENABLE
     return zos_mutex_recursive_unlock(m->mutex.mutex);
 #else
     return pika_platform_thread_mutex_unlock(&m->mutex);
@@ -1010,7 +1010,7 @@ int pika_thread_recursive_mutex_unlock(pika_thread_recursive_mutex_t* m) {
 }
 
 int pika_thread_recursive_mutex_destroy(pika_thread_recursive_mutex_t* m) {
-#if PIKA_ZeusOS_ENABLE
+#if PIKA_ZEUSOS_ENABLE
     return zos_mutex_destroy(m->mutex.mutex);
 #else
     return pika_platform_thread_mutex_destroy(&m->mutex);
@@ -1028,7 +1028,7 @@ PIKA_WEAK void pika_platform_thread_timer_init(pika_platform_timer_t* timer) {
     timer->time = 0;
 #elif PIKA_RTTHREAD_ENABLE
     timer->time = 0;
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     timer->time = 0;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
@@ -1056,7 +1056,7 @@ PIKA_WEAK void pika_platform_thread_timer_cutdown(pika_platform_timer_t* timer,
     timer->time =
         (uint32_t)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
     timer->time += timeout;
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     zos_uint32_t tick = zos_tick_get() * 1000;
     timer->time =
         (uint32_t)((tick + ZOS_TICK_PER_SECOND - 1) / ZOS_TICK_PER_SECOND);
@@ -1086,7 +1086,7 @@ PIKA_WEAK char pika_platform_thread_timer_is_expired(
     uint32_t time =
         (uint32_t)((tick + RT_TICK_PER_SECOND - 1) / RT_TICK_PER_SECOND);
     return time > timer->time ? 1 : 0;
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     uint32_t tick = zos_tick_get() * 1000;
     uint32_t time =
         (uint32_t)((tick + ZOS_TICK_PER_SECOND - 1) / ZOS_TICK_PER_SECOND);
@@ -1124,7 +1124,7 @@ PIKA_WEAK int pika_platform_thread_timer_remain(pika_platform_timer_t* timer) {
         return 0;
     }
     return timer->time - now;
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     uint32_t now;
     uint32_t tick = zos_tick_get() * 1000;
     now = (uint32_t)((tick + ZOS_TICK_PER_SECOND - 1) / ZOS_TICK_PER_SECOND);
@@ -1147,7 +1147,7 @@ PIKA_WEAK unsigned long pika_platform_thread_timer_now(void) {
     uint32_t tick = rt_tick_get() * 1000;
     return (unsigned long)((tick + RT_TICK_PER_SECOND - 1) /
                            RT_TICK_PER_SECOND);
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     uint32_t tick = zos_tick_get() * 1000;
     return (unsigned long)((tick + ZOS_TICK_PER_SECOND - 1) /
                            ZOS_TICK_PER_SECOND);
@@ -1178,7 +1178,7 @@ PIKA_WEAK void pika_platform_thread_timer_usleep(unsigned long usec) {
             tick = 1;
     }
     rt_thread_mdelay(tick);
-#elif PIKA_ZeusOS_ENABLE
+#elif PIKA_ZEUSOS_ENABLE
     zos_tick_t tick = 1;
     if (usec != 0) {
         tick = usec / ZOS_TICK_PER_SECOND;

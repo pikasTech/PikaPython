@@ -419,8 +419,8 @@ extern "C" {
         #define PIKA_RTTHREAD_ENABLE 0
     #endif
 
-    #ifndef PIKA_ZeusOS_ENABLE
-        #define PIKA_ZeusOS_ENABLE 0
+    #ifndef PIKA_ZEUSOS_ENABLE
+        #define PIKA_ZEUSOS_ENABLE 0
     #endif
     
     #ifndef PIKA_LINUX_COMPATIBLE
