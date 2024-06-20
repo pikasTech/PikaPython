@@ -155,6 +155,7 @@ void _thread_start_new_thread(PikaObj* self, Arg* function, Arg* args_) {
         obj_setSysOut(self, "thread create failed");
         return;
     }
+    pika_platform_thread_startup(info->thread);
 #if !PIKA_THREAD_MALLOC_STACK_ENABLE
     g_PikaMemInfo.heapUsed += info->stack_size;
 #endif
