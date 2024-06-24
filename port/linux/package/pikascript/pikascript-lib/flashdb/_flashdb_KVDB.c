@@ -1,9 +1,7 @@
 #include "_flashdb_KVDB.h"
-#include <stdio.h>
 #include "_flashdb_KVDB_CTRL.h"
-#include "_flashdb_kvdb_t.h"
+#include <stdio.h>
 #include "flashdb.h"
-#include "pikaScript.h"
 
 // #include "fdb_def.h"
 #define PIKA_USING_FLASHDB1 1
@@ -158,6 +156,7 @@ struct _flashdb_foreach_context {
     struct fdb_default_kv_node* def_kv_table;
     PikaObj* self;
 };
+
 int32_t _flashdb_foreach(PikaObj* self_dict,
                          Arg* keyEach,
                          Arg* valEach,
