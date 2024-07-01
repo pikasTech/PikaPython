@@ -3,6 +3,7 @@ import struct
 
 KVDB_CTRL = _flashdb.KVDB_CTRL()
 
+
 class KVDB(_flashdb.KVDB):
 
     def get_blob(self, key, size):
@@ -28,3 +29,9 @@ class KVDB(_flashdb.KVDB):
         if len(vs) == 1:
             return vs[0]
         return vs
+
+
+class TSDB(_flashdb.TSDB):
+    def __init__(self, name: str, path: str, max_len: int = 1024,
+                 user_data=None):
+        super().__init__(name, path, max_len, user_data)

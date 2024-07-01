@@ -790,13 +790,18 @@ TEST(flashdb, base) {
 }
 
 TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(flashdb,
+                                   kvdb1,
+                                   "test/python/flashdb/flashdb_kvdb1.py",
+                                   "PASS\r\n")
+
+TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(flashdb,
                                    kvdb2,
                                    "test/python/flashdb/flashdb_kvdb2.py",
                                    "PASS\r\n")
 
 TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(flashdb,
-                                   kvdb1,
-                                   "test/python/flashdb/flashdb_kvdb1.py",
+                                   tsdb1,
+                                   "test/python/flashdb/flashdb_tsdb1.py",
                                    "PASS\r\n")
 
 #endif

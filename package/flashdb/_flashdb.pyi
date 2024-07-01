@@ -1,6 +1,7 @@
 class kvdb_t:
     ...
 
+
 class KVDB_CTRL:
     SET_SEC_SIZE: int
     GET_SEC_SIZE: int
@@ -11,10 +12,11 @@ class KVDB_CTRL:
     SET_NOT_FORMAT: int
     def __init__(self): ...
 
+
 class KVDB:
 
     def __init__(self, name: str, path: str, default_kv: dict,
-                  user_data: any): ...
+                 user_data: any): ...
 
     def control(self, cmd: int, arg: any) -> int: ...
 
@@ -28,3 +30,16 @@ class KVDB:
 
     def __del__(self): ...
 
+
+class TSDB:
+    def __init__(self, name: str, path: str, max_len: int,
+                 user_data: any): ...
+
+    def __del__(self): ...
+
+    def append(self, blob: any) -> int: ...
+
+
+class TSL:
+    def get_time(self) -> int64: ...
+    def to_blob(self) -> bytes: ...
