@@ -35,7 +35,7 @@ static void unlock(fdb_db_t db)
 }
 */
 static fdb_time_t get_time(void) {
-    // ms to s
+    // ns to ms
     return pika_platform_get_tick() / 1000;
 }
 #endif
@@ -268,6 +268,22 @@ int _flashdb_TSDB_tsl_iter_reverse(PikaObj* self,
                                    Arg* callback,
                                    Arg* user_data) {
     return _TSDB_iter(self, callback, user_data, pika_true);
+}
+
+int _flashdb_TSDB_tsl_iter_by_time(PikaObj* self,
+                                   int64_t from_time,
+                                   int64_t to_time,
+                                   Arg* callback,
+                                   Arg* user_data) {
+    fdb_tsdb_t tsdb = _OBJ2TSDB(self);
+    tsdb_foreach_context context = {
+        .callback = callback,
+        .user_data = user_data,
+        .tsdb = tsdb,
+    };
+    fdb_tsl_iter_by_time(tsdb, from_time, to_time, _flashdb_TSL_iter_callback,
+                         &context);
+    return 0;
 }
 
 #undef strudp

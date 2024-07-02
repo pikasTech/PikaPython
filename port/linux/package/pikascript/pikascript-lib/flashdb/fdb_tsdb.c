@@ -622,6 +622,7 @@ static int search_start_tsl_addr(fdb_tsdb_t db,
                                  fdb_time_t to) {
     struct fdb_tsl tsl;
     while (pika_true) {
+        size_t align = LOG_IDX_DATA_SIZE;
         tsl.addr.index =
             start + FDB_ALIGN((end - start) / 2, LOG_IDX_DATA_SIZE);
         read_tsl(db, &tsl);

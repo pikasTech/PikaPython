@@ -198,7 +198,7 @@ int64_t args_getInt(Args* self, char* name) {
     if (arg_type == ARG_TYPE_INT) {
         return arg_getInt(arg);
     } else if (arg_type == ARG_TYPE_FLOAT) {
-        return (int)arg_getFloat(arg);
+        return (int64_t)arg_getFloat(arg);
     } else if (arg_type == ARG_TYPE_BOOL) {
         return arg_getBool(arg);
     }

@@ -122,9 +122,11 @@ TEST(timetest, sleep) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_STD_DEVICE_UNIX_TIME_ENABLE && PIKA_FLOAT_TYPE_DOUBLE
 TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(time,
                                    test1,
                                    "test/python/time/time_test1.py",
                                    "PASS\r\n")
+#endif
 
 TEST_END
