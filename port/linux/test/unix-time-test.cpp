@@ -37,43 +37,6 @@ TEST(unix_time, time) {
 }
 #endif
 
-#if PIKA_STD_DEVICE_UNIX_TIME_ENABLE
-TEST(unix_time, unix_time) {
-    /* init */
-    g_PikaMemInfo.heapUsedMax = 0;
-    /* run */
-    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
-    extern unsigned char pikaModules_py_a[];
-    obj_linkLibrary(self, pikaModules_py_a);
-    obj_run(self,
-            "import time\n"
-            "time.localtime(0.0)\n");
-    /* 获取数据比对 */
-    int tm_sec = obj_getInt(self, "time._time.tm_sec");
-    int tm_min = obj_getInt(self, "time._time.tm_min");
-    int tm_hour = obj_getInt(self, "time._time.tm_hour");
-    int tm_mday = obj_getInt(self, "time._time.tm_mday");
-    int tm_mon = obj_getInt(self, "time._time.tm_mon");
-    int tm_year = obj_getInt(self, "time._time.tm_year");
-    int tm_wday = obj_getInt(self, "time._time.tm_wday");
-    int tm_yday = obj_getInt(self, "time._time.tm_yday");
-    int tm_isdst = obj_getInt(self, "time._time.tm_isdst");
-    /* assert */
-    EXPECT_EQ(tm_sec, 0);
-    EXPECT_EQ(tm_min, 0);
-    EXPECT_EQ(tm_hour, 8);
-    EXPECT_EQ(tm_mday, 1);
-    EXPECT_EQ(tm_mon, 0);  // 1月
-    EXPECT_EQ(tm_year, 1970);
-    EXPECT_EQ(tm_wday, 4);  // 周四
-    EXPECT_EQ(tm_yday, 1);
-    EXPECT_EQ(tm_isdst, -1);
-    /* deinit */
-    obj_deinit(self);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
-#endif
-
 int compare(const _tm* t1, const _tm* t2) {
     int size = 8;  // 只比对前面8个数据
     int* it1 = (int*)t1;
@@ -158,5 +121,10 @@ TEST(timetest, sleep) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(time,
+                                   test1,
+                                   "test/python/time/time_test1.py",
+                                   "PASS\r\n")
 
 TEST_END

@@ -7,7 +7,7 @@ DB_PATH = "test/out/fdb_tsdb"
 
 tsdb = flashdb.TSDB("env", DB_PATH, max_len=512)
 
-for i in range(100):
+for i in range(10):
     blob_i = struct.pack('i', i)
     time.sleep(0.001)
     ret = tsdb.tsl_append(blob_i)
@@ -25,5 +25,6 @@ def callback(tsl, user_data) -> int:
 
 
 assert tsdb.tsl_iter(callback, 'user_data') == 0
+assert tsdb.tsl_iter_reverse(callback, 'user_data_reverse') == 0
 
 print('PASS')

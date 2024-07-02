@@ -35,16 +35,19 @@ def localtime(unix_time: float = None):
     return _time.localtime(unix_time)
 
 
-def mktime() -> int:
-    return _time.mktime()
+def mktime(tm: tuple) -> int:
+    return _time.mktime(tm)
+
 
 def ctime(unix_time: float = None) -> str:
     if unix_time is None:
         return _time.ctime(time())
     return _time.ctime(unix_time)
 
+
 def asctime() -> str:
     return _time.asctime()
+
 
 def tick_ms() -> int:
     _time.platformGetTick()

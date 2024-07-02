@@ -25,7 +25,7 @@
                 // "--gtest_filter=vm.subsrc_import"
                 // "--gtest_filter=event.event_thread3"
                 // "--gtest_filter=parser.semicolon*"
-                "--gtest_filter=flashdb.tsdb*"
+                "--gtest_filter=time*"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

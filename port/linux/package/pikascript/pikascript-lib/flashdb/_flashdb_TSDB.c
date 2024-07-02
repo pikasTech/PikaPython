@@ -242,15 +242,32 @@ pika_bool _flashdb_TSL_iter_callback(fdb_tsl_t tsl, void* arg) {
     return res;
 }
 
-int _flashdb_TSDB_tsl_iter(PikaObj* self, Arg* callback, Arg* user_data) {
+static int _TSDB_iter(PikaObj* self,
+                      Arg* callback,
+                      Arg* user_data,
+                      pika_bool is_reverse) {
     fdb_tsdb_t tsdb = _OBJ2TSDB(self);
     tsdb_foreach_context context = {
         .callback = callback,
         .user_data = user_data,
         .tsdb = tsdb,
     };
-    fdb_tsl_iter(tsdb, _flashdb_TSL_iter_callback, &context);
+    if (is_reverse) {
+        fdb_tsl_iter_reverse(tsdb, _flashdb_TSL_iter_callback, &context);
+    } else {
+        fdb_tsl_iter(tsdb, _flashdb_TSL_iter_callback, &context);
+    }
     return 0;
+}
+
+int _flashdb_TSDB_tsl_iter(PikaObj* self, Arg* callback, Arg* user_data) {
+    return _TSDB_iter(self, callback, user_data, pika_false);
+}
+
+int _flashdb_TSDB_tsl_iter_reverse(PikaObj* self,
+                                   Arg* callback,
+                                   Arg* user_data) {
+    return _TSDB_iter(self, callback, user_data, pika_true);
 }
 
 #undef strudp

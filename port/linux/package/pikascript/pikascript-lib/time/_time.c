@@ -1,4 +1,5 @@
 #include "_time.h"
+#include "_time_struct_time.h"
 #include "PikaVM.h"
 #if defined(__linux)
 #include <unistd.h>
@@ -287,7 +288,7 @@ status unix_time_to_utc_struct_time(_tm* this_tm, int64_t unix_time) {
 
         this_tm->tm_wday = time_get_week(this_tm);
 
-        this_tm->tm_isdst = -1;
+        this_tm->tm_isdst = 0;
     }
     return TIME_OK;
 }
@@ -474,19 +475,19 @@ void _time_gmtime(PikaObj* self, pika_float unix_time) {
 #endif
 }
 
-void _time_localtime(PikaObj* self, pika_float unix_time) {
+PikaObj* _time_localtime(PikaObj* self, pika_float unix_time) {
 #if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
     obj_setErrorCode(self, 1);
     obj_setSysOut(
         self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
 #else
     _tm this_tm;
-    char str[200];
     int locale = g_pika_local_timezone;
     time_localtime(unix_time, &this_tm, locale);
     time_set_tm_value(self, &this_tm);
-    time_struct_format(&this_tm, str);
-    time_printf("%s\n", str);
+    PikaObj* struct_time_obj = newNormalObj(New__time_struct_time);
+    obj_setStruct(struct_time_obj, "_tm", this_tm);
+    return struct_time_obj;
 #endif
 }
 
@@ -508,16 +509,21 @@ void time_get_tm_value(PikaObj* self, _tm* this_tm) {
 #endif
 }
 
-int _time_mktime(PikaObj* self) {
+int _time_mktime(PikaObj* self, PikaObj* tm) {
 #if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
     obj_setErrorCode(self, 1);
     obj_setSysOut(
         self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
     return 0;
 #else
-    _tm this_tm;
+    _tm this_tm = {0};
     int locale = g_pika_local_timezone;
-    time_get_tm_value(self, &this_tm);
+    this_tm.tm_year = pikaTuple_getInt(tm, 0);
+    this_tm.tm_mon = pikaTuple_getInt(tm, 1) - 1;
+    this_tm.tm_mday = pikaTuple_getInt(tm, 2);
+    this_tm.tm_hour = pikaTuple_getInt(tm, 3);
+    this_tm.tm_min = pikaTuple_getInt(tm, 4);
+    this_tm.tm_sec = pikaTuple_getInt(tm, 5);
     return time_mktime(&this_tm, locale);
 #endif
 }
@@ -570,4 +576,62 @@ void _time___init__(PikaObj* self) {
     time_localtime(0.0, &this_tm, 8);
     time_set_tm_value(self, &this_tm);
 #endif
+}
+
+#define _OBJ2TM(obj) obj_getStruct(obj, "_tm")
+
+Arg* _time_struct_time___iter__(PikaObj* self) {
+    obj_setInt(self, "__iter_i", 0);
+    return arg_newRef(self);
+}
+
+Arg* _time_struct_time___next__(PikaObj* self) {
+    int __iter_i = args_getInt(self->list, "__iter_i");
+    if (__iter_i > 8) {
+        return arg_newNone();
+    }
+    obj_setInt(self, "__iter_i", __iter_i + 1);
+    return arg_newInt(_time_struct_time___getitem__(self, __iter_i));
+}
+
+int _time_struct_time___getitem__(PikaObj* self, int __key) {
+    _tm* this_tm = _OBJ2TM(self);
+    int tm_wday = 0;
+    switch (__key) {
+        case 0:
+            return this_tm->tm_year;
+        case 1:
+            return this_tm->tm_mon + 1;
+        case 2:
+            return this_tm->tm_mday;
+        case 3:
+            return this_tm->tm_hour;
+        case 4:
+            return this_tm->tm_min;
+        case 5:
+            return this_tm->tm_sec;
+        case 6:
+            tm_wday = this_tm->tm_wday - 1;
+            if (tm_wday < 0) {
+                tm_wday = 6;
+            }
+            return tm_wday;
+        case 7:
+            return this_tm->tm_yday;
+        case 8:
+            return this_tm->tm_isdst;
+        default:
+            return 0;
+    }
+}
+
+char* _time_struct_time___str__(PikaObj* self) {
+    _tm* _tm = _OBJ2TM(self);
+    char str[200];
+    time_struct_format(_tm, str);
+    return obj_cacheStr(self, str);
+}
+
+int _time_struct_time___len__(PikaObj* self) {
+    return 9;
 }
