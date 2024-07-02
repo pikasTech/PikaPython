@@ -68,8 +68,8 @@ struct Pool{
 };
 /* clang-format on */
 
-#define align_by(size, aline) \
-    (((size) == 0) ? 0 : (((size)-1) / (aline) + 1) * (aline))
+#define align_by(size, align) \
+    (((size) == 0) ? 0 : (((size)-1) / (align) + 1) * (align))
 
 void pikaFree(void* mem, uint32_t size);
 void* pikaMalloc(uint32_t size);

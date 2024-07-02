@@ -15,8 +15,8 @@
 
 #include <inttypes.h>
 #include <string.h>
-#include "flashdb.h"
 #include "fdb_low_lvl.h"
+#include "flashdb.h"
 
 #define FDB_LOG_TAG "[tsl]"
 /* rewrite log prefix */
