@@ -71,7 +71,7 @@ Arg* _flashdb_TSDB_kv_get(PikaObj *self, Arg* tsdb, char* key){
 }
 */
 
-int _flashdb_TSDB_append(PikaObj* self, Arg* blob_in) {
+int _flashdb_TSDB_tsl_append(PikaObj* self, Arg* blob_in) {
     fdb_err_t res = FDB_NO_ERR;
     FDB_TSDB* tsdb = _OBJ2TSDB(self);
 
@@ -94,10 +94,6 @@ int _flashdb_TSDB_set_default(PikaObj* self, Arg* tsdb) {
     return 0;
 }
 
-Arg* _flashdb_TSDB_to_blob(PikaObj* self, Arg* kv, Arg* blob) {
-    return NULL;
-}
-
 int _flashdb_TSDB_control(PikaObj* self, int cmd, Arg* arg) {
     return -1;
 }
@@ -106,7 +102,7 @@ void _flashdb_TSDB_deinit(PikaObj* self) {
     fdb_tsdb_deinit(_OBJ2TSDB(self));
 }
 
-struct _flashdb_foreach_context {
+struct _kvdb_foreach_context {
     struct fdb_default_kv_node* def_kv_table;
     PikaObj* self;
 };
@@ -173,14 +169,88 @@ void _flashdb_TSDB_CTRL___init__(PikaObj* self) {
     obj_setInt(self, "SET_NOT_FORMAT", FDB_TSDB_CTRL_SET_NOT_FORMAT);
 }
 
+#define _OBJ2TSL(self) obj_getPtr(self, "TSL")
+#define _OBJSETTSL(self, tsl) obj_setPtr(self, "TSL", tsl)
+
 int64_t _flashdb_TSL_get_time(PikaObj* self) {
-    //! TODO
-    return -1;
+    fdb_tsl_t tsl = _OBJ2TSL(self);
+    if (NULL == tsl) {
+        return -1;
+    }
+    return tsl->time;
+}
+
+fdb_blob_t blob_alloc(fdb_blob_t blob) {
+    uint8_t* buf = (uint8_t*)pikaMalloc(blob->saved.len + 1);
+    if (!buf) {
+        pika_platform_printf("alloc fail\n");
+        return NULL;
+    }
+    blob->buf = buf;
+    blob->size = blob->saved.len;
+    return blob;
+}
+
+int fdb_blob_free(fdb_blob_t blob) {
+    if (blob) {
+        pikaFree(blob->buf, blob->size + 1);
+        blob->buf = NULL;
+        blob->size = 0;
+    }
+    return 0;
 }
 
 Arg* _flashdb_TSL_to_blob(PikaObj* self) {
-    //! TODO
-    return NULL;
+    fdb_tsl_t tsl = _OBJ2TSL(self);
+    fdb_tsdb_t tsdb = obj_getPtr(self, "tsdb");
+    if (NULL == tsl) {
+        return NULL;
+    }
+    struct fdb_blob blob;
+    fdb_tsl_to_blob(tsl, &blob);
+    if (NULL == blob_alloc(&blob)) {
+        return NULL;
+    }
+    fdb_blob_read((fdb_db_t)tsdb, &blob);
+    Arg* res = arg_newBytes((uint8_t*)blob.buf, blob.size);
+    fdb_blob_free(&blob);
+    return res;
+}
+
+typedef struct _tsdb_foreach_context {
+    Arg* callback;
+    Arg* user_data;
+    fdb_tsdb_t tsdb;
+} tsdb_foreach_context;
+
+PikaObj* New__flashdb_TSDB(Args* args);
+pika_bool _flashdb_TSL_iter_callback(fdb_tsl_t tsl, void* arg) {
+    tsdb_foreach_context* context = (tsdb_foreach_context*)arg;
+    Arg* callback = context->callback;
+    Arg* user_data = context->user_data;
+    PikaObj* tsl_obj = newNormalObj(New__flashdb_TSL);
+    _OBJSETTSL(tsl_obj, tsl);
+    obj_setPtr(tsl_obj, "tsdb", context->tsdb);
+    Arg* ret = pika_runFunction2(arg_copy(callback), arg_newObj(tsl_obj),
+                                 arg_copy(user_data));
+
+    if (NULL == ret) {
+        return pika_true;
+    }
+    pika_bool res = arg_getBool(ret);
+    arg_deinit(ret);
+    return res;
+}
+
+int _flashdb_TSDB_tsl_iter(PikaObj* self, Arg* callback, Arg* user_data) {
+    fdb_tsdb_t tsdb = _OBJ2TSDB(self);
+    tsdb_foreach_context context = {
+        .callback = callback,
+        .user_data = user_data,
+        .tsdb = tsdb,
+    };
+    fdb_tsl_iter(tsdb, _flashdb_TSL_iter_callback, &context);
+    return 0;
 }
 
 #undef strudp

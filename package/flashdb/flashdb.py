@@ -35,3 +35,7 @@ class TSDB(_flashdb.TSDB):
     def __init__(self, name: str, path: str, max_len: int = 1024,
                  user_data=None):
         super().__init__(name, path, max_len, user_data)
+
+
+class TSL(_flashdb.TSL):
+    pass

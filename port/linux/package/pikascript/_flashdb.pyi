@@ -1,3 +1,6 @@
+from PikaObj import *
+
+
 class kvdb_t:
     ...
 
@@ -37,7 +40,8 @@ class TSDB:
 
     def __del__(self): ...
 
-    def append(self, blob: any) -> int: ...
+    def tsl_append(self, blob: any) -> int: ...
+    def tsl_iter(self, callback: any, user_data: any) -> int: ...
 
 
 class TSL:

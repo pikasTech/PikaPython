@@ -388,10 +388,13 @@ Method methodArg_getPtr(Arg* method_arg);
 VMParameters* obj_run(PikaObj* self, char* cmd);
 Arg* pika_runFunction0(Arg* functionArg);
 Arg* pika_runFunction1(Arg* methodArg, Arg* arg1);
+Arg* pika_runFunction2(Arg* methodArg, Arg* arg1, Arg* arg2);
 Arg* obj_runMethodArg0(PikaObj* self, Arg* methodArg);
 Arg* obj_runMethodArg1(PikaObj* self, Arg* methodArg, Arg* arg1);
+Arg* obj_runMethodArg2(PikaObj* self, Arg* methodArg, Arg* arg1, Arg* arg2);
 Arg* obj_runMethod0(PikaObj* self, char* methodName);
 Arg* obj_runMethod1(PikaObj* self, char* methodName, Arg* arg1);
+Arg* obj_runMethod2(PikaObj* self, char* methodName, Arg* arg1, Arg* arg2);
 PikaObj* New_PikaObj(void);
 PikaObj* New_PikaObj_noGC(void);
 
