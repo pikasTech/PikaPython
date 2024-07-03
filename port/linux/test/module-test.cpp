@@ -799,10 +799,12 @@ TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(flashdb,
                                    "test/python/flashdb/flashdb_kvdb2.py",
                                    "PASS\r\n")
 
+#if PIKA_FLOAT_TYPE_DOUBLE
 TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(flashdb,
                                    tsdb1,
                                    "test/python/flashdb/flashdb_tsdb1.py",
                                    "PASS\r\n")
+#endif
 
 #endif
 

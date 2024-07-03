@@ -138,9 +138,10 @@ struct PikaVMFrame {
     pika_bool in_repl;
 };
 
+typedef PikaObj* (*NewFun)(Args* args);
 struct PikaObj {
     Args* list;
-    void* constructor;
+    NewFun constructor;
 #if PIKA_GC_MARK_SWEEP_ENABLE
     PikaObj* gcNext;
 #endif
@@ -228,7 +229,6 @@ static inline void obj_clearFlag(PikaObj* self, uint16_t flag) {
 #endif
 }
 
-typedef PikaObj* (*NewFun)(Args* args);
 typedef PikaObj* (*InitFun)(PikaObj* self, Args* args);
 typedef void (*Method)(PikaObj* self, Args* args);
 
@@ -395,7 +395,7 @@ Arg* obj_runMethodArg2(PikaObj* self, Arg* methodArg, Arg* arg1, Arg* arg2);
 Arg* obj_runMethod0(PikaObj* self, char* methodName);
 Arg* obj_runMethod1(PikaObj* self, char* methodName, Arg* arg1);
 Arg* obj_runMethod2(PikaObj* self, char* methodName, Arg* arg1, Arg* arg2);
-PikaObj* New_PikaObj(void);
+PikaObj* New_PikaObj(Args* args);
 PikaObj* New_PikaObj_noGC(void);
 
 /* tools */
@@ -745,7 +745,7 @@ const MethodProp floatMethod = {
 
 
 #if defined(_WIN32) || \
-    (defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 6000000))
+    (defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 6000000)) || defined(__IAR_SYSTEMS_ICC__)
 #define __BEFORE_MOETHOD_DEF                        \
     {                                               \
         ._ =                                        \
