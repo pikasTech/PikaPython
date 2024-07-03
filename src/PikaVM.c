@@ -678,7 +678,7 @@ static PikaObj* Locals_getLReg(PikaObj* self, char* name) {
 }
 
 static PikaObj* New_Locals(Args* args) {
-    PikaObj* self = New_PikaObj();
+    PikaObj* self = New_PikaObj(NULL);
     self->constructor = New_Locals;
 #if PIKA_KERNAL_DEBUG_ENABLE
     self->name = "Locals";

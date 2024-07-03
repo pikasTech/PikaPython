@@ -216,7 +216,7 @@ PIKA_RES pikaCompileFile(char* input_file_name) {
 }
 
 LibObj* New_LibObj(Args* args) {
-    LibObj* self = New_PikaObj();
+    LibObj* self = New_PikaObj(NULL);
     return self;
 }
 
@@ -873,7 +873,7 @@ static PIKA_RES __Maker_compileModuleWithInfo(PikaMaker* self,
 }
 
 PikaMaker* New_PikaMaker(void) {
-    PikaMaker* self = New_PikaObj();
+    PikaMaker* self = New_PikaObj(NULL);
     obj_setStr(self, "pwd", "");
     obj_setInt(self, "err", 0);
     LibObj* lib = New_LibObj(NULL);

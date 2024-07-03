@@ -2529,7 +2529,7 @@ pika_bool pikaGC_islock(void) {
 #endif
 }
 
-PikaObj* New_PikaObj(void) {
+PikaObj* New_PikaObj(Args* args) {
     PikaObj* self = pikaMalloc(sizeof(PikaObj));
     /* List */
     self->list = New_args(NULL);
