@@ -1,37 +1,14 @@
-/*
- * This file is part of the PikaPython project.
- * http://github.com/pikastech/pikapython
- *
- * MIT License
- *
- * Copyright (c) 2024 lyon liang6516@outlook.com
- *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
- */
-
-// jrpc.h
 #ifndef JRPC_H
 #define JRPC_H
 
-#include "cJSON.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-// 宏定义字符串常量
+#include "cJSON.h"
+#include <stdint.h>
+
+// Define string constants
 #define STR_JSON_RPC_VERSION "1.0"
 #define STR_JSON_RPC_FIELD "jsonrpc"
 #define STR_METHOD_FIELD "method"
@@ -48,19 +25,23 @@
     { NULL, NULL, 0 }
 #define PARAM_COUNT_NO_CHECK -1
 
-// 超时宏定义
+// Timeout definitions
 #define ACK_TIMEOUT 1000
-#define BLOCKING_TIMEOUT 5000
+#define BLOCKING_TIMEOUT 20000
 #define RETRY_COUNT 5
 
-// 数据包类型的宏定义
+// Packet type definitions
 #define TYPE_REQUEST 0
 #define TYPE_ACK 1
 #define TYPE_RESULT 2
 
+#define STR_TYPE_REQUEST "REQ"
+#define STR_TYPE_ACK "ACK"
+#define STR_TYPE_RESULT "RES"
+
 #define STR_TYPE_FIELD "type"
 
-// 缓存数组大小
+// Cache array size
 #define CACHE_SIZE 16
 
 typedef enum {
@@ -80,13 +61,13 @@ typedef int (*rpc_function_nonblocking)(int id,
 typedef struct {
     const char* name;
     rpc_function func;
-    int param_count;  // 参数数量
+    int param_count;  // Number of parameters
 } rpc_mapping;
 
 typedef struct {
     const char* name;
     rpc_function_nonblocking func;
-    int param_count;  // 参数数量
+    int param_count;  // Number of parameters
 } rpc_mapping_nonblocking;
 
 typedef void (*rpc_callback)(cJSON* result);
@@ -100,16 +81,16 @@ struct JRPC_ {
     rpc_mapping_nonblocking* nonblocking_map;
     send_function send;
     receive_function receive;
+    uint8_t receive_need_free;
     yield_function yield;
     tick_function tick;
     int current_id;
-    cJSON* cache[CACHE_SIZE];  // 添加缓存
+    cJSON* cache[CACHE_SIZE];  // Add cache
     int cache_count;
 };
 
-// 函数声明
-void JRPC_send_acknowledgement(JRPC* self, int id, ack_status status);
-void JRPC_handle_request(JRPC* self, const char* json_str);
+// Function declarations
+void JRPC_server_handle(JRPC* self, const char* json_str);
 rpc_function JRPC_find_rpc_function(JRPC* self,
                                     const char* name,
                                     int* param_count);
@@ -128,6 +109,15 @@ cJSON* JRPC_send_request_blocking(JRPC* self,
                                   int param_count);
 
 cJSON* JRPC_receive_with_id_and_type(JRPC* self, int id, int type);
+int jrpc_validate_response(const char* expected_response);
+int jrpc_compare_json_strings(const char* json_str1, const char* json_str2);
+int jrpc_validate_response(const char* expected_response);
 
-int jrpc_base_test();
-#endif  // jrpc.h
+int jrpc_test_client();
+int jrpc_test_server();
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif  // JRPC_H

@@ -30,7 +30,34 @@
 #include <stdlib.h>
 #include <string.h>
 
-// 示例函数：add
+/* private function */
+static int JRPC_send_message_with_retry(JRPC* self,
+                                        const char* request_str,
+                                        int retry_count,
+                                        unsigned long ack_timeout,
+                                        int id,
+                                        int type,
+                                        const char* label);
+
+static void JRPC_send_acknowledgement(JRPC* self,
+                                      int id,
+                                      ack_status status,
+                                      const char* label);
+
+static const char* JRPC_type_2_string(int type) {
+    switch (type) {
+        case TYPE_REQUEST:
+            return STR_TYPE_REQUEST;
+        case TYPE_ACK:
+            return STR_TYPE_ACK;
+        case TYPE_RESULT:
+            return STR_TYPE_RESULT;
+        default:
+            return "UNKNOWN";
+    }
+}
+
+// Example function: add
 cJSON* add(cJSON* params[], int param_count) {
     int a = params[0]->valueint;
     int b = params[1]->valueint;
@@ -39,7 +66,7 @@ cJSON* add(cJSON* params[], int param_count) {
     return result;
 }
 
-// 示例非阻塞函数：add_nonblocking
+// Example non-blocking function: add_nonblocking
 int add_nonblocking(int id, cJSON* params[], int param_count, JRPC* self) {
     int a = params[0]->valueint;
     int b = params[1]->valueint;
@@ -49,7 +76,7 @@ int add_nonblocking(int id, cJSON* params[], int param_count, JRPC* self) {
     return 0;
 }
 
-// 示例函数：subtract
+// Example function: subtract
 cJSON* subtract(cJSON* params[], int param_count) {
     int a = params[0]->valueint;
     int b = params[1]->valueint;
@@ -66,7 +93,8 @@ rpc_mapping_nonblocking default_nonblocking_rpc_map[] = {
     {"add_nonblocking", add_nonblocking, 2},
     RPC_MAP_END};
 
-void JRPC_send_acknowledgement(JRPC* self, int id, ack_status status) {
+// Function to create an acknowledgement string
+char* create_acknowledgement_string(int id, ack_status status) {
     cJSON* response = cJSON_CreateObject();
     cJSON_AddStringToObject(response, STR_JSON_RPC_FIELD, STR_JSON_RPC_VERSION);
     cJSON_AddStringToObject(
@@ -77,15 +105,24 @@ void JRPC_send_acknowledgement(JRPC* self, int id, ack_status status) {
                                            : STR_UNKNOWN_STATUS);
     cJSON_AddNumberToObject(response, STR_ID_FIELD, id);
     cJSON_AddNumberToObject(response, STR_TYPE_FIELD,
-                            TYPE_ACK);  // 添加类型字段
+                            TYPE_ACK);  // Add type field
 
     char* response_str = cJSON_Print(response);
-    printf("Acknowledgement: %s\n", response_str);
+    cJSON_Delete(response);
+    return response_str;
+}
+
+// Function to send an acknowledgement
+static void JRPC_send_acknowledgement(JRPC* self,
+                                      int id,
+                                      ack_status status,
+                                      const char* label) {
+    char* response_str = create_acknowledgement_string(id, status);
+    printf("[%s] ACK: %s\n", label, response_str);
 
     self->send(response_str);
 
-    free(response_str);
-    cJSON_Delete(response);
+    cJSON_free(response_str);
 }
 
 void JRPC_send_response(JRPC* self, int id, cJSON* result) {
@@ -94,17 +131,18 @@ void JRPC_send_response(JRPC* self, int id, cJSON* result) {
     cJSON_AddItemToObject(response, STR_RESULT_FIELD, result);
     cJSON_AddNumberToObject(response, STR_ID_FIELD, id);
     cJSON_AddNumberToObject(response, STR_TYPE_FIELD,
-                            TYPE_RESULT);  // 添加类型字段
+                            TYPE_RESULT);  // Add type field
 
     char* response_str = cJSON_Print(response);
-    printf("Response: %s\n", response_str);
+    printf("[Server] Response: %s\n", response_str);
 
     self->send(response_str);
 
-    free(response_str);
+    cJSON_free(response_str);
+    cJSON_Delete(response);
 }
 
-void JRPC_handle_request(JRPC* self, const char* json_str) {
+void JRPC_server_handle(JRPC* self, const char* json_str) {
     cJSON* json = cJSON_Parse(json_str);
     if (json == NULL) {
         printf("Error parsing JSON\n");
@@ -120,7 +158,7 @@ void JRPC_handle_request(JRPC* self, const char* json_str) {
     if (!cJSON_IsString(jsonrpc) || !cJSON_IsString(method) ||
         !cJSON_IsArray(params) || !cJSON_IsNumber(id) ||
         !cJSON_IsNumber(type)) {
-        printf("Invalid JSON RPC request format\n");
+        printf("[Server] Invalid JSON RPC request format: %s\n", json_str);
         cJSON_Delete(json);
         return;
     }
@@ -141,51 +179,48 @@ void JRPC_handle_request(JRPC* self, const char* json_str) {
     rpc_function_nonblocking func_nonblocking =
         JRPC_find_nonblocking_rpc_function(self, method->valuestring,
                                            &expected_param_count);
-    if (func_nonblocking != NULL) {
-        int param_count = cJSON_GetArraySize(params);
-        if (expected_param_count != PARAM_COUNT_NO_CHECK &&
-            param_count != expected_param_count) {
-            JRPC_send_acknowledgement(self, id->valueint, ACK_INVALID_PARAMS);
+    rpc_function func = NULL;
+    int is_nonblocking = (func_nonblocking != NULL);
+
+    if (!is_nonblocking) {
+        func = JRPC_find_rpc_function(self, method->valuestring,
+                                      &expected_param_count);
+        if (func == NULL) {
+            JRPC_send_acknowledgement(self, id->valueint, ACK_METHOD_NOT_FOUND,
+                                      "Server");
             cJSON_Delete(json);
             return;
         }
+    }
 
-        // 发送成功ACK
-        JRPC_send_acknowledgement(self, id->valueint, ACK_SUCCESS);
+    int param_count = cJSON_GetArraySize(params);
+    if (expected_param_count != PARAM_COUNT_NO_CHECK &&
+        param_count != expected_param_count) {
+        JRPC_send_acknowledgement(self, id->valueint, ACK_INVALID_PARAMS,
+                                  "Server");
+        cJSON_Delete(json);
+        return;
+    }
 
-        // 调用非阻塞函数
-        cJSON* param_array[param_count];
-        for (int i = 0; i < param_count; i++) {
-            param_array[i] = cJSON_GetArrayItem(params, i);
-        }
+    char* ack_str = create_acknowledgement_string(id->valueint, ACK_SUCCESS);
+    if (JRPC_send_message_with_retry(self, ack_str, RETRY_COUNT, ACK_TIMEOUT,
+                                     id->valueint, TYPE_ACK, "Server") != 0) {
+        cJSON_Delete(json);
+        return;
+    }
 
+    if (ack_str) {
+        cJSON_free(ack_str);
+    }
+
+    cJSON* param_array[param_count];
+    for (int i = 0; i < param_count; i++) {
+        param_array[i] = cJSON_GetArrayItem(params, i);
+    }
+
+    if (is_nonblocking) {
         func_nonblocking(id->valueint, param_array, param_count, self);
     } else {
-        rpc_function func = JRPC_find_rpc_function(self, method->valuestring,
-                                                   &expected_param_count);
-        if (func == NULL) {
-            JRPC_send_acknowledgement(self, id->valueint, ACK_METHOD_NOT_FOUND);
-            cJSON_Delete(json);
-            return;
-        }
-
-        int param_count = cJSON_GetArraySize(params);
-        if (expected_param_count != PARAM_COUNT_NO_CHECK &&
-            param_count != expected_param_count) {
-            JRPC_send_acknowledgement(self, id->valueint, ACK_INVALID_PARAMS);
-            cJSON_Delete(json);
-            return;
-        }
-
-        // 发送成功ACK
-        JRPC_send_acknowledgement(self, id->valueint, ACK_SUCCESS);
-
-        // 调用函数
-        cJSON* param_array[param_count];
-        for (int i = 0; i < param_count; i++) {
-            param_array[i] = cJSON_GetArrayItem(params, i);
-        }
-
         cJSON* result = func(param_array, param_count);
         JRPC_send_response(self, id->valueint, result);
     }
@@ -202,7 +237,7 @@ rpc_function JRPC_find_rpc_function(JRPC* self,
             return self->map[i].func;
         }
     }
-    return NULL;  // 没有找到对应的函数
+    return NULL;  // Function not found
 }
 
 rpc_function_nonblocking JRPC_find_nonblocking_rpc_function(JRPC* self,
@@ -214,15 +249,15 @@ rpc_function_nonblocking JRPC_find_nonblocking_rpc_function(JRPC* self,
             return self->nonblocking_map[i].func;
         }
     }
-    return NULL;  // 没有找到对应的函数
+    return NULL;  // Function not found
 }
 
-// 缓存添加函数
+// Cache add function
 void JRPC_cache_add(JRPC* self, cJSON* item) {
     if (self->cache_count < CACHE_SIZE) {
         self->cache[self->cache_count++] = item;
     } else {
-        // 缓存已满，删除最旧的
+        // Cache full, delete oldest
         cJSON_Delete(self->cache[0]);
         for (int i = 0; i < CACHE_SIZE - 1; i++) {
             self->cache[i] = self->cache[i + 1];
@@ -231,16 +266,18 @@ void JRPC_cache_add(JRPC* self, cJSON* item) {
     }
 }
 
-// 缓存获取函数
+// Cache get function
 cJSON* JRPC_cache_get(JRPC* self, int id, int type) {
     for (int i = 0; i < self->cache_count; i++) {
         cJSON* cached_json = self->cache[i];
-        cJSON* cached_id = cJSON_GetObjectItem(cached_json, STR_ID_FIELD);
+        cJSON* cached_id =
+
+            cJSON_GetObjectItem(cached_json, STR_ID_FIELD);
         cJSON* cached_type = cJSON_GetObjectItem(cached_json, STR_TYPE_FIELD);
         if (cached_id && cJSON_IsNumber(cached_id) &&
             cached_id->valueint == id && cached_type &&
             cJSON_IsNumber(cached_type) && cached_type->valueint == type) {
-            // 找到匹配项，返回并从缓存中删除
+            // Found match, return and remove from cache
             cJSON* result = cached_json;
             for (int j = i; j < self->cache_count - 1; j++) {
                 self->cache[j] = self->cache[j + 1];
@@ -253,17 +290,19 @@ cJSON* JRPC_cache_get(JRPC* self, int id, int type) {
 }
 
 cJSON* JRPC_receive_with_id_and_type(JRPC* self, int id, int type) {
-    // 先检查缓存
+    // Check cache first
     cJSON* cached_json = JRPC_cache_get(self, id, type);
     if (cached_json != NULL) {
         return cached_json;
     }
 
-    // 缓存中没有匹配项，从接收接口获取
+    // No match in cache, receive from interface
     char* received_str = self->receive();
     if (received_str != NULL) {
         cJSON* received_json = cJSON_Parse(received_str);
-        free(received_str);
+        if (self->receive_need_free) {
+            free(received_str);
+        }
         if (received_json != NULL) {
             cJSON* received_id =
                 cJSON_GetObjectItem(received_json, STR_ID_FIELD);
@@ -275,7 +314,7 @@ cJSON* JRPC_receive_with_id_and_type(JRPC* self, int id, int type) {
                 received_type->valueint == type) {
                 return received_json;
             } else {
-                // 缓存数据
+                // Cache data
                 JRPC_cache_add(self, received_json);
             }
         }
@@ -283,12 +322,44 @@ cJSON* JRPC_receive_with_id_and_type(JRPC* self, int id, int type) {
     return NULL;
 }
 
+static int JRPC_send_message_with_retry(JRPC* self,
+                                        const char* request_str,
+                                        int retry_count,
+                                        unsigned long ack_timeout,
+                                        int id,
+                                        int type,
+                                        const char* label) {
+    for (int retry = 0; retry < retry_count; retry++) {
+        printf("[%s] Send and await %s with retry [%d]: %s\n", label,
+               JRPC_type_2_string(type), retry, request_str);
+        self->send(request_str);
+
+        unsigned long start_time = self->tick();
+        cJSON* ack_json = NULL;
+        while (1) {
+            ack_json = JRPC_receive_with_id_and_type(self, id, type);
+            if (ack_json != NULL) {
+                printf("[%s] Received ACK, id: %d\n", label, id);
+                cJSON_Delete(ack_json);
+                return 0;  // Received correct ACK
+            }
+            if (self->tick() - start_time >= ack_timeout) {
+                printf("[%s] ACK timeout, retrying...\n", label);
+                break;
+            }
+            self->yield();  // Thread switch
+        }
+    }
+    printf("[%s] Failed to receive ACK after %d retries\n", label, retry_count);
+    return -1;  // Failed to receive correct ACK after retries
+}
+
 void JRPC_send_request_no_blocking(JRPC* self,
                                    const char* method,
                                    cJSON* params[],
                                    int param_count,
                                    rpc_callback callback) {
-    // 构建请求
+    // Build request
     int id = ++self->current_id;
     cJSON* request = cJSON_CreateObject();
     cJSON_AddStringToObject(request, STR_JSON_RPC_FIELD, STR_JSON_RPC_VERSION);
@@ -301,46 +372,21 @@ void JRPC_send_request_no_blocking(JRPC* self,
     cJSON_AddItemToObject(request, STR_PARAMS_FIELD, params_array);
     cJSON_AddNumberToObject(request, STR_ID_FIELD, id);
     cJSON_AddNumberToObject(request, STR_TYPE_FIELD,
-                            TYPE_REQUEST);  // 添加类型字段
+                            TYPE_REQUEST);  // Add type field
 
     char* request_str = cJSON_Print(request);
-    printf("Sending Request (no_blocking): %s\n", request_str);
+    printf("[Client] Sending Request (no_blocking): %s\n", request_str);
 
-    // 发送请求并重试
-    int retry;
-    for (retry = 0; retry < RETRY_COUNT; retry++) {
-        self->send(request_str);
-
-        unsigned long start_time = self->tick();
-        cJSON* ack_json = NULL;
-        while (1) {
-            ack_json = JRPC_receive_with_id_and_type(self, id, TYPE_ACK);
-            if (ack_json != NULL) {
-                printf("Received ACK, id: %d\n", id);
-                cJSON_Delete(ack_json);
-                break;  // 收到正确的ACK
-            }
-            if (self->tick() - start_time >= ACK_TIMEOUT) {
-                printf("ACK timeout, retrying...\n");
-                break;
-            }
-            self->yield();  // 多线程切换
-        }
-
-        if (ack_json != NULL) {
-            break;
-        }
+    if (JRPC_send_message_with_retry(self, request_str, RETRY_COUNT,
+                                     ACK_TIMEOUT, id, TYPE_ACK,
+                                     "Client") != 0) {
+        // If ACK received
+        callback(NULL);  // Simulate callback, no result
     }
 
-    // 如果收到ACK
-    if (retry < RETRY_COUNT) {
-        // 调用回调函数处理结果
-        callback(NULL);  // 模拟调用回调函数，不传递结果
-    } else {
-        printf("Failed to receive ACK after %d retries\n", RETRY_COUNT);
-    }
+    JRPC_send_acknowledgement(self, id, ACK_SUCCESS, "Client");
 
-    free(request_str);
+    cJSON_free(request_str);
     cJSON_Delete(request);
 }
 
@@ -348,7 +394,7 @@ cJSON* JRPC_send_request_blocking(JRPC* self,
                                   const char* method,
                                   cJSON* params[],
                                   int param_count) {
-    // 构建请求
+    // Build request
     int id = ++self->current_id;
     cJSON* request = cJSON_CreateObject();
     cJSON_AddStringToObject(request, STR_JSON_RPC_FIELD, STR_JSON_RPC_VERSION);
@@ -361,70 +407,54 @@ cJSON* JRPC_send_request_blocking(JRPC* self,
     cJSON_AddItemToObject(request, STR_PARAMS_FIELD, params_array);
     cJSON_AddNumberToObject(request, STR_ID_FIELD, id);
     cJSON_AddNumberToObject(request, STR_TYPE_FIELD,
-                            TYPE_REQUEST);  // 添加类型字段
+                            TYPE_REQUEST);  // Add type field
 
     char* request_str = cJSON_Print(request);
-    printf("Sending Request (blocking): %s\n", request_str);
+    printf("[Client] Sending Request (blocking): %s\n", request_str);
 
-    cJSON* ack_json = NULL;
-    // 发送请求并重试
-    for (int retry = 0; retry < RETRY_COUNT; retry++) {
-        self->send(request_str);
-
-        unsigned long start_time = self->tick();
-        while (1) {
-            ack_json = JRPC_receive_with_id_and_type(self, id, TYPE_ACK);
-            if (ack_json != NULL) {
-                cJSON_Delete(ack_json);
-                break;  // 收到正确的ACK
-            }
-            if (self->tick() - start_time >= ACK_TIMEOUT) {
-                printf("ACK timeout, retrying...\n");
-                break;
-            }
-            self->yield();  // 多线程切换
-        }
-
-        if (ack_json != NULL) {
-            break;
-        }
-    }
-
-    if (ack_json == NULL) {
-        printf("Failed to receive ACK after %d retries\n", RETRY_COUNT);
-        free(request_str);
+    if (JRPC_send_message_with_retry(self, request_str, RETRY_COUNT,
+                                     ACK_TIMEOUT, id, TYPE_ACK,
+                                     "Client") != 0) {
+        cJSON_free(request_str);
         cJSON_Delete(request);
         return NULL;
     }
-
-    printf("Received ACK: %d\n", id);
-
-    // 等待执行完毕响应
+    JRPC_send_acknowledgement(self, id, ACK_SUCCESS, "Client");
+    // Wait for response
     unsigned long start_time = self->tick();
     while (1) {
         cJSON* response_json =
             JRPC_receive_with_id_and_type(self, id, TYPE_RESULT);
         if (response_json != NULL) {
             cJSON_Delete(request);
-            free(request_str);
+            cJSON_free(request_str);
+            char* response_str = cJSON_Print(response_json);
+            printf("[Client] Received Response: %s\n", response_str);
+            cJSON_free(response_str);
             return response_json;
         }
         if (self->tick() - start_time >= BLOCKING_TIMEOUT) {
-            printf("Response timeout\n");
-            free(request_str);
+            printf("[Client] Response timeout\n");
+            cJSON_free(request_str);
             cJSON_Delete(request);
             return NULL;
         }
-        self->yield();  // 多线程切换
+        self->yield();  // Thread switch
     }
 }
 
-// 模拟发送函数
+// Mock send function with validation
+static char* mock_sent_message = NULL;
+
 static void mock_send(const char* message) {
-    printf("mock send: %s\n", message);
+    printf("[Mock] send: %s\n", message);
+    if (mock_sent_message) {
+        free(mock_sent_message);
+    }
+    mock_sent_message = strdup(message);  // Capture sent message
 }
 
-// 模拟接收函数（非阻塞）
+// Mock receive function (non-blocking)
 static char* mock_receive(void) {
     static int call_count = 0;
     call_count++;
@@ -446,15 +476,36 @@ static char* mock_receive(void) {
     }
 }
 
-// 模拟 yield 函数
-static void mock_yield(void) {
-    printf("$");
+static char* mock_receive_server_test(void) {
+    static int call_count = 0;
+    call_count++;
+    switch (call_count) {
+        case 3:
+            return strdup(
+                "{\"jsonrpc\": \"1.0\", \"status\": \"received\", \"id\": 1, "
+                "\"type\": 1}");
+        case 6:
+            return strdup(
+                "{\"jsonrpc\": \"1.0\", \"status\": \"received\", \"id\": 2, "
+                "\"type\": 1}");
+        case 9:
+            return strdup(
+                "{\"jsonrpc\": \"1.0\", \"status\": \"received\", \"id\": 3, "
+                "\"type\": 1}");
+        default:
+            return NULL;
+    }
 }
 
-// 模拟 tick 函数
+// Mock yield function
+static void mock_yield(void) {
+    printf("[Y]");
+}
+
+// Mock tick function
 static unsigned long mock_tick_ms(void) {
     static unsigned long tick = 0;
-    tick += 100;  // 模拟每次调用增加100ms
+    tick += 100;  // Simulate 100ms per call
     return tick;
 }
 
@@ -463,30 +514,31 @@ static void result_callback(cJSON* result) {
            result ? cJSON_Print(result) : "No result");
 }
 
-int jrpc_base_test() {
+int jrpc_test_client() {
     int ret = 0;
     JRPC jrpc = {default_rpc_map,
                  default_nonblocking_rpc_map,
                  mock_send,
                  mock_receive,
+                 1,
                  mock_yield,
                  mock_tick_ms,
                  0,
                  {NULL},
                  0};
 
-    // 测试 no_blocking
+    // Test no_blocking
     cJSON* params1[] = {cJSON_CreateNumber(5), cJSON_CreateNumber(3)};
     JRPC_send_request_no_blocking(&jrpc, "add_nonblocking", params1, 2,
                                   result_callback);
 
-    // 测试 blocking
+    // Test blocking
     cJSON* params2[] = {cJSON_CreateNumber(5), cJSON_CreateNumber(3)};
     cJSON* response = JRPC_send_request_blocking(&jrpc, "add", params2, 2);
     char* call_result = cJSON_Print(response);
-    printf("Blocking call result: %s\n", call_result);
-    free(call_result);
-    // 计算结果应为 8
+    printf("[Client] Blocking call result: %s\n", call_result);
+    cJSON_free(call_result);
+    // Result should be 8
     if (response == NULL ||
         cJSON_GetObjectItem(response, "result")->valueint != 8) {
         ret = -1;
@@ -496,6 +548,94 @@ int jrpc_base_test() {
     for (int i = 0; i < 2; i++) {
         cJSON_Delete(params1[i]);
         cJSON_Delete(params2[i]);
+    }
+
+    if (mock_sent_message) {
+        free(mock_sent_message);
+        mock_sent_message = NULL;
+    }
+
+    return ret;
+}
+
+int jrpc_compare_json_strings(const char* json_str1, const char* json_str2) {
+    cJSON* json1 = cJSON_Parse(json_str1);
+    cJSON* json2 = cJSON_Parse(json_str2);
+
+    if (json1 == NULL || json2 == NULL) {
+        if (json1) {
+            cJSON_Delete(json1);
+        } else {
+            printf("json1 is NULL\n");
+        }
+        if (json2) {
+            cJSON_Delete(json2);
+        } else {
+            printf("json2 is NULL\n");
+        }
+        return -1;
+    }
+
+    int result = cJSON_Compare(json1, json2, 1) ? 0 : -1;
+    if (0 != result) {
+        printf("Json compare failed\n");
+        printf("json1: %s\n", json_str1);
+        printf("json2: %s\n", json_str2);
+    }
+
+    cJSON_Delete(json1);
+    cJSON_Delete(json2);
+
+    return result;
+}
+
+int jrpc_validate_response(const char* expected_response) {
+    if (mock_sent_message == NULL) {
+        return -1;
+    }
+
+    return jrpc_compare_json_strings(mock_sent_message, expected_response);
+}
+
+int jrpc_test_server() {
+    JRPC jrpc = {default_rpc_map,
+                 default_nonblocking_rpc_map,
+                 mock_send,
+                 mock_receive_server_test,
+                 1,
+                 mock_yield,
+                 mock_tick_ms,
+                 0,
+                 {NULL},
+                 0};
+
+    const char* requests[] = {
+        "{\"jsonrpc\": \"1.0\", \"method\": \"add\", \"params\": [5, 3], "
+        "\"id\": 1, \"type\": 0}",
+        "{\"jsonrpc\": \"1.0\", \"method\": \"subtract\", \"params\": [10, 4], "
+        "\"id\": 2, \"type\": 0}",
+        "{\"jsonrpc\": \"1.0\", \"method\": \"add_nonblocking\", \"params\": "
+        "[2, 2], \"id\": 3, \"type\": 0}",
+    };
+
+    const char* expected_responses[] = {
+        "{\"jsonrpc\": \"1.0\", \"result\": 8, \"id\": 1, \"type\": 2}",
+        "{\"jsonrpc\": \"1.0\", \"result\": 6, \"id\": 2, \"type\": 2}",
+        "{\"jsonrpc\": \"1.0\", \"result\": 4, \"id\": 3, \"type\": 2}"};
+
+    int ret = 0;
+
+    for (int i = 0; i < sizeof(requests) / sizeof(requests[0]); i++) {
+        JRPC_server_handle(&jrpc, requests[i]);
+        if (jrpc_validate_response(expected_responses[i]) != 0) {
+            ret = -1;
+            break;
+        }
+    }
+
+    if (mock_sent_message) {
+        free(mock_sent_message);
+        mock_sent_message = NULL;
     }
 
     return ret;

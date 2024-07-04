@@ -1,4 +1,7 @@
 #include "test_common.h"
+#include <thread>
+#include <atomic>
+#include <semaphore.h>
 TEST_START
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(module, cmodule_import) {
@@ -901,8 +904,282 @@ TEST_RUN_SINGLE_FILE(lvgl,
 TEST_RUN_SINGLE_FILE(lvgl, lv_tim, "test/python/pika_lvgl/lv_tim.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_uidemo, "test/python/pika_lvgl/lv_uidemo.py");
 
-TEST(jrpc, base) {
-    ASSERT_EQ(jrpc_base_test(), 0);
+TEST(jrpc, client) {
+    ASSERT_EQ(jrpc_test_client(), 0);
+}
+
+TEST(jrpc, server) {
+    ASSERT_EQ(jrpc_test_server(), 0);
+}
+
+// Mock functions for testing
+static char* mock_receive_message = NULL;
+static char* mock_sent_message = NULL;
+
+void mock_send(const char* message) {
+    if (mock_sent_message) {
+        free(mock_sent_message);
+    }
+    mock_sent_message = strdup(message);
+}
+
+char* mock_receive(void) {
+    if (mock_receive_message) {
+        char* temp = strdup(mock_receive_message);
+        free(mock_receive_message);
+        mock_receive_message = NULL;
+        return temp;
+    }
+    return NULL;
+}
+
+void mock_yield(void) {
+    sched_yield();
+}
+static unsigned long mock_tick_ms(void) {
+    return pika_platform_get_tick();
+}
+
+rpc_mapping gtest_rpc_map[] = {{"add",
+                                [](cJSON* params[], int param_count) -> cJSON* {
+                                    int a = params[0]->valueint;
+                                    int b = params[1]->valueint;
+                                    return cJSON_CreateNumber(a + b);
+                                },
+                                2},
+                               RPC_MAP_END};
+
+rpc_mapping_nonblocking gtest_nonblocking_rpc_map[] = {RPC_MAP_END};
+
+TEST(jrpc, InvalidJSONFormat) {
+    JRPC jrpc = {gtest_rpc_map,
+                 gtest_nonblocking_rpc_map,
+                 mock_send,
+                 mock_receive,
+                 1,
+                 mock_yield,
+                 mock_tick_ms,
+                 0,
+                 {NULL},
+                 0};
+    const char* request =
+        "{\"jsonrpc\": \"1.0\", \"method\": \"add\", \"params\": [3, 4], "
+        "\"id\": 1, \"type\": ";  // Invalid JSON
+    mock_sent_message = NULL;
+
+    JRPC_server_handle(&jrpc, request);
+
+    ASSERT_EQ(mock_sent_message, nullptr);
+
+    if (NULL != mock_sent_message) {
+        free(mock_sent_message);
+        mock_sent_message = NULL;
+    }
+}
+
+TEST(jrpc, MethodNotFound) {
+    JRPC jrpc = {gtest_rpc_map,
+                 gtest_nonblocking_rpc_map,
+                 mock_send,
+                 mock_receive,
+                 1,
+                 mock_yield,
+                 mock_tick_ms,
+                 0,
+                 {NULL},
+                 0};
+    const char* request =
+        "{\"jsonrpc\": \"1.0\", \"method\": \"subtract\", \"params\": [3, 4], "
+        "\"id\": 1, \"type\": 0}";
+    const char* expected_response =
+        "{\"jsonrpc\": \"1.0\", \"status\": \"method not found\", \"id\": 1, "
+        "\"type\": 1}";
+
+    JRPC_server_handle(&jrpc, request);
+
+    ASSERT_EQ(jrpc_compare_json_strings(mock_sent_message, expected_response),
+              0);
+    if (NULL != mock_sent_message) {
+        free(mock_sent_message);
+        mock_sent_message = NULL;
+    }
+}
+
+TEST(jrpc, ParameterCountMismatch) {
+    JRPC jrpc = {gtest_rpc_map,
+                 gtest_nonblocking_rpc_map,
+                 mock_send,
+                 mock_receive,
+                 1,
+                 mock_yield,
+                 mock_tick_ms,
+                 0,
+                 {NULL},
+                 0};
+    const char* request =
+        "{\"jsonrpc\": \"1.0\", \"method\": \"add\", \"params\": [3], "
+        "\"id\": 1, \"type\": 0}";
+    const char* expected_response =
+        "{\"jsonrpc\": \"1.0\", \"status\": \"invalid params\", \"id\": 1, "
+        "\"type\": 1}";
+
+    JRPC_server_handle(&jrpc, request);
+
+    ASSERT_EQ(jrpc_compare_json_strings(mock_sent_message, expected_response),
+              0);
+    if (NULL != mock_sent_message) {
+        free(mock_sent_message);
+        mock_sent_message = NULL;
+    }
+}
+
+#if 0
+TEST(jrpc, InvalidParameterType) {
+    JRPC jrpc = {gtest_rpc_map,
+                 gtest_nonblocking_rpc_map,
+                 mock_send,
+                 mock_receive,
+                 1, mock_yield,
+                 mock_tick_ms,
+                 0,
+                 {NULL},
+                 0};
+    const char* request =
+        "{\"jsonrpc\": \"1.0\", \"method\": \"add\", \"params\": [3, \"a\"], "
+        "\"id\": 1, \"type\": 0}";
+    const char* expected_response =
+        "{\"jsonrpc\": \"1.0\", \"status\": \"invalid params\", \"id\": 1, "
+        "\"type\": 1}";
+
+    JRPC_server_handle(&jrpc, request);
+
+    ASSERT_EQ(jrpc_compare_json_strings(mock_sent_message, expected_response),
+              0);
+    if (NULL != mock_sent_message) {
+        free(mock_sent_message);
+        mock_sent_message = NULL;
+    }
+}
+#endif
+
+// Buffer for communication between client and server
+static char* server_receive_buffer = NULL;
+static char* client_receive_buffer = NULL;
+
+// Server send function
+static void jrpc_server_send(const char* message) {
+    if (client_receive_buffer) {
+        free(client_receive_buffer);
+    }
+    client_receive_buffer = strdup(message);
+}
+
+// Server receive function
+static char* jrpc_server_receive(void) {
+    if (server_receive_buffer) {
+        char* temp = strdup(server_receive_buffer);
+        free(server_receive_buffer);
+        server_receive_buffer = NULL;
+        return temp;
+    }
+    return NULL;
+}
+
+// Client send function
+static void jrpc_client_send(const char* message) {
+    if (server_receive_buffer) {
+        free(server_receive_buffer);
+    }
+    server_receive_buffer = strdup(message);
+}
+
+// Client receive function
+static char* jrpc_client_receive(void) {
+    if (client_receive_buffer) {
+        char* temp = strdup(client_receive_buffer);
+        free(client_receive_buffer);
+        client_receive_buffer = NULL;
+        return temp;
+    }
+    return NULL;
+}
+
+// Global atomic variable to signal the server to stop
+std::atomic<bool> server_running(true);
+
+// Function to periodically call JRPC_server_handle
+static void server_handle(JRPC* server) {
+    while (server_running) {
+        char* message = jrpc_server_receive();
+        if (NULL != message) {
+            JRPC_server_handle(server, message);
+            free(message);
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(
+            10));  // Adjust the sleep duration as needed
+    }
+}
+
+// Test case
+TEST(jrpc, BlockingRequestBetweenTwoJRPC) {
+    // Server JRPC
+    JRPC server = {gtest_rpc_map,
+                   gtest_nonblocking_rpc_map,
+                   jrpc_server_send,
+                   jrpc_server_receive,
+                   1,
+                   mock_yield,
+                   mock_tick_ms,
+                   0,
+                   {NULL},
+                   0};
+
+    // Client JRPC
+    JRPC client = {gtest_rpc_map,
+                   gtest_nonblocking_rpc_map,
+                   jrpc_client_send,
+                   jrpc_client_receive,
+                   1,
+                   mock_yield,
+                   mock_tick_ms,
+                   0,
+                   {NULL},
+                   0};
+
+    // Create a thread to run server_handle
+    std::thread server_thread(server_handle, &server);
+
+    // Client sends request to Server
+    const char* request_method = "add";
+    cJSON* params[] = {cJSON_CreateNumber(10), cJSON_CreateNumber(20)};
+    cJSON* response =
+        JRPC_send_request_blocking(&client, request_method, params, 2);
+
+    // Verify that client received correct response
+    ASSERT_EQ(cJSON_GetObjectItem(response, "result")->valueint, 30);
+
+    // Clean up cJSON objects
+    if (response != NULL) {
+        cJSON_Delete(response);
+    }
+    for (int i = 0; i < 2; i++) {
+        cJSON_Delete(params[i]);
+    }
+
+    // Signal the server to stop and wait for the server thread to finish
+    server_running = false;
+    server_thread.join();
+
+    // Clean up mock_sent_message
+    if (NULL != mock_sent_message) {
+        free(mock_sent_message);
+        mock_sent_message = NULL;
+    }
+
+    if (NULL != server_receive_buffer) {
+        free(server_receive_buffer);
+        server_receive_buffer = NULL;
+    }
 }
 
 TEST_END

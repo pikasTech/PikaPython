@@ -28,7 +28,9 @@
                 // "--gtest_filter=time*"
                 // "--gtest_filter=flashdb.tsdb1"
                 // "--gtest_filter=flashdb.base"
-                "--gtest_filter=jrpc.base"
+                // "--gtest_filter=jrpc.server"
+                // "--gtest_filter=jrpc.client"
+                "--gtest_filter=jrpc.BlockingRequestBetweenTwoJRPC"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
