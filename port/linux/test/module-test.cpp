@@ -901,4 +901,8 @@ TEST_RUN_SINGLE_FILE(lvgl,
 TEST_RUN_SINGLE_FILE(lvgl, lv_tim, "test/python/pika_lvgl/lv_tim.py");
 TEST_RUN_SINGLE_FILE(lvgl, lv_uidemo, "test/python/pika_lvgl/lv_uidemo.py");
 
+TEST(jrpc, base) {
+    ASSERT_EQ(jrpc_base_test(), 0);
+}
+
 TEST_END

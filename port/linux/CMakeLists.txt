@@ -35,6 +35,7 @@ include_directories(package/pikascript/pikascript-core)
 include_directories(package/pikascript/pikascript-api)
 include_directories(package/pikascript/pikascript-lib/PikaNN/TinyMaix/include)
 include_directories(package/pikascript/pikascript-lib/PikaStdDevice)
+include_directories(package/pikascript/pikascript-lib/pika_cjson)
 # rbg/kcf add ---
 include_directories(package/pikascript/pikascript-lib/flashdb)
 include_directories(package/lvgl)

@@ -20,6 +20,7 @@ extern "C" {
 #include "pikaScript.h"
 #include "pika_config_gtest.h"
 #include "pika_hal.h"
+#include "../jrpc/jrpc.h"
 char* PikaStdData_Dict___str__(PikaObj* self);
 char* PikaStdData_List___str__(PikaObj* self);
 
