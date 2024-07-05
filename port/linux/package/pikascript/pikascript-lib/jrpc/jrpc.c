@@ -30,6 +30,38 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Function pointers for memory management
+static char* (*port_mem_strdup)(const char* str) = strdup;
+static void (*port_mem_free)(void* ptr) = free;
+static int (*port_vprintf)(const char* format, va_list args) = vprintf;
+static void jrpc_debug(const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    if (port_vprintf) {
+        port_vprintf(format, args);
+    }
+    va_end(args);
+}
+
+// API to set memory management functions
+void set_jrpc_memory_functions(char* (*strdup_func)(const char*),
+                               void (*free_func)(void*)) {
+    port_mem_strdup = strdup_func;
+    port_mem_free = free_func;
+}
+
+void set_jrpc_vprintf_function(int (*vprintf_func)(const char*, va_list)) {
+    port_vprintf = vprintf_func;
+}
+
+static char* jrpc_strdup(const char* str) {
+    return port_mem_strdup(str);
+}
+
+static void jrpc_free(void* ptr) {
+    port_mem_free(ptr);
+}
+
 /* private function */
 static int JRPC_send_message_with_retry(JRPC* self,
                                         const char* request_str,
@@ -118,11 +150,11 @@ static void JRPC_send_acknowledgement(JRPC* self,
                                       ack_status status,
                                       const char* label) {
     char* response_str = create_acknowledgement_string(id, status);
-    printf("[%s] ACK: %s\n", label, response_str);
+    jrpc_debug("[%s] ACK: %s\n", label, response_str);
 
     self->send(response_str);
 
-    cJSON_free(response_str);
+    jrpc_free(response_str);
 }
 
 void JRPC_send_response(JRPC* self, int id, cJSON* result) {
@@ -134,18 +166,18 @@ void JRPC_send_response(JRPC* self, int id, cJSON* result) {
                             TYPE_RESULT);  // Add type field
 
     char* response_str = cJSON_Print(response);
-    printf("[Server] Response: %s\n", response_str);
+    jrpc_debug("[Server] Response: %s\n", response_str);
 
     self->send(response_str);
 
-    cJSON_free(response_str);
+    jrpc_free(response_str);
     cJSON_Delete(response);
 }
 
 void JRPC_server_handle(JRPC* self, const char* json_str) {
     cJSON* json = cJSON_Parse(json_str);
     if (json == NULL) {
-        printf("Error parsing JSON\n");
+        jrpc_debug("Error parsing JSON\n");
         return;
     }
 
@@ -158,19 +190,19 @@ void JRPC_server_handle(JRPC* self, const char* json_str) {
     if (!cJSON_IsString(jsonrpc) || !cJSON_IsString(method) ||
         !cJSON_IsArray(params) || !cJSON_IsNumber(id) ||
         !cJSON_IsNumber(type)) {
-        printf("[Server] Invalid JSON RPC request format: %s\n", json_str);
+        jrpc_debug("[Server] Invalid JSON RPC request format: %s\n", json_str);
         cJSON_Delete(json);
         return;
     }
 
     if (strcmp(jsonrpc->valuestring, STR_JSON_RPC_VERSION) != 0) {
-        printf("Unsupported JSON RPC version: %s\n", jsonrpc->valuestring);
+        jrpc_debug("Unsupported JSON RPC version: %s\n", jsonrpc->valuestring);
         cJSON_Delete(json);
         return;
     }
 
     if (type->valueint != TYPE_REQUEST) {
-        printf("Invalid JSON RPC message type\n");
+        jrpc_debug("Invalid JSON RPC message type\n");
         cJSON_Delete(json);
         return;
     }
@@ -210,7 +242,7 @@ void JRPC_server_handle(JRPC* self, const char* json_str) {
     }
 
     if (ack_str) {
-        cJSON_free(ack_str);
+        jrpc_free(ack_str);
     }
 
     cJSON* param_array[param_count];
@@ -270,9 +302,7 @@ void JRPC_cache_add(JRPC* self, cJSON* item) {
 cJSON* JRPC_cache_get(JRPC* self, int id, int type) {
     for (int i = 0; i < self->cache_count; i++) {
         cJSON* cached_json = self->cache[i];
-        cJSON* cached_id =
-
-            cJSON_GetObjectItem(cached_json, STR_ID_FIELD);
+        cJSON* cached_id = cJSON_GetObjectItem(cached_json, STR_ID_FIELD);
         cJSON* cached_type = cJSON_GetObjectItem(cached_json, STR_TYPE_FIELD);
         if (cached_id && cJSON_IsNumber(cached_id) &&
             cached_id->valueint == id && cached_type &&
@@ -301,7 +331,7 @@ cJSON* JRPC_receive_with_id_and_type(JRPC* self, int id, int type) {
     if (received_str != NULL) {
         cJSON* received_json = cJSON_Parse(received_str);
         if (self->receive_need_free) {
-            free(received_str);
+            jrpc_free(received_str);
         }
         if (received_json != NULL) {
             cJSON* received_id =
@@ -330,8 +360,8 @@ static int JRPC_send_message_with_retry(JRPC* self,
                                         int type,
                                         const char* label) {
     for (int retry = 0; retry < retry_count; retry++) {
-        printf("[%s] Send and await %s with retry [%d]: %s\n", label,
-               JRPC_type_2_string(type), retry, request_str);
+        jrpc_debug("[%s] Send and await %s with retry [%d]: %s\n", label,
+                   JRPC_type_2_string(type), retry, request_str);
         self->send(request_str);
 
         unsigned long start_time = self->tick();
@@ -339,18 +369,19 @@ static int JRPC_send_message_with_retry(JRPC* self,
         while (1) {
             ack_json = JRPC_receive_with_id_and_type(self, id, type);
             if (ack_json != NULL) {
-                printf("[%s] Received ACK, id: %d\n", label, id);
+                jrpc_debug("[%s] Received ACK, id: %d\n", label, id);
                 cJSON_Delete(ack_json);
                 return 0;  // Received correct ACK
             }
             if (self->tick() - start_time >= ack_timeout) {
-                printf("[%s] ACK timeout, retrying...\n", label);
+                jrpc_debug("[%s] ACK timeout, retrying...\n", label);
                 break;
             }
             self->yield();  // Thread switch
         }
     }
-    printf("[%s] Failed to receive ACK after %d retries\n", label, retry_count);
+    jrpc_debug("[%s] Failed to receive ACK after %d retries\n", label,
+               retry_count);
     return -1;  // Failed to receive correct ACK after retries
 }
 
@@ -375,7 +406,7 @@ void JRPC_send_request_no_blocking(JRPC* self,
                             TYPE_REQUEST);  // Add type field
 
     char* request_str = cJSON_Print(request);
-    printf("[Client] Sending Request (no_blocking): %s\n", request_str);
+    jrpc_debug("[Client] Sending Request (no_blocking): %s\n", request_str);
 
     if (JRPC_send_message_with_retry(self, request_str, RETRY_COUNT,
                                      ACK_TIMEOUT, id, TYPE_ACK,
@@ -386,7 +417,7 @@ void JRPC_send_request_no_blocking(JRPC* self,
 
     JRPC_send_acknowledgement(self, id, ACK_SUCCESS, "Client");
 
-    cJSON_free(request_str);
+    jrpc_free(request_str);
     cJSON_Delete(request);
 }
 
@@ -410,12 +441,12 @@ cJSON* JRPC_send_request_blocking(JRPC* self,
                             TYPE_REQUEST);  // Add type field
 
     char* request_str = cJSON_Print(request);
-    printf("[Client] Sending Request (blocking): %s\n", request_str);
+    jrpc_debug("[Client] Sending Request (blocking): %s\n", request_str);
 
     if (JRPC_send_message_with_retry(self, request_str, RETRY_COUNT,
                                      ACK_TIMEOUT, id, TYPE_ACK,
                                      "Client") != 0) {
-        cJSON_free(request_str);
+        jrpc_free(request_str);
         cJSON_Delete(request);
         return NULL;
     }
@@ -427,15 +458,15 @@ cJSON* JRPC_send_request_blocking(JRPC* self,
             JRPC_receive_with_id_and_type(self, id, TYPE_RESULT);
         if (response_json != NULL) {
             cJSON_Delete(request);
-            cJSON_free(request_str);
+            jrpc_free(request_str);
             char* response_str = cJSON_Print(response_json);
-            printf("[Client] Received Response: %s\n", response_str);
-            cJSON_free(response_str);
+            jrpc_debug("[Client] Received Response: %s\n", response_str);
+            jrpc_free(response_str);
             return response_json;
         }
         if (self->tick() - start_time >= BLOCKING_TIMEOUT) {
-            printf("[Client] Response timeout\n");
-            cJSON_free(request_str);
+            jrpc_debug("[Client] Response timeout\n");
+            jrpc_free(request_str);
             cJSON_Delete(request);
             return NULL;
         }
@@ -447,11 +478,11 @@ cJSON* JRPC_send_request_blocking(JRPC* self,
 static char* mock_sent_message = NULL;
 
 static void mock_send(const char* message) {
-    printf("[Mock] send: %s\n", message);
+    jrpc_debug("[Mock] send: %s\n", message);
     if (mock_sent_message) {
-        free(mock_sent_message);
+        jrpc_free(mock_sent_message);
     }
-    mock_sent_message = strdup(message);  // Capture sent message
+    mock_sent_message = jrpc_strdup(message);  // Capture sent message
 }
 
 // Mock receive function (non-blocking)
@@ -460,15 +491,15 @@ static char* mock_receive(void) {
     call_count++;
     switch (call_count) {
         case 3:
-            return strdup(
+            return jrpc_strdup(
                 "{\"jsonrpc\": \"1.0\", \"status\": \"received\", \"id\": 1, "
                 "\"type\": 1}");
         case 6:
-            return strdup(
+            return jrpc_strdup(
                 "{\"jsonrpc\": \"1.0\", \"status\": \"received\", \"id\": 2, "
                 "\"type\": 1}");
         case 9:
-            return strdup(
+            return jrpc_strdup(
                 "{\"jsonrpc\": \"1.0\", \"result\": 8, \"id\": 2, \"type\": "
                 "2}");
         default:
@@ -481,15 +512,15 @@ static char* mock_receive_server_test(void) {
     call_count++;
     switch (call_count) {
         case 3:
-            return strdup(
+            return jrpc_strdup(
                 "{\"jsonrpc\": \"1.0\", \"status\": \"received\", \"id\": 1, "
                 "\"type\": 1}");
         case 6:
-            return strdup(
+            return jrpc_strdup(
                 "{\"jsonrpc\": \"1.0\", \"status\": \"received\", \"id\": 2, "
                 "\"type\": 1}");
         case 9:
-            return strdup(
+            return jrpc_strdup(
                 "{\"jsonrpc\": \"1.0\", \"status\": \"received\", \"id\": 3, "
                 "\"type\": 1}");
         default:
@@ -499,7 +530,7 @@ static char* mock_receive_server_test(void) {
 
 // Mock yield function
 static void mock_yield(void) {
-    printf("[Y]");
+    jrpc_debug("[Y]");
 }
 
 // Mock tick function
@@ -510,8 +541,8 @@ static unsigned long mock_tick_ms(void) {
 }
 
 static void result_callback(cJSON* result) {
-    printf("Callback executed. Result: %s\n",
-           result ? cJSON_Print(result) : "No result");
+    jrpc_debug("Callback executed. Result: %s\n",
+               result ? cJSON_Print(result) : "No result");
 }
 
 int jrpc_test_client() {
@@ -536,8 +567,8 @@ int jrpc_test_client() {
     cJSON* params2[] = {cJSON_CreateNumber(5), cJSON_CreateNumber(3)};
     cJSON* response = JRPC_send_request_blocking(&jrpc, "add", params2, 2);
     char* call_result = cJSON_Print(response);
-    printf("[Client] Blocking call result: %s\n", call_result);
-    cJSON_free(call_result);
+    jrpc_debug("[Client] Blocking call result: %s\n", call_result);
+    jrpc_free(call_result);
     // Result should be 8
     if (response == NULL ||
         cJSON_GetObjectItem(response, "result")->valueint != 8) {
@@ -551,7 +582,7 @@ int jrpc_test_client() {
     }
 
     if (mock_sent_message) {
-        free(mock_sent_message);
+        jrpc_free(mock_sent_message);
         mock_sent_message = NULL;
     }
 
@@ -566,21 +597,21 @@ int jrpc_compare_json_strings(const char* json_str1, const char* json_str2) {
         if (json1) {
             cJSON_Delete(json1);
         } else {
-            printf("json1 is NULL\n");
+            jrpc_debug("json1 is NULL\n");
         }
         if (json2) {
             cJSON_Delete(json2);
         } else {
-            printf("json2 is NULL\n");
+            jrpc_debug("json2 is NULL\n");
         }
         return -1;
     }
 
     int result = cJSON_Compare(json1, json2, 1) ? 0 : -1;
     if (0 != result) {
-        printf("Json compare failed\n");
-        printf("json1: %s\n", json_str1);
-        printf("json2: %s\n", json_str2);
+        jrpc_debug("Json compare failed\n");
+        jrpc_debug("json1: %s\n", json_str1);
+        jrpc_debug("json2: %s\n", json_str2);
     }
 
     cJSON_Delete(json1);
@@ -634,7 +665,7 @@ int jrpc_test_server() {
     }
 
     if (mock_sent_message) {
-        free(mock_sent_message);
+        jrpc_free(mock_sent_message);
         mock_sent_message = NULL;
     }
 

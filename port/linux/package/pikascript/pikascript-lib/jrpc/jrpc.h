@@ -7,6 +7,7 @@ extern "C" {
 
 #include "cJSON.h"
 #include <stdint.h>
+#include <stdarg.h>
 
 // Define string constants
 #define STR_JSON_RPC_VERSION "1.0"
@@ -112,6 +113,10 @@ cJSON* JRPC_receive_with_id_and_type(JRPC* self, int id, int type);
 int jrpc_validate_response(const char* expected_response);
 int jrpc_compare_json_strings(const char* json_str1, const char* json_str2);
 int jrpc_validate_response(const char* expected_response);
+void set_jrpc_memory_functions(char* (*strdup_func)(const char*),
+                               void (*free_func)(void*));
+
+void set_jrpc_vprintf_function(int (*vprintf_func)(const char*, va_list));
 
 int jrpc_test_client();
 int jrpc_test_server();
