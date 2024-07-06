@@ -31,9 +31,10 @@
 #include <string.h>
 
 // Function pointers for memory management
-static char* (*port_mem_strdup)(const char* str) = strdup;
+static void* (*port_mem_malloc)(size_t size) = malloc;
 static void (*port_mem_free)(void* ptr) = free;
 static int (*port_vprintf)(const char* format, va_list args) = vprintf;
+
 static void jrpc_debug(const char* format, ...) {
     va_list args;
     va_start(args, format);
@@ -44,9 +45,9 @@ static void jrpc_debug(const char* format, ...) {
 }
 
 // API to set memory management functions
-void set_jrpc_memory_functions(char* (*strdup_func)(const char*),
+void set_jrpc_memory_functions(void* (*malloc_func)(size_t),
                                void (*free_func)(void*)) {
-    port_mem_strdup = strdup_func;
+    port_mem_malloc = malloc_func;
     port_mem_free = free_func;
 }
 
@@ -55,7 +56,12 @@ void set_jrpc_vprintf_function(int (*vprintf_func)(const char*, va_list)) {
 }
 
 static char* jrpc_strdup(const char* str) {
-    return port_mem_strdup(str);
+    size_t len = strlen(str) + 1;
+    char* copy = (char*)port_mem_malloc(len);
+    if (copy) {
+        memcpy(copy, str, len);
+    }
+    return copy;
 }
 
 static void jrpc_free(void* ptr) {
