@@ -30,7 +30,8 @@
                 // "--gtest_filter=flashdb.base"
                 // "--gtest_filter=jrpc.server"
                 // "--gtest_filter=jrpc.client"
-                "--gtest_filter=jrpc.BlockingRequestBetweenTwoJRPC"
+                // "--gtest_filter=jrpc.BlockingRequestBetweenTwoJRPC"
+                "--gtest_filter=jrpc.cmd"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

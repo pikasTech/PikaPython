@@ -1182,4 +1182,65 @@ TEST(jrpc, BlockingRequestBetweenTwoJRPC) {
     }
 }
 
+// 结果回调函数示例
+void result_callback(cJSON* result) {
+    if (result) {
+        char* result_str = cJSON_Print(result);
+        printf("Result: %s\n", result_str);
+        free(result_str);
+        cJSON_Delete(result);
+    } else {
+        printf("No result\n");
+    }
+}
+
+char* mock_receive_cmd(void) {
+    static int count = 0;
+    count++;
+    switch (count) {
+        case 1:
+            return "{\"jsonrpc\": \"1.0\", \"status\": \"received\", \"id\": "
+                   "1, "
+                   "\"type\": 1}";
+        case 2:
+            return "{\"jsonrpc\": \"1.0\", \"result\": 8, \"id\": 1, \"type\": "
+                   "2}";
+        default:
+            return NULL;
+    }
+}
+
+// 测试用例：测试 jrpc_cmd 函数
+TEST(jrpc, cmd) {
+    JRPC jrpc = {gtest_rpc_map,
+                 gtest_nonblocking_rpc_map,
+                 mock_send,
+                 mock_receive_cmd,
+                 0,
+                 mock_yield,
+                 mock_tick_ms,
+                 0,
+                 {NULL},
+                 0};
+
+    // 清空 mock_sent_message
+    if (mock_sent_message) {
+        free(mock_sent_message);
+        mock_sent_message = NULL;
+    }
+
+    // 模拟命令行输入 "add 5 3"
+    char* result = jrpc_cmd(&jrpc, "add 5 3");
+
+    // 预期的请求字符串
+    EXPECT_STREQ(result, "8");
+    free(result);
+
+    // 清理
+    if (mock_sent_message) {
+        free(mock_sent_message);
+        mock_sent_message = NULL;
+    }
+}
+
 TEST_END

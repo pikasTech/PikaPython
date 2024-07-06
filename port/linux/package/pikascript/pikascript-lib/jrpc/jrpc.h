@@ -108,18 +108,15 @@ cJSON* JRPC_send_request_blocking(JRPC* self,
                                   const char* method,
                                   cJSON* params[],
                                   int param_count);
-
 cJSON* JRPC_receive_with_id_and_type(JRPC* self, int id, int type);
-int jrpc_validate_response(const char* expected_response);
 int jrpc_compare_json_strings(const char* json_str1, const char* json_str2);
 int jrpc_validate_response(const char* expected_response);
 void set_jrpc_memory_functions(void* (*malloc_func)(size_t),
                                void (*free_func)(void*));
-
 void set_jrpc_vprintf_function(int (*vprintf_func)(const char*, va_list));
-
 int jrpc_test_client();
 int jrpc_test_server();
+char* jrpc_cmd(JRPC* jrpc, const char* cmd);
 
 #ifdef __cplusplus
 }

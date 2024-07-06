@@ -677,3 +677,97 @@ int jrpc_test_server() {
 
     return ret;
 }
+
+// 将字符串按分隔符拆分的自定义实现
+char* jrpc_strtok(char* str, const char* delimiters, char** context) {
+    char* start = str ? str : *context;
+    if (!start)
+        return NULL;
+
+    // 跳过分隔符
+    while (*start && strchr(delimiters, *start))
+        ++start;
+    if (!*start)
+        return NULL;
+
+    char* end = start;
+    while (*end && !strchr(delimiters, *end))
+        ++end;
+
+    if (*end) {
+        *end = '\0';
+        *context = end + 1;
+    } else {
+        *context = NULL;
+    }
+
+    return start;
+}
+
+char* jrpc_cmd(JRPC* jrpc, const char* cmd) {
+    // 使用自定义内存分配器复制命令字符串
+    char* cmd_copy = jrpc_strdup(cmd);
+    char* context = NULL;
+
+    // 使用自定义strtok解析命令行字符串
+    char* token = jrpc_strtok(cmd_copy, " ", &context);
+    if (token == NULL) {
+        jrpc_debug("Invalid command\n");
+        jrpc_free(cmd_copy);
+        return NULL;
+    }
+
+    // 提取方法名
+    char* method = jrpc_strdup(token);
+
+    // 提取参数
+    cJSON* params_array[10];
+    int param_count = 0;
+    while ((token = jrpc_strtok(NULL, " ", &context)) != NULL) {
+        int param_value = atoi(token);  // 假设所有参数都是整数
+        params_array[param_count] = cJSON_CreateNumber(param_value);
+        param_count++;
+    }
+
+    // 检查参数数量
+    if (param_count == 0) {
+        jrpc_debug("No parameters provided\n");
+        jrpc_free(method);
+        jrpc_free(cmd_copy);
+        return NULL;
+    }
+
+    // 调用 JRPC_send_request_no_blocking
+    cJSON* result =
+        JRPC_send_request_blocking(jrpc, method, params_array, param_count);
+
+    if (result == NULL) {
+        jrpc_debug("No result\n", NULL);
+        jrpc_free(method);
+        jrpc_free(cmd_copy);
+        return NULL;
+    }
+
+    cJSON* result_data = cJSON_GetObjectItem(result, "result");
+    if (NULL == result_data) {
+        jrpc_debug("No result Item\n", NULL);
+        jrpc_free(method);
+        jrpc_free(cmd_copy);
+        cJSON_Delete(result);
+        return NULL;
+    }
+
+    char* result_str;
+    if (result_data) {
+        result_str = cJSON_Print(result_data);
+        // jrpc_debug("%s\n", result_str);
+        cJSON_Delete(result);
+    }
+    // 清理
+    for (int i = 0; i < param_count; i++) {
+        cJSON_Delete(params_array[i]);
+    }
+    jrpc_free(method);
+    jrpc_free(cmd_copy);
+    return result_str;
+}
