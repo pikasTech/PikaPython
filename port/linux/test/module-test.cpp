@@ -967,7 +967,7 @@ TEST(jrpc, InvalidJSONFormat) {
         "\"id\": 1, \"type\": ";  // Invalid JSON
     mock_sent_message = NULL;
 
-    JRPC_server_handle(&jrpc, request);
+    JRPC_server_handle_string(&jrpc, (char*)request);
 
     ASSERT_EQ(mock_sent_message, nullptr);
 
@@ -995,7 +995,7 @@ TEST(jrpc, MethodNotFound) {
         "{\"jsonrpc\": \"1.0\", \"status\": \"method not found\", \"id\": 1, "
         "\"type\": 1}";
 
-    JRPC_server_handle(&jrpc, request);
+    JRPC_server_handle_string(&jrpc, (char*)request);
 
     ASSERT_EQ(jrpc_compare_json_strings(mock_sent_message, expected_response),
               0);
@@ -1023,7 +1023,7 @@ TEST(jrpc, ParameterCountMismatch) {
         "{\"jsonrpc\": \"1.0\", \"status\": \"invalid params\", \"id\": 1, "
         "\"type\": 1}";
 
-    JRPC_server_handle(&jrpc, request);
+    JRPC_server_handle_string(&jrpc, (char*)request);
 
     ASSERT_EQ(jrpc_compare_json_strings(mock_sent_message, expected_response),
               0);
@@ -1051,7 +1051,7 @@ TEST(jrpc, InvalidParameterType) {
         "{\"jsonrpc\": \"1.0\", \"status\": \"invalid params\", \"id\": 1, "
         "\"type\": 1}";
 
-    JRPC_server_handle(&jrpc, request);
+    JRPC_server_handle_string(&jrpc, (char*)request);
 
     ASSERT_EQ(jrpc_compare_json_strings(mock_sent_message, expected_response),
               0);
@@ -1110,11 +1110,7 @@ std::atomic<bool> server_running(true);
 // Function to periodically call JRPC_server_handle
 static void server_handle(JRPC* server) {
     while (server_running) {
-        char* message = jrpc_server_receive();
-        if (NULL != message) {
-            JRPC_server_handle(server, message);
-            free(message);
-        }
+        JRPC_server_handle(server);
         std::this_thread::sleep_for(std::chrono::milliseconds(
             10));  // Adjust the sleep duration as needed
     }
@@ -1230,7 +1226,7 @@ TEST(jrpc, cmd) {
     }
 
     // 模拟命令行输入 "add 5 3"
-    char* result = jrpc_cmd(&jrpc, "add 5 3");
+    char* result = JRPC_cmd(&jrpc, "add 5 3");
 
     // 预期的请求字符串
     EXPECT_STREQ(result, "8");

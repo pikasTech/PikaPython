@@ -49,13 +49,15 @@ void set_jrpc_memory_functions(void* (*malloc_func)(size_t),
                                void (*free_func)(void*)) {
     port_mem_malloc = malloc_func;
     port_mem_free = free_func;
+    cJSON_Hooks cJson_hooks = {.free_fn = free_func, .malloc_fn = malloc_func};
+    cJSON_InitHooks(&cJson_hooks);
 }
 
 void set_jrpc_vprintf_function(int (*vprintf_func)(const char*, va_list)) {
     port_vprintf = vprintf_func;
 }
 
-static char* jrpc_strdup(const char* str) {
+char* jrpc_strdup(const char* str) {
     size_t len = strlen(str) + 1;
     char* copy = (char*)port_mem_malloc(len);
     if (copy) {
@@ -64,7 +66,11 @@ static char* jrpc_strdup(const char* str) {
     return copy;
 }
 
-static void jrpc_free(void* ptr) {
+void* jrpc_malloc(size_t size) {
+    return port_mem_malloc(size);
+}
+
+void jrpc_free(void* ptr) {
     port_mem_free(ptr);
 }
 
@@ -96,7 +102,7 @@ static const char* JRPC_type_2_string(int type) {
 }
 
 // Example function: add
-cJSON* add(cJSON* params[], int param_count) {
+static cJSON* add(cJSON* params[], int param_count) {
     int a = params[0]->valueint;
     int b = params[1]->valueint;
     int sum = a + b;
@@ -105,7 +111,10 @@ cJSON* add(cJSON* params[], int param_count) {
 }
 
 // Example non-blocking function: add_nonblocking
-int add_nonblocking(int id, cJSON* params[], int param_count, JRPC* self) {
+static int add_nonblocking(int id,
+                           cJSON* params[],
+                           int param_count,
+                           JRPC* self) {
     int a = params[0]->valueint;
     int b = params[1]->valueint;
     int sum = a + b;
@@ -115,7 +124,7 @@ int add_nonblocking(int id, cJSON* params[], int param_count, JRPC* self) {
 }
 
 // Example function: subtract
-cJSON* subtract(cJSON* params[], int param_count) {
+static cJSON* subtract(cJSON* params[], int param_count) {
     int a = params[0]->valueint;
     int b = params[1]->valueint;
     int difference = a - b;
@@ -123,11 +132,11 @@ cJSON* subtract(cJSON* params[], int param_count) {
     return result;
 }
 
-rpc_mapping default_rpc_map[] = {{"add", add, 2},
-                                 {"subtract", subtract, 2},
-                                 RPC_MAP_END};
+static rpc_mapping default_rpc_map[] = {{"add", add, 2},
+                                        {"subtract", subtract, 2},
+                                        RPC_MAP_END};
 
-rpc_mapping_nonblocking default_nonblocking_rpc_map[] = {
+static rpc_mapping_nonblocking default_nonblocking_rpc_map[] = {
     {"add_nonblocking", add_nonblocking, 2},
     RPC_MAP_END};
 
@@ -180,7 +189,7 @@ void JRPC_send_response(JRPC* self, int id, cJSON* result) {
     cJSON_Delete(response);
 }
 
-void JRPC_server_handle(JRPC* self, const char* json_str) {
+void JRPC_server_handle_string(JRPC* self, char* json_str) {
     cJSON* json = cJSON_Parse(json_str);
     if (json == NULL) {
         jrpc_debug("Error parsing JSON\n");
@@ -240,19 +249,20 @@ void JRPC_server_handle(JRPC* self, const char* json_str) {
         return;
     }
 
+    // Try to get ACK from client to start task
     char* ack_str = create_acknowledgement_string(id->valueint, ACK_SUCCESS);
-    if (JRPC_send_message_with_retry(self, ack_str, RETRY_COUNT, ACK_TIMEOUT,
-                                     id->valueint, TYPE_ACK, "Server") != 0) {
-        cJSON_Delete(json);
-        return;
-    }
+#if JRPC_USING_DOUBLE_ACK
+    JRPC_send_message_with_retry(self, ack_str, 1, ACK_TIMEOUT, id->valueint,
+                                 TYPE_ACK, "Server");
 
+#else
+    self->send(ack_str);
+#endif
     if (ack_str) {
         jrpc_free(ack_str);
     }
 
-    cJSON** param_array =
-        (cJSON**)port_mem_malloc(param_count * sizeof(cJSON*));
+    cJSON** param_array = (cJSON**)jrpc_malloc(param_count * sizeof(cJSON*));
     if (param_array == NULL) {
         jrpc_debug("Memory allocation failed for param_array\n");
         JRPC_send_acknowledgement(self, id->valueint, ACK_MEMORY_ERROR,
@@ -276,9 +286,22 @@ void JRPC_server_handle(JRPC* self, const char* json_str) {
     cJSON_Delete(json);
 }
 
+void JRPC_server_handle(JRPC* self) {
+    char* json_str = self->receive();
+    if (NULL != json_str) {
+        JRPC_server_handle_string(self, json_str);
+    }
+    if (self->receive_need_free) {
+        jrpc_free(json_str);
+    }
+}
+
 rpc_function JRPC_find_rpc_function(JRPC* self,
                                     const char* name,
                                     int* param_count) {
+    if (NULL == self->map) {
+        return NULL;
+    }
     for (int i = 0; self->map[i].name != NULL; i++) {
         if (strcmp(self->map[i].name, name) == 0) {
             *param_count = self->map[i].param_count;
@@ -291,6 +314,9 @@ rpc_function JRPC_find_rpc_function(JRPC* self,
 rpc_function_nonblocking JRPC_find_nonblocking_rpc_function(JRPC* self,
                                                             const char* name,
                                                             int* param_count) {
+    if (NULL == self->nonblocking_map) {
+        return NULL;
+    }
     for (int i = 0; self->nonblocking_map[i].name != NULL; i++) {
         if (strcmp(self->nonblocking_map[i].name, name) == 0) {
             *param_count = self->nonblocking_map[i].param_count;
@@ -564,7 +590,7 @@ static void result_callback(cJSON* result) {
 int jrpc_test_client() {
     int ret = 0;
     JRPC jrpc = {0};
-    jrpc_init(&jrpc, default_rpc_map, default_nonblocking_rpc_map, mock_send,
+    JRPC_init(&jrpc, default_rpc_map, default_nonblocking_rpc_map, mock_send,
               mock_receive, 1, mock_yield, mock_tick_ms);
 
     // Test no_blocking
@@ -639,7 +665,7 @@ int jrpc_validate_response(const char* expected_response) {
 
 int jrpc_test_server() {
     JRPC jrpc = {0};
-    jrpc_init(&jrpc, default_rpc_map, default_nonblocking_rpc_map, mock_send,
+    JRPC_init(&jrpc, default_rpc_map, default_nonblocking_rpc_map, mock_send,
               mock_receive_server_test, 1, mock_yield, mock_tick_ms);
 
     const char* requests[] = {
@@ -659,12 +685,14 @@ int jrpc_test_server() {
     int ret = 0;
 
     for (int i = 0; i < sizeof(requests) / sizeof(requests[0]); i++) {
-        JRPC_server_handle(&jrpc, requests[i]);
+        JRPC_server_handle_string(&jrpc, (char*)requests[i]);
         if (jrpc_validate_response(expected_responses[i]) != 0) {
             ret = -1;
             break;
         }
     }
+
+    JRPC_deinit(&jrpc);
 
     if (mock_sent_message) {
         jrpc_free(mock_sent_message);
@@ -698,7 +726,7 @@ char* jrpc_strtok(char* str, const char* delimiters, char** context) {
     return start;
 }
 
-char* jrpc_cmd(JRPC* jrpc, const char* cmd) {
+char* JRPC_cmd(JRPC* jrpc, const char* cmd) {
     char* cmd_copy = jrpc_strdup(cmd);
     char* context = NULL;
 
@@ -714,7 +742,7 @@ char* jrpc_cmd(JRPC* jrpc, const char* cmd) {
     cJSON* params_array[10];
     int param_count = 0;
     while ((token = jrpc_strtok(NULL, " ", &context)) != NULL) {
-        int param_value = atoi(token);  
+        int param_value = atoi(token);
         params_array[param_count] = cJSON_CreateNumber(param_value);
         param_count++;
     }
@@ -745,13 +773,12 @@ char* jrpc_cmd(JRPC* jrpc, const char* cmd) {
         return NULL;
     }
 
-    char* result_str;
+    char* result_str = NULL;
     if (result_data) {
         result_str = cJSON_Print(result_data);
         // jrpc_debug("%s\n", result_str);
         cJSON_Delete(result);
     }
-    // 清理
     for (int i = 0; i < param_count; i++) {
         cJSON_Delete(params_array[i]);
     }
@@ -760,7 +787,7 @@ char* jrpc_cmd(JRPC* jrpc, const char* cmd) {
     return result_str;
 }
 
-void jrpc_init(JRPC* jrpc,
+void JRPC_init(JRPC* jrpc,
                rpc_mapping* rpc_map,
                rpc_mapping_nonblocking* nonblocking_rpc_map,
                void (*send_func)(const char* message),
@@ -778,4 +805,10 @@ void jrpc_init(JRPC* jrpc,
     jrpc->current_id = 0;
     memset(jrpc->cache, 0, sizeof(jrpc->cache));
     jrpc->cache_count = 0;
+}
+
+void JRPC_deinit(JRPC* jrpc) {
+    for (int i = 0; i < jrpc->cache_count; i++) {
+        cJSON_Delete(jrpc->cache[i]);
+    }
 }

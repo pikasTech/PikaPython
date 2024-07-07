@@ -27,8 +27,8 @@ extern "C" {
 #define PARAM_COUNT_NO_CHECK -1
 
 // Timeout definitions
-#define ACK_TIMEOUT 1000
-#define BLOCKING_TIMEOUT 20000
+#define ACK_TIMEOUT 50
+#define BLOCKING_TIMEOUT 1000
 #define RETRY_COUNT 5
 
 // Packet type definitions
@@ -41,6 +41,8 @@ extern "C" {
 #define STR_TYPE_RESULT "RES"
 
 #define STR_TYPE_FIELD "type"
+
+#define JRPC_USING_DOUBLE_ACK 1
 
 // Cache array size
 #define CACHE_SIZE 16
@@ -92,7 +94,8 @@ struct JRPC_ {
 };
 
 // Function declarations
-void JRPC_server_handle(JRPC* self, const char* json_str);
+void JRPC_server_handle_string(JRPC* self, char* json_str);
+void JRPC_server_handle(JRPC* self);
 rpc_function JRPC_find_rpc_function(JRPC* self,
                                     const char* name,
                                     int* param_count);
@@ -117,8 +120,8 @@ void set_jrpc_memory_functions(void* (*malloc_func)(size_t),
 void set_jrpc_vprintf_function(int (*vprintf_func)(const char*, va_list));
 int jrpc_test_client();
 int jrpc_test_server();
-char* jrpc_cmd(JRPC* jrpc, const char* cmd);
-void jrpc_init(JRPC* jrpc,
+char* JRPC_cmd(JRPC* jrpc, const char* cmd);
+void JRPC_init(JRPC* jrpc,
                rpc_mapping* rpc_map,
                rpc_mapping_nonblocking* nonblocking_rpc_map,
                void (*send_func)(const char* message),
@@ -127,6 +130,10 @@ void jrpc_init(JRPC* jrpc,
                void (*yield_func)(void),
                unsigned long (*tick_func)(void));
 
+void JRPC_deinit(JRPC* jrpc);
+void* jrpc_malloc(size_t size);
+void jrpc_free(void* ptr);
+char* jrpc_strdup(const char* str);
 #ifdef __cplusplus
 }
 #endif
