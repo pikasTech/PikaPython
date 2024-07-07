@@ -48,7 +48,8 @@ extern "C" {
 typedef enum {
     ACK_SUCCESS,
     ACK_METHOD_NOT_FOUND,
-    ACK_INVALID_PARAMS
+    ACK_INVALID_PARAMS,
+    ACK_MEMORY_ERROR
 } ack_status;
 
 typedef struct JRPC_ JRPC;
@@ -117,6 +118,14 @@ void set_jrpc_vprintf_function(int (*vprintf_func)(const char*, va_list));
 int jrpc_test_client();
 int jrpc_test_server();
 char* jrpc_cmd(JRPC* jrpc, const char* cmd);
+void jrpc_init(JRPC* jrpc,
+               rpc_mapping* rpc_map,
+               rpc_mapping_nonblocking* nonblocking_rpc_map,
+               void (*send_func)(const char* message),
+               char* (*receive_func)(void),
+               int receive_need_free,
+               void (*yield_func)(void),
+               unsigned long (*tick_func)(void));
 
 #ifdef __cplusplus
 }

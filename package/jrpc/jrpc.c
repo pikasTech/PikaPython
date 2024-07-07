@@ -251,7 +251,16 @@ void JRPC_server_handle(JRPC* self, const char* json_str) {
         jrpc_free(ack_str);
     }
 
-    cJSON* param_array[param_count];
+    cJSON** param_array =
+        (cJSON**)port_mem_malloc(param_count * sizeof(cJSON*));
+    if (param_array == NULL) {
+        jrpc_debug("Memory allocation failed for param_array\n");
+        JRPC_send_acknowledgement(self, id->valueint, ACK_MEMORY_ERROR,
+                                  "Server");
+        cJSON_Delete(json);
+        return;
+    }
+
     for (int i = 0; i < param_count; i++) {
         param_array[i] = cJSON_GetArrayItem(params, i);
     }
@@ -263,6 +272,7 @@ void JRPC_server_handle(JRPC* self, const char* json_str) {
         JRPC_send_response(self, id->valueint, result);
     }
 
+    jrpc_free(param_array);
     cJSON_Delete(json);
 }
 
@@ -553,16 +563,9 @@ static void result_callback(cJSON* result) {
 
 int jrpc_test_client() {
     int ret = 0;
-    JRPC jrpc = {default_rpc_map,
-                 default_nonblocking_rpc_map,
-                 mock_send,
-                 mock_receive,
-                 1,
-                 mock_yield,
-                 mock_tick_ms,
-                 0,
-                 {NULL},
-                 0};
+    JRPC jrpc = {0};
+    jrpc_init(&jrpc, default_rpc_map, default_nonblocking_rpc_map, mock_send,
+              mock_receive, 1, mock_yield, mock_tick_ms);
 
     // Test no_blocking
     cJSON* params1[] = {cJSON_CreateNumber(5), cJSON_CreateNumber(3)};
@@ -635,16 +638,9 @@ int jrpc_validate_response(const char* expected_response) {
 }
 
 int jrpc_test_server() {
-    JRPC jrpc = {default_rpc_map,
-                 default_nonblocking_rpc_map,
-                 mock_send,
-                 mock_receive_server_test,
-                 1,
-                 mock_yield,
-                 mock_tick_ms,
-                 0,
-                 {NULL},
-                 0};
+    JRPC jrpc = {0};
+    jrpc_init(&jrpc, default_rpc_map, default_nonblocking_rpc_map, mock_send,
+              mock_receive_server_test, 1, mock_yield, mock_tick_ms);
 
     const char* requests[] = {
         "{\"jsonrpc\": \"1.0\", \"method\": \"add\", \"params\": [5, 3], "
@@ -678,13 +674,11 @@ int jrpc_test_server() {
     return ret;
 }
 
-// 将字符串按分隔符拆分的自定义实现
 char* jrpc_strtok(char* str, const char* delimiters, char** context) {
     char* start = str ? str : *context;
     if (!start)
         return NULL;
 
-    // 跳过分隔符
     while (*start && strchr(delimiters, *start))
         ++start;
     if (!*start)
@@ -705,11 +699,9 @@ char* jrpc_strtok(char* str, const char* delimiters, char** context) {
 }
 
 char* jrpc_cmd(JRPC* jrpc, const char* cmd) {
-    // 使用自定义内存分配器复制命令字符串
     char* cmd_copy = jrpc_strdup(cmd);
     char* context = NULL;
 
-    // 使用自定义strtok解析命令行字符串
     char* token = jrpc_strtok(cmd_copy, " ", &context);
     if (token == NULL) {
         jrpc_debug("Invalid command\n");
@@ -717,19 +709,16 @@ char* jrpc_cmd(JRPC* jrpc, const char* cmd) {
         return NULL;
     }
 
-    // 提取方法名
     char* method = jrpc_strdup(token);
 
-    // 提取参数
     cJSON* params_array[10];
     int param_count = 0;
     while ((token = jrpc_strtok(NULL, " ", &context)) != NULL) {
-        int param_value = atoi(token);  // 假设所有参数都是整数
+        int param_value = atoi(token);  
         params_array[param_count] = cJSON_CreateNumber(param_value);
         param_count++;
     }
 
-    // 检查参数数量
     if (param_count == 0) {
         jrpc_debug("No parameters provided\n");
         jrpc_free(method);
@@ -737,7 +726,6 @@ char* jrpc_cmd(JRPC* jrpc, const char* cmd) {
         return NULL;
     }
 
-    // 调用 JRPC_send_request_no_blocking
     cJSON* result =
         JRPC_send_request_blocking(jrpc, method, params_array, param_count);
 
@@ -770,4 +758,24 @@ char* jrpc_cmd(JRPC* jrpc, const char* cmd) {
     jrpc_free(method);
     jrpc_free(cmd_copy);
     return result_str;
+}
+
+void jrpc_init(JRPC* jrpc,
+               rpc_mapping* rpc_map,
+               rpc_mapping_nonblocking* nonblocking_rpc_map,
+               void (*send_func)(const char* message),
+               char* (*receive_func)(void),
+               int receive_need_free,
+               void (*yield_func)(void),
+               unsigned long (*tick_func)(void)) {
+    jrpc->map = rpc_map;
+    jrpc->nonblocking_map = nonblocking_rpc_map;
+    jrpc->send = send_func;
+    jrpc->receive = receive_func;
+    jrpc->receive_need_free = receive_need_free;
+    jrpc->yield = yield_func;
+    jrpc->tick = tick_func;
+    jrpc->current_id = 0;
+    memset(jrpc->cache, 0, sizeof(jrpc->cache));
+    jrpc->cache_count = 0;
 }
