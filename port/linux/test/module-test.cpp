@@ -947,6 +947,11 @@ rpc_mapping gtest_rpc_map[] = {{"add",
                                     return cJSON_CreateNumber(a + b);
                                 },
                                 2},
+                               {"get_val",
+                                [](cJSON* params[], int param_count) -> cJSON* {
+                                    return cJSON_CreateNumber(2478);
+                                },
+                                0},
                                RPC_MAP_END};
 
 rpc_mapping_nonblocking gtest_nonblocking_rpc_map[] = {RPC_MAP_END};
@@ -1143,6 +1148,7 @@ TEST(jrpc, BlockingRequestBetweenTwoJRPC) {
                    0};
 
     // Create a thread to run server_handle
+    server_running = 1;
     std::thread server_thread(server_handle, &server);
 
     // Client sends request to Server
@@ -1237,6 +1243,74 @@ TEST(jrpc, cmd) {
         free(mock_sent_message);
         mock_sent_message = NULL;
     }
+}
+
+char* execute_cmd(const char* cmd) {
+    // Server JRPC
+    JRPC server = {gtest_rpc_map,
+                   gtest_nonblocking_rpc_map,
+                   jrpc_server_send,
+                   jrpc_server_receive,
+                   1,
+                   mock_yield,
+                   mock_tick_ms,
+                   0,
+                   {NULL},
+                   0};
+
+    // Client JRPC
+    JRPC client = {gtest_rpc_map,
+                   gtest_nonblocking_rpc_map,
+                   jrpc_client_send,
+                   jrpc_client_receive,
+                   1,
+                   mock_yield,
+                   mock_tick_ms,
+                   0,
+                   {NULL},
+                   0};
+
+    // Create a thread to run server_handle
+    server_running = 1;
+    std::thread server_thread(server_handle, &server);
+
+    // Client sends request to Server
+    char* response = JRPC_cmd(&client, cmd);
+
+    // Signal the server to stop and wait for the server thread to finish
+    server_running = false;
+    server_thread.join();
+
+    // Clean up mock_sent_message
+    if (NULL != mock_sent_message) {
+        free(mock_sent_message);
+        mock_sent_message = NULL;
+    }
+
+    if (NULL != server_receive_buffer) {
+        free(server_receive_buffer);
+        server_receive_buffer = NULL;
+    }
+
+    JRPC_deinit(&server);
+    return response;
+}
+
+TEST(jrpc, exec_add) {
+    char* response = execute_cmd("add 10 20");
+    EXPECT_STREQ(response, "30");
+    free(response);
+}
+
+TEST(jrpc, exec_get_val) {
+    char* response = execute_cmd("get_val");
+    EXPECT_STREQ(response, "2478");
+    free(response);
+}
+
+TEST(jrpc, exec_par_num_err) {
+    char* response = execute_cmd("get_val 123");
+    EXPECT_STREQ(response, NULL);
 }
 
 TEST_END

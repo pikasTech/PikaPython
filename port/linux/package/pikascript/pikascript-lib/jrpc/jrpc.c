@@ -468,6 +468,7 @@ cJSON* JRPC_send_request_blocking(JRPC* self,
                                   cJSON* params[],
                                   int param_count) {
     // Build request
+    cJSON* resObj = NULL;
     int id = ++self->current_id;
     cJSON* request = cJSON_CreateObject();
     cJSON_AddStringToObject(request, STR_JSON_RPC_FIELD, STR_JSON_RPC_VERSION);
@@ -488,9 +489,8 @@ cJSON* JRPC_send_request_blocking(JRPC* self,
     if (JRPC_send_message_with_retry(self, request_str, RETRY_COUNT,
                                      ACK_TIMEOUT, id, TYPE_ACK,
                                      "Client") != 0) {
-        jrpc_free(request_str);
-        cJSON_Delete(request);
-        return NULL;
+        resObj = NULL;
+        goto __exit;
     }
     JRPC_send_acknowledgement(self, id, ACK_SUCCESS, "Client");
     // Wait for response
@@ -499,21 +499,25 @@ cJSON* JRPC_send_request_blocking(JRPC* self,
         cJSON* response_json =
             JRPC_receive_with_id_and_type(self, id, TYPE_RESULT);
         if (response_json != NULL) {
-            cJSON_Delete(request);
-            jrpc_free(request_str);
             char* response_str = cJSON_Print(response_json);
             jrpc_debug("[Client] Received Response: %s\n", response_str);
             jrpc_free(response_str);
-            return response_json;
+            resObj = response_json;
+            goto __exit;
         }
         if (self->tick() - start_time >= BLOCKING_TIMEOUT) {
             jrpc_debug("[Client] Response timeout\n");
-            jrpc_free(request_str);
-            cJSON_Delete(request);
-            return NULL;
+            resObj = NULL;
+            goto __exit;
         }
         self->yield();  // Thread switch
     }
+__exit:
+    cJSON_Delete(request);
+    if (NULL != request_str) {
+        jrpc_free(request_str);
+    }
+    return resObj;
 }
 
 // Mock send function with validation
@@ -727,63 +731,77 @@ char* jrpc_strtok(char* str, const char* delimiters, char** context) {
 }
 
 char* JRPC_cmd(JRPC* jrpc, const char* cmd) {
-    char* cmd_copy = jrpc_strdup(cmd);
-    char* context = NULL;
+    char* cmd_copy = NULL;
+    char* method = NULL;
+    cJSON* params_array[10] = {NULL};
+    int param_count = 0;
+    char* result_str = NULL;
+    cJSON* result = NULL;
 
+    cmd_copy = jrpc_strdup(cmd);
+    if (!cmd_copy) {
+        jrpc_debug("Failed to duplicate command\n");
+        goto __exit;
+    }
+
+    char* context = NULL;
     char* token = jrpc_strtok(cmd_copy, " ", &context);
     if (token == NULL) {
         jrpc_debug("Invalid command\n");
-        jrpc_free(cmd_copy);
-        return NULL;
+        goto __exit;
     }
 
-    char* method = jrpc_strdup(token);
+    method = jrpc_strdup(token);
+    if (!method) {
+        jrpc_debug("Failed to duplicate method\n");
+        goto __exit;
+    }
 
-    cJSON* params_array[10];
-    int param_count = 0;
     while ((token = jrpc_strtok(NULL, " ", &context)) != NULL) {
         int param_value = atoi(token);
         params_array[param_count] = cJSON_CreateNumber(param_value);
+        if (!params_array[param_count]) {
+            jrpc_debug("Failed to create JSON number\n");
+            goto __exit;
+        }
         param_count++;
     }
 
-    if (param_count == 0) {
-        jrpc_debug("No parameters provided\n");
-        jrpc_free(method);
-        jrpc_free(cmd_copy);
-        return NULL;
-    }
-
-    cJSON* result =
+    result =
         JRPC_send_request_blocking(jrpc, method, params_array, param_count);
-
     if (result == NULL) {
-        jrpc_debug("No result\n", NULL);
-        jrpc_free(method);
-        jrpc_free(cmd_copy);
-        return NULL;
+        jrpc_debug("No result\n");
+        goto __exit;
     }
 
     cJSON* result_data = cJSON_GetObjectItem(result, "result");
-    if (NULL == result_data) {
-        jrpc_debug("No result Item\n", NULL);
-        jrpc_free(method);
-        jrpc_free(cmd_copy);
-        cJSON_Delete(result);
-        return NULL;
+    if (result_data == NULL) {
+        jrpc_debug("No result item\n");
+        goto __exit;
     }
 
-    char* result_str = NULL;
-    if (result_data) {
-        result_str = cJSON_Print(result_data);
-        // jrpc_debug("%s\n", result_str);
+    result_str = cJSON_Print(result_data);
+    if (!result_str) {
+        jrpc_debug("Failed to print JSON result\n");
+        goto __exit;
+    }
+
+__exit:
+    for (int i = 0; i < param_count; i++) {
+        if (params_array[i]) {
+            cJSON_Delete(params_array[i]);
+        }
+    }
+    if (result) {
         cJSON_Delete(result);
     }
-    for (int i = 0; i < param_count; i++) {
-        cJSON_Delete(params_array[i]);
+    if (method) {
+        jrpc_free(method);
     }
-    jrpc_free(method);
-    jrpc_free(cmd_copy);
+    if (cmd_copy) {
+        jrpc_free(cmd_copy);
+    }
+
     return result_str;
 }
 
@@ -810,5 +828,7 @@ void JRPC_init(JRPC* jrpc,
 void JRPC_deinit(JRPC* jrpc) {
     for (int i = 0; i < jrpc->cache_count; i++) {
         cJSON_Delete(jrpc->cache[i]);
+        jrpc->cache[i] = NULL;
     }
+    jrpc->cache_count = 0;
 }
