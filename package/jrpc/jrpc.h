@@ -48,10 +48,10 @@ extern "C" {
 #define CACHE_SIZE 16
 
 typedef enum {
-    ACK_SUCCESS,
-    ACK_METHOD_NOT_FOUND,
-    ACK_INVALID_PARAMS,
-    ACK_MEMORY_ERROR
+    ACK_SUCCESS = 0,
+    ACK_METHOD_NOT_FOUND = -1,
+    ACK_INVALID_PARAMS = -2,
+    ACK_MEMORY_ERROR = -3
 } ack_status;
 
 typedef struct JRPC_ JRPC;

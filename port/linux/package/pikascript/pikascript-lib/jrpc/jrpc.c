@@ -75,13 +75,12 @@ void jrpc_free(void* ptr) {
 }
 
 /* private function */
-static int JRPC_send_message_with_retry(JRPC* self,
-                                        const char* request_str,
-                                        int retry_count,
-                                        unsigned long ack_timeout,
-                                        int id,
-                                        int type,
-                                        const char* label);
+static int JRPC_send_message_wait_ACK_with_retry(JRPC* self,
+                                                 const char* request_str,
+                                                 int retry_count,
+                                                 unsigned long ack_timeout,
+                                                 int id,
+                                                 const char* label);
 
 static void JRPC_send_acknowledgement(JRPC* self,
                                       int id,
@@ -252,8 +251,8 @@ void JRPC_server_handle_string(JRPC* self, char* json_str) {
     // Try to get ACK from client to start task
     char* ack_str = create_acknowledgement_string(id->valueint, ACK_SUCCESS);
 #if JRPC_USING_DOUBLE_ACK
-    JRPC_send_message_with_retry(self, ack_str, 1, ACK_TIMEOUT, id->valueint,
-                                 TYPE_ACK, "Server");
+    JRPC_send_message_wait_ACK_with_retry(self, ack_str, 1, ACK_TIMEOUT,
+                                          id->valueint, "Server");
 
 #else
     self->send(ack_str);
@@ -394,26 +393,41 @@ cJSON* JRPC_receive_with_id_and_type(JRPC* self, int id, int type) {
     return NULL;
 }
 
-static int JRPC_send_message_with_retry(JRPC* self,
-                                        const char* request_str,
-                                        int retry_count,
-                                        unsigned long ack_timeout,
-                                        int id,
-                                        int type,
-                                        const char* label) {
+static int JRPC_send_message_wait_ACK_with_retry(JRPC* self,
+                                                 const char* request_str,
+                                                 int retry_count,
+                                                 unsigned long ack_timeout,
+                                                 int id,
+                                                 const char* label) {
+    cJSON* ack_json = NULL;
+    int result = -1;
+
     for (int retry = 0; retry < retry_count; retry++) {
         jrpc_debug("[%s] Send and await %s with retry [%d]: %s\n", label,
-                   JRPC_type_2_string(type), retry, request_str);
+                   JRPC_type_2_string(TYPE_ACK), retry, request_str);
         self->send(request_str);
 
         unsigned long start_time = self->tick();
-        cJSON* ack_json = NULL;
+
         while (1) {
-            ack_json = JRPC_receive_with_id_and_type(self, id, type);
+            ack_json = JRPC_receive_with_id_and_type(self, id, TYPE_ACK);
             if (ack_json != NULL) {
                 jrpc_debug("[%s] Received ACK, id: %d\n", label, id);
-                cJSON_Delete(ack_json);
-                return 0;  // Received correct ACK
+                // check status for ACK
+                if (cJSON_HasObjectItem(ack_json, STR_STATUS_FIELD)) {
+                    cJSON* status =
+                        cJSON_GetObjectItem(ack_json, STR_STATUS_FIELD);
+                    if (status && cJSON_IsString(status) &&
+                        strcmp(status->valuestring, STR_RECEIVED_STATUS) == 0) {
+                        result = 0;  // Received correct ACK
+                        goto __exit;
+                    } else {
+                        jrpc_debug("[%s] Received ACK status: [%s]\n", label,
+                                   status->valuestring);
+                        result = -1;  // Received incorrect ACK
+                        goto __exit;
+                    }
+                }
             }
             if (self->tick() - start_time >= ack_timeout) {
                 jrpc_debug("[%s] ACK timeout, retrying...\n", label);
@@ -422,9 +436,15 @@ static int JRPC_send_message_with_retry(JRPC* self,
             self->yield();  // Thread switch
         }
     }
+
     jrpc_debug("[%s] Failed to receive ACK after %d retries\n", label,
                retry_count);
-    return -1;  // Failed to receive correct ACK after retries
+
+__exit:
+    if (ack_json) {
+        cJSON_Delete(ack_json);
+    }
+    return result;  // Return the result based on ACK reception
 }
 
 void JRPC_send_request_no_blocking(JRPC* self,
@@ -450,9 +470,8 @@ void JRPC_send_request_no_blocking(JRPC* self,
     char* request_str = cJSON_Print(request);
     jrpc_debug("[Client] Sending Request (no_blocking): %s\n", request_str);
 
-    if (JRPC_send_message_with_retry(self, request_str, RETRY_COUNT,
-                                     ACK_TIMEOUT, id, TYPE_ACK,
-                                     "Client") != 0) {
+    if (JRPC_send_message_wait_ACK_with_retry(self, request_str, RETRY_COUNT,
+                                              ACK_TIMEOUT, id, "Client") != 0) {
         // If ACK received
         callback(NULL);  // Simulate callback, no result
     }
@@ -486,9 +505,8 @@ cJSON* JRPC_send_request_blocking(JRPC* self,
     char* request_str = cJSON_Print(request);
     jrpc_debug("[Client] Sending Request (blocking): %s\n", request_str);
 
-    if (JRPC_send_message_with_retry(self, request_str, RETRY_COUNT,
-                                     ACK_TIMEOUT, id, TYPE_ACK,
-                                     "Client") != 0) {
+    if (JRPC_send_message_wait_ACK_with_retry(self, request_str, RETRY_COUNT,
+                                              ACK_TIMEOUT, id, "Client") != 0) {
         resObj = NULL;
         goto __exit;
     }
