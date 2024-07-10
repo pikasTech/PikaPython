@@ -49,7 +49,12 @@ for root, apply_dirs, files in os.walk('.'):
             result = subprocess.run(diff_command, stdout=subprocess.PIPE)
             if result.stdout:
                 # 确保使用UTF-8编码解码stdout
-                diff_output = result.stdout.decode('utf-8')
+                try:
+                    diff_output = result.stdout.decode('utf-8')
+                except Exception as e:
+                    print(f"Failed to decode diff output: {e}")
+                    print("Skipping file:", target_file)
+                    exit(-1)
                 print(diff_output)
                 # 使用UTF-8编码打开文件进行写入
                 with open("/tmp/base/changes.patch", "a", encoding='utf-8') as patch_file:
