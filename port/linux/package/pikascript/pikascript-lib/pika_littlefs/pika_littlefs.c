@@ -116,38 +116,83 @@ int pika_platform_rename(const char* oldpath, const char* newpath) {
 }
 
 char** pika_platform_listdir(const char* path, int* count) {
-    // LittleFS doesn't have a direct listdir function, so we'll need to
-    // implement this.
     lfs_dir_t dir;
-    lfs_info_t info;
+    struct lfs_info info;
 
     char** filenames = NULL;
     int index = 0;
     *count = 0;
+    int err = 0;
 
-    if (lfs_opendir(&pika_lfs_handle, &dir, path) == LFS_ERR_OK) {
-        while (lfs_readdir(&pika_lfs_handle, &dir, &info) == LFS_ERR_OK) {
-            if (info.name[0] != 0) {
+    err = lfs_dir_open(&pika_lfs_handle, &dir, path);
+    if (err != LFS_ERR_OK) {
+        pika_platform_printf("Error opening directory: %d\n", err);
+        goto __exit;
+    }
+
+    while ((err = lfs_dir_read(&pika_lfs_handle, &dir, &info)) > 0) {
+        if (info.type == LFS_TYPE_REG || info.type == LFS_TYPE_DIR) {
+            if (info.name[0] != 0 && strcmp(info.name, ".") != 0 &&
+                strcmp(info.name, "..") != 0) {
                 (*count)++;
             }
         }
-        lfs_closedir(&pika_lfs_handle, &dir);
+    }
+    if (err < 0) {
+        pika_platform_printf("Error reading directory: %d\n", err);
+        goto __exit;
+    }
+    lfs_dir_close(&pika_lfs_handle, &dir);
 
-        // Allocate space for filenames
-        filenames = (char**)pika_platform_malloc(sizeof(char*) * (*count));
+    if (*count == 0) {
+        return NULL;
+    }
 
-        // Read filenames
-        lfs_opendir(&pika_lfs_handle, &dir, path);
-        while (lfs_readdir(&pika_lfs_handle, &dir, &info) == LFS_ERR_OK) {
-            if (info.name[0] != 0) {
+    filenames = (char**)pika_platform_malloc(sizeof(char*) * (*count));
+    if (!filenames) {
+        pika_platform_printf("Memory allocation failed\n");
+        err = -1;
+        goto __exit;
+    }
+
+    err = lfs_dir_open(&pika_lfs_handle, &dir, path);
+    if (err != LFS_ERR_OK) {
+        pika_platform_printf("Error reopening directory: %d\n", err);
+        goto __exit;
+    }
+
+    while ((err = lfs_dir_read(&pika_lfs_handle, &dir, &info)) > 0) {
+        if (info.type == LFS_TYPE_REG || info.type == LFS_TYPE_DIR) {
+            if (info.name[0] != 0 && strcmp(info.name, ".") != 0 &&
+                strcmp(info.name, "..") != 0) {
                 filenames[index] = pika_platform_strdup(info.name);
+                if (!filenames[index]) {
+                    pika_platform_printf("Memory allocation failed\n");
+                    err = -1;
+                    goto __exit;
+                }
                 index++;
             }
         }
-        lfs_closedir(&pika_lfs_handle, &dir);
+    }
+    if (err < 0) {
+        pika_platform_printf("Error reading directory: %d\n", err);
+        goto __exit;
     }
 
-    return filenames;
+__exit:
+    if (err < 0) {
+        if (filenames) {
+            for (int i = 0; i < index; i++) {
+                if (filenames[i]) {
+                    pika_platform_free(filenames[i]);
+                }
+            }
+            pika_platform_free(filenames);
+        }
+    }
+    lfs_dir_close(&pika_lfs_handle, &dir);
+    return (err < 0) ? NULL : filenames;
 }
 
 #endif
