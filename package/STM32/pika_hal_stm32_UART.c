@@ -1135,16 +1135,16 @@ static void uart_isr(struct rt_serial_device *serial)
 }
 
 #if defined(BSP_USING_UART1)
-void USART1_IRQHandler(void)
-{
-    /* enter interrupt */
-    rt_interrupt_enter();
+//void USART1_IRQHandler(void)
+//{
+//    /* enter interrupt */
+//    rt_interrupt_enter();
 
-    uart_isr(&(uart_obj[UART1_INDEX].serial));
+//    uart_isr(&(uart_obj[UART1_INDEX].serial));
 
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
+//    /* leave interrupt */
+//    rt_interrupt_leave();
+//}
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART1_RX_USING_DMA)
 void UART1_DMA_RX_IRQHandler(void)
 {
@@ -2035,16 +2035,16 @@ static pika_dev* find_uart_from_handle(UART_HandleTypeDef* handle){
     return NULL;
 }
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
-    pika_dev* uart = find_uart_from_handle(huart);
-    platform_UART* pika_uart = uart->platform_data;
+//void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
+//    pika_dev* uart = find_uart_from_handle(huart);
+//    platform_UART* pika_uart = uart->platform_data;
 
-    // Increment writePointer, wrap around if needed
-    pika_uart->writePointer = (pika_uart->writePointer + 1) % RX_BUFF_LENGTH;
+//    // Increment writePointer, wrap around if needed
+//    pika_uart->writePointer = (pika_uart->writePointer + 1) % RX_BUFF_LENGTH;
 
-    // Start receiving next character
-    UART_Start_Receive_IT(huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->writePointer), 1);
-}
+//    // Start receiving next character
+//    UART_Start_Receive_IT(huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->writePointer), 1);
+//}
 
 int pika_hal_platform_UART_read(pika_dev* dev, void* buf, size_t count) {
     platform_UART* pika_uart = (platform_UART*)dev->platform_data;
