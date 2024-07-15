@@ -940,19 +940,42 @@ static unsigned long mock_tick_ms(void) {
     return pika_platform_get_tick();
 }
 
-rpc_mapping gtest_rpc_map[] = {{"add",
-                                [](cJSON* params[], int param_count) -> cJSON* {
-                                    int a = params[0]->valueint;
-                                    int b = params[1]->valueint;
-                                    return cJSON_CreateNumber(a + b);
-                                },
-                                2},
-                               {"get_val",
-                                [](cJSON* params[], int param_count) -> cJSON* {
-                                    return cJSON_CreateNumber(2478);
-                                },
-                                0},
-                               RPC_MAP_END};
+rpc_mapping gtest_rpc_map[] = {
+    {"add",
+     [](cJSON* params[], int param_count) -> cJSON* {
+         int a = params[0]->valueint;
+         int b = params[1]->valueint;
+         return cJSON_CreateNumber(a + b);
+     },
+     2},
+    {"get_val",
+     [](cJSON* params[], int param_count) -> cJSON* {
+         return cJSON_CreateNumber(2478);
+     },
+     0},
+    {"concat",
+     [](cJSON* params[], int param_count) -> cJSON* {
+         const char* str1 = params[0]->valuestring;
+         const char* str2 = params[1]->valuestring;
+         size_t len = strlen(str1) + strlen(str2) + 1;
+         char* result_str = (char*)malloc(len);
+         if (!result_str)
+             return NULL;
+         strcpy(result_str, str1);
+         strcat(result_str, str2);
+         cJSON* result = cJSON_CreateString(result_str);
+         free(result_str);
+         return result;
+     },
+     2},
+    {"multiply",
+     [](cJSON* params[], int param_count) -> cJSON* {
+         double a = params[0]->valuedouble;
+         double b = params[1]->valuedouble;
+         return cJSON_CreateNumber(a * b);
+     },
+     2},
+    RPC_MAP_END};
 
 rpc_mapping_nonblocking gtest_nonblocking_rpc_map[] = {RPC_MAP_END};
 
@@ -1311,6 +1334,41 @@ TEST(jrpc, exec_get_val) {
 TEST(jrpc, exec_par_num_err) {
     char* response = execute_cmd("get_val 123");
     EXPECT_STREQ(response, NULL);
+}
+
+TEST(jrpc, exec_concat) {
+    char* response = execute_cmd("concat hello world");
+    EXPECT_STREQ(response, "\"helloworld\"");
+    free(response);
+}
+
+TEST(jrpc, exec_multiply) {
+    char* response = execute_cmd("multiply 3.5 2.0");
+    EXPECT_STREQ(response, "7");
+    free(response);
+}
+
+TEST(jrpc, exec_multiply_integer) {
+    char* response = execute_cmd("multiply 3 2");
+    EXPECT_STREQ(response, "6");
+    free(response);
+}
+
+TEST(jrpc, exec_concat_num_err) {
+    char* response = execute_cmd("concat hello");
+    EXPECT_EQ(response, nullptr);
+}
+
+TEST(jrpc, exec_concat_str) {
+    char* response = execute_cmd("concat \"hello\" \"world\"");
+    EXPECT_STREQ(response, "\"helloworld\"");
+    free(response);
+}
+
+TEST(jrpc, exec_concat_str_space) {
+    char* response = execute_cmd("concat \"he llo\" \"world\"");
+    EXPECT_STREQ(response, "\"he lloworld\"");
+    free(response);
 }
 
 TEST_END

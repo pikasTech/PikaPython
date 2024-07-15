@@ -27,7 +27,7 @@ extern "C" {
 #define PARAM_COUNT_NO_CHECK -1
 
 // Timeout definitions
-#define ACK_TIMEOUT 50
+#define ACK_TIMEOUT 200
 #define BLOCKING_TIMEOUT 1000
 #define RETRY_COUNT 5
 

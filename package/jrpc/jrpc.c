@@ -261,7 +261,8 @@ void JRPC_server_handle_string(JRPC* self, char* json_str) {
         jrpc_free(ack_str);
     }
 
-    cJSON** param_array = (cJSON**)jrpc_malloc(param_count * sizeof(cJSON*));
+    cJSON** param_array =
+        (cJSON**)jrpc_malloc(param_count * sizeof(cJSON*) + 1);
     if (param_array == NULL) {
         jrpc_debug("Memory allocation failed for param_array\n");
         JRPC_send_acknowledgement(self, id->valueint, ACK_MEMORY_ERROR,
@@ -726,17 +727,23 @@ int jrpc_test_server() {
 
 char* jrpc_strtok(char* str, const char* delimiters, char** context) {
     char* start = str ? str : *context;
-    if (!start)
+    if (!start) {
         return NULL;
+    }
 
-    while (*start && strchr(delimiters, *start))
+    // Skip initial delimiters
+    while (*start && strchr(delimiters, *start)) {
         ++start;
-    if (!*start)
+    }
+    if (!*start) {
+        *context = NULL;
         return NULL;
+    }
 
     char* end = start;
-    while (*end && !strchr(delimiters, *end))
+    while (*end && !strchr(delimiters, *end)) {
         ++end;
+    }
 
     if (*end) {
         *end = '\0';
@@ -746,6 +753,36 @@ char* jrpc_strtok(char* str, const char* delimiters, char** context) {
     }
 
     return start;
+}
+
+static char* extract_quoted_string(const char** input) {
+    const char* start = *input;
+    if (*start != '"') {
+        return NULL;
+    }
+    start++;
+    const char* end = strchr(start, '"');
+    if (!end) {
+        return NULL;
+    }
+    size_t len = end - start;
+    char* result = (char*)malloc(len + 1);
+    if (!result) {
+        return NULL;
+    }
+    strncpy(result, start, len);
+    result[len] = '\0';
+    *input = end + 1;
+    return result;
+}
+
+static void skip_whitespace(const char** input) {
+    if (input == NULL || *input == NULL) {
+        return;
+    }
+    while (**input == ' ' || **input == '\t' || **input == '\n') {
+        (*input)++;
+    }
 }
 
 char* JRPC_cmd(JRPC* jrpc, const char* cmd) {
@@ -762,8 +799,10 @@ char* JRPC_cmd(JRPC* jrpc, const char* cmd) {
         goto __exit;
     }
 
-    char* context = NULL;
-    char* token = jrpc_strtok(cmd_copy, " ", &context);
+    const char* cursor = cmd_copy;
+    skip_whitespace(&cursor);
+
+    char* token = jrpc_strtok(cmd_copy, " ", (char**)&cursor);
     if (token == NULL) {
         jrpc_debug("Invalid command\n");
         goto __exit;
@@ -775,18 +814,52 @@ char* JRPC_cmd(JRPC* jrpc, const char* cmd) {
         goto __exit;
     }
 
-    while ((token = jrpc_strtok(NULL, " ", &context)) != NULL) {
-        int param_value = atoi(token);
-        params_array[param_count] = cJSON_CreateNumber(param_value);
-        if (!params_array[param_count]) {
-            jrpc_debug("Failed to create JSON number\n");
+    skip_whitespace(&cursor);
+
+    while (cursor && *cursor != '\0') {
+        cJSON* param = NULL;
+        if (*cursor == '"') {
+            char* str_param = extract_quoted_string(&cursor);
+            if (!str_param) {
+                jrpc_debug("Failed to extract quoted string\n");
+                goto __exit;
+            }
+            param = cJSON_CreateString(str_param);
+            free(str_param);
+        } else {
+            const char* start = cursor;
+            while (*cursor != ' ' && *cursor != '\0') {
+                cursor++;
+            }
+            size_t len = cursor - start;
+            char* token_param = (char*)malloc(len + 1);
+            if (!token_param) {
+                jrpc_debug("Failed to allocate memory for token_param\n");
+                goto __exit;
+            }
+            strncpy(token_param, start, len);
+            token_param[len] = '\0';
+
+            param = cJSON_Parse(token_param);
+            if (!param) {
+                param = cJSON_CreateString(token_param);
+            }
+            free(token_param);
+        }
+        if (!param) {
+            jrpc_debug("Failed to create JSON parameter\n");
             goto __exit;
         }
+        params_array[param_count] = param;
         param_count++;
+
+        skip_whitespace(&cursor);
     }
 
-    result =
-        JRPC_send_request_blocking(jrpc, method, params_array, param_count);
+    // Ensure params_array and param_count are handled correctly when
+    // param_count is 0
+    result = JRPC_send_request_blocking(
+        jrpc, method, param_count > 0 ? params_array : NULL, param_count);
     if (result == NULL) {
         jrpc_debug("No result\n");
         goto __exit;
