@@ -770,7 +770,7 @@ static char* extract_quoted_string(const char** input) {
     if (!result) {
         return NULL;
     }
-    strncpy(result, start, len);
+    memcpy(result, start, len);
     result[len] = '\0';
     *input = end + 1;
     return result;
@@ -837,7 +837,7 @@ char* JRPC_cmd(JRPC* jrpc, const char* cmd) {
                 jrpc_debug("Failed to allocate memory for token_param\n");
                 goto __exit;
             }
-            strncpy(token_param, start, len);
+            memcpy(token_param, start, len);
             token_param[len] = '\0';
 
             param = cJSON_Parse(token_param);
