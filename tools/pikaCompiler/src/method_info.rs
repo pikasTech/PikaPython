@@ -93,7 +93,7 @@ impl MethodInfo {
             format!(
                 "    {}({}_{}, {}),\n",
                 class_define_method, self.class_name, self.name, self.name_hash
-            )
+            ).replace(".", "_")
             .as_str(),
         );
 
@@ -113,7 +113,7 @@ impl MethodInfo {
         return format!(
             "void {}_{}Method(PikaObj *self, Args *_args_)",
             self.class_name, self.name
-        );
+        ).replace(".", "_");
     }
     pub fn method_impl_declear(&self) -> String {
         let return_type_in_c = match self.return_type.as_ref() {
@@ -127,7 +127,7 @@ impl MethodInfo {
         return format!(
             "{} {}_{}(PikaObj *self{});\n",
             return_type_in_c, self.class_name, self.name, arg_list_in_c,
-        );
+        ).replace(".", "_");
     }
     pub fn method_fn_impl(&self) -> String {
         let mut method_fn_impl = "".to_string();
@@ -178,7 +178,7 @@ impl MethodInfo {
             self.name,
             self.name,
             self.get_arg_list_define(),
-        );
+        ).replace(".", "_");
         method_fn_impl.push_str(&typedef);
         return method_fn_impl;
     }

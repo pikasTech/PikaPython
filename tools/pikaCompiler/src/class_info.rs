@@ -117,8 +117,8 @@ impl ClassInfo {
 
     pub fn include(&self) -> String {
         let mut include = String::new();
-        include.push_str(&format!("#include \"{}.h\"\n", self.this_class_name));
-        include.push_str(&format!("#include \"{}.h\"\n", self.super_class_name));
+        include.push_str(&format!("#include \"{}.h\"\n", self.this_class_name.replace(".", "_")));
+        include.push_str(&format!("#include \"{}.h\"\n", self.super_class_name.replace(".", "_")));
         for (_, import_info) in self.import_list.iter() {
             include.push_str(&format!(
                 "#include \"{}.h\"\n",
@@ -139,7 +139,7 @@ impl ClassInfo {
         for (_, method_info) in self.method_list.iter() {
             method_impl.push_str(&method_info.method_fn_impl());
         }
-        return method_impl;
+        return method_impl.replace(".", "_");
     }
 
     pub fn script_fn(&self, version_info: VersionInfo) -> String {
@@ -201,7 +201,7 @@ impl ClassInfo {
         let mut new_class_fn = String::new();
         let new_class_fn_head = format!("{}{{\n", self.new_class_fn_name());
 
-        let class_def = format!("class_def({}){{\n", self.this_class_name);
+        let class_def = format!("class_def({}){{\n", self.this_class_name).replace(".", "_");
         new_class_fn.push_str(&class_def);
 
         // new_class_fn.push_str("#ifdef _WIN32\n");
@@ -226,7 +226,7 @@ impl ClassInfo {
         let class_inhert = format!(
             "class_inhert({}, {});\n\n",
             self.this_class_name, self.super_class_name
-        );
+        ).replace(".", "_");
 
         new_class_fn.push_str(&class_inhert);
 
@@ -238,7 +238,7 @@ impl ClassInfo {
             new_class_fn.push_str(&object_info.new_object_fn());
         }
 
-        let obj_set_class = format!("    obj_setClass(self, {});\n", self.this_class_name);
+        let obj_set_class = format!("    obj_setClass(self, {});\n", self.this_class_name).replace(".", "_");
         new_class_fn.push_str(&obj_set_class);
 
         new_class_fn.push_str("    return self;\n");
@@ -247,7 +247,7 @@ impl ClassInfo {
     }
 
     pub fn new_class_fn_name(&self) -> String {
-        return format!("PikaObj *New_{}(Args *args)", self.this_class_name);
+        return format!("PikaObj *New_{}(Args *args)", self.this_class_name).replace(".", "_");
     }
 
     pub fn method_impl_declear(&self) -> String {

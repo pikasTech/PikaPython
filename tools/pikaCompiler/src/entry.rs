@@ -78,6 +78,7 @@ pub fn pika_compiler_entry() {
                 Some(package_name.clone())
             }
         })
+        .map(|name| name.replace(".", "_"))
         .collect();
 
     // Add "main" to the start of the module_names
@@ -116,7 +117,7 @@ pub fn pika_compiler_entry() {
 
     /* make the -api.c file for each python class */
 
-    let api_file_path = format!("{}__pikaBinding.c", compiler.dist_path);
+    let api_file_path = format!("{}__pikaBinding.c", compiler.dist_path.replace(".", "_"));
     let mut f = File::create(api_file_path).unwrap();
     f.write(head_info.as_bytes()).unwrap();
     /* create include for calsses */
@@ -160,7 +161,7 @@ pub fn pika_compiler_entry() {
         /* create module control macro */
         let module_define = format!(
             "#ifndef PIKA_MODULE_{}_DISABLE\n",
-            module_name.to_ascii_uppercase()
+            module_name.replace(".", "_").to_ascii_uppercase()
         );
         f.write(module_define.as_bytes()).unwrap();
         /* create method api function */
@@ -171,9 +172,9 @@ pub fn pika_compiler_entry() {
         if !class_info.is_package {
             f.write("\n".as_bytes()).unwrap();
             let name = String::from(class_info.this_class_name.to_string());
-            f.write(format!("Arg *{}(PikaObj *self){{\n", &name).as_bytes())
+            f.write(format!("Arg *{}(PikaObj *self){{\n", &name).replace(".", "_").as_bytes())
                 .unwrap();
-            f.write(format!("    return obj_newObjInPackage(New_{});\n", &name).as_bytes())
+            f.write(format!("    return obj_newObjInPackage(New_{});\n", &name).replace(".", "_").as_bytes())
                 .unwrap();
             f.write("}\n".as_bytes()).unwrap();
         }
@@ -184,12 +185,12 @@ pub fn pika_compiler_entry() {
 
     /* make the .h file for each python class */
     for (_, class_info) in compiler.class_list.iter() {
-        let api_file_path = format!("{}{}.h", compiler.dist_path, class_info.this_class_name);
+        let api_file_path = format!("{}{}.h", compiler.dist_path.replace(".", "_"), class_info.this_class_name.replace(".", "_"));
         let mut f = File::create(api_file_path).unwrap();
         f.write(head_info.as_bytes()).unwrap();
-        f.write(format!("#ifndef __{}__H\n", class_info.this_class_name).as_bytes())
+        f.write(format!("#ifndef __{}__H\n", class_info.this_class_name).replace(".", "_").as_bytes())
             .unwrap();
-        f.write(format!("#define __{}__H\n", class_info.this_class_name).as_bytes())
+        f.write(format!("#define __{}__H\n", class_info.this_class_name).replace(".", "_").as_bytes())
             .unwrap();
         f.write("#include <stdio.h>\n".as_bytes()).unwrap();
         f.write("#include <stdlib.h>\n".as_bytes()).unwrap();
@@ -205,7 +206,7 @@ pub fn pika_compiler_entry() {
         drop(f);
     }
     /* make the pikascript.c */
-    let api_file_path = format!("{}pikaScript.c", compiler.dist_path);
+    let api_file_path = format!("{}pikaScript.c", compiler.dist_path.replace(".", "_"));
     let mut f = File::create(api_file_path).unwrap();
     /* add head */
     f.write(head_info.as_bytes()).unwrap();
@@ -225,7 +226,7 @@ pub fn pika_compiler_entry() {
     drop(f);
 
     /* make the pikascript.h */
-    let api_file_path = format!("{}pikaScript.h", compiler.dist_path);
+    let api_file_path = format!("{}pikaScript.h", compiler.dist_path.replace(".", "_"));
     let mut f = File::create(api_file_path).unwrap();
     f.write("/* ******************************** */\n".as_bytes())
         .unwrap();
