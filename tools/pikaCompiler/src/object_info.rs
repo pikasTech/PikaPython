@@ -41,7 +41,7 @@ impl ObjectInfo {
         );
         let module_define = format!(
             "#ifndef PIKA_MODULE_{}_DISABLE\n",
-            self.import_class_name.to_ascii_uppercase()
+            self.import_class_name.to_ascii_uppercase().replace(".", "_")
         );
         new_object_fn.push_str(&module_define);
         new_object_fn.push_str(&new_fn);
