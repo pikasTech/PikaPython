@@ -23,9 +23,8 @@ int _random_randrange(PikaObj* self, int start, int stop, int step) {
     return start + r * step;
 }
 
-PikaObj* _random_seed(PikaObj* self, int a) {
+void _random_seed(PikaObj* self, int a) {
     srand(a);
-    return NULL;
 }
 
 pika_float _random_uniform(PikaObj* self, pika_float a, pika_float b) {

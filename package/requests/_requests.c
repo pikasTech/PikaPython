@@ -305,7 +305,7 @@ int _requests_Response_request_init(PikaObj* self, char* method) {
     return 1;
 }
 
-PikaObj* _requests_Response_request_del(PikaObj* self) {
+void _requests_Response_request_del(PikaObj* self) {
     struct webclient_session* session;
     session = (struct webclient_session*)obj_getPtr(self, "session_address");
     if (session) {
@@ -313,7 +313,6 @@ PikaObj* _requests_Response_request_del(PikaObj* self) {
         RQ_debug("Response free session memory.");
     }
     RQ_debug("Response set variables None.");
-    return NULL;
 }
 
 void _requests_Response___del__(PikaObj* self) {
