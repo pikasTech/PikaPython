@@ -878,6 +878,7 @@ pika_bool pikaTuple_getBool(PikaTuple* self, int index);
 pika_float pikaList_getFloat(PikaList* self, int index);
 char* pikaList_getStr(PikaList* self, int index);
 void* pikaList_getPtr(PikaList* self, int index);
+PikaObj* pikaList_getObj(PikaList* self, int index);
 Arg* pikaList_get(PikaList* self, int index);
 #define pikaList_getArg pikaList_get
 size_t pikaList_getSize(PikaList* self);
@@ -931,6 +932,7 @@ pika_bool pikaDict_getBool(PikaDict* self, char* name);
 pika_float pikaDict_getFloat(PikaDict* self, char* name);
 char* pikaDict_getStr(PikaDict* self, char* name);
 void* pikaDict_getPtr(PikaDict* self, char* name);
+PikaObj* pikaDict_getObj(PikaDict* self, char* name);
 int pikaDict_getSize(PikaDict* self);
 Arg* pikaDict_getArgByidex(PikaDict* self, int index);
 Arg* pikaDict_get(PikaDict* self, char* name);

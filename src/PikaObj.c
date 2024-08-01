@@ -1941,9 +1941,9 @@ char _await_getchar(sh_getchar fn_getchar) {
 #define PIKA_MAGIC_CODE_LEN 4
 
 /* return file size */
-PIKA_WEAK uint32_t _pikaShell_recv_file(ShellConfig* cfg,
-                                        uint8_t* magic_code,
-                                        uint8_t** pbuff) {
+uint32_t _pikaShell_recv_file_direct(ShellConfig* cfg,
+                                    uint8_t* magic_code,
+                                    uint8_t** pbuff) {
     uint32_t size = 0;
     for (int i = 0; i < 4; i++) {
         uint8_t* size_byte = (uint8_t*)&size;
@@ -1962,6 +1962,13 @@ PIKA_WEAK uint32_t _pikaShell_recv_file(ShellConfig* cfg,
     }
     *pbuff = buff;
     return size;
+}
+
+/* return file size */
+PIKA_WEAK uint32_t _pikaShell_recv_file(ShellConfig* cfg,
+                                        uint8_t* magic_code,
+                                        uint8_t** pbuff) {
+    return _pikaShell_recv_file_direct(cfg, magic_code, pbuff);
 }
 
 void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
@@ -2049,7 +2056,12 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
                 magic_code[2 + i] = cfg->fn_getchar();
             }
             uint8_t* recv = NULL;
-            uint32_t size = _pikaShell_recv_file(cfg, magic_code, &recv);
+            uint32_t size = 0;
+            if (magic_code[2] == 'y' && magic_code[3] == 'a'){
+                size = _pikaShell_recv_file(cfg, magic_code, &recv);
+            }else{
+                size = _pikaShell_recv_file_direct(cfg, magic_code, &recv);
+            }
             pika_platform_printf(
                 "\r\n=============== [File] ===============\r\n");
             pika_platform_printf("[   Info] Recived size: %d\r\n", size);
@@ -2061,7 +2073,8 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
                     "=============== [ RUN] ===============\r\n");
                 pikaVM_runByteCodeInconstant(self, recv);
                 pikaFree(recv, size);
-                return;
+                pika_platform_printf("%s", cfg->prefix);
+                continue;
             }
             if (magic_code[3] == 'a') {
                 _save_file(PIKA_SHELL_SAVE_APP_PATH, (uint8_t*)recv, size);
@@ -4693,6 +4706,11 @@ void* pikaList_getPtr(PikaList* self, int index) {
     return arg_getPtr(arg);
 }
 
+PikaObj* pikaList_getObj(PikaList* self, int index) {
+    Arg* arg = pikaList_get(self, index);
+    return arg_getObj(arg);
+}
+
 PIKA_RES pikaList_append(PikaList* self, Arg* arg) {
     if (NULL == arg) {
         return PIKA_RES_ERR_ARG_NO_FOUND;
@@ -4802,6 +4820,7 @@ void pikaList_init(PikaObj* self) {
     args_pushArg_name(list, "top", arg_newInt(0));
     obj_setPtr(self, "list", list);
 }
+
 
 void pikaList_reverse(PikaList* self) {
     pika_assert(NULL != self);
@@ -4914,6 +4933,10 @@ char* pikaDict_getStr(PikaDict* self, char* name) {
 }
 
 void* pikaDict_getPtr(PikaDict* self, char* name) {
+    return args_getPtr(_OBJ2DICT(self), (name));
+}
+
+PikaObj* pikaDict_getObj(PikaDict* self, char* name) {
     return args_getPtr(_OBJ2DICT(self), (name));
 }
 
