@@ -32,6 +32,7 @@
                 // "--gtest_filter=jrpc.client"
                 // "--gtest_filter=jrpc.BlockingRequestBetweenTwoJRPC"
                 // "--gtest_filter=jrpc.cmd"
+                // "--gtest_filter=jrpc.exec_get_val"
                 "--gtest_filter=jrpc.exec_get_val"
             ],
             "stopAtEntry": false,

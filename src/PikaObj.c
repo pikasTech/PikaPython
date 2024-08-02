@@ -1942,8 +1942,8 @@ char _await_getchar(sh_getchar fn_getchar) {
 
 /* return file size */
 uint32_t _pikaShell_recv_file_direct(ShellConfig* cfg,
-                                    uint8_t* magic_code,
-                                    uint8_t** pbuff) {
+                                     uint8_t* magic_code,
+                                     uint8_t** pbuff) {
     uint32_t size = 0;
     for (int i = 0; i < 4; i++) {
         uint8_t* size_byte = (uint8_t*)&size;
@@ -2057,9 +2057,9 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
             }
             uint8_t* recv = NULL;
             uint32_t size = 0;
-            if (magic_code[2] == 'y' && magic_code[3] == 'a'){
+            if (magic_code[2] == 'y' && magic_code[3] == 'a') {
                 size = _pikaShell_recv_file(cfg, magic_code, &recv);
-            }else{
+            } else {
                 size = _pikaShell_recv_file_direct(cfg, magic_code, &recv);
             }
             pika_platform_printf(
@@ -2073,8 +2073,10 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
                     "=============== [ RUN] ===============\r\n");
                 pikaVM_runByteCodeInconstant(self, recv);
                 pikaFree(recv, size);
-                pika_platform_printf("%s", cfg->prefix);
-                continue;
+                // pika_platform_printf("%s", cfg->prefix);
+                // continue;
+                //! Return for example like lvgl handler to continue.
+                return;
             }
             if (magic_code[3] == 'a') {
                 _save_file(PIKA_SHELL_SAVE_APP_PATH, (uint8_t*)recv, size);
@@ -4820,7 +4822,6 @@ void pikaList_init(PikaObj* self) {
     args_pushArg_name(list, "top", arg_newInt(0));
     obj_setPtr(self, "list", list);
 }
-
 
 void pikaList_reverse(PikaList* self) {
     pika_assert(NULL != self);
