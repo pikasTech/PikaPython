@@ -5,6 +5,7 @@ assert isinstance([1, 2, 3, 4, 5], list) == True
 assert isinstance({"key": "value"}, dict) == True
 assert isinstance(3.14, float) == True
 assert isinstance(object(), object) == True
+assert isinstance(10, str) == False
 
 class MyClass:
     pass

@@ -33,7 +33,8 @@
                 // "--gtest_filter=jrpc.BlockingRequestBetweenTwoJRPC"
                 // "--gtest_filter=jrpc.cmd"
                 // "--gtest_filter=jrpc.exec_get_val"
-                "--gtest_filter=jrpc.exec_get_val"
+                // "--gtest_filter=jrpc.exec_get_val"
+                "--gtest_filter=builtin.issue_isinstance"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

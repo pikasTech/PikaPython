@@ -4009,7 +4009,12 @@ pika_bool _isinstance(Arg* aObj, Arg* classinfo) {
             res = pika_true;
             goto __exit;
         }
-        aObjType = methodArg_super(aObjType, &objProp);
+        Arg* aObjSuper = methodArg_super(aObjType, &objProp);
+        if (NULL == aObjSuper) {
+            res = pika_false;
+            goto __exit;
+        }
+        aObjType = aObjSuper;
         if (NULL != objProp) {
             if (!(arg_getType(classinfo) ==
                   ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR)) {
