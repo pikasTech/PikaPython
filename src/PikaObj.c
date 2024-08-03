@@ -4010,7 +4010,7 @@ pika_bool _isinstance(Arg* aObj, Arg* classinfo) {
             goto __exit;
         }
         Arg* aObjSuper = methodArg_super(aObjType, &objProp);
-        if (NULL == aObjSuper) {
+        if ((NULL == aObjSuper) && (NULL == objProp)) {
             res = pika_false;
             goto __exit;
         }

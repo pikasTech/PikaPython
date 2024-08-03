@@ -261,6 +261,7 @@ uint8_t pika_is_locked_pikaMemory(void);
 /* Thread Platform */
 #ifdef __linux
 #include <pthread.h>
+#include <sched.h>
 typedef struct pika_platform_thread {
     pthread_t thread;
     pthread_mutex_t mutex;

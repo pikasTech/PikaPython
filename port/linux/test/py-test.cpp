@@ -109,6 +109,9 @@ TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(socket,
                                    "test/python/socket/socket_download.py",
                                    "PASS\r\n")
 
+TEST_RUN_SINGLE_FILE_PASS(builtin,
+                          issue_isinstance,
+                          "test/python/builtins/issue_isinstance.py");
 #endif
 
 TEST_END

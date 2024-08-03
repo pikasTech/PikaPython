@@ -34,7 +34,9 @@
                 // "--gtest_filter=jrpc.cmd"
                 // "--gtest_filter=jrpc.exec_get_val"
                 // "--gtest_filter=jrpc.exec_get_val"
-                "--gtest_filter=builtin.issue_isinstance"
+                // "--gtest_filter=thread.issue1"
+                // "--gtest_filter=except.isinstance"
+                "--gtest_filter=builtin.isinstance"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

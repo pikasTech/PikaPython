@@ -612,8 +612,10 @@ PIKA_WEAK void pika_platform_thread_yield(void) {
     pika_thread_idle_hook();
 #if PIKA_FREERTOS_ENABLE
     vTaskDelay(1);
-#elif defined(__linux) || defined(_WIN32)
-    return;
+#elif defined(_WIN32)
+    SwitchToThread();
+#elif defined(__linux)
+    sched_yield();
 #elif PIKA_RTTHREAD_ENABLE
     rt_thread_yield();
 #elif PIKA_ZEUSOS_ENABLE
