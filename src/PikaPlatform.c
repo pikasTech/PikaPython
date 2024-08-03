@@ -733,7 +733,6 @@ PIKA_WEAK uint64_t pika_platform_thread_self(void) {
 #elif PIKA_ZEUSOS_ENABLE
     return (uint64_t)zos_task_self();
 #else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
     return 0;
 #endif
 }

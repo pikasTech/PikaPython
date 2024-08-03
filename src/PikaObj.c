@@ -2753,8 +2753,8 @@ int obj_runModule(PikaObj* self, char* module_name) {
         return 1;
     }
 
-    PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
-                              .try_result = TRY_RESULT_NONE};
+    PikaVMThread vm_thread = {0};
+    pikaVMThread_init(&vm_thread);
     pikaVM_runBytecode_ex_cfg cfg = {0};
     cfg.globals = self;
     cfg.locals = self;

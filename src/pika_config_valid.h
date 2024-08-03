@@ -294,6 +294,10 @@ extern "C" {
         #define PIKA_DEBUG_BREAK_POINT_MAX 8
     #endif
 
+    #ifndef PIKA_THERAD_NUM_MAX
+        #define PIKA_THERAD_NUM_MAX 16
+    #endif
+
     #ifndef PIKA_FILEIO_ENABLE
         #define PIKA_FILEIO_ENABLE 1
     #endif

@@ -1260,8 +1260,8 @@ Arg* obj_runMethodArgWithState_noalloc(PikaObj* self,
 Arg* obj_runMethodArg(PikaObj* self,
                       PikaObj* method_args_obj,
                       Arg* method_arg) {
-    PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
-                              .try_result = TRY_RESULT_NONE};
+    PikaVMThread vm_thread = {0};
+    pikaVMThread_init(&vm_thread);
     return obj_runMethodArgWithState(self, method_args_obj, method_arg,
                                      &vm_thread);
 }
@@ -4059,8 +4059,8 @@ VMParameters* pikaVM_run(PikaObj* self, char* py_lines) {
 
 VMParameters* pikaVM_runByteCode(PikaObj* self, const uint8_t* bytecode) {
     pika_assert(NULL != self);
-    PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
-                              .try_result = TRY_RESULT_NONE};
+    PikaVMThread vm_thread = {0};
+    pikaVMThread_init(&vm_thread);
     pikaVM_runBytecode_ex_cfg cfg = {0};
     cfg.locals = self;
     cfg.globals = self;
@@ -4110,8 +4110,8 @@ Arg* pikaVM_runByteCode_exReturn(PikaObj* self,
 }
 
 VMParameters* pikaVM_runByteCodeInconstant(PikaObj* self, uint8_t* bytecode) {
-    PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
-                              .try_result = TRY_RESULT_NONE};
+    PikaVMThread vm_thread = {0};
+    pikaVMThread_init(&vm_thread);
     pikaVM_runBytecode_ex_cfg cfg = {0};
     cfg.locals = self;
     cfg.globals = self;
@@ -4543,6 +4543,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     PikaVMFrame* vm =
         PikaVMFrame_create(locals, globals, bytecode_frame, pc, vm_thread);
     vm->in_repl = in_repl;
+    vm_thread->invoke_deepth++;
     g_PikaVMState.vm_cnt++;
     while (vm->pc < size) {
         if (vm->pc == VM_PC_EXIT) {
@@ -4605,6 +4606,12 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     VMParameters* result = locals;
     pikaFree(vm, sizeof(PikaVMFrame));
     self->vmFrame = NULL;
+    pika_assert(vm_thread->invoke_deepth > 0);
+    vm_thread->invoke_deepth--;
+    if (vm_thread->invoke_deepth == 0) {
+        // pika_GIL_EXIT();
+        //! TODO need thread_self to require one-to-on vm_thread
+    }
     return result;
 }
 
@@ -4677,11 +4684,21 @@ static VMParameters* _pikaVM_runByteCodeFrameWithState(
         self, locals, globals, bytecode_frame, pc, vm_thread, pika_false);
 }
 
+int pikaVMThread_init(PikaVMThread* self) {
+    self->try_state = TRY_STATE_NONE;
+    self->try_result = TRY_RESULT_NONE;
+    self->error_code = 0;
+    self->line_error_code = 0;
+    self->try_error_code = 0;
+    self->invoke_deepth = 0;
+    return 0;
+}
+
 VMParameters* _pikaVM_runByteCodeFrame(PikaObj* self,
                                        ByteCodeFrame* byteCode_frame,
                                        pika_bool in_repl) {
-    PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
-                              .try_result = TRY_RESULT_NONE};
+    PikaVMThread vm_thread = {0};
+    pikaVMThread_init(&vm_thread);
     return __pikaVM_runByteCodeFrameWithState(self, self, self, byteCode_frame,
                                               0, &vm_thread, in_repl);
 }
@@ -4690,8 +4707,8 @@ VMParameters* _pikaVM_runByteCodeFrameGlobals(PikaObj* self,
                                               PikaObj* globals,
                                               ByteCodeFrame* byteCode_frame,
                                               pika_bool in_repl) {
-    PikaVMThread vm_thread = {.try_state = TRY_STATE_NONE,
-                              .try_result = TRY_RESULT_NONE};
+    PikaVMThread vm_thread = {0};
+    pikaVMThread_init(&vm_thread);
     return __pikaVM_runByteCodeFrameWithState(
         self, self, globals, byteCode_frame, 0, &vm_thread, in_repl);
 }

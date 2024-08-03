@@ -115,6 +115,7 @@ struct PikaThreadState {
     TRY_STATE try_state;
     TRY_RESULT try_result;
     int8_t error_code;
+    uint8_t invoke_deepth;
     uint8_t line_error_code;
     uint8_t try_error_code;
 };
