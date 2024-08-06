@@ -202,7 +202,7 @@ void pika_platform_wait(void);
 
 /* support shell */
 char pika_platform_getchar(void);
-int pika_platform_getchar_noblock(char* ch);
+int pika_platform_getchar_nonblocking(char* ch);
 int pika_platform_putchar(char ch);
 int pika_platform_fflush(void* stream);
 

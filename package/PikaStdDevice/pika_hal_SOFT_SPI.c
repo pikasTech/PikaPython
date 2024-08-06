@@ -63,7 +63,7 @@ int pika_hal_platform_SOFT_SPI_ioctl_enable(pika_dev* dev) {
     }
     pika_debug("SCK[0x%p] config", cfg->SCK);
     pika_hal_ioctl(cfg->SCK, PIKA_HAL_IOCTL_CONFIG, &cfg_SCK);
-    if (NULL != cfg->MOSI){
+    if (NULL != cfg->MOSI) {
         pika_debug("MOSI[0x%p] config", cfg->MOSI);
         pika_hal_ioctl(cfg->MOSI, PIKA_HAL_IOCTL_CONFIG, &cfg_MOSI);
     }
@@ -78,7 +78,7 @@ int pika_hal_platform_SOFT_SPI_ioctl_enable(pika_dev* dev) {
     }
     pika_debug("SCK[0x%p] enable", cfg->SCK);
     pika_hal_ioctl(cfg->SCK, PIKA_HAL_IOCTL_ENABLE);
-    if (NULL != cfg->MOSI){
+    if (NULL != cfg->MOSI) {
         pika_debug("MOSI[0x%p] enable", cfg->MOSI);
         pika_hal_ioctl(cfg->MOSI, PIKA_HAL_IOCTL_ENABLE);
     }
@@ -91,7 +91,7 @@ int pika_hal_platform_SOFT_SPI_ioctl_enable(pika_dev* dev) {
         _GPIO_write(cfg->CS, 1);
     }
     _GPIO_write(cfg->SCK, 1);
-    if (NULL != cfg->MOSI){
+    if (NULL != cfg->MOSI) {
         _GPIO_write(cfg->MOSI, 1);
     }
     return 0;

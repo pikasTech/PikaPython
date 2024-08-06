@@ -388,7 +388,7 @@ int pika_hal_SG_ioctl_merge_config(pika_hal_SG_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(amplitude, 0.1);
     dst->offset = src->offset;
     dst->seconds = src->seconds;
-    _IOCTL_CONFIG_USE_DEFAULT(noblocking, PIKA_HAL_SG_NOBLOCKING_ENABLE);
+    _IOCTL_CONFIG_USE_DEFAULT(nonblocking, PIKA_HAL_SG_NONBLOCKING_ENABLE);
     _IOCTL_CONFIG_USE_DEFAULT(event_callback, NULL);
     _IOCTL_CONFIG_USE_DEFAULT(event_callback_filter,
                               PIKA_HAL_SG_EVENT_SIGNAL_ANY);

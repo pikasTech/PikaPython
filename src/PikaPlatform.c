@@ -312,7 +312,7 @@ PIKA_WEAK char pika_platform_getchar(void) {
 }
 
 /* return -1 for no char received, 0 for received */
-PIKA_WEAK int pika_platform_getchar_noblock(char* ch) {
+PIKA_WEAK int pika_platform_getchar_nonblocking(char* ch) {
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR_LOWLEVEL();
 }
 

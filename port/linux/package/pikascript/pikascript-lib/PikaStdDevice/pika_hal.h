@@ -632,10 +632,10 @@ typedef enum {
 } PIKA_HAL_SG_EVENT_SIGNAL;
 
 typedef enum {
-    _PIKA_HAL_SG_NOBLOCKING_UNUSED = 0,
-    PIKA_HAL_SG_NOBLOCKING_ENABLE,
-    PIKA_HAL_SG_NOBLOCKING_DISABLE,
-} PIKA_HAL_SG_NOBLOCKING;
+    _PIKA_HAL_SG_NONBLOCKING_UNUSED = 0,
+    PIKA_HAL_SG_NONBLOCKING_ENABLE,
+    PIKA_HAL_SG_NONBLOCKING_DISABLE,
+} PIKA_HAL_SG_NONBLOCKING;
 
 typedef struct {
     PIKA_HAL_SG_WAVEFORM waveform;
@@ -643,7 +643,7 @@ typedef struct {
     pika_float amplitude;  // Amplitude in Volts
     pika_float offset;     // Offset in Volts
     pika_float seconds;    // Seconds to output
-    PIKA_HAL_SG_NOBLOCKING noblocking;
+    PIKA_HAL_SG_NONBLOCKING nonblocking;
     void (*event_callback)(pika_dev* dev, PIKA_HAL_SG_EVENT_SIGNAL signal);
     PIKA_HAL_SG_EVENT_SIGNAL event_callback_filter;
     PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;
