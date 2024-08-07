@@ -320,7 +320,9 @@ Arg* pikaVM_runByteCode_exReturn(PikaObj* self,
                                  pika_bool is_const_bytecode,
                                  char* return_name);
 
-int pikaVMThread_init(PikaVMThread* self);
+int pikaVMThread_init(PikaVMThread* state, uint64_t thread_id);
+PikaVMThread* pikaVMThread_require(void);
+void pikaVMThread_delete(void);
 InstructUnit* instructArray_getNow(InstructArray* self);
 InstructUnit* instructArray_getNext(InstructArray* self);
 VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename);

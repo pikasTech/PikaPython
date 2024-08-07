@@ -2753,13 +2753,12 @@ int obj_runModule(PikaObj* self, char* module_name) {
         return 1;
     }
 
-    PikaVMThread vm_thread = {0};
-    pikaVMThread_init(&vm_thread);
+    PikaVMThread* vm_thread = pikaVMThread_require();
     pikaVM_runBytecode_ex_cfg cfg = {0};
     cfg.globals = self;
     cfg.locals = self;
     cfg.name = module_name;
-    cfg.vm_thread = &vm_thread;
+    cfg.vm_thread = vm_thread;
     cfg.is_const_bytecode = pika_true;
     pikaVM_runByteCode_ex(self, bytecode, &cfg);
     return 0;
@@ -4512,19 +4511,22 @@ PikaObj* builtins_bytearray_split(PikaObj* self, PikaTuple* vars) {
         obj_setSysOut(self, "TypeError: bytes is required");
         return NULL;
     }
-    PikaList* list = New_PikaList();
-    uint8_t* data = obj_getBytes(self, "raw");
-    size_t len = obj_getBytesSize(self, "raw");
-    if (len == 0) {
-        pikaList_append(list, arg_newBytes((uint8_t*)"", 0));
-        goto __exit;
-    }
+
+    PikaList* list = NULL;
     uint8_t* sep_data = arg_getBytes(sep);
     size_t sep_len = arg_getBytesSize(sep);
 
     if (sep_len == 0) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "ValueError: empty separator");
+        goto __exit;
+    }
+
+    list = New_PikaList();
+    uint8_t* data = obj_getBytes(self, "raw");
+    size_t len = obj_getBytesSize(self, "raw");
+    if (len == 0) {
+        pikaList_append(list, arg_newBytes((uint8_t*)"", 0));
         goto __exit;
     }
 

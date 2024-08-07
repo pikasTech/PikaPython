@@ -110,14 +110,16 @@ typedef enum {
     TRY_RESULT_RAISE,
 } TRY_RESULT;
 
-typedef struct PikaThreadState PikaVMThread;
-struct PikaThreadState {
+typedef struct PikaVMThread PikaVMThread;
+struct PikaVMThread {
     TRY_STATE try_state;
     TRY_RESULT try_result;
     int8_t error_code;
     uint8_t invoke_deepth;
     uint8_t line_error_code;
     uint8_t try_error_code;
+    uint64_t thread_id;
+    struct PikaVMThread* next;
 };
 
 typedef PikaObj VMParameters;

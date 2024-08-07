@@ -1260,10 +1260,10 @@ Arg* obj_runMethodArgWithState_noalloc(PikaObj* self,
 Arg* obj_runMethodArg(PikaObj* self,
                       PikaObj* method_args_obj,
                       Arg* method_arg) {
-    PikaVMThread vm_thread = {0};
-    pikaVMThread_init(&vm_thread);
+    PikaVMThread* vm_thread = pikaVMThread_require();
+
     return obj_runMethodArgWithState(self, method_args_obj, method_arg,
-                                     &vm_thread);
+                                     vm_thread);
 }
 
 static char* _kw_pos_to_default_all(FunctionArgsInfo* f,
@@ -4059,13 +4059,13 @@ VMParameters* pikaVM_run(PikaObj* self, char* py_lines) {
 
 VMParameters* pikaVM_runByteCode(PikaObj* self, const uint8_t* bytecode) {
     pika_assert(NULL != self);
-    PikaVMThread vm_thread = {0};
-    pikaVMThread_init(&vm_thread);
+    PikaVMThread* vm_thread = pikaVMThread_require();
+
     pikaVM_runBytecode_ex_cfg cfg = {0};
     cfg.locals = self;
     cfg.globals = self;
     cfg.name = NULL;
-    cfg.vm_thread = &vm_thread;
+    cfg.vm_thread = vm_thread;
     cfg.is_const_bytecode = pika_true;
     return pikaVM_runByteCode_ex(self, (uint8_t*)bytecode, &cfg);
 }
@@ -4110,12 +4110,12 @@ Arg* pikaVM_runByteCode_exReturn(PikaObj* self,
 }
 
 VMParameters* pikaVM_runByteCodeInconstant(PikaObj* self, uint8_t* bytecode) {
-    PikaVMThread vm_thread = {0};
-    pikaVMThread_init(&vm_thread);
+    PikaVMThread* vm_thread = pikaVMThread_require();
+
     pikaVM_runBytecode_ex_cfg cfg = {0};
     cfg.locals = self;
     cfg.globals = self;
-    cfg.vm_thread = &vm_thread;
+    cfg.vm_thread = vm_thread;
     cfg.is_const_bytecode = pika_false;
     return pikaVM_runByteCode_ex(self, (uint8_t*)bytecode, &cfg);
 }
@@ -4610,7 +4610,8 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     vm_thread->invoke_deepth--;
     if (vm_thread->invoke_deepth == 0) {
         // pika_GIL_EXIT();
-        //! TODO need thread_self to require one-to-on vm_thread
+        // ! TODO need thread_self to require one-to-on vm_thread
+        pikaVMThread_delete();
     }
     return result;
 }
@@ -4684,33 +4685,102 @@ static VMParameters* _pikaVM_runByteCodeFrameWithState(
         self, locals, globals, bytecode_frame, pc, vm_thread, pika_false);
 }
 
-int pikaVMThread_init(PikaVMThread* self) {
-    self->try_state = TRY_STATE_NONE;
-    self->try_result = TRY_RESULT_NONE;
-    self->error_code = 0;
-    self->line_error_code = 0;
-    self->try_error_code = 0;
-    self->invoke_deepth = 0;
+static PikaVMThread* pika_vm_state_head = NULL;
+
+int pikaVMThread_init(PikaVMThread* state, uint64_t thread_id) {
+    state->thread_id = thread_id;
+    state->error_code = 0;
+    state->invoke_deepth = 0;
+    state->line_error_code = 0;
+    state->try_error_code = 0;
+    pika_platform_memset(&state->try_state, 0, sizeof(TRY_STATE));
+    pika_platform_memset(&state->try_result, 0, sizeof(TRY_RESULT));
+    state->next = NULL;
     return 0;
+}
+
+PikaVMThread* pikaVMThread_create(uint64_t thread_id) {
+    PikaVMThread* vm_state = (PikaVMThread*)pikaMalloc(sizeof(PikaVMThread));
+    if (vm_state == NULL) {
+        return NULL;
+    }
+    pikaVMThread_init(vm_state, thread_id);
+    return vm_state;
+}
+
+void pikaVMThread_destroy(PikaVMThread* state) {
+    if (state != NULL) {
+        pikaFree(state, sizeof(PikaVMThread));
+    }
+}
+
+PikaVMThread* pikaVMThread_find_node_by_thread_id(uint64_t thread_id) {
+    PikaVMThread* current = pika_vm_state_head;
+    while (current != NULL) {
+        if (current->thread_id == thread_id) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
+PikaVMThread* pikaVMThread_require(void) {
+    uint64_t current_thread_id = pika_platform_thread_self();
+    PikaVMThread* state =
+        pikaVMThread_find_node_by_thread_id(current_thread_id);
+    if (state != NULL) {
+        return state;
+    }
+
+    PikaVMThread* new_state = pikaVMThread_create(current_thread_id);
+    if (new_state == NULL) {
+        return NULL;
+    }
+
+    new_state->next = pika_vm_state_head;
+    pika_vm_state_head = new_state;
+
+    return new_state;
+}
+
+void pikaVMThread_delete(void) {
+    uint64_t current_thread_id = pika_platform_thread_self();
+    PikaVMThread* current = pika_vm_state_head;
+    PikaVMThread* previous = NULL;
+
+    while (current != NULL) {
+        if (current->thread_id == current_thread_id) {
+            if (previous == NULL) {
+                pika_vm_state_head = current->next;
+            } else {
+                previous->next = current->next;
+            }
+            pikaVMThread_destroy(current);
+            return;
+        }
+        previous = current;
+        current = current->next;
+    }
 }
 
 VMParameters* _pikaVM_runByteCodeFrame(PikaObj* self,
                                        ByteCodeFrame* byteCode_frame,
                                        pika_bool in_repl) {
-    PikaVMThread vm_thread = {0};
-    pikaVMThread_init(&vm_thread);
+    PikaVMThread* vm_thread = pikaVMThread_require();
+
     return __pikaVM_runByteCodeFrameWithState(self, self, self, byteCode_frame,
-                                              0, &vm_thread, in_repl);
+                                              0, vm_thread, in_repl);
 }
 
 VMParameters* _pikaVM_runByteCodeFrameGlobals(PikaObj* self,
                                               PikaObj* globals,
                                               ByteCodeFrame* byteCode_frame,
                                               pika_bool in_repl) {
-    PikaVMThread vm_thread = {0};
-    pikaVMThread_init(&vm_thread);
+    PikaVMThread* vm_thread = pikaVMThread_require();
+
     return __pikaVM_runByteCodeFrameWithState(
-        self, self, globals, byteCode_frame, 0, &vm_thread, in_repl);
+        self, self, globals, byteCode_frame, 0, vm_thread, in_repl);
 }
 
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
