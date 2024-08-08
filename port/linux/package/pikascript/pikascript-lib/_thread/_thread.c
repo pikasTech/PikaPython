@@ -3,6 +3,10 @@
 #include "TinyObj.h"
 #include "dataMemory.h"
 
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 13, 4)
+#error "pikapython version must be greater than 1.13.4"
+#endif
+
 static volatile int g_thread_stack_size = PIKA_THREAD_STACK_SIZE;
 #if !PIKA_THREAD_MALLOC_STACK_ENABLE
 extern volatile PikaMemInfo g_PikaMemInfo;
