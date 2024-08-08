@@ -202,10 +202,13 @@ int32_t obj_deinit(PikaObj* self) {
     Arg* del = obj_getMethodArgWithFullPath(self, "__del__");
     if (NULL != del) {
         obj_setFlag(self, OBJ_FLAG_IN_DEL);
+        PikaVMThread* thread = pikaVMThread_require();
+        thread->in_del_call = 1;
         Arg* aRes = obj_runMethodArg0(self, del);
         if (NULL != aRes) {
             arg_deinit(aRes);
         }
+        thread->in_del_call = 0;
     }
     extern volatile PikaObj* __pikaMain;
     if (self == (PikaObj*)__pikaMain) {
@@ -2167,7 +2170,7 @@ void pikaShellSetEcho(pika_bool enable_echo) {
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode) {
     pika_assert(NULL != self->vmFrame);
-    self->vmFrame->vm_thread->error_code = errCode;
+    self->vmFrame->error->code = errCode;
 }
 
 void method_returnBytes(Args* args, uint8_t* val) {
@@ -4342,8 +4345,8 @@ void _do_vsysOut(char* fmt, va_list args) {
 
 void obj_setSysOut(PikaObj* self, char* fmt, ...) {
     if (NULL != self->vmFrame) {
-        if (self->vmFrame->vm_thread->error_code == 0) {
-            self->vmFrame->vm_thread->error_code = PIKA_RES_ERR_RUNTIME_ERROR;
+        if (self->vmFrame->error->code == 0) {
+            self->vmFrame->error->code = PIKA_RES_ERR_RUNTIME_ERROR;
         }
         if (self->vmFrame->vm_thread->try_state == TRY_STATE_INNER) {
             return;

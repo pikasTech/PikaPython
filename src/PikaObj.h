@@ -110,16 +110,25 @@ typedef enum {
     TRY_RESULT_RAISE,
 } TRY_RESULT;
 
+typedef struct PikaVMError PikaVMError;
+struct PikaVMError {
+    int8_t code;
+    int8_t line_code;
+    int8_t try_code;
+    PikaVMError* next;
+};
+
 typedef struct PikaVMThread PikaVMThread;
 struct PikaVMThread {
     TRY_STATE try_state;
     TRY_RESULT try_result;
-    int8_t error_code;
+    PikaVMError* error_stack;
+    uint32_t error_stack_deepth;
+    uint32_t error_stack_deepth_max;
     uint8_t invoke_deepth;
-    uint8_t line_error_code;
-    uint8_t try_error_code;
     uint64_t thread_id;
     struct PikaVMThread* next;
+    uint8_t in_del_call;
 };
 
 typedef PikaObj VMParameters;
@@ -139,6 +148,7 @@ struct PikaVMFrame {
     pika_bool ireg[PIKA_REGIST_SIZE];
     PikaObj* oreg[16];
     pika_bool in_repl;
+    PikaVMError* error;
 };
 
 typedef PikaObj* (*NewFun)(Args* args);
