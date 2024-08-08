@@ -202,14 +202,10 @@ int32_t obj_deinit(PikaObj* self) {
     Arg* del = obj_getMethodArgWithFullPath(self, "__del__");
     if (NULL != del) {
         obj_setFlag(self, OBJ_FLAG_IN_DEL);
-        // PikaVMThread* vmThread = pikaVMThread_require();
-        // pika_assert(NULL != vmThread);
-        // vmThread->in_del_call = 1;
         Arg* aRes = obj_runMethodArg0(self, del);
         if (NULL != aRes) {
             arg_deinit(aRes);
         }
-        // vmThread->in_del_call = 0;
     }
     extern volatile PikaObj* __pikaMain;
     if (self == (PikaObj*)__pikaMain) {

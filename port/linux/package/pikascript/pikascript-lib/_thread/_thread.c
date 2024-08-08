@@ -43,6 +43,8 @@ typedef struct pika_thread_info {
 static void _thread_func(void* arg) {
     pika_debug("thread start");
     pika_GIL_ENTER();
+    PikaVMThread* vmThread = pikaVMThread_require();
+    vmThread->is_sub_thread = 1;
     PikaObj* ctx = New_TinyObj(NULL);
     pika_thread_info* info = (pika_thread_info*)arg;
     if (NULL != info->args) {

@@ -128,7 +128,7 @@ struct PikaVMThread {
     uint8_t invoke_deepth;
     uint64_t thread_id;
     struct PikaVMThread* next;
-    uint8_t in_del_call;
+    uint8_t is_sub_thread;
 };
 
 typedef PikaObj VMParameters;

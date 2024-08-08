@@ -4551,14 +4551,6 @@ int pikaVMFrame_checkErrorStack(PikaVMFrame* vm) {
         return 0;
     }
 
-    if (vm->vm_thread->in_del_call) {
-        if (0 != vm->vm_thread->error_stack->code) {
-            return vm->vm_thread->error_stack->code;
-        } else {
-            return 0;
-        }
-    }
-
     for (PikaVMError* current = vm->vm_thread->error_stack; current != NULL;
          current = current->next) {
         if (0 != current->code) {
@@ -4740,12 +4732,22 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     VMParameters* result = locals;
     pika_assert(vm_thread->invoke_deepth > 0);
     vm_thread->invoke_deepth--;
-    if (vm_thread->invoke_deepth == 0) {
-        // pika_GIL_EXIT();
-        // ! TODO need thread_self to require one-to-on vm_thread
+    uint8_t vm_thread_deepth = vm_thread->invoke_deepth;
+    uint8_t vm_thread_is_sub_thread = vm_thread->is_sub_thread;
+    if (vm_thread_deepth == 0) {
         pikaVMThread_delete();
     }
     g_PikaVMState.vm_cnt--;
+    if ((vm_thread_deepth == 0) && (!vm_thread_is_sub_thread)) {
+        if (VMSignal_getCtrl() == VM_SIGNAL_CTRL_EXIT) {
+            // wait other sub thread to exit
+            while (_VMEvent_getVMCnt() > 0) {
+                pika_GIL_EXIT();
+                pika_platform_thread_yield();
+                pika_GIL_ENTER();
+            }
+        }
+    }
     return result;
 }
 
@@ -4820,17 +4822,17 @@ static VMParameters* _pikaVM_runByteCodeFrameWithState(
 
 static PikaVMThread* g_pika_vm_state_head = NULL;
 
-int pikaVMThread_init(PikaVMThread* state, uint64_t thread_id) {
-    state->thread_id = thread_id;
-    state->invoke_deepth = 0;
-    state->error_stack = NULL;
-    state->exception_stack = NULL;
-    state->error_stack_deepth = 0;
-    state->error_stack_deepth_max = 0;
-    state->in_del_call = 0;
-    pika_platform_memset(&state->try_state, 0, sizeof(TRY_STATE));
-    pika_platform_memset(&state->try_result, 0, sizeof(TRY_RESULT));
-    state->next = NULL;
+int pikaVMThread_init(PikaVMThread* vmThread, uint64_t thread_id) {
+    vmThread->thread_id = thread_id;
+    vmThread->invoke_deepth = 0;
+    vmThread->error_stack = NULL;
+    vmThread->exception_stack = NULL;
+    vmThread->error_stack_deepth = 0;
+    vmThread->error_stack_deepth_max = 0;
+    pika_platform_memset(&vmThread->try_state, 0, sizeof(TRY_STATE));
+    pika_platform_memset(&vmThread->try_result, 0, sizeof(TRY_RESULT));
+    vmThread->next = NULL;
+    vmThread->is_sub_thread = 0;
     return 0;
 }
 
