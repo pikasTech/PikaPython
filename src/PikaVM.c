@@ -4513,8 +4513,7 @@ PikaVMFrame* PikaVMFrame_create(VMParameters* locals,
     vm->vm_thread = vm_thread;
     vm->jmp = 0;
     vm->loop_deepth = 0;
-    PikaVMError error = {0};
-    pikaVMThread_pushError(vm_thread, &error);
+    pikaVMThread_pushError(vm_thread);
     vm->error = pikaVMThread_getErrorCurrent(vm_thread);
     vm->ins_cnt = 0;
     vm->in_super = pika_false;
@@ -4526,7 +4525,8 @@ PikaVMFrame* PikaVMFrame_create(VMParameters* locals,
 }
 
 int PikaVMFrame_destroy(PikaVMFrame* vm) {
-    if (pikaVMError_isNone(vm->error)) {
+    // if (pikaVMError_isNone(vm->error)) {
+    if (1) {
         PikaVMError* err = pikaVMThread_popError(vm->vm_thread);
         pikaFree(err, sizeof(PikaVMError));
     }
@@ -4559,10 +4559,10 @@ int pikaVMThread_checkErrorCode(PikaVMThread* state) {
     return 0;
 }
 
-int pikaVMThread_pushError(PikaVMThread* state, PikaVMError* error) {
+int pikaVMThread_pushError(PikaVMThread* state) {
     pika_assert(NULL != state);
-    pika_assert(NULL != error);
-
+    PikaVMError error_t = {0};
+    PikaVMError* error = &error_t;
     for (PikaVMError* current = state->error_stack; current != NULL;
          current = current->next) {
         if (current == error) {

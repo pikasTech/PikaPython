@@ -9,3 +9,4 @@ try:
 except:
     print("in excpet")
     res += 4
+print("after except")
