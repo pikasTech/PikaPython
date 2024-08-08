@@ -39,7 +39,10 @@
                 // "--gtest_filter=builtin.isinstance"
                 // "--gtest_filter=bytes.bytes_split"
                 // "--gtest_filter=except.dict"
-                "--gtest_filter=except.for_loop"
+                // "--gtest_filter=except.*"
+                "--gtest_filter=except.try1"
+                // "--gtest_filter=except.for_loop"
+                // "--gtest_filter=builtin.init_raise"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

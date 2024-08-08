@@ -122,6 +122,7 @@ struct PikaVMThread {
     TRY_STATE try_state;
     TRY_RESULT try_result;
     PikaVMError* error_stack;
+    PikaVMError* exception_stack;
     uint32_t error_stack_deepth;
     uint32_t error_stack_deepth_max;
     uint8_t invoke_deepth;
