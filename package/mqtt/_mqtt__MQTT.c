@@ -490,6 +490,7 @@ void Subscribe_Handler(void* client, message_data_t* msg) {
         return;
     }
 
+    pika_GIL_ENTER();
     Arg* evt_obj_arg = arg_newDirectObj(New_TinyObj);
     PikaObj* evt_obj = arg_getPtr(evt_obj_arg);
     obj_setStr(evt_obj, "topic", (char*)msg->topic_name);
@@ -498,6 +499,7 @@ void Subscribe_Handler(void* client, message_data_t* msg) {
 
     pika_eventListener_send(g_mqtt_event_listener, hash_time33(msg->topic_name),
                             evt_obj_arg);
+    pika_GIL_EXIT();
 
     // MQTT_LOG_I("\n>>>------------------");
     // MQTT_LOG_I("Topic:%s \nlen:%d,message: %s", msg->topic_name,

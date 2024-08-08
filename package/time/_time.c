@@ -480,6 +480,7 @@ PikaObj* _time_localtime(PikaObj* self, pika_float unix_time) {
     obj_setErrorCode(self, 1);
     obj_setSysOut(
         self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
+    return NULL;
 #else
     _tm this_tm;
     int locale = g_pika_local_timezone;
