@@ -323,11 +323,11 @@ Arg* pikaVM_runByteCode_exReturn(PikaObj* self,
 int pikaVMThread_init(PikaVMThread* state, uint64_t thread_id);
 PikaVMThread* pikaVMThread_require(void);
 void pikaVMThread_delete(void);
-int pikaVMThread_pushError(PikaVMThread* state);
+int pikaVMThread_pushError(PikaVMThread* state, PikaVMError* error);
 PikaVMError* pikaVMThread_popError(PikaVMThread* state);
 int pikaVMError_isNone(PikaVMError* error);
 int pikaVMThread_clearError(PikaVMThread* state);
-int pikaVMThread_checkErrorCode(PikaVMThread* state);
+int pikaVMFrame_checkErrorCode(PikaVMFrame* state);
 PikaVMError* pikaVMThread_getErrorCurrent(PikaVMThread* state);
 InstructUnit* instructArray_getNow(InstructArray* self);
 InstructUnit* instructArray_getNext(InstructArray* self);

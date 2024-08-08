@@ -2170,7 +2170,7 @@ void pikaShellSetEcho(pika_bool enable_echo) {
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode) {
     pika_assert(NULL != self->vmFrame);
-    self->vmFrame->error->code = errCode;
+    self->vmFrame->error.code = errCode;
 }
 
 void method_returnBytes(Args* args, uint8_t* val) {
@@ -4345,8 +4345,8 @@ void _do_vsysOut(char* fmt, va_list args) {
 
 void obj_setSysOut(PikaObj* self, char* fmt, ...) {
     if (NULL != self->vmFrame) {
-        if (self->vmFrame->error->code == 0) {
-            self->vmFrame->error->code = PIKA_RES_ERR_RUNTIME_ERROR;
+        if (self->vmFrame->error.code == 0) {
+            self->vmFrame->error.code = PIKA_RES_ERR_RUNTIME_ERROR;
         }
         if (self->vmFrame->vm_thread->try_state == TRY_STATE_INNER) {
             return;

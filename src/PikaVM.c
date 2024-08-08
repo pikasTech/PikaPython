@@ -456,14 +456,14 @@ static VMParameters* _pikaVM_runByteCodeFrameWithState(
 /* head declare end */
 
 static void PikaVMFrame_setErrorCode(PikaVMFrame* vm, int8_t error_code) {
-    vm->error->code = error_code;
+    vm->error.code = error_code;
 }
 
 void _do_vsysOut(char* fmt, va_list args);
 void PikaVMFrame_setSysOut(PikaVMFrame* vm, char* fmt, ...) {
     pika_assert(NULL != vm);
-    if (vm->error->code == 0) {
-        vm->error->code = PIKA_RES_ERR_RUNTIME_ERROR;
+    if (vm->error.code == 0) {
+        vm->error.code = PIKA_RES_ERR_RUNTIME_ERROR;
     }
     if (vm->vm_thread->try_state == TRY_STATE_INNER) {
         return;
@@ -990,7 +990,7 @@ static Arg* VM_instruction_handler_EXP(PikaObj* self,
                                        PikaVMFrame* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    vm->error->try_code = 0;
+    vm->error.try_code = 0;
     return NULL;
 }
 
@@ -1171,7 +1171,7 @@ static Arg* VM_instruction_handler_GER(PikaObj* self,
                                        PikaVMFrame* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    PIKA_RES err = (PIKA_RES)vm->error->try_code;
+    PIKA_RES err = (PIKA_RES)vm->error.try_code;
     Arg* err_arg = arg_newInt(err);
     return err_arg;
 }
@@ -2187,7 +2187,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         vm, oThis, oSublocals->list, aMethod, sRunPath, sProxyName, iNumUsed);
 
     /* load args failed */
-    if (pikaVMThread_checkErrorCode(vm->vm_thread) != 0) {
+    if (pikaVMFrame_checkErrorCode(vm) != 0) {
         goto __exit;
     }
 
@@ -2203,7 +2203,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
 
     if (vm->vm_thread->try_result != TRY_RESULT_NONE) {
         /* try result */
-        vm->error->code = vm->vm_thread->try_result;
+        vm->error.code = vm->vm_thread->try_result;
     }
 
     /* __init__() */
@@ -2223,7 +2223,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         PikaVMFrame_loadArgsFromMethodArg(vm, oNew, oSublocalsInit->list,
                                           aMethod, "__init__", NULL, iNumUsed);
         /* load args failed */
-        if (pikaVMThread_checkErrorCode(vm->vm_thread) != 0) {
+        if (pikaVMFrame_checkErrorCode(vm) != 0) {
             goto __init_exit;
         }
         aReturnInit = obj_runMethodArgWithState(oNew, oSublocalsInit, aMethod,
@@ -2489,7 +2489,7 @@ static Arg* VM_instruction_handler_SER(PikaObj* self,
                                        PikaVMFrame* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    vm->error->try_code = fast_atoi(data);
+    vm->error.try_code = fast_atoi(data);
     return NULL;
 }
 
@@ -3773,7 +3773,7 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     return_arg = VM_instruct_handler_table[instruct](self, vm, data, &ret_reg);
 #endif
 
-    if (pikaVMThread_checkErrorCode(vm->vm_thread) != PIKA_RES_OK ||
+    if (pikaVMFrame_checkErrorCode(vm) != PIKA_RES_OK ||
         VMSignal_getCtrl() == VM_SIGNAL_CTRL_EXIT) {
         /* raise jmp */
         if (vm->vm_thread->try_state == TRY_STATE_INNER) {
@@ -3839,7 +3839,7 @@ __next_line:
     pc_next = vm->pc + instructUnit_getSize();
 
     /* jump to next line */
-    if (pikaVMThread_checkErrorCode(vm->vm_thread) != 0) {
+    if (pikaVMFrame_checkErrorCode(vm) != 0) {
         while (1) {
             if (pc_next >= (int)PikaVMFrame_getInstructArraySize(vm)) {
                 pc_next = VM_PC_EXIT;
@@ -4491,7 +4491,7 @@ void PikaVMFrame_solveUnusedStack(PikaVMFrame* vm) {
             arg_deinit(arg);
             continue;
         }
-        if (vm->error->line_code != 0) {
+        if (vm->error.line_code != 0) {
             arg_deinit(arg);
             continue;
         }
@@ -4513,8 +4513,7 @@ PikaVMFrame* PikaVMFrame_create(VMParameters* locals,
     vm->vm_thread = vm_thread;
     vm->jmp = 0;
     vm->loop_deepth = 0;
-    pikaVMThread_pushError(vm_thread);
-    vm->error = pikaVMThread_getErrorCurrent(vm_thread);
+    pika_platform_memset(&vm->error, 0, sizeof(PikaVMError));
     vm->ins_cnt = 0;
     vm->in_super = pika_false;
     vm->super_invoke_deepth = 0;
@@ -4528,7 +4527,9 @@ int PikaVMFrame_destroy(PikaVMFrame* vm) {
     // if (pikaVMError_isNone(vm->error)) {
     if (1) {
         PikaVMError* err = pikaVMThread_popError(vm->vm_thread);
-        pikaFree(err, sizeof(PikaVMError));
+        if (NULL != err) {
+            pikaFree(err, sizeof(PikaVMError));
+        }
     }
     stack_deinit(&(vm->stack));
     pikaFree(vm, sizeof(PikaVMFrame));
@@ -4539,30 +4540,14 @@ int pikaVMError_isNone(PikaVMError* error) {
     return error->code == 0 && error->line_code == 0 && error->try_code == 0;
 }
 
-int pikaVMThread_checkErrorCode(PikaVMThread* state) {
+int pikaVMFrame_checkErrorCode(PikaVMFrame* state) {
     pika_assert(NULL != state);
-    pika_assert(NULL != state->error_stack);
-    // if (state->in_del_call) {
-    if (1) {
-        if (0 != state->error_stack->code) {
-            return state->error_stack->code;
-        } else {
-            return 0;
-        }
-    }
-    for (PikaVMError* current = state->error_stack; current != NULL;
-         current = current->next) {
-        if (0 != current->code) {
-            return current->code;
-        }
-    }
-    return 0;
+    return state->error.code;
 }
 
-int pikaVMThread_pushError(PikaVMThread* state) {
+int pikaVMThread_pushError(PikaVMThread* state, PikaVMError* error) {
     pika_assert(NULL != state);
-    PikaVMError error_t = {0};
-    PikaVMError* error = &error_t;
+    pika_assert(NULL != error);
     for (PikaVMError* current = state->error_stack; current != NULL;
          current = current->next) {
         if (current == error) {
@@ -4642,8 +4627,8 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
         if (is_new_line) {
             PikaVMFrame_solveUnusedStack(vm);
             stack_reset(&(vm->stack));
-            vm->error->code = 0;
-            vm->error->line_code = 0;
+            vm->error.code = 0;
+            vm->error.line_code = 0;
         }
         self->vmFrame = vm;
         vm->pc = pikaVM_runInstructUnit(self, vm, this_ins_unit);
@@ -4656,8 +4641,8 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
         if (vm->ins_cnt % PIKA_INSTRUCT_YIELD_PERIOD == 0) {
             _pikaVM_yield();
         }
-        if (vm->error->code != 0) {
-            vm->error->line_code = vm->error->code;
+        if (vm->error.code != 0) {
+            vm->error.line_code = vm->error.code;
             InstructUnit* head_ins_unit = this_ins_unit;
             /* get first ins of a line */
             while (1) {
@@ -4667,7 +4652,8 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
                 head_ins_unit--;
             }
             if (vm->vm_thread->try_state) {
-                vm->error->try_code = vm->error->code;
+                // Store the error code in the try state
+                vm->error.try_code = vm->error.code;
             }
             /* print inses of a line */
             if (!vm->vm_thread->try_state) {

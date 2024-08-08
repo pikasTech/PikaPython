@@ -148,7 +148,7 @@ struct PikaVMFrame {
     pika_bool ireg[PIKA_REGIST_SIZE];
     PikaObj* oreg[16];
     pika_bool in_repl;
-    PikaVMError* error;
+    PikaVMError error;
 };
 
 typedef PikaObj* (*NewFun)(Args* args);

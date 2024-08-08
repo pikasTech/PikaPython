@@ -60,6 +60,7 @@ void* pikaMalloc(uint32_t size) {
 }
 
 void pikaFree(void* mem, uint32_t size) {
+    pika_assert(mem != NULL);
     if (0 != pika_is_locked_pikaMemory()) {
         pika_platform_wait();
     }
