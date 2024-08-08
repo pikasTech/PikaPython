@@ -114,7 +114,6 @@ typedef struct PikaVMError PikaVMError;
 struct PikaVMError {
     int8_t code;
     int8_t line_code;
-    int8_t try_code;
     PikaVMError* next;
 };
 

@@ -990,7 +990,7 @@ static Arg* VM_instruction_handler_EXP(PikaObj* self,
                                        PikaVMFrame* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    vm->error.try_code = 0;
+    pikaVMThread_clearErrorStack(vm->vm_thread);
     return NULL;
 }
 
@@ -1171,7 +1171,8 @@ static Arg* VM_instruction_handler_GER(PikaObj* self,
                                        PikaVMFrame* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    PIKA_RES err = (PIKA_RES)vm->error.try_code;
+    PikaVMThread* vm_thread = pikaVMThread_require();
+    PIKA_RES err = pikaVMThread_checkErrorCode(vm_thread);
     Arg* err_arg = arg_newInt(err);
     return err_arg;
 }
@@ -2489,7 +2490,9 @@ static Arg* VM_instruction_handler_SER(PikaObj* self,
                                        PikaVMFrame* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    vm->error.try_code = fast_atoi(data);
+    PikaVMError error = {0};
+    error.code = fast_atoi(data);
+    pikaVMThread_pushError(vm->vm_thread, &error);
     return NULL;
 }
 
@@ -4537,12 +4540,35 @@ int PikaVMFrame_destroy(PikaVMFrame* vm) {
 }
 
 int pikaVMError_isNone(PikaVMError* error) {
-    return error->code == 0 && error->line_code == 0 && error->try_code == 0;
+    return error->code == 0 && error->line_code == 0;
 }
 
 int pikaVMFrame_checkErrorCode(PikaVMFrame* state) {
     pika_assert(NULL != state);
     return state->error.code;
+}
+
+int pikaVMThread_checkErrorCode(PikaVMThread* vmThread) {
+    pika_assert(NULL != vmThread);
+    if (NULL == vmThread->error_stack) {
+        return 0;
+    }
+
+    // if (state->in_del_call) {
+    if (1) {
+        if (0 != vmThread->error_stack->code) {
+            return vmThread->error_stack->code;
+        } else {
+            return 0;
+        }
+    }
+    for (PikaVMError* current = vmThread->error_stack; current != NULL;
+         current = current->next) {
+        if (0 != current->code) {
+            return current->code;
+        }
+    }
+    return 0;
 }
 
 int pikaVMThread_pushError(PikaVMThread* state, PikaVMError* error) {
@@ -4584,7 +4610,7 @@ PikaVMError* pikaVMThread_getErrorCurrent(PikaVMThread* state) {
     return state->error_stack;
 }
 
-int pikaVMThread_clearError(PikaVMThread* state) {
+int pikaVMThread_clearErrorStack(PikaVMThread* state) {
     pika_assert(NULL != state);
     PikaVMError* current = state->error_stack;
     while (current != NULL) {
@@ -4651,9 +4677,9 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
                 }
                 head_ins_unit--;
             }
-            if (vm->vm_thread->try_state) {
+            if (vm->vm_thread->try_state == TRY_STATE_INNER) {
                 // Store the error code in the try state
-                vm->error.try_code = vm->error.code;
+                pikaVMThread_pushError(vm->vm_thread, &(vm->error));
             }
             /* print inses of a line */
             if (!vm->vm_thread->try_state) {
@@ -4783,7 +4809,7 @@ PikaVMThread* pikaVMThread_create(uint64_t thread_id) {
 }
 
 void pikaVMThread_destroy(PikaVMThread* state) {
-    pikaVMThread_clearError(state);
+    pikaVMThread_clearErrorStack(state);
     if (state != NULL) {
         pikaFree(state, sizeof(PikaVMThread));
     }
