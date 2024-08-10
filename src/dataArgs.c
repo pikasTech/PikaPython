@@ -532,7 +532,7 @@ char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg) {
             if (type == ARG_TYPE_POINTER) {
                 fmt = strsReplace(&buffs, fmt, sym, "%p");
                 break;
-            }else{
+            } else {
                 fmt = strsReplace(&buffs, fmt, sym, "%s");
             }
         }
@@ -555,10 +555,11 @@ char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg) {
     if (ARG_TYPE_NONE == type) {
         res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, "None");
         goto __exit;
-    }else{
+    } else {
         Arg* arg_str = arg_toStrArg(arg);
-        if (NULL != arg_str){
-            res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, arg_getStr(arg_str));
+        if (NULL != arg_str) {
+            res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt,
+                             arg_getStr(arg_str));
             arg_deinit(arg_str);
         }
     }

@@ -34,7 +34,7 @@
                 // "--gtest_filter=jrpc.cmd"
                 // "--gtest_filter=jrpc.exec_get_val"
                 // "--gtest_filter=jrpc.exec_get_val"
-                "--gtest_filter=thread.issue1"
+                // "--gtest_filter=thread.issue1"
                 // "--gtest_filter=except.isinstance"
                 // "--gtest_filter=builtin.isinstance"
                 // "--gtest_filter=bytes.bytes_split"
@@ -43,7 +43,8 @@
                 // "--gtest_filter=except.try1"
                 // "--gtest_filter=except.for_loop"
                 // "--gtest_filter=builtin.init_raise"
-                // "--gtest_filter=event.event_thread"
+                // "--gtest_filter=builtin.strformat"
+                "--gtest_filter=except.typeerr"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
