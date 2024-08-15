@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1723215091735,
+  "lastUpdate": 1723736973209,
   "repoUrl": "https://github.com/pikasTech/PikaPython",
   "entries": {
     "Benchmark": [
@@ -112607,6 +112607,66 @@ window.BENCHMARK_DATA = {
             "value": 0.005000217318377476,
             "unit": "ms/iter",
             "extra": "iterations: 354930\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "88232613+pikasTech@users.noreply.github.com",
+            "name": "Lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "288465e49e793fcdfc2560309426252c9c5a7160",
+          "message": "Merge pull request #337 from IVOES/cpp/wrong-type-format-argument\n\nFix incorrect printf format specifier",
+          "timestamp": "2024-08-15T16:36:32+01:00",
+          "tree_id": "8a7ef6e5c4c4e43ed9f6e4847aedd0deee28e761",
+          "url": "https://github.com/pikasTech/PikaPython/commit/288465e49e793fcdfc2560309426252c9c5a7160"
+        },
+        "date": 1723736965836,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 15929.525075485524,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 15929.525075485524 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 26.595602392361684,
+            "unit": "ms/iter",
+            "extra": "iterations: 69\ncpu: 26.59523590632134 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 13.36605613665351,
+            "unit": "ms/iter",
+            "extra": "iterations: 133\ncpu: 13.3659808920096 ms\nthreads: 1"
+          },
+          {
+            "name": "for_print_1000",
+            "value": 13.991462559743123,
+            "unit": "ms/iter",
+            "extra": "iterations: 127\ncpu: 13.991238017069902 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 3.1388946263981663,
+            "unit": "ms/iter",
+            "extra": "iterations: 565\ncpu: 3.1388255307715776 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000184594732045,
+            "unit": "ms/iter",
+            "extra": "iterations: 354393\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
