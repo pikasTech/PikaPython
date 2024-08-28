@@ -3305,7 +3305,7 @@ static Arg* VM_instruction_handler_RIS(PikaObj* self,
     Arg* err_arg = stack_popArg_alloc(&(vm->stack));
     if (ARG_TYPE_INT == arg_getType(err_arg)) {
         PIKA_RES err = (PIKA_RES)arg_getInt(err_arg);
-        if (PIKA_RES_ERR_RUNTIME_ERROR != err) {
+        if (err > 0) {
             PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
             PikaVMFrame_setSysOut(
                 vm, "TypeError: exceptions must derive from BaseException");
