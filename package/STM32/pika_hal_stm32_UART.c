@@ -2035,16 +2035,16 @@ static pika_dev* find_uart_from_handle(UART_HandleTypeDef* handle){
     return NULL;
 }
 
-//void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
-//    pika_dev* uart = find_uart_from_handle(huart);
-//    platform_UART* pika_uart = uart->platform_data;
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
+    pika_dev* uart = find_uart_from_handle(huart);
+    platform_UART* pika_uart = uart->platform_data;
 
-//    // Increment writePointer, wrap around if needed
-//    pika_uart->writePointer = (pika_uart->writePointer + 1) % RX_BUFF_LENGTH;
+    // Increment writePointer, wrap around if needed
+    pika_uart->writePointer = (pika_uart->writePointer + 1) % RX_BUFF_LENGTH;
 
-//    // Start receiving next character
-//    UART_Start_Receive_IT(huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->writePointer), 1);
-//}
+    // Start receiving next character
+    UART_Start_Receive_IT(huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->writePointer), 1);
+}
 
 int pika_hal_platform_UART_read(pika_dev* dev, void* buf, size_t count) {
     platform_UART* pika_uart = (platform_UART*)dev->platform_data;
