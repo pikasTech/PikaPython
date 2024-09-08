@@ -20,7 +20,7 @@
 #include "main.h"
 #include "gpio.h"
 #include "pikaScript.h"
-#include "PikaStdDevice/pika_hal.h"
+#include "../pikascript-lib/PikaStdDevice/pika_hal.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 

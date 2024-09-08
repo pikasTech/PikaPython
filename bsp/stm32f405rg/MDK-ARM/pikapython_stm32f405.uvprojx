@@ -137,7 +137,7 @@
             <DriverSelection>4101</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
-          <Flash2>BIN\UL2V8M.DLL</Flash2>
+          <Flash2>BIN\UL2CM3.DLL</Flash2>
           <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F405xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\pikapython\pikascript-core;..\pikapython\pikascript-lib;..\pikapython\pikascript-api</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\pikapython\pikascript-lib/PikaStdDevice;..\pikapython\pikascript-lib/STM32;..\pikapython\pikascript-lib/PikaStdLib;..\pikapython\pikascript-api;..\pikapython\pikascript-core</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -630,214 +630,204 @@
           <GroupName>pikapython/pikascript-api</GroupName>
           <Files>
             <File>
-              <FileName>__asset_pikaModules_py_a.c</FileName>
+              <FileName>pikaScript.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-api\__asset_pikaModules_py_a.c</FilePath>
+              <FilePath>..\pikapython\pikascript-api/pikaScript.c</FilePath>
             </File>
             <File>
               <FileName>__pikaBinding.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-api\__pikaBinding.c</FilePath>
+              <FilePath>..\pikapython\pikascript-api/__pikaBinding.c</FilePath>
             </File>
             <File>
-              <FileName>pikaScript.c</FileName>
+              <FileName>__asset_pikaModules_py_a.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-api\pikaScript.c</FilePath>
+              <FilePath>..\pikapython\pikascript-api/__asset_pikaModules_py_a.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>pikapython/pikascript-lib/PikaStdLib</GroupName>
+          <GroupName>pikapython/pikascript-lib</GroupName>
           <Files>
-            <File>
-              <FileName>PikaDebuger_Debuger.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdLib\PikaDebuger_Debuger.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_ByteArray.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdLib\PikaStdData_ByteArray.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_Dict.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdLib\PikaStdData_Dict.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_FILEIO.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdLib\PikaStdData_FILEIO.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_List.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdLib\PikaStdData_List.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_String.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdLib\PikaStdData_String.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_Tuple.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdLib\PikaStdData_Tuple.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_Utils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdLib\PikaStdData_Utils.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_MemChecker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdLib\PikaStdLib_MemChecker.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_RangeObj.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdLib\PikaStdLib_RangeObj.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_StringObj.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdLib\PikaStdLib_StringObj.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_SysObj.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdTask_Task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdLib\PikaStdTask_Task.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>pikapython/pikascript-lib/PikaStdDevice</GroupName>
-          <Files>
-            <File>
-              <FileName>pika_hal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\pika_hal.c</FilePath>
-            </File>
             <File>
               <FileName>pika_hal_SOFT_IIC.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\pika_hal_SOFT_IIC.c</FilePath>
-            </File>
-            <File>
-              <FileName>pika_hal_SOFT_SPI.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\pika_hal_SOFT_SPI.c</FilePath>
-            </File>
-            <File>
-              <FileName>pika_hal_SOFT_TIM.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\pika_hal_SOFT_TIM.c</FilePath>
-            </File>
-            <File>
-              <FileName>pika_hal_utils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\pika_hal_utils.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdDevice_ADC.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\PikaStdDevice_ADC.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdDevice_BaseDev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\PikaStdDevice_BaseDev.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdDevice_CAN.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\PikaStdDevice_CAN.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdDevice_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\PikaStdDevice_common.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdDevice_DAC.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\PikaStdDevice_DAC.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdDevice_GPIO.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\PikaStdDevice_GPIO.c</FilePath>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/pika_hal_SOFT_IIC.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdDevice_IIC.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\PikaStdDevice_IIC.c</FilePath>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/PikaStdDevice_IIC.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdDevice_PWM.c</FileName>
+              <FileName>PikaStdDevice_ADC.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\PikaStdDevice_PWM.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdDevice_SPI.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\PikaStdDevice_SPI.c</FilePath>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/PikaStdDevice_ADC.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdDevice_Timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\PikaStdDevice_Timer.c</FilePath>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/PikaStdDevice_Timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_BaseDev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/PikaStdDevice_BaseDev.c</FilePath>
+            </File>
+            <File>
+              <FileName>pika_hal_utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/pika_hal_utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/PikaStdDevice_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_GPIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/PikaStdDevice_GPIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_CAN.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/PikaStdDevice_CAN.c</FilePath>
+            </File>
+            <File>
+              <FileName>pika_hal_SOFT_TIM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/pika_hal_SOFT_TIM.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdDevice_UART.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\PikaStdDevice\PikaStdDevice_UART.c</FilePath>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/PikaStdDevice_UART.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>pikapython/pikascript-lib/STM32</GroupName>
-          <Files>
+            <File>
+              <FileName>PikaStdDevice_PWM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/PikaStdDevice_PWM.c</FilePath>
+            </File>
+            <File>
+              <FileName>pika_hal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/pika_hal.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_SPI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/PikaStdDevice_SPI.c</FilePath>
+            </File>
+            <File>
+              <FileName>pika_hal_SOFT_SPI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/pika_hal_SOFT_SPI.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_DAC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdDevice/PikaStdDevice_DAC.c</FilePath>
+            </File>
             <File>
               <FileName>pika_hal_stm32_ADC.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\STM32\pika_hal_stm32_ADC.c</FilePath>
-            </File>
-            <File>
-              <FileName>pika_hal_stm32_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\STM32\pika_hal_stm32_common.c</FilePath>
+              <FilePath>..\pikapython\pikascript-lib/STM32/pika_hal_stm32_ADC.c</FilePath>
             </File>
             <File>
               <FileName>pika_hal_stm32_DAC.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\STM32\pika_hal_stm32_DAC.c</FilePath>
+              <FilePath>..\pikapython\pikascript-lib/STM32/pika_hal_stm32_DAC.c</FilePath>
             </File>
             <File>
-              <FileName>pika_hal_stm32_GPIO.c</FileName>
+              <FileName>pika_hal_stm32_common.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\STM32\pika_hal_stm32_GPIO.c</FilePath>
-            </File>
-            <File>
-              <FileName>pika_hal_stm32_PWM.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\STM32\pika_hal_stm32_PWM.c</FilePath>
+              <FilePath>..\pikapython\pikascript-lib/STM32/pika_hal_stm32_common.c</FilePath>
             </File>
             <File>
               <FileName>pika_hal_stm32_time.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\STM32\pika_hal_stm32_time.c</FilePath>
+              <FilePath>..\pikapython\pikascript-lib/STM32/pika_hal_stm32_time.c</FilePath>
             </File>
             <File>
               <FileName>pika_hal_stm32_UART.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikapython\pikascript-lib\STM32\pika_hal_stm32_UART.c</FilePath>
+              <FilePath>..\pikapython\pikascript-lib/STM32/pika_hal_stm32_UART.c</FilePath>
+            </File>
+            <File>
+              <FileName>pika_hal_stm32_PWM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/STM32/pika_hal_stm32_PWM.c</FilePath>
+            </File>
+            <File>
+              <FileName>pika_hal_stm32_GPIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/STM32/pika_hal_stm32_GPIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_RangeObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdLib/PikaStdLib_RangeObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_Dict.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdLib/PikaStdData_Dict.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask_Task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdLib/PikaStdTask_Task.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_StringObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdLib/PikaStdLib_StringObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_Tuple.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdLib/PikaStdData_Tuple.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_MemChecker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebuger_Debuger.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdLib/PikaDebuger_Debuger.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_ByteArray.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdLib/PikaStdData_ByteArray.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_String.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdLib/PikaStdData_String.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_Utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdLib/PikaStdData_Utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_List.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdLib/PikaStdData_List.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_SysObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_FILEIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikapython\pikascript-lib/PikaStdLib/PikaStdData_FILEIO.c</FilePath>
             </File>
           </Files>
         </Group>
