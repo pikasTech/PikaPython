@@ -274,7 +274,7 @@ TEST(requests, get_basic) {
 }
 
 //! Enable it manually if needed
-#if 0
+#if 1
 TEST(requests, post_data) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];

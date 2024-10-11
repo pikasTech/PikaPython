@@ -56,10 +56,10 @@ def request(
         files=None,
         json=None,
         data=None) -> Response:
-    if files != None:
+    if files is not None:
         print("files is not supported")
         return None
-    if json != None:
+    if json is not None:
         print("json is not supported")
         return None
     """ 
@@ -69,25 +69,41 @@ def request(
     rqst.url = url
     # 初始化，分配内存, 写入方法POST/GET
     ret = rqst.request_init(method)
+    # print("Request init ret: " + str(ret))
     if ret != 1:
+        print("Failed to initialize the request object.")
         return None
+
     # 写入URL
     ret = _append_params_to_url(rqst, url, params)
-    if  ret != 1:
+    # print("Append params to URL ret: " + str(ret))
+    if ret != 1:
         # 出现错误，需要释放对象
+        print("Error appending params to the URL.")
         return None
+
     # 写入默认HTTP版本号
     ret = rqst.proto_write('')
+    # print("Write HTTP version ret: " + str(ret))
     if ret != 1:
+        print("Error writing HTTP version.")
         return None
+
     # 写入响应头数据
     ret = _append_headers(rqst, headers)
+    # print("Append headers ret: " + str(ret))
     if ret != 1:
+        print("Error appending headers to the request.")
         return None
+
     ret = rqst.request(method, rqst.url, timeout, data)
+    # print("Request ret: " + str(ret))
     if ret != 1:
+        print("Request failed with response code: " + str(ret))
         return None
+
     return rqst
+
 
 def get(url: str, params=None) -> Response:
     return request('GET', url, params)

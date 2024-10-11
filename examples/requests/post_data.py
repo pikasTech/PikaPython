@@ -3,7 +3,11 @@ form_data = '------WebKitFormBoundaryrEPACvZYkAbE4bYB\r\nContent-Disposition: fo
 
 header = {"Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryrEPACvZYkAbE4bYB"}
 
-a = requests.request("POST", "http://pikascript.com/upload", headers=header, data=form_data)
+a = requests.request("POST", "http://httpbin.org/post",
+                     headers=header, data=form_data)
+
+# a = requests.request("POST", "http://pikascript.com/uploads",
+#                      headers=header, data=form_data)
 
 print(a.headers)
 print(a.content_length)
