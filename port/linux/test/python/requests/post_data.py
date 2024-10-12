@@ -3,7 +3,7 @@ form_data = '------WebKitFormBoundaryrEPACvZYkAbE4bYB\r\nContent-Disposition: fo
 
 header = {"Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryrEPACvZYkAbE4bYB"}
 
-a = requests.request("POST", "http://httpbin.org/post",
+a = requests.request("POST", "http://www.rt-thread.com/service/echo",
                      headers=header, data=form_data)
 
 # a = requests.request("POST", "http://pikascript.com/uploads",
