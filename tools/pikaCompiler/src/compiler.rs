@@ -435,10 +435,29 @@ impl Compiler {
         let lines: Vec<&str> = file_str.split('\n').collect();
         let mut last_line = String::from("");
         /* analyse each line */
+        let mut inside_docstring = false;
         for line in lines.iter() {
             let mut line = line.replace("\r", "");
-            /* replace \t with 4 spaces */
             line = line.replace("\t", "    ");
+
+            // Check for docstring blocks (both single-line and multi-line)
+            if line.trim().contains("\"\"\"") {
+                let count = line.matches("\"\"\"").count();
+                if count == 1 {
+                    // If we encounter just one set of """ and we are not inside a docstring block, start or end the block
+                    inside_docstring = !inside_docstring;
+                    continue;
+                } else if count == 2 {
+                    // If there are two sets of """ on the same line, it's a single-line docstring, skip it
+                    continue;
+                }
+            }
+
+            // Skip lines inside the docstring block
+            if inside_docstring {
+                continue;
+            }
+
             if line.contains("(") && !line.contains(")") {
                 last_line = line.clone();
                 continue;
@@ -452,6 +471,7 @@ impl Compiler {
                     continue;
                 }
             }
+
             self = match pkg_type {
                 PackageType::CPackageTop | PackageType::CPackageInner => {
                     Compiler::analyse_pyi_line(self, line.to_string(), &file_name, is_top_c_pkg)
@@ -461,6 +481,7 @@ impl Compiler {
                 }
             };
         }
+
         return self;
     }
 

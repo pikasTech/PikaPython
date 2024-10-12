@@ -69,3 +69,9 @@ class CAN(PikaStdDevice.CAN):
 
 
 def __del__(self): ...
+
+
+"""
+def test_doc_string_pyi():
+    pass
+"""

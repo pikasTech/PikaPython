@@ -3011,7 +3011,8 @@ Arg* __eventListener_runEvent(PikaEventListener* listener,
     pika_debug("event handler: %p", handler);
     if (NULL == handler) {
         pika_platform_printf(
-            "Error: can not find event handler by id: [0x%02" PRIxPTR "]\r\n", eventId);
+            "Error: can not find event handler by id: [0x%02" PRIxPTR "]\r\n",
+            eventId);
         return NULL;
     }
     Arg* eventCallBack = obj_getArg(handler, "eventCallBack");
