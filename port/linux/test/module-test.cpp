@@ -1373,4 +1373,6 @@ TEST(jrpc, exec_concat_str_space) {
     free(response);
 }
 
+TEST_RUN_SINGLE_FILE(threading, lock_rlock, "test/python/threading/lock_rlock.py")
+
 TEST_END
