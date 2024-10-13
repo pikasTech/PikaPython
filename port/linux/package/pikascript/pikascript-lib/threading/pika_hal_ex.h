@@ -1,44 +1,44 @@
 #ifndef PIKA_HAL_CIRCULAR_PTR_QUEUE_H
 #define PIKA_HAL_CIRCULAR_PTR_QUEUE_H
-#include "pika_hal.h"
 #include "PikaObj.h"
+#include "pika_hal.h"
 
-// 定义循环指针队列的结构体
+// Define the structure for the circular pointer queue
 typedef struct pika_hal_CircularPtrQueue {
-    void** buffer;    // 存储元素的缓冲区
-    size_t head;      // 队头指针
-    size_t tail;      // 队尾指针
-    size_t count;     // 当前元素数量
-    size_t capacity;  // 缓冲区容量
+    void** buffer;    // Buffer to store elements
+    size_t head;      // Head pointer
+    size_t tail;      // Tail pointer
+    size_t count;     // Current element count
+    size_t capacity;  // Buffer capacity
 #if PIKA_HAL_CIRCULAR_QUEUE_MUTEX_ENABLE
-    pika_platform_thread_mutex_t mutex;  // 互斥锁
+    pika_platform_thread_mutex_t mutex;  // Mutex
 #endif
 } pika_hal_CircularPtrQueue;
 
-// 创建一个新的循环指针队列
+// Create a new circular pointer queue
 pika_hal_CircularPtrQueue* pika_hal_circularPtrQueue_create(size_t capacity);
 
-// 向队列中添加一个元素
+// Add an element to the queue
 int pika_hal_circularPtrQueue_enqueue(pika_hal_CircularPtrQueue* cb,
                                       void* data);
 
-// 从队列中移除一个元素
+// Remove an element from the queue
 int pika_hal_circularPtrQueue_dequeue(pika_hal_CircularPtrQueue* cb,
                                       void** value);
 
-// 销毁队列并释放相关资源
+// Destroy the queue and release related resources
 int pika_hal_circularPtrQueue_deinit(pika_hal_CircularPtrQueue* cb);
 
-// 获取队列中的元素数量
+// Get the number of elements in the queue
 size_t pika_hal_circularPtrQueue_getCount(pika_hal_CircularPtrQueue* cb);
 
-// 检查队列是否为空
+// Check if the queue is empty
 int pika_hal_circularPtrQueue_isEmpty(pika_hal_CircularPtrQueue* cb);
 
-// 检查队列是否已满
+// Check if the queue is full
 int pika_hal_circularPtrQueue_isFull(pika_hal_CircularPtrQueue* cb);
 
-// 查看队列头部的元素，但不移除它
+// Peek at the front element of the queue without removing it
 int pika_hal_circularPtrQueue_peek(pika_hal_CircularPtrQueue* cb, void** value);
 
 #endif  // PIKA_HAL_CIRCULAR_PTR_QUEUE_H

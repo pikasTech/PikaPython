@@ -78,6 +78,7 @@ def main():
     # time.sleep(60)
     while finished < 2:
         time.sleep(1)
+    time.sleep(1)
 
 
 main()

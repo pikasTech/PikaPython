@@ -1373,6 +1373,19 @@ TEST(jrpc, exec_concat_str_space) {
     free(response);
 }
 
-TEST_RUN_SINGLE_FILE(threading, lock_rlock, "test/python/threading/lock_rlock.py")
+#if !PIKA_NANO_ENABLE
+TEST(threading, lock_rlock) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a); /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/threading/lock_rlock.py");
+    /* assert */ /* deinit */
+    pika_vm_exit_await();
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
 
 TEST_END

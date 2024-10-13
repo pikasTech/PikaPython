@@ -1,47 +1,45 @@
 #include "PikaPlatformEx.h"
 
 //----------------------------- mutex -------------------------------
-// 带超时的互斥锁加锁
+// Mutex lock with timeout
 int pika_platform_thread_mutex_timedlock(pika_platform_thread_mutex_t* m,
                                          pika_bool block,
                                          Arg* timeout) {
 #if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
-    ArgType timout_type = arg_getType(timeout);
+    ArgType timeout_type = arg_getType(timeout);
     pika_float timeout_f;
     int result;
-    if (!(timout_type == ARG_TYPE_FLOAT || timout_type == ARG_TYPE_INT ||
-          timout_type == ARG_TYPE_NONE)) {
+    if (!(timeout_type == ARG_TYPE_FLOAT || timeout_type == ARG_TYPE_INT ||
+          timeout_type == ARG_TYPE_NONE)) {
         return PIKA_RES_ERR_INVALID_PARAM;
     }
 
-    if (timout_type == ARG_TYPE_FLOAT || timout_type == ARG_TYPE_INT) {
-        // printf("==== #01\n");
-        if (timout_type == ARG_TYPE_FLOAT) {
+    if (timeout_type == ARG_TYPE_FLOAT || timeout_type == ARG_TYPE_INT) {
+        if (timeout_type == ARG_TYPE_FLOAT) {
             timeout_f = arg_getFloat(timeout);
         }
-        if (timout_type == ARG_TYPE_INT) {
+        if (timeout_type == ARG_TYPE_INT) {
             int timeout_d = arg_getInt(timeout);
             timeout_f = (pika_float)timeout_d;
-            // printf("==== #04  %lf\n", timeout_f);
         }
         if (timeout_f < 0.0f) {
             return PIKA_RES_ERR_INVALID_PARAM;
         }
 
         struct timespec ts;
-        clock_gettime(CLOCK_REALTIME, &ts);  // 获取当前时间
+        clock_gettime(CLOCK_REALTIME, &ts);  // Get current time
 
-        // 将浮点数秒转换为秒和纳秒
+        // Convert floating seconds to seconds and nanoseconds
         long sec = (long)timeout_f;
         long nsec = (long)((timeout_f - (pika_float)sec) * 1000000000.0);
 
         ts.tv_sec += sec;
         ts.tv_nsec += nsec;
 
-        // 如果纳秒数超过 1 秒，则需要调整秒数和纳秒数
+        // Adjust seconds and nanoseconds if nanoseconds exceed 1 second
         if (ts.tv_nsec >= 1000000000) {
-            ts.tv_nsec -= 1000000000;  // 减去 1 秒的纳秒数
-            ts.tv_sec += 1;            // 增加 1 秒
+            ts.tv_nsec -= 1000000000;  // Subtract 1 second in nanoseconds
+            ts.tv_sec += 1;            // Add 1 second
         }
 
         pika_GIL_EXIT();
@@ -49,15 +47,13 @@ int pika_platform_thread_mutex_timedlock(pika_platform_thread_mutex_t* m,
         pika_GIL_ENTER();
         return result == 0 ? 0 : -1;
 
-    } else if (timout_type == ARG_TYPE_NONE) {
+    } else if (timeout_type == ARG_TYPE_NONE) {
         if (block) {
-            // printf("==== #02\n");
             pika_GIL_EXIT();
             result = pthread_mutex_lock(&m->mutex);
             pika_GIL_ENTER();
             return result == 0 ? 0 : -1;
         } else {
-            // printf("==== #03\n");
             pika_GIL_EXIT();
             result = pthread_mutex_trylock(&m->mutex);
             pika_GIL_ENTER();
@@ -86,7 +82,7 @@ int pika_platform_thread_mutex_timedlock(pika_platform_thread_mutex_t* m,
 }
 
 //----------------------------- rtmutex -------------------------------
-// 初始化递归互斥锁
+// Initialize recursive mutex
 void pika_platform_thread_rtmutex_init(pika_platform_thread_rtmutex_t* rtm) {
 #if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
     pthread_mutexattr_t attr;
@@ -94,7 +90,7 @@ void pika_platform_thread_rtmutex_init(pika_platform_thread_rtmutex_t* rtm) {
         perror("pthread_mutexattr_init");
         exit(EXIT_FAILURE);
     }
-    // 设置互斥锁类型为递归互斥锁
+    // Set the mutex type to recursive
     if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) != 0) {
         perror("pthread_mutexattr_settype");
         pthread_mutexattr_destroy(&attr);
@@ -114,7 +110,7 @@ void pika_platform_thread_rtmutex_init(pika_platform_thread_rtmutex_t* rtm) {
 #endif
 }
 
-// 销毁递归互斥锁
+// Destroy recursive mutex
 void pika_platform_thread_rtmutex_destroy(pika_platform_thread_rtmutex_t* rtm) {
 #if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
     pthread_cond_destroy(&rtm->cond);
@@ -127,17 +123,17 @@ void pika_platform_thread_rtmutex_destroy(pika_platform_thread_rtmutex_t* rtm) {
 #endif
 }
 
-// 带超时的递归互斥锁加锁
+// Lock recursive mutex with timeout
 int pika_platform_thread_rtmutex_lock(pika_platform_thread_rtmutex_t* rtm,
                                       pika_bool block,
                                       Arg* timeout) {
 #if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
-    ArgType timout_type = arg_getType(timeout);
+    ArgType timeout_type = arg_getType(timeout);
     pika_float timeout_f;
     int result;
 
-    if (!(timout_type == ARG_TYPE_FLOAT || timout_type == ARG_TYPE_INT ||
-          timout_type == ARG_TYPE_NONE)) {
+    if (!(timeout_type == ARG_TYPE_FLOAT || timeout_type == ARG_TYPE_INT ||
+          timeout_type == ARG_TYPE_NONE)) {
         return PIKA_RES_ERR_INVALID_PARAM;
     }
 
@@ -146,45 +142,42 @@ int pika_platform_thread_rtmutex_lock(pika_platform_thread_rtmutex_t* rtm,
     pika_GIL_ENTER();
 
     if (rtm->owner == pthread_self()) {
-        // 如果当前线程已经持有锁，则递归深度加1
+        // If the current thread already owns the lock, increment recursion
+        // depth
         rtm->count++;
-        // printf("rtm->count = %d\n", rtm->count);
         pthread_mutex_unlock(&rtm->mutex);
-        // printf("succ\n");
         return 0;
     }
 
-    if (timout_type == ARG_TYPE_FLOAT || timout_type == ARG_TYPE_INT) {
-        // printf("==== #01\n");
-        if (timout_type == ARG_TYPE_FLOAT) {
+    if (timeout_type == ARG_TYPE_FLOAT || timeout_type == ARG_TYPE_INT) {
+        if (timeout_type == ARG_TYPE_FLOAT) {
             timeout_f = arg_getFloat(timeout);
         }
-        if (timout_type == ARG_TYPE_INT) {
+        if (timeout_type == ARG_TYPE_INT) {
             int timeout_d = arg_getInt(timeout);
             timeout_f = (pika_float)timeout_d;
-            // printf("==== #04  %lf\n", timeout_f);
         }
         if (timeout_f < 0.0f) {
             return PIKA_RES_ERR_INVALID_PARAM;
         }
 
         struct timespec ts;
-        clock_gettime(CLOCK_REALTIME, &ts);  // 获取当前时间
+        clock_gettime(CLOCK_REALTIME, &ts);  // Get current time
 
-        // 将浮点数秒转换为秒和纳秒
+        // Convert floating seconds to seconds and nanoseconds
         long sec = (long)timeout_f;
         long nsec = (long)((timeout_f - (pika_float)sec) * 1000000000.0);
 
         ts.tv_sec += sec;
         ts.tv_nsec += nsec;
 
-        // 如果纳秒数超过 1 秒，则需要调整秒数和纳秒数
+        // Adjust seconds and nanoseconds if nanoseconds exceed 1 second
         if (ts.tv_nsec >= 1000000000) {
-            ts.tv_nsec -= 1000000000;  // 减去 1 秒的纳秒数
-            ts.tv_sec += 1;            // 增加 1 秒
+            ts.tv_nsec -= 1000000000;  // Subtract 1 second in nanoseconds
+            ts.tv_sec += 1;            // Add 1 second
         }
 
-        // 等待直到获得锁或超时
+        // Wait until the lock is acquired or timeout occurs
         while (rtm->owner != (pthread_t)0) {
             pika_GIL_EXIT();
             result = pthread_cond_timedwait(&rtm->cond, &rtm->mutex, &ts);
@@ -195,15 +188,15 @@ int pika_platform_thread_rtmutex_lock(pika_platform_thread_rtmutex_t* rtm,
                 return -1;
             }
         }
-        // 设置当前线程为锁的持有者
+        // Set the current thread as the owner of the lock
         rtm->owner = pthread_self();
         rtm->count = 1;
         pthread_mutex_unlock(&rtm->mutex);
         return 0;
 
-    } else if (timout_type == ARG_TYPE_NONE) {
+    } else if (timeout_type == ARG_TYPE_NONE) {
         if (block) {
-            // 永久等待
+            // Wait indefinitely
             while (rtm->owner != (pthread_t)0) {
                 pika_GIL_EXIT();
                 result = pthread_cond_wait(&rtm->cond, &rtm->mutex);
@@ -214,22 +207,22 @@ int pika_platform_thread_rtmutex_lock(pika_platform_thread_rtmutex_t* rtm,
                     return -1;
                 }
             }
-            // 设置当前线程为锁的持有者
+            // Set the current thread as the owner of the lock
             rtm->owner = pthread_self();
             rtm->count = 1;
             pthread_mutex_unlock(&rtm->mutex);
             return 0;
 
         } else {
-            // 非阻塞模式
+            // Non-blocking mode
             if (rtm->owner == (pthread_t)0) {
-                // 如果没有其他线程持有锁，获取锁
+                // Acquire the lock if no other thread owns it
                 rtm->owner = pthread_self();
                 rtm->count = 1;
                 pthread_mutex_unlock(&rtm->mutex);
                 return 0;
             } else {
-                // 如果已经有其他线程持有锁，立即返回 -1
+                // If another thread owns the lock, return -1 immediately
                 pthread_mutex_unlock(&rtm->mutex);
                 return -1;
             }
@@ -246,8 +239,7 @@ int pika_platform_thread_rtmutex_lock(pika_platform_thread_rtmutex_t* rtm,
 #endif
 }
 
-#if 1
-// 释放递归互斥锁
+// Release recursive mutex
 int pika_platform_thread_rtmutex_unlock(pika_platform_thread_rtmutex_t* rtm) {
 #if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
     pthread_t self = pthread_self();
@@ -256,7 +248,6 @@ int pika_platform_thread_rtmutex_unlock(pika_platform_thread_rtmutex_t* rtm) {
     pthread_mutex_lock(&rtm->mutex);
     pika_GIL_ENTER();
 
-    // printf("rtm->owner = %lu\n", rtm->owner);
     if (rtm->owner != self) {
         perror("Attempt to unlock a mutex not owned by the current thread");
         pthread_mutex_unlock(&rtm->mutex);
@@ -267,7 +258,6 @@ int pika_platform_thread_rtmutex_unlock(pika_platform_thread_rtmutex_t* rtm) {
     if (rtm->count == 0) {
         rtm->owner = (pthread_t)0;
         pthread_cond_signal(&rtm->cond);
-        // printf("rtm->owner = %lu\n", rtm->owner);
     }
 
     pthread_mutex_unlock(&rtm->mutex);
@@ -279,9 +269,8 @@ int pika_platform_thread_rtmutex_unlock(pika_platform_thread_rtmutex_t* rtm) {
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
 #endif
 }
-#endif
 
-// 检查递归互斥锁是否已被当前线程获取
+// Check if recursive mutex is held by the current thread
 int pika_platform_thread_rtmutex_locked(pika_platform_thread_rtmutex_t* rtm) {
 #if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
     pthread_t self = pthread_self();
@@ -322,7 +311,7 @@ void pika_platform_thread_cond_destroy(pika_platform_thread_cond_t* cond) {
 #if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
     pthread_cond_destroy(&cond->cond);
     pika_platform_thread_rtmutex_destroy(&cond->rtmutex);
-    cond->owner = (pthread_t)0;  // 释放资源后重置 owner
+    cond->owner = (pthread_t)0;  // Reset owner after releasing resources
 #elif PIKA_FREERTOS_ENABLE
 #elif PIKA_RTTHREAD_ENABLE
 #elif PIKA_ZEUSOS_ENABLE
@@ -331,41 +320,37 @@ void pika_platform_thread_cond_destroy(pika_platform_thread_cond_t* cond) {
 #endif
 }
 
-// 检查当前线程是否持有互斥锁
+// Check if the current thread owns the mutex
 static int is_mutex_owned(pika_platform_thread_cond_t* cond) {
-    // pthread_t current_thread = pthread_self();
-
-    // 使用 pthread_mutex_trylock 来检查是否已经持有锁
     if (pthread_mutex_trylock(&cond->rtmutex.mutex) == EBUSY) {
-        // 如果锁已经被持有，尝试解锁并检查是否是当前线程持有的
         if (pthread_mutex_unlock(&cond->rtmutex.mutex) == 0) {
-            return 1;  // 当前线程持有锁
+            return 1;  // Current thread owns the lock
         }
     }
 
     return 0;
 }
 
-// 带阻塞和超时功能的条件变量等待
+// Condition variable wait with blocking and timeout functionality
 int pika_platform_thread_cond_timedwait(pika_platform_thread_cond_t* cond,
                                         Arg* timeout) {
 #if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
-    ArgType timout_type = arg_getType(timeout);
+    ArgType timeout_type = arg_getType(timeout);
     pika_float timeout_f;
     int result;
 
-    // 检查是否已经获得了互斥锁
+    // Check if the mutex is already acquired
     if (!is_mutex_owned(cond)) {
         return -1;
     }
 
-    if (!(timout_type == ARG_TYPE_FLOAT || timout_type == ARG_TYPE_INT ||
-          timout_type == ARG_TYPE_NONE)) {
+    if (!(timeout_type == ARG_TYPE_FLOAT || timeout_type == ARG_TYPE_INT ||
+          timeout_type == ARG_TYPE_NONE)) {
         return PIKA_RES_ERR_INVALID_PARAM;
     }
 
-    if (timout_type == ARG_TYPE_FLOAT || timout_type == ARG_TYPE_INT) {
-        if (timout_type == ARG_TYPE_FLOAT) {
+    if (timeout_type == ARG_TYPE_FLOAT || timeout_type == ARG_TYPE_INT) {
+        if (timeout_type == ARG_TYPE_FLOAT) {
             timeout_f = arg_getFloat(timeout);
         } else {
             int timeout_d = arg_getInt(timeout);
@@ -377,35 +362,35 @@ int pika_platform_thread_cond_timedwait(pika_platform_thread_cond_t* cond,
         }
 
         struct timespec ts;
-        clock_gettime(CLOCK_REALTIME, &ts);  // 获取当前时间
+        clock_gettime(CLOCK_REALTIME, &ts);  // Get current time
 
-        // 将浮点数秒转换为秒和纳秒
+        // Convert floating seconds to seconds and nanoseconds
         long sec = (long)timeout_f;
         long nsec = (long)((timeout_f - (pika_float)sec) * 1000000000.0);
 
         ts.tv_sec += sec;
         ts.tv_nsec += nsec;
 
-        // 如果纳秒数超过 1 秒，则需要调整秒数和纳秒数
+        // Adjust seconds and nanoseconds if nanoseconds exceed 1 second
         if (ts.tv_nsec >= 1000000000) {
-            ts.tv_nsec -= 1000000000;  // 减去 1 秒的纳秒数
-            ts.tv_sec += 1;            // 增加 1 秒
+            ts.tv_nsec -= 1000000000;  // Subtract 1 second in nanoseconds
+            ts.tv_sec += 1;            // Add 1 second
         }
 
-        // 等待直到被通知或超时
+        // Wait until notified or timeout occurs
         pika_GIL_EXIT();
         result = pthread_cond_timedwait(&cond->cond, &cond->rtmutex.mutex, &ts);
         pika_GIL_ENTER();
 
         if (result != 0) {
             if (result == ETIMEDOUT) {
-                return -1;  // 超时
+                return -1;  // Timeout
             }
             perror("pthread_cond_timedwait");
-            return -1;  // 其他错误
+            return -1;  // Other errors
         }
-    } else if (timout_type == ARG_TYPE_NONE) {
-        // 永久等待
+    } else if (timeout_type == ARG_TYPE_NONE) {
+        // Wait indefinitely
         pika_GIL_EXIT();
         result = pthread_cond_wait(&cond->cond, &cond->rtmutex.mutex);
         pika_GIL_ENTER();
@@ -427,12 +412,13 @@ int pika_platform_thread_cond_timedwait(pika_platform_thread_cond_t* cond,
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
 #endif
 }
-// 信号量通知
+
+// Signal condition variable
 int pika_platform_thread_cond_signal(pika_platform_thread_cond_t* cond) {
 #if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
     int result;
     result = pthread_cond_signal(&cond->cond);
-    cond->owner = (pthread_t)0;  // 通知后重置 owner
+    cond->owner = (pthread_t)0;  // Reset owner after notifying
     return result == 0 ? 0 : -1;
 #elif PIKA_FREERTOS_ENABLE
 #elif PIKA_RTTHREAD_ENABLE
@@ -442,12 +428,12 @@ int pika_platform_thread_cond_signal(pika_platform_thread_cond_t* cond) {
 #endif
 }
 
-// 信号量广播
+// Broadcast condition variable
 int pika_platform_thread_cond_broadcast(pika_platform_thread_cond_t* cond) {
 #if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
     int result;
     result = pthread_cond_broadcast(&cond->cond);
-    cond->owner = (pthread_t)0;  // 广播后重置 owner
+    cond->owner = (pthread_t)0;  // Reset owner after broadcasting
     return result == 0 ? 0 : -1;
 #elif PIKA_FREERTOS_ENABLE
 #elif PIKA_RTTHREAD_ENABLE

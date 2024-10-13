@@ -14,6 +14,7 @@ void threading_Lock___init__(PikaObj* self) {
     pika_platform_thread_mutex_init(m);
     obj_setPtr(self, "_mutex_", m);
 }
+
 pika_bool threading_Lock_acquire(PikaObj* self, pika_bool block, Arg* timeout) {
     pika_platform_thread_mutex_t* m = obj_getPtr(self, "_mutex_");
     int result = pika_platform_thread_mutex_timedlock(m, block, timeout);
@@ -23,27 +24,23 @@ pika_bool threading_Lock_acquire(PikaObj* self, pika_bool block, Arg* timeout) {
     }
     return result == 0 ? pika_true : pika_false;
 }
+
 pika_bool threading_Lock_locked(PikaObj* self) {
     pika_platform_thread_mutex_t* m = obj_getPtr(self, "_mutex_");
     pika_GIL_EXIT();
     int result = pika_platform_thread_mutex_trylock(m);
     pika_GIL_ENTER();
     if (result == 0) {
-        // 成功获得了锁，需要解锁
-        // pika_GIL_EXIT();
+        // Successfully acquired the lock, need to unlock it
         pika_platform_thread_mutex_unlock(m);
-        // pika_GIL_ENTER();/*  */
-        return pika_false;  // 锁未被占用/*  */
+        return pika_false;  // Lock is not held
     } else {
-        // 锁已被占用或发生了其他错误
-        // perror("pthread_mutex_trylock");
+        // Lock is held or an error occurred
         return pika_true;
     }
 }
 
 void threading_Lock_release(PikaObj* self) {
     pika_platform_thread_mutex_t* m = obj_getPtr(self, "_mutex_");
-    // pika_GIL_EXIT();
     pika_platform_thread_mutex_unlock(m);
-    // pika_GIL_ENTER();
 }
