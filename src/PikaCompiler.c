@@ -426,6 +426,37 @@ static int32_t __foreach_handler_getModuleNum(Arg* argEach,
     return 0;
 }
 
+#include <stdint.h>
+#include <stdio.h>
+
+/* Times33 checksum calculation from a specific offset in the file */
+uint32_t file_calculate_times33(FILE* fp, uint32_t offset) {
+    uint32_t checksum = 5381;  // Times33 uses 5381 as the initial value
+    uint8_t buffer[64];        // 64-byte buffer for reading
+
+    // Seek to the specified offset in the file
+    pika_platform_fseek(fp, offset, SEEK_SET);
+
+    size_t bytes_read;
+    // Read the file chunk by chunk and update the checksum
+    while ((bytes_read = pika_platform_fread(buffer, 1, sizeof(buffer), fp)) >
+           0) {
+        for (size_t i = 0; i < bytes_read; i++) {
+            checksum = (checksum * 33) + buffer[i];
+        }
+    }
+
+    return checksum;
+}
+
+uint32_t bytes_caclulate_times33(uint8_t* bytes, uint32_t size) {
+    uint32_t checksum = 5381;  // Times33 uses 5381 as the initial value
+    for (uint32_t i = 0; i < size; i++) {
+        checksum = (checksum * 33) + bytes[i];
+    }
+    return checksum;
+}
+
 int LibObj_linkFile(LibObj* self, char* output_file_name) {
     FILE* out_file = pika_platform_fopen(output_file_name, "wb+");
 
@@ -451,22 +482,23 @@ int LibObj_linkFile(LibObj* self, char* output_file_name) {
     uint32_t module_num = linker.module_num;
     uint32_t modules_size = linker.sum_size;
     uint32_t block_size = linker.block_size;
-    uint32_t totle_size = block_size * (module_num + 1) + modules_size;
+    uint32_t total_size = block_size * (module_num + 1) + modules_size;
     uint8_t* meta_block_buff = pikaMalloc(block_size);
     pika_platform_memset(meta_block_buff, 0, block_size);
 
     /* write meta info */
     const uint32_t magic_code_offset =
         sizeof(uint32_t) * PIKA_APP_MAGIC_CODE_OFFSET;
-    const uint32_t totle_size_offset =
+    const uint32_t total_size_offset =
         sizeof(uint32_t) * PIKA_APP_MODULE_SIZE_OFFSET;
     const uint32_t version_offset = sizeof(uint32_t) * PIKA_APP_VERSION_OFFSET;
     const uint32_t module_num_offset =
         sizeof(uint32_t) * PIKA_APP_MODULE_NUM_OFFSET;
     const uint32_t info_block_size_offset =
         sizeof(uint32_t) * PIKA_APP_INFO_BLOCK_SIZE_OFFSET;
+    const uint32_t times33_offset = sizeof(uint32_t) * PIKA_APP_TIMES33_OFFSET;
 
-    // the meta info is the first block
+    /* the meta info is the first block */
     pika_platform_memcpy(meta_block_buff + magic_code_offset, &magic_code,
                          sizeof(uint32_t));
     pika_platform_memcpy(meta_block_buff + version_offset, &version_num,
@@ -475,23 +507,33 @@ int LibObj_linkFile(LibObj* self, char* output_file_name) {
     pika_platform_memcpy(meta_block_buff + module_num_offset, &module_num,
                          sizeof(uint32_t));
     /* write modules_size to the file */
-    pika_platform_memcpy(meta_block_buff + totle_size_offset, &totle_size,
+    pika_platform_memcpy(meta_block_buff + total_size_offset, &total_size,
                          sizeof(uint32_t));
     /* write block_size to the file */
     pika_platform_memcpy(meta_block_buff + info_block_size_offset, &block_size,
                          sizeof(uint32_t));
     linker_fwrite(&linker, meta_block_buff, block_size);
+
     /* write module index to file */
     args_foreach(self->list, (fn_args_foreach)__foreach_handler_libWriteIndex,
                  &linker);
     /* write module bytecode to file */
     args_foreach(self->list,
                  (fn_args_foreach)__foreach_handler_libWriteBytecode, &linker);
+
+    /* Calculate CRC16 from block_size to the end of the file using the new
+     * function */
+    uint32_t ftimes33 = file_calculate_times33(out_file, block_size);
+
+    /* Move back to times33_offset position and write the CRC16 value */
+    pika_platform_fseek(out_file, times33_offset, SEEK_SET);
+    pika_platform_fwrite(&ftimes33, sizeof(uint32_t), 1, out_file);
+
     /* main process */
     /* deinit */
     pika_platform_fclose(out_file);
     pikaFree(meta_block_buff, block_size);
-    pika_assert(totle_size == linker.written_size);
+    pika_assert(total_size == linker.written_size);
     return 0;
 }
 
@@ -505,7 +547,9 @@ static int _getModuleNum(uint8_t* library_bytes) {
     uint32_t* library_info = (uint32_t*)library_bytes;
     uint32_t version_num = library_info[PIKA_APP_VERSION_OFFSET];
     uint32_t module_num = library_info[PIKA_APP_MODULE_NUM_OFFSET];
-
+    uint32_t library_times33_saved = library_info[PIKA_APP_TIMES33_OFFSET];
+    uint32_t total_size = library_info[PIKA_APP_MODULE_SIZE_OFFSET];
+    uint32_t info_block_size = library_info[PIKA_APP_INFO_BLOCK_SIZE_OFFSET];
     /* check magic_code */
     if (!((magic_code[0] == 0x0f) && (magic_code[1] == 'p') &&
           (magic_code[2] == 'y') && (magic_code[3] == 'a'))) {
@@ -521,6 +565,19 @@ static int _getModuleNum(uint8_t* library_bytes) {
             "Please run the 'rus-msc-latest-win10.exe' again to update the "
             "version of compiled library.\r\n");
         return PIKA_RES_ERR_INVALID_VERSION_NUMBER;
+    }
+
+    /* check times33 */
+    if (0 != library_times33_saved) {
+        // support the old version without times33
+        uint32_t library_times34_calculated = bytes_caclulate_times33(
+            library_bytes + info_block_size, total_size - info_block_size);
+        if (library_times33_saved != library_times34_calculated) {
+            pika_platform_printf(
+                "Error: invalid checksum, the package is broken.\r\n",
+                library_times34_calculated, library_times33_saved);
+            return PIKA_RES_ERR_INVALID_PARAM;
+        }
     }
     return module_num;
 }

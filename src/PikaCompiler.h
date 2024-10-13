@@ -57,6 +57,7 @@ PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
 #define PIKA_APP_VERSION_OFFSET 2
 #define PIKA_APP_MODULE_NUM_OFFSET 3
 #define PIKA_APP_INFO_BLOCK_SIZE_OFFSET 4
+#define PIKA_APP_TIMES33_OFFSET 5
 
 typedef struct {
     Arg* farg;

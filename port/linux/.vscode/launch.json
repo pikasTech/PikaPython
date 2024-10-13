@@ -44,7 +44,7 @@
                 // "--gtest_filter=except.for_loop"
                 // "--gtest_filter=builtin.init_raise"
                 // "--gtest_filter=builtin.strformat"
-                "--gtest_filter=except.typeerr"
+                // "--gtest_filter=except.typeerr"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
