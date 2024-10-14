@@ -1668,6 +1668,14 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
                                      ShellConfig* shell) {
     char* input_line = NULL;
     enum shellCTRL ctrl = SHELL_CTRL_CONTINUE;
+    static uint64_t tick_start_block_input = 0;
+    if (tick_start_block_input != 0) {
+        if (pika_platform_get_tick() - tick_start_block_input < 5000) {
+            return SHELL_CTRL_CONTINUE;
+        } else {
+            tick_start_block_input = 0;
+        }
+    }
     if (inputChar == 0x7F) {
         inputChar = '\b';
     }
@@ -1762,7 +1770,12 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
             pika_platform_printf(
                 "\r\nError: line buff overflow, please use bigger "
                 "'PIKA_LINE_BUFF_SIZE'\r\n");
-            ctrl = SHELL_CTRL_EXIT;
+            ctrl = SHELL_CTRL_CONTINUE;
+            pika_platform_printf(
+                "Input is blocked for 5 seconds to protect the "
+                "kernel...\r\n");
+            tick_start_block_input = pika_platform_get_tick();
+            pika_platform_printf(">>> ");
             __clearBuff(shell);
             goto __exit;
         }
@@ -1981,6 +1994,12 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
     while (1) {
         inputChar[1] = inputChar[0];
         inputChar[0] = _await_getchar(cfg->fn_getchar);
+#ifdef __linux
+        if (inputChar[0] == EOF) {
+            pika_platform_printf("\r\n");
+            return;
+        }
+#endif
 #if !PIKA_NANO_ENABLE
         /* run python script */
         if (inputChar[0] == '!' && inputChar[1] == '#') {

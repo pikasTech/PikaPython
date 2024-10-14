@@ -504,9 +504,9 @@ char f_getchar(void) {
     if (n > 0) {
         return c;
     }
-    pika_platform_printf("f_getchar error\r\n");
-    pika_assert(0);
-    return -1;
+    // pika_platform_printf("f_getchar error\r\n");
+    // pika_assert(0);
+    return EOF;
 }
 void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn);
 }
@@ -603,7 +603,7 @@ TEST(module, REPL_big_script) {
     fclose((FILE*)f_getchar_fp);
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0],
+    EXPECT_STREQ(log_buff[3],
                  "\r\nError: line buff overflow, please use bigger "
                  "'PIKA_LINE_BUFF_SIZE'\r\n");
     /* deinit */
