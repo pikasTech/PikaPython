@@ -1395,6 +1395,121 @@ typedef enum {
     __FILTER_SUCCESS_DROP_ALL_PEEKED
 } FilterReturn;
 
+typedef struct {
+    int count;
+    char **completions;
+} CompletionList;
+
+typedef struct {
+    char lineBuff[PIKA_LINE_BUFF_SIZE];
+    size_t line_position;
+    size_t line_curpos;
+    char prefix[32];
+} Shell;
+
+const char *dictionary[] = {
+    "import", "PikaStdLib", "from", "high", "low", "Pin", "value", "def", 
+    "PikaStdDevice", "setPin", "enable", "print", "sleep_ms", "read", 
+    "setMode", "setCallBack", "setPull", "as", "MemChecker", "max", "min",
+    "float", "int", "str", "list", "dict", "tuple", "if", "else", 
+    "elif", "for", "while", "break", "continue", "return", "try", "except",
+    "finally", "with", "open", "write", "append", "close", "True", "False", 
+    "None", "self", "class", "init", "len", "range", "input", "output",
+    "config", "setup", "loop", "GPIO", "UART", "I2C", "SPI", "ADC", "PWM",
+    "digitalRead", "digitalWrite", "analogRead", "analogWrite", "time", "datetime",
+    "random", "OS", "sys", "math", "json", "readFile", "writeFile",
+    ""
+};
+
+int dictSize = sizeof(dictionary) / sizeof(dictionary[0]);
+
+static CompletionList filtered_complete = {0, NULL};
+
+void shCompletePrint(CompletionList *completeList, const char *prefix) {
+    for (int i = 0; i < completeList->count; i++) {
+        printf("%s  ", completeList->completions[i]);
+    }
+}
+
+void getFilteredCompletions(const char* prefix, const char** dictionary, int dictSize, CompletionList *result) {
+    printf("\n");
+    if (result->completions != NULL) {
+        for (int i = 0; i < result->count; i++) {
+            free(result->completions[i]);
+        }
+        free(result->completions);
+        result->completions = NULL;
+    }
+    result->count = 0;
+    result->completions = (char**)malloc(dictSize * sizeof(char*));
+    if (result->completions == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    for (int i = 0; i < dictSize; i++) {
+        if (strncmp(dictionary[i], prefix, strlen(prefix)) == 0) {
+            result->completions[result->count] = strdup(dictionary[i]);
+            if (result->completions[result->count] == NULL) {
+                printf("Memory allocation failed for completion\n");
+                continue;
+            }
+            result->count++;
+        }
+    }
+
+    if (result->count == 0) {
+        printf("Warning: No matches found for '%s'\n", prefix);
+    }
+}
+
+/*free CompletionList*/
+void freeCompletionList(CompletionList *list) {
+    for (int i = 0; i < list->count; ++i) {
+        free(list->completions[i]);
+    }
+    free(list->completions);
+    list->completions = NULL;
+    list->count = 0;
+}
+
+void handleTabCompletion(ShellConfig* shell, char* prefix) {
+#if PIKA_TAB_ENABLE
+    if (shell->line_position > 0) {
+        if (prefix == NULL) {
+            printf("Memory allocation failed for prefix\n");
+            return;
+        }
+
+        // printf("\n================[fetch : %s ]=====================\n", prefix);
+        getFilteredCompletions(prefix, dictionary, dictSize, &filtered_complete);
+
+        if (filtered_complete.count == 1) {
+            char* last_space = strrchr(shell->lineBuff, ' ');
+            size_t start_pos = 0;
+
+            if (last_space != NULL) {
+                /*保留空格以前的内容*/
+                start_pos = last_space - shell->lineBuff + 1;
+            }
+
+            memset(shell->lineBuff + start_pos, 0, sizeof(shell->lineBuff) - start_pos);
+            strncpy(shell->lineBuff + start_pos, filtered_complete.completions[0], sizeof(shell->lineBuff) - start_pos - 1);
+            shell->lineBuff[sizeof(shell->lineBuff) - 1] = '\0';
+            shell->line_position = strlen(shell->lineBuff);
+            shell->line_curpos = shell->line_position;
+
+            printf(">>> %s", shell->lineBuff);
+        } else {
+            shCompletePrint(&filtered_complete, prefix);
+            printf("\n>>> %s", shell->lineBuff);
+        }
+        free(prefix);
+    }
+#endif
+    freeCompletionList(&filtered_complete);
+}
+
 pika_bool _filter_msg_hi_pika_handler(FilterItem* msg,
                                       PikaObj* self,
                                       ShellConfig* shell) {
@@ -1687,6 +1802,33 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
 #endif
     }
     if (inputChar == '\n' && shell->lastChar == '\r') {
+        ctrl = SHELL_CTRL_CONTINUE;
+        goto __exit;
+    }
+    if (inputChar == 0x09) {
+#if PIKA_TAB_ENABLE
+        if (shell->line_position > 0) {
+            // printf("Current cursor position: %zu, Line position: %zu\n", shell->line_curpos, shell->line_position);
+            char* shell_content = NULL;
+            char* last_space = strrchr(shell->lineBuff, ' ');
+
+            if (last_space == NULL) {
+                shell_content = strndup(shell->lineBuff, shell->line_position);
+            } else {
+                shell_content = strdup(last_space + 1);
+            }
+
+            if (shell_content == NULL) {
+                printf("Memory allocation failed for shell_content\n");
+                // return;
+            }
+
+            handleTabCompletion(shell, shell_content);
+            ctrl = SHELL_CTRL_CONTINUE;
+            // __clearBuff(shell);
+            goto __exit;
+        }
+#endif
         ctrl = SHELL_CTRL_CONTINUE;
         goto __exit;
     }
