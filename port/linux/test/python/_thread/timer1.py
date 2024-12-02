@@ -20,3 +20,4 @@ while len(tim.tasks) > 0:
     time.sleep(1)
 
 tim.stop()
+time.sleep(1)

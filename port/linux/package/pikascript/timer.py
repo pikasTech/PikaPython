@@ -1,6 +1,7 @@
 import _thread
 import time
 
+
 class Timer:
     def __init__(self, tick_ms=10):
         self.tick_ms = tick_ms
@@ -16,14 +17,15 @@ class Timer:
 
     def run(self):
         while self.is_running:
-            time.sleep_ms(self.tick_ms)
+            tick_now = time.tick_ms()
             for task in self.tasks:
                 time_end, func, args = task
-                if time.tick_ms() >= time_end:
+                if tick_now >= time_end:
                     func(*args)
                     self.tasks.remove(task)
                     if self.debug:
                         print('tasks after run:', len(self.tasks))
+            time.sleep_ms(self.tick_ms)
         self.stoped = True
 
     def stop(self):
