@@ -11,40 +11,9 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=vm.keyword_2"
-                // "--gtest_filter=compiler.find_break_point"
-                // "--gtest_filter=pikaMain.REPL_pdb_set_break"
-                // "--gtest_filter=vm.subsrc_import",
-                // "--gtest_filter=vm.run_file_subsrc"
-                // "--gtest_filter=vm.run_file"
-                // "--gtest_filter=stddata.encode_decode"
-                // "--gtest_filter=packtool.packfiles_txt"
-                // "--gtest_filter=cmodule.class_attr_obj"
-                // "--gtest_filter=except.try_import_except"
-                // "--gtest_filter=vm.test_cmodule_import_as"
-                // "--gtest_filter=vm.subsrc_import"
-                // "--gtest_filter=event.event_thread3"
-                // "--gtest_filter=parser.semicolon*"
-                // "--gtest_filter=time*"
-                // "--gtest_filter=flashdb.tsdb1"
-                // "--gtest_filter=flashdb.base"
-                // "--gtest_filter=jrpc.server"
-                // "--gtest_filter=jrpc.client"
-                // "--gtest_filter=jrpc.BlockingRequestBetweenTwoJRPC"
-                // "--gtest_filter=jrpc.cmd"
-                // "--gtest_filter=jrpc.exec_get_val"
-                // "--gtest_filter=jrpc.exec_get_val"
-                // "--gtest_filter=thread.issue1"
-                // "--gtest_filter=except.isinstance"
-                // "--gtest_filter=builtin.isinstance"
-                // "--gtest_filter=bytes.bytes_split"
-                // "--gtest_filter=except.dict"
-                // "--gtest_filter=except.*"
-                // "--gtest_filter=except.try1"
-                // "--gtest_filter=except.for_loop"
-                // "--gtest_filter=builtin.init_raise"
-                // "--gtest_filter=builtin.strformat"
-                // "--gtest_filter=except.typeerr"
+                // "--gtest_filter=module.REPL_big_script"
+                // "--gtest_filter=parser.input_issue1"
+                "--gtest_filter=except.raise_type"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

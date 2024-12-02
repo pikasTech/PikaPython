@@ -2753,6 +2753,27 @@ TEST(pikaMain, REPL_backspace) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_TAB_ENABLE
+TEST(pikaMain, REPL_tab_completion) {
+    char lines[] = {'p', 'r', 0x09, '(', '\"',
+                    't', 'e', 's', 't', '\"', ')', '\r', '\n', 0x00};
+    /* init */
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    for (size_t i = 0; i < strGetSize(lines); i++) {
+        obj_runChar(pikaMain, lines[i]);
+    }
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "test\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
 TEST(pikaMain, REPL_backspace_issue_1) {
     char* lines = "print('test'\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b'a'\r\n";
     /* init */
