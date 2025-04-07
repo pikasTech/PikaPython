@@ -88,6 +88,8 @@ PikaPython 串口终端、脚本下载、模块管理工具。
 
 ## 相关开源项目 
 
+- 🎮 [MicroLink](https://github.com/Aladdin-Wang/MicroLink) 一款集多功能于一体的嵌入式系统开发工具
+
 - ▶️ [pikapython Binding For LVGL](https://github.com/lvgl/lv_binding_pikascript)
 
 - ⭐ [pikapython Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌](https://github.com/maxgerhardt/pikascript-pio-bluepill)
