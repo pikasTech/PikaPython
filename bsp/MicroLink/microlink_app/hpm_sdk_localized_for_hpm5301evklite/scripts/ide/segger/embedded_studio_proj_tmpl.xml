@@ -1,0 +1,152 @@
+<!DOCTYPE CrossStudio_Project_File>
+<solution Name="{{ target["name"] }}" target="20" version="2">
+  <project Name="{{ target["name"] }} - {{ target["board"] }}">
+    <configuration
+      Name="Common"
+      LIBRARY_IO_TYPE="{{ target["library_io_type"] }}"
+      arm_linker_heap_size="{{ target["heap_size"]}}"
+      arm_linker_stack_size="{{ target["stack_size"]}}"
+      arm_rtl_variant="SEGGER"
+      arm_linker_no_warn_on_mismatch="Yes"
+      build_generic_options_file_name=""
+      c_user_include_directories="{% for inc in target["includes"] %}{{ inc }};{% endfor %}"
+      link_linker_script_file="{{ target["linker"]}}"
+      link_use_linker_script_file="Yes"
+      linker_output_format="hex"
+      {%- if not target["use_outdir_relpath"] %}
+      macros="HPM_SDK_BASE={{ target["sdk_base"] }}"
+      {%- endif %}
+      project_directory=""
+      project_type="Executable"
+      {%- if target["openocd"] %}
+      debug_target_connection="GDB Server"
+      gdb_server_type="Custom"
+      gdb_server_reset_command="{{ target["gdb_server_reset_command"] }}"
+      gdb_server_autostart_server="{{ target["auto_start_gdb_server"] }}"
+      gdb_server_port="{{ target["gdb_server_port"] }}"
+      gdb_server_command_line="{{ target["openocd_cmdline"] }}"
+      {%- else %}
+      {%- if target["debug_target_connection"] %}
+      debug_target_connection="{{ target["debug_target_connection"]}}"
+      {%- endif %}
+      {%- if target["jlink_speed"] %}
+      speed="{{ target["jlink_speed"]}}"
+      {%- endif %}
+      {%- endif %}
+      target_device_name="{{ target["target_device_name"] }}"
+      linker_output_format="bin"
+      {%- if target["post_build_command"] %}
+      post_build_command="{{ target["post_build_command"] }} &amp;&amp; &quot;$(OBJDUMP)&quot; -S -d &quot;$(OutDir)/{{ target["app_name"] }}$(EXE)&quot; &gt; &quot;$(OutDir)/{{ target["app_name"] }}.asm&quot;"
+      {%- else %}
+      post_build_command="&quot;$(OBJDUMP)&quot; -S -d &quot;$(OutDir)/{{ target["app_name"] }}$(EXE)&quot; &gt; &quot;$(OutDir)/{{ target["app_name"] }}.asm&quot;"
+      {%- endif %}
+      heap_size="{{ target["heap_size"] }}"
+      stack_size="{{ target["stack_size"] }}"
+      RISCV_TOOLCHAIN_VARIANT="{{ target["toolchain_variant"] }}"
+      {%- if target["compiler_abi"] %}
+      rv_abi="{{ target["compiler_abi"] }}"
+      {%- endif %}
+      {%- if target["compiler_isa"] %}
+      rv_architecture="{{ target["compiler_isa"] }}"
+      {%- endif %}
+      c_additional_options="{{ target["cflags"] }}"
+      {%- if target["toolchain_variant"] == "Andes" %}
+      link_symbol_definitions="{{ target["segger_rtl_linker_symbols"]}}"
+      build_generic_options_file_name="$(StudioDir)/targets/Andes_build_options.xml"
+      rv_arch_zicsr="No"
+      rv_arch_zifencei="No"
+      rv_debug_extensions="Andes"
+      rv_toolchain_prefix="andes-"
+      {%- if target["compiler_variant"] == "gcc" %}
+      {%- if target["enable_nds_dsp"] %}
+      rv32andes_compiler_ext_dsp="Yes"
+      rv_arch_ext="_p_xv5"
+      {%- else %}
+      rv_arch_ext="_xv5"
+      {%- endif %}
+      {%- endif %}
+      {%- if target["cplusplus"] %}
+      gcc_cplusplus_language_standard="c++11"
+      libcxx="Yes (No Exceptions)"
+      {%- endif %}
+      {%- else %}
+      rv_arch_ext=""
+      {%- if target["compiler_arch_exts_csr"] == "1" %}
+      rv_arch_zicsr="Yes"
+      {%- else %}
+      rv_arch_zicsr="No"
+      {%- endif %}
+      {%- if target["compiler_arch_exts_fencei"] == "1" %}
+      rv_arch_zifencei="Yes"
+      {%- else %}
+      rv_arch_zifencei="No"
+      {%- endif %}
+      {%- if target["compiler_arch_exts_zba"] == "1" %}
+      rv_arch_zba="Yes"
+      {%- endif %}
+      {%- if target["compiler_arch_exts_zbb"] == "1" %}
+      rv_arch_zbb="Yes"
+      {%- endif %}
+      {%- if target["compiler_arch_exts_zbc"] == "1" %}
+      rv_arch_zbc="Yes"
+      {%- endif %}
+      {%- if target["compiler_arch_exts_zbs"] == "1" %}
+      rv_arch_zbs="Yes"
+      {%- endif %}
+      rv_debug_extensions="None"
+      rv_toolchain_prefix=""
+      {%- if target["cplusplus"] %}
+      gcc_cplusplus_language_standard="c++11"
+      libcxx="Yes"
+      {%- if target["enable_cpp_exceptions"] %}
+      cpp_enable_exceptions="Yes"
+      {%- endif %}
+      {%- endif %}
+      {%- endif %}
+      {%- if target["ses_link_input"] %}
+      linker_additional_files="{{ target["ses_link_input"] }}"
+      {%- endif %}
+      build_output_file_name="$(OutDir)/{{ target["app_name"] }}$(EXE)"
+      {%- for opt in target["extra_ses_options"] %}
+      {{ opt }}
+      {%- endfor %}
+      gcc_enable_all_warnings="Yes"
+      gcc_all_warnings_command_line_options="-Wall;-Wextra;-Wno-format"
+      arm_compiler_variant="{{ target["compiler_variant"] }}"
+      arm_assembler_variant="{{ target["assembler_variant"] }}"
+      {%- if target["linker_variant"] %}
+      arm_linker_variant="{{ target["linker_variant"] }}"
+      {%- endif %}
+      />
+
+{{ target["file_structure"] }}
+  </project>
+  <configuration
+    Name="Debug"
+    c_preprocessor_definitions="DEBUG"
+    gcc_debugging_level="Level 3"
+    gdb_server_allow_memory_access_during_execution="Yes"
+    gdb_server_ignore_checksum_errors="No"
+    gdb_server_register_access="General and Individual"
+    gcc_optimization_level="{{ target["gcc_opt_level"] }}"
+  />
+  <configuration
+    Name="Release"
+    c_preprocessor_definitions="NDEBUG"
+    gcc_debugging_level="None"
+    gcc_omit_frame_pointer="Yes"
+    {%- if target["gcc_opt_level"] != "None" %}
+    gcc_optimization_level="{{ target["gcc_opt_level"] }}"
+    {%- else %}
+    gcc_optimization_level="Level 1"
+    {%- endif %}
+  />
+  <configuration Name="Common"
+    c_preprocessor_definitions="{% for define in target["defines"] %}{{ define }};{% endfor %}"
+    gdb_server_write_timeout="300"
+    link_symbol_definitions="{% for symbol in target["link_symbols"] %}{{ symbol }};{% endfor %}"
+    debug_cpu_registers_file="{{ target["cpu_register_definition"] }}"
+    debug_register_definition_file="{{ target["register_definition"] }}"
+    debug_restrict_memory_access="No"
+  />
+</solution>

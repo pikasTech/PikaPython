@@ -1,0 +1,10 @@
+install usb drivers for probes
+
+- Copy rule files under udev_rules to /etc/udev/rules.d
+  - firedap: udev_rules/99-daplink.rules
+  - jlink: udev_rules/99-jlink.rules
+  - aice and ftdi (ft2x32):
+    - udev_rules/99-ndsusb-v1.rules
+    - udev_rules/ftdi_script-v1.sh
+- grant access of usb to "users"
+    - udev_rules/90-usbpermission.rules

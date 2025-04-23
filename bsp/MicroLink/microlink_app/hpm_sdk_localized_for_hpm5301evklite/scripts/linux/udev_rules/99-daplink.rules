@@ -1,0 +1,4 @@
+# 1fc9:5601 firedap
+SUBSYSTEM="usb", ATTRS{idVendor}=="1fc9", ATTRS{idProduct}=="5601", MODE:="666"
+
+ATTRS{product}=="*CMSIS-DAP*", MODE="666", GROUP="dialout"

@@ -1,0 +1,9 @@
+excluded_sample:
+- freemaster
+- openocd_algo
+- coremark
+- dhrystone
+- multicore/console_coremark
+- multicore/lvgl_coremark
+- tinycrypt
+- audio_codec/lvgl_audio_player

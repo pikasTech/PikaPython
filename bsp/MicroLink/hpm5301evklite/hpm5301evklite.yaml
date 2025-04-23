@@ -1,0 +1,13 @@
+# Copyright (c) 2023 HPMicro
+# SPDX-License-Identifier: BSD-3-Clause
+
+board:
+    soc: HPM5301
+    device: HPM5301xEGx
+    openocd-soc: hpm5300
+    openocd-probe: cmsis_dap
+    on-board-flash:
+      type: qspi-nor-flash
+      size: 1M
+    feature:
+      - board_gpt_pin

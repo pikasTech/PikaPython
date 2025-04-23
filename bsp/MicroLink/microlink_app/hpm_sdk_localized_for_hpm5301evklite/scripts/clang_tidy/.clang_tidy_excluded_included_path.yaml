@@ -1,0 +1,12 @@
+excluded_file_path:
+- hpm_sdk/soc
+- hpm_sdk/boards
+- hpm_sdk/drivers
+- hpm_sdk/middleware
+- hpm_sdk/utils
+- hpm_sdk/components/debug_console
+- hpm_sdk/samples/motor_ctrl/bldc_littlevgl_foc/lvgl_v835
+
+included_file_path:
+- hpm_sdk/middleware/hpm_*
+- hpm_sdk/middleware/audio_codec
