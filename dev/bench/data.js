@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1743993896049,
+  "lastUpdate": 1745420515600,
   "repoUrl": "https://github.com/pikasTech/PikaPython",
   "entries": {
     "Benchmark": [
@@ -113387,6 +113387,66 @@ window.BENCHMARK_DATA = {
             "value": 0.005000352911695712,
             "unit": "ms/iter",
             "extra": "iterations: 352980\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "53324574+Aladdin-Wang@users.noreply.github.com",
+            "name": "KK",
+            "username": "Aladdin-Wang"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "deb6f86e74db14d3667b1c77c8a8246c8d3d5c9a",
+          "message": "增加MicroLink BSP (#353)\n\n* 添加microlink bsp\n\n* 删除microlink\n\n* 添加microlink bsp",
+          "timestamp": "2025-04-23T22:47:46+08:00",
+          "tree_id": "5df39c73c98aeed7d74f04128ac24d4b9ec5e535",
+          "url": "https://github.com/pikasTech/PikaPython/commit/deb6f86e74db14d3667b1c77c8a8246c8d3d5c9a"
+        },
+        "date": 1745420508326,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 15831.912474957908,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 15831.912474957908 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 25.26220524121096,
+            "unit": "ms/iter",
+            "extra": "iterations: 70\ncpu: 25.26079603643113 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 13.784677443650992,
+            "unit": "ms/iter",
+            "extra": "iterations: 129\ncpu: 13.784356868404688 ms\nthreads: 1"
+          },
+          {
+            "name": "for_print_1000",
+            "value": 13.040071113555413,
+            "unit": "ms/iter",
+            "extra": "iterations: 135\ncpu: 13.039644687352695 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 3.158308862539185,
+            "unit": "ms/iter",
+            "extra": "iterations: 560\ncpu: 3.1581781467707954 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.00500029988553119,
+            "unit": "ms/iter",
+            "extra": "iterations: 353252\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
