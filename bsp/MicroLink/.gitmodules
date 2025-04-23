@@ -1,3 +1,0 @@
-[submodule "external/MicroBoot"]
-	path = external/MicroBoot
-	url = https://github.com/Aladdin-Wang/MicroBoot.git
