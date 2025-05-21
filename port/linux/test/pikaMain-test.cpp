@@ -2755,8 +2755,8 @@ TEST(pikaMain, REPL_backspace) {
 
 #if PIKA_TAB_ENABLE
 TEST(pikaMain, REPL_tab_completion) {
-    char lines[] = {'p', 'r', 0x09, '(', '\"',
-                    't', 'e', 's', 't', '\"', ')', '\r', '\n', 0x00};
+    char lines[] = {'p', 'r', 0x09, '(', '\"', 't',  'e',
+                    's', 't', '\"', ')', '\r', '\n', 0x00};
     /* init */
     g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);

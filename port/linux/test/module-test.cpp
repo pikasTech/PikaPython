@@ -603,7 +603,7 @@ TEST(module, REPL_big_script) {
     fclose((FILE*)f_getchar_fp);
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[3],
+    EXPECT_STREQ(log_buff[0],
                  "\r\nError: line buff overflow, please use bigger "
                  "'PIKA_LINE_BUFF_SIZE'\r\n");
     /* deinit */

@@ -498,10 +498,6 @@ char* shHistory_getPrev(ShellHistory* self);
 char* shHistory_getNext(ShellHistory* self);
 #endif
 
-#if PIKA_TAB_ENABLE
-void handleTabCompletion(ShellConfig* shell, char* prefix);
-#endif
-
 void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg);
 
 void _temp__do_pikaScriptShell(PikaObj* self, ShellConfig* cfg);

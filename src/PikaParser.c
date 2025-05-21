@@ -2720,9 +2720,7 @@ static char* Suger_semicolon(Args* outbuffs, char* sLine) {
         sStmtItem = strsAppend(&buffs, sStmtItem, "\n");
         sStmtAfter = strsAppend(&buffs, sStmtAfter, sStmtItem);
     }
-    if (sStmtAfter[0] != '\0') {
-        sStmtAfter[strGetSize(sStmtAfter) - 1] = '\0';
-    }
+    sStmtAfter[strGetSize(sStmtAfter) - 1] = '\0';
     sStmtAfter = strsCopy(outbuffs, sStmtAfter);
     strsDeinit(&buffs);
     return sStmtAfter;
