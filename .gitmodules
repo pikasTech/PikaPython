@@ -1,3 +1,6 @@
 [submodule "port/linux/package/lvgl/lvgl"]
 	path = port/linux/package/lvgl/lvgl
 	url = https://gitee.com/Lyon1998/lvgl
+[submodule "bsp/MicroLink"]
+	path = bsp/MicroLink
+	url = https://github.com/Aladdin-Wang/MicroLink.git

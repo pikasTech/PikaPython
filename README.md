@@ -65,6 +65,7 @@ The board based on STM32G030C8T6 MCU, only 64kB Flash, 8kB RAM can run pikapytho
 CH340 is deployed to support USB to serial with Type-C USB, support download python script py serial, there are 4 RGB on the board and support the [LCD](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.12.16f97c58fsLjVk&id=660745643102).
 
 # Related Projects
+- 🎮 [MicroLink](https://github.com/Aladdin-Wang/MicroLink) 一款集多功能于一体的嵌入式系统开发工具
 
 - ▶️ [pikapython Binding For LVGL](https://github.com/lvgl/lv_binding_pikascript)
 

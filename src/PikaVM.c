@@ -327,14 +327,14 @@ PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
     if (NULL == cq) {
         return PIKA_RES_ERR_SIGNAL_EVENT_EMPTY;
     }
-    *id = cq->id[g_PikaVMState.cq.head];
+    *id = cq->id[cq->head];
     if (cq == &g_PikaVMState.cq) {
-        *data = cq->data[g_PikaVMState.cq.head].arg;
+        *data = cq->data[cq->head].arg;
     } else {
-        *signal = cq->data[g_PikaVMState.cq.head].signal;
+        *signal = cq->data[cq->head].signal;
         *data = NULL;
     }
-    *lisener_p = cq->listener[g_PikaVMState.cq.head];
+    *lisener_p = cq->listener[cq->head];
     *head = cq->head;
     cq->head = (cq->head + 1) % PIKA_EVENT_LIST_SIZE;
     return PIKA_RES_OK;
