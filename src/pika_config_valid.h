@@ -93,6 +93,10 @@ extern "C" {
             #define PIKA_SHELL_HISTORY_ENABLE 0
         #endif
 
+        #ifndef PIKA_TAB_ENABLE
+            #define PIKA_TAB_ENABLE 0
+        #endif
+        
     #endif
 
     /* default optimize */
@@ -493,6 +497,10 @@ extern "C" {
 
     #ifndef PIKA_SHELL_HISTORY_ENABLE
         #define PIKA_SHELL_HISTORY_ENABLE 1
+    #endif
+
+    #ifndef PIKA_TAB_ENABLE
+        #define PIKA_TAB_ENABLE 1
     #endif
 
     #ifndef PIKA_SHELL_HISTORY_NUM

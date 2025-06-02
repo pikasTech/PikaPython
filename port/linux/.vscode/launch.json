@@ -14,7 +14,8 @@
                 // "--gtest_filter=module.REPL_big_script"
                 // "--gtest_filter=parser.input_issue1"
                 // "--gtest_filter=except.raise_type"
-                "--gtest_filter=module.REPL_big_script"
+                // "--gtest_filter=module.REPL_big_script"
+                "--gtest_filter=builtin.repl_mode"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
