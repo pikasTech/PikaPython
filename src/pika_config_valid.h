@@ -483,6 +483,10 @@ extern "C" {
         #define PIKA_EVENT_THREAD_ENABLE 1
     #endif
 
+    #ifndef PIKA_COROUTINE_ENABLE
+        #define PIKA_COROUTINE_ENABLE 0
+    #endif
+
     #ifndef PIKA_GC_MARK_SWEEP_ENABLE
         #define PIKA_GC_MARK_SWEEP_ENABLE 0
     #endif
@@ -524,6 +528,9 @@ extern "C" {
     #endif
 
     /* configuration validation */
+#if PIKA_COROUTINE_ENABLE && PIKA_EVENT_THREAD_ENABLE
+    #error "PIKA_COROUTINE_ENABLE can not used with PIKA_EVENT_THREAD_ENABLE"
+#endif
 
 #endif
 #ifdef __cplusplus
