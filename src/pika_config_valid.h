@@ -504,7 +504,7 @@ extern "C" {
     #endif
 
     #ifndef PIKA_TAB_ENABLE
-        #define PIKA_TAB_ENABLE 1
+        #define PIKA_TAB_ENABLE 0
     #endif
 
     #ifndef PIKA_SHELL_HISTORY_NUM
