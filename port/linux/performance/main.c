@@ -22,8 +22,19 @@ int main(void) {
     /* clang-format off */
     clock_t start = clock();
     pikaVM_run(pikaMain, 
-    "for i in range(500000):\n"
-    "    print(i)"
+    "def fib_iterative(n):\n"
+    "    if n <= 1:\n"
+    "        return n\n"
+    "    a = 0\n"
+    "    b = 1\n"
+    "    for i in range(2, n+1):\n"
+    "        temp = a + b\n"
+    "        a = b\n"
+    "        b = temp\n"
+    "    return b\n"
+    "\n"
+    "for i in range(100000):\n"
+    "    result = fib_iterative(10)\n"
     );
     clock_t end = clock();
     /* deinit */
