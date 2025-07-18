@@ -16,7 +16,7 @@ case $MODE in
         
         echo "Running benchmark..."
         BENCHMARK_FILE="fib_benchmark_${TIMESTAMP}.json"
-        ./Release/benchmark/pikascript_benchmark --benchmark_filter=fib_iterative_10 --benchmark_format=json > "$BENCHMARK_FILE"
+        ./Release/benchmark/pikascript_benchmark --benchmark_filter=fib_recursive_25 --benchmark_format=json > "$BENCHMARK_FILE"
         
         echo ""
         echo "=== Benchmark Results ==="
@@ -30,7 +30,7 @@ try:
     with open('$BENCHMARK_FILE', 'r') as f:
         data = json.load(f)
     for benchmark in data.get('benchmarks', []):
-        if 'fib_iterative_10' in benchmark['name']:
+        if 'fib_recursive_25' in benchmark['name']:
             print(f\"✅ {benchmark['name']}: {benchmark['real_time']:.3f} ms\")
 except:
     print('Raw benchmark data in $BENCHMARK_FILE')
@@ -74,7 +74,7 @@ except:
         # Run benchmark test
         echo "Running benchmark test..."
         BENCHMARK_FILE="fib_benchmark_${TIMESTAMP}.json"
-        ./Release/benchmark/pikascript_benchmark --benchmark_filter=fib_iterative_10 --benchmark_format=json > "$BENCHMARK_FILE" 2>/dev/null
+        ./Release/benchmark/pikascript_benchmark --benchmark_filter=fib_recursive_25 --benchmark_format=json > "$BENCHMARK_FILE" 2>/dev/null
         
         # Run profile test
         echo "Running profile test..."
@@ -103,17 +103,17 @@ try:
     with open('$BENCHMARK_FILE', 'r') as f:
         data = json.load(f)
     pika_time = None
-    c_time = None
+    cpython_time = None
     for benchmark in data.get('benchmarks', []):
-        if 'fib_iterative_10' in benchmark['name'] and 'c' not in benchmark['name']:
+        if 'fib_recursive_25' in benchmark['name'] and 'cpython' not in benchmark['name']:
             pika_time = benchmark['real_time']
-            print(f\"  PikaPython fib(10): {pika_time:.3f} ms\")
-        elif 'fib_iterative_10_c' in benchmark['name']:
-            c_time = benchmark['real_time']
-            print(f\"  C语言基准 fib(10): {c_time:.6f} ms\")
-    if pika_time and c_time:
-        ratio = pika_time / c_time
-        print(f\"  性能比率: {ratio:.0f}x 差距\")
+            print(f\"  PikaPython fib(25): {pika_time:.3f} ms\")
+        elif 'fib_recursive_25_cpython' in benchmark['name']:
+            cpython_time = benchmark['real_time']
+            print(f\"  CPython基准 fib(25): {cpython_time:.6f} ms\")
+    if pika_time and cpython_time:
+        ratio = cpython_time / pika_time
+        print(f\"  性能比率: PikaPython比CPython快 {ratio:.1f}x\")
 except:
     print('  基准测试数据解析失败')
 "

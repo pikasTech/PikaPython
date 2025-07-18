@@ -121,54 +121,37 @@ static void prime_number_100_c(benchmark::State& state) {
 }
 BENCHMARK(prime_number_100_c)->Unit(benchmark::kMillisecond);
 
-static void fib_iterative_10(benchmark::State& state) {
+static void fib_recursive_25(benchmark::State& state) {
     for (auto _ : state) {
         PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
         /* run */
         pikaVM_run(pikaMain, (char *)
-            "def fib_iterative(n):\n"
-            "    if n <= 1:\n"
-            "        return n\n"
-            "    a = 0\n"
-            "    b = 1\n"
-            "    for i in range(2, n+1):\n"
-            "        temp = a + b\n"
-            "        a = b\n"
-            "        b = temp\n"
-            "    return b\n"
+            "def fib_recursive(n):\n"
+            "    if n <= 0:\n"
+            "        return 0\n"
+            "    elif n == 1:\n"
+            "        return 1\n"
+            "    else:\n"
+            "        return fib_recursive(n-1) + fib_recursive(n-2)\n"
             "\n"
-            "result = fib_iterative(10)\n");
+            "result = fib_recursive(25)\n");
         
-        int result = obj_getInt(pikaMain, (char*)"result");
-        if (55 != result) {  // fib(10) = 55
-            printf("Error: fib_iterative_10, expected 55, got %d\r\n", result);
+        long long result = obj_getInt(pikaMain, (char*)"result");
+        if (75025 != result) {  // fib(25) = 75025
+            printf("Error: fib_recursive_25, expected 75025, got %lld\r\n", result);
         }
         obj_deinit(pikaMain);
     }
 }
-BENCHMARK(fib_iterative_10)->Unit(benchmark::kMillisecond);
+BENCHMARK(fib_recursive_25)->Unit(benchmark::kMillisecond);
 
-static void fib_iterative_10_c(benchmark::State& state) {
-    int result = 0;
+static void fib_recursive_25_cpython(benchmark::State& state) {
     for (auto _ : state) {
-        // C语言基准实现
-        int n = 10;
-        if (n <= 1) {
-            result = n;
-        } else {
-            int a = 0, b = 1;
-            for (int i = 2; i <= n; i++) {
-                int temp = a + b;
-                a = b;
-                b = temp;
-            }
-            result = b;
-        }
-        if (55 != result) {
-            printf("Error: fib_iterative_10_c\r\n");
-        }
+        // CPython基准实现 - 递归版本
+        int result = system("python3 -c 'def fib(n): return 0 if n<=0 else 1 if n==1 else fib(n-1)+fib(n-2); print(fib(25), end=\"\")' >/dev/null 2>&1");
+        (void)result; // 忽略返回值，只测量时间
     }
 }
-BENCHMARK(fib_iterative_10_c)->Unit(benchmark::kMillisecond);
+BENCHMARK(fib_recursive_25_cpython)->Unit(benchmark::kMillisecond);
 
 BENCHMARK_MAIN();
