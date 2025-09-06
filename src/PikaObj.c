@@ -1191,8 +1191,8 @@ static void obj_saveMethodInfo(PikaObj* self, MethodInfo* tInfo) {
         .host_obj = NULL,
     };
     char* name = tInfo->name;
+    char name_buff[PIKA_LINE_BUFF_SIZE / 2] = {0};
     if (NULL == tInfo->name) {
-        char name_buff[PIKA_LINE_BUFF_SIZE / 2] = {0};
         name = strGetFirstToken(name_buff, tInfo->dec, '(');
     }
     /* the first arg_value */
