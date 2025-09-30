@@ -1,0 +1,242 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 200px;
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+}
+
+.sidebar button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.sidebar button:hover {
+    background-color: #0056b3;
+}
+
+.sidebar button.active {
+    background-color: #0056b3;
+    font-weight: bold;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+    position: relative;
+}
+
+.section {
+    display: none;
+    height: 100%;
+}
+
+.section.active {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 聊天界面样式 */
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.message-content {
+    white-space: pre-wrap; /* 保留空白和换行 */
+    word-wrap: break-word; /* 长单词换行 */
+    line-height: 1.4;
+}
+
+.user-message {
+    background-color: #e3f2fd;
+    text-align: right;
+}
+
+.agent-message {
+    background-color: #f5f5f5;
+    text-align: left;
+}
+
+.chat-input {
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input textarea {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    min-height: 60px;
+}
+
+.chat-input button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#loading {
+    display: none;
+    color: #007bff;
+    font-style: italic;
+}
+
+/* 日志和文件扫描界面样式 */
+.scan-section {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.scan-controls {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+}
+
+.scan-controls input {
+    padding: 8px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 300px;
+}
+
+.scan-controls button {
+    padding: 8px 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.scan-results {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 15px;
+    background-color: #f9f9f9;
+}
+
+.log-file {
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+
+/* 完成文件的特殊样式 */
+.log-file.completion-file {
+    border: 2px solid #28a745;
+    background-color: #f0fff4;
+}
+
+.file-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.completion-file .file-name {
+    color: #28a745;
+}
+
+.file-content {
+    white-space: pre-wrap;
+    background: #f5f5f5;
+    padding: 8px;
+    border-radius: 3px;
+}
+
+.completion-file {
+    border-left: 4px solid #4CAF50;
+    background-color: #f9fff9;
+}
+
+button {
+    margin: 10px 0;
+    padding: 8px 16px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+/* 文件扫描样式 */
+.file-item {
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.file-item.directory {
+    background-color: #f0f8ff;
+    border-left: 3px solid #007bff;
+}
+
+.file-item.file {
+    background-color: #f9f9f9;
+    border-left: 3px solid #28a745;
+}
+
+.file-item.error {
+    background-color: #fff0f0;
+    border-left: 3px solid #dc3545;
+}
+
+.file-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.file-content {
+    white-space: pre-wrap;
+    background: #fff;
+    padding: 8px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    margin-top: 5px;
+    font-family: monospace;
+    font-size: 0.9em;
+    max-height: 300px;
+    overflow-y: auto;
+}
