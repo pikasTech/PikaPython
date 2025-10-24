@@ -1,0 +1,8 @@
+**/__pycache__
+file_create/
+logs/
+pikapython-linux/build/
+pikapython-linux/pikapython/pikascript-api/
+**/*.bak*
+**/*.backup*
+pikapython-linux/pikapython/pikascript-api*/

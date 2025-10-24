@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>面向PikaPython的AI驱动Python-C编译加速器与自动化验证平台</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="sidebar">
+        <button id="chat-btn" class="active">聊天功能</button>
+        <button id="log-btn">获取日志</button>
+        <button id="file-btn">获取文件</button>
+    </div>
+    
+    <div class="main-content">
+        <!-- 聊天部分 -->
+        <div id="chat-section" class="section active">
+            <div class="chat-messages" id="chat-messages"></div>
+            <form id="chat-form">
+                <div class="chat-input">
+                    <textarea id="user-input" placeholder="输入您的消息..."></textarea>
+                    <button type="submit">发送</button>
+                </div>
+            </form>
+            <div id="loading">处理中...</div>
+        </div>
+        
+        <!-- 日志扫描部分 -->
+        <div id="log-section" class="section">
+            <div class="scan-section">
+                <div class="scan-controls">
+                    <p>日志目录: {{ LOG_DIR }}</p>
+                    <button id="scan-logs-btn">获取日志</button>
+                </div>
+                <div class="scan-results" id="log-results">
+                    <p>请点击"获取日志"按钮开始扫描...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 文件扫描部分 -->
+        <div id="file-section" class="section">
+            <div class="scan-section">
+                <div class="scan-controls">
+                    <p>文件目录: {{ FILE_DIR }}</p>
+                    <button id="refresh-files-btn">刷新文件</button>
+                </div>
+                <div class="scan-results" id="file-results">
+                    <p>请点击"刷新文件"按钮开始扫描...</p>
+                </div>
+            </div>
+        </div>
+
+    <script>
+        // 确保在页面加载时正确初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化：只显示聊天部分
+            switchSection('chat-section');
+            setActiveButton(document.getElementById('chat-btn'));
+        });
+
+        // 切换部分功能
+        document.getElementById('chat-btn').addEventListener('click', function() {
+            switchSection('chat-section');
+            setActiveButton(this);
+        });
+        
+        document.getElementById('log-btn').addEventListener('click', function() {
+            switchSection('log-section');
+            setActiveButton(this);
+        });
+        
+        document.getElementById('file-btn').addEventListener('click', function() {
+            switchSection('file-section');
+            setActiveButton(this);
+        });
+        
+        function switchSection(sectionId) {
+            console.log('切换到部分:', sectionId);
+            
+            // 隐藏所有部分
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // 显示选中的部分
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+        }
+        
+        function setActiveButton(button) {
+            // 移除所有按钮的active类
+            document.querySelectorAll('.sidebar button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 为当前按钮添加active类
+            button.classList.add('active');
+        }
+        
+        // 聊天功能
+        document.getElementById('chat-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const userInput = document.getElementById('user-input');
+            const message = userInput.value.trim();
+            
+            if (!message) return;
+            
+            // 显示用户消息（需要转义）
+            addMessage(message, 'user');
+            userInput.value = '';
+            
+            // 显示加载中
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            
+            // 发送请求到后端
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+                
+                if (data.success) {
+                    // 显示agent回复（需要转义）
+                    addMessage(data.agent_response, 'agent');
+                } else {
+                    addMessage('错误: ' + data.error, 'agent');
+                }
+            })
+            .catch(error => {
+                loading.style.display = 'none';
+                addMessage('网络错误，请重试', 'agent');
+                console.error('Error:', error);
+            });
+        });
+
+        function addMessage(content, sender) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            
+            // 使用 innerHTML 并转义内容，同时保留换行和空格
+            contentDiv.innerHTML = escapeHtml(content);
+            
+            messageDiv.appendChild(contentDiv);
+            chatMessages.appendChild(messageDiv);
+            
+            // 滚动到底部
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // 允许按Enter发送，Ctrl+Enter换行
+        document.getElementById('user-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.ctrlKey) {
+                e.preventDefault();
+                document.getElementById('chat-form').dispatchEvent(new Event('submit'));
+            }
+        });
+        
+        // 日志扫描功能
+        document.getElementById('scan-logs-btn').addEventListener('click', function() {
+            const logResults = document.getElementById('log-results');
+            logResults.innerHTML = '<p>开始获取日志文件...</p>';
+            
+            console.log('开始SSE连接...');
+            
+            // 使用EventSource
+            const eventSource = new EventSource('/scan_logs');
+            
+            eventSource.onopen = function(event) {
+                console.log('SSE连接已建立');
+                logResults.innerHTML += '<p style="color: green;">连接已建立，开始扫描...</p>';
+            };
+            
+            eventSource.onmessage = function(event) {
+                console.log('收到SSE消息:', event.data);
+                
+                try {
+                    const data = JSON.parse(event.data);
+                    
+                    // 忽略心跳包
+                    if (data.heartbeat) {
+                        console.log('收到心跳包');
+                        return;
+                    }
+                    
+                    displayLogEntry(data);
+                    
+                    // 如果是完成文件，关闭连接
+                    if (data.is_completion) {
+                        console.log('收到完成信号，关闭连接');
+                        eventSource.close();
+                        logResults.innerHTML += '<p style="color: green;">日志扫描完成</p>';
+                    }
+                } catch (e) {
+                    console.error('解析SSE数据错误:', e, '原始数据:', event.data);
+                    logResults.innerHTML += `<p style="color: red;">数据解析错误: ${e.message}</p>`;
+                }
+            };
+            
+            eventSource.onerror = function(event) {
+                console.error('SSE连接错误:', event);
+                
+                if (eventSource.readyState === EventSource.CLOSED) {
+                    console.log('SSE连接已关闭');
+                    logResults.innerHTML += '<p style="color: gray;">连接已关闭</p>';
+                } else {
+                    console.log('SSE连接错误');
+                    logResults.innerHTML += '<p style="color: red;">连接错误，请检查服务器状态</p>';
+                }
+                eventSource.close();
+            };
+            
+            // // 停止按钮
+            // const stopButton = document.createElement('button');
+            // stopButton.textContent = '停止扫描';
+            // stopButton.onclick = function() {
+            //     console.log('手动停止扫描');
+            //     eventSource.close();
+            //     logResults.innerHTML += '<p>扫描已停止</p>';
+            //     stopButton.remove();
+            // };
+            // logResults.appendChild(stopButton);
+        });
+
+        // 显示日志条目的函数
+        function displayLogEntry(logEntry) {
+            const logResults = document.getElementById('log-results');
+            
+            const isCompletion = logEntry.is_completion || logEntry.filename === 'summary_stats.log';
+            const completionClass = isCompletion ? 'completion-file' : '';
+            
+            const logElement = document.createElement('div');
+            logElement.className = `log-file ${completionClass}`;
+            logElement.setAttribute('data-log-id', logEntry.n || logEntry.filename);
+            
+            let content = '';
+            if (logEntry.error) {
+                content = `错误: ${logEntry.error}`;
+            } else if (typeof logEntry.content === 'object') {
+                content = JSON.stringify(logEntry.content, null, 2);
+            } else {
+                content = logEntry.content || '';
+            }
+            
+            const fileName = logEntry.filename || '未知文件';
+            
+            logElement.innerHTML = `
+                <div class="file-name">${fileName} ${isCompletion ? '(完成文件)' : ''} [序号: ${logEntry.n || 'N/A'}]</div>
+                <div class="file-content">${content}</div>
+            `;
+            
+            logResults.appendChild(logElement);
+            
+            // 自动滚动到底部
+            logResults.scrollTop = logResults.scrollHeight;
+            
+            console.log('已显示日志条目:', logEntry);
+        }
+        
+        // 文件扫描功能
+        document.getElementById('refresh-files-btn').addEventListener('click', function() {
+            const fileResults = document.getElementById('file-results');
+            fileResults.innerHTML = '<p>扫描中...</p>';
+            
+            fetch('/refresh_files', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayFileResults(data.files);
+                } else {
+                    fileResults.innerHTML = `<p style="color: red;">错误: ${data.error}</p>`;
+                }
+            })
+            .catch(error => {
+                fileResults.innerHTML = `<p style="color: red;">网络错误: ${error}</p>`;
+                console.error('Error:', error);
+            });
+        });
+
+        function displayFileResults(files) {
+            const fileResults = document.getElementById('file-results');
+            
+            if (files.length === 0) {
+                fileResults.innerHTML = '<p>未找到文件</p>';
+                return;
+            }
+            
+            let html = '';
+            files.forEach(item => {
+                const indent = '&nbsp;'.repeat(item.depth * 4);
+                const icon = item.type === 'directory' ? '📁' : 
+                            item.type === 'file' ? '📄' : '❌';
+                
+                html += `
+                    <div class="file-item ${item.type}">
+                        <div class="file-name">${indent}${icon} ${item.name}</div>
+                        ${item.type === 'file' ? `<div class="file-content">${escapeHtml(item.content)}</div>` : ''}
+                    </div>
+                `;
+            });
+            
+            fileResults.innerHTML = html;
+        }
+
+        // 辅助函数：转义 HTML 特殊字符
+        function escapeHtml(unsafe) {
+            if (typeof unsafe !== 'string') return unsafe;
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;")
+                .replace(/\n/g, "<br>")
+                .replace(/ /g, "&nbsp;")
+                .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
+        }
+    </script>
+</body>
+</html>

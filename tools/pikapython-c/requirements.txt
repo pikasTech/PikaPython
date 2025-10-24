@@ -1,0 +1,6 @@
+langchain-openai
+fastmcp
+langgraph
+langchain-core
+pyfiglet
+langchain-mcp-adapters
