@@ -1,0 +1,30 @@
+# MicroLink Web Serial Configuration Parameters
+# 串口配置
+port=COM3
+baudrate=115200
+databits=8
+parity=N
+stopbits=1
+
+# RTT配置
+rtt_addr=0x20000000
+rtt_size=4000
+rtt_channel=0
+
+# SystemView配置
+systemview_addr=0x20000000
+systemview_size=4000
+systemview_channel=1
+
+# FLM配置
+flm_path=STM32/STM32F4xx_1024.FLM.o
+base_addr=0x08000000
+ram_addr=0x20000000
+
+# 下载配置
+bin_file_path=firmware.bin
+bin_addr=0x08000000
+
+# 自定义命令
+custom_commands=RTTView.start(0x20000000,1024,0);SystemView.start(0x20000000,1024,1);load.offline()
+

@@ -1,0 +1,2913 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicroLink Web Serial Terminal</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- 代码预览区美化和复制按钮 -->
+    <style>
+.code-block { background: #1e1e1e; color: #f8f8f2; font-family: 'Consolas', 'Menlo', 'Monaco', 'monospace'; font-size: 14px; line-height: 1.6; border-radius: 8px; padding: 18px 18px 18px 24px; overflow-x: auto; min-height: 120px; white-space: pre; position: relative; }
+.code-copy-btn { position: absolute; top: 12px; right: 18px; background: #444; color: #fff; border: none; border-radius: 4px; padding: 4px 12px; font-size: 13px; cursor: pointer; opacity: 0.8; transition: opacity 0.2s; z-index: 2; }
+.code-copy-btn:hover { opacity: 1; background: #3498db; }
+/* 右侧面板整体美化 */
+.right-panel {
+    background: #f7fafd;
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(52,152,219,0.08);
+    padding: 28px 24px 24px 24px;
+    margin: 0 0 0 18px;
+    min-width: 420px;
+}
+
+/* FLM ELF解析器美化 */
+.flm-parser-panel {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(52,152,219,0.07);
+    padding: 28px 28px 18px 28px;
+    margin-bottom: 18px;
+    border: 1.5px solid #e3eaf2;
+}
+.flm-parser-panel h2 {
+    color: #2980b9;
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+}
+.flm-parser-panel p {
+    color: #666;
+    font-size: 1.05rem;
+    margin-bottom: 18px;
+}
+.flm-parser-panel input[type="file"] {
+    margin: 10px 0 18px 0;
+    font-size: 1rem;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 8px 12px;
+    background: #f8fafc;
+}
+.flm-parser-panel button, .flm-parser-panel a.btn {
+    margin: 8px 8px 8px 0;
+    width: 160px;
+    font-size: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(52,152,219,0.06);
+    text-align: center;
+    padding: 10px 16px;
+}
+.flm-parser-panel a.btn {
+    padding: 10px 16px;
+    display: inline-block;
+    text-decoration: none;
+}
+.flm-parser-panel pre#log {
+    background: #23272e;
+    color: #e0e0e0;
+    border-radius: 7px;
+    padding: 14px 18px;
+    font-size: 14px;
+    min-height: 80px;
+    margin-top: 12px;
+    margin-bottom: 0;
+    font-family: 'Consolas', 'Menlo', 'Monaco', 'monospace';
+    box-shadow: 0 1px 4px rgba(52,152,219,0.04);
+}
+
+#flmYmodemSendBtn {
+    width: 160px;
+    font-size: 1rem;
+    border-radius: 6px;
+}
+#flmYmodemProgress {
+    width: 180px;
+    height: 16px;
+    vertical-align: middle;
+    margin-left: 16px;
+    border-radius: 8px;
+    background: #eaf6fb;
+    box-shadow: 0 1px 4px rgba(52,152,219,0.04);
+}
+#flmYmodemLog {
+    background: #23272e;
+    color: #0f0;
+    padding: 8px 10px;
+    border-radius: 6px;
+    min-height: 36px;
+    max-height: 90px;
+    overflow: auto;
+    font-size: 13px;
+    margin-top: 8px;
+    font-family: 'Consolas', 'Menlo', 'Monaco', 'monospace';
+}
+
+/* Python脚本生成器美化 */
+.config-panel {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(52,152,219,0.07);
+    padding: 24px 24px 18px 24px;
+    border: 1.5px solid #e3eaf2;
+}
+.config-group {
+    margin-bottom: 22px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9e9e9;
+}
+.config-group:last-child {
+    border-bottom: none;
+}
+.config-panel h2 {
+    color: #2980b9;
+    font-size: 1.18rem;
+    margin-bottom: 8px;
+}
+.config-panel label {
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 4px;
+}
+.config-panel input, .config-panel select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #d0d7de;
+    border-radius: 6px;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    background: #f8fafc;
+    transition: border-color 0.2s;
+}
+.config-panel input:focus, .config-panel select:focus {
+    border-color: #3498db;
+    outline: none;
+}
+.btn-download {
+    width: 100%;
+    margin-top: 18px;
+    font-size: 1.08rem;
+    border-radius: 6px;
+    padding: 12px 0;
+    box-shadow: 0 2px 8px rgba(52,152,219,0.06);
+}
+.preview-panel {
+    background: #23272e;
+    border-radius: 12px;
+    padding: 24px 18px 18px 18px;
+    color: #f8f8f2;
+    box-shadow: 0 2px 12px rgba(52,152,219,0.07);
+    min-width: 320px;
+    margin-left: 18px;
+}
+.code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.code-header h2 {
+    color: #fff;
+    font-size: 1.18rem;
+    margin: 0;
+}
+.script-tabs {
+    display: flex;
+    gap: 10px;
+}
+.script-tab {
+    padding: 7px 18px;
+    background: #444;
+    color: #ccc;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+.script-tab.active {
+    background: #3498db;
+    color: #fff;
+}
+.script-tab:hover {
+    background: #555;
+}
+.script-tab.active:hover {
+    background: #2980b9;
+}
+.script-content {
+    display: none;
+}
+.script-content.active {
+    display: block;
+}
+.code-block {
+    background: #181c23;
+    color: #f8f8f2;
+    font-family: 'Consolas', 'Menlo', 'Monaco', 'monospace';
+    font-size: 15px;
+    line-height: 1.7;
+    border-radius: 8px;
+    padding: 18px 18px 18px 24px;
+    overflow-x: auto;
+    min-height: 120px;
+    white-space: pre;
+    position: relative;
+    box-shadow: 0 1px 4px rgba(52,152,219,0.04);
+}
+.code-copy-btn {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    background: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    opacity: 0.85;
+    transition: opacity 0.2s, background 0.2s;
+    z-index: 2;
+}
+.code-copy-btn:hover {
+    opacity: 1;
+    background: #217dbb;
+}
+.highlight {
+    background-color: #ffe082;
+    color: #222;
+    border-radius: 3px;
+    padding: 1px 4px;
+}
+@media (max-width: 1200px) {
+    .right-panel { min-width: 320px; padding: 18px 6px 18px 6px; }
+    .preview-panel { min-width: 0; margin-left: 0; }
+}
+@media (max-width: 900px) {
+    .right-panel { min-width: 0; padding: 8px 2px 8px 2px; }
+    .preview-panel { padding: 12px 4px 12px 4px; }
+}
+    </style>
+    <style>
+#pyYmodemLog, #flmYmodemLog, #log, #pyYmodemProgress { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部控制栏 -->
+        <header class="header">
+            <div class="header-left">
+                <h1><i class="fas fa-microchip"></i> MicroLink Web Serial Terminal</h1>
+            </div>
+            <div class="header-right">
+                <!-- 移动过来的四个按键 -->
+                <div class="header-controls">
+                    <button id="connectBtn" class="btn btn-primary"><i class="fas fa-plug"></i> 连接串口</button>
+                    <button id="disconnectBtn" class="btn btn-secondary" disabled><i class="fas fa-times"></i> 断开连接</button>
+                    <button id="clearBtn" class="btn btn-warning"><i class="fas fa-trash"></i> 清空</button>
+                    <button id="saveLogBtn" class="btn btn-info"><i class="fas fa-save"></i> 保存日志</button>
+                </div>
+                <div class="connection-status">
+                    <span id="connectionStatus" class="status-disconnected">
+                        <i class="fas fa-circle"></i> 未连接
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 左侧功能块选择栏 -->
+            <div class="sidebar">
+                <button class="sidebar-btn active" data-panel="serialPanel">串口调试</button>
+                <button class="sidebar-btn" data-panel="flmPanel">FLM配置</button>
+                <button class="sidebar-btn" data-panel="scriptPanel">Python脚本配置</button>
+                <button class="sidebar-btn" data-panel="varPanel">变量分析</button>
+            </div>
+            <!-- 中间功能内容区 -->
+            <div class="center-panel">
+                <!-- 串口调试内容（API控制区，默认显示） -->
+                <div id="serialPanel" class="center-content" style="display: block;">
+                    <div class="control-panel">
+                        <h3><i class="fas fa-cogs"></i> MicroLink API 控制</h3>
+                        <!-- 参数管理 -->
+                        <div class="api-section">
+                            <h4><i class="fas fa-save"></i> 参数管理</h4>
+                            <div class="button-group">
+                                <button id="saveParams" class="btn btn-success">保存到本地</button>
+                                <button id="saveToFile" class="btn btn-primary">保存到文件</button>
+                                <button id="loadParams" class="btn btn-info">加载参数</button>
+                                <button id="resetParams" class="btn btn-warning">重置参数</button>
+                                <button id="loadConfigFile" class="btn btn-secondary">重新加载HTML配置</button>
+                            </div>
+                            <div class="param-group">
+                                <label>手动选择配置文件 (可选):</label>
+                                <input type="file" id="configFileInput" accept=".txt" class="param-input" style="font-size: 12px;">
+                            </div>
+                        </div>
+                        <!-- 自定义命令 -->
+                        <div class="api-section">
+                            <h4><i class="fas fa-terminal"></i> 自定义命令</h4>
+                            <div class="param-group">
+                                <textarea id="customCommand" placeholder="输入自定义命令..." class="custom-command-input"></textarea>
+                            </div>
+                            <div class="button-group">
+                                <button id="sendCustom" class="btn btn-primary">发送命令</button>
+                                <button id="addCustom" class="btn btn-secondary">添加到列表</button>
+                            </div>
+                            <div id="customCommandsList" class="custom-commands-list"></div>
+                        </div>
+                        <!-- RTT控制 -->
+                        <div class="api-section">
+                            <h4><i class="fas fa-satellite-dish"></i> RTT 控制</h4>
+                            <div class="param-group">
+                                <label>RTT地址:</label>
+                                <input type="text" id="rttAddr" value="0x20000000" class="param-input">
+                            </div>
+                            <div class="param-group">
+                                <label>搜索大小:</label>
+                                <input type="text" id="rttSize" value="0x4000" class="param-input">
+                            </div>
+                            <div class="param-group">
+                                <label>通道:</label>
+                                <input type="number" id="rttChannel" value="0" class="param-input">
+                            </div>
+                            <div class="button-group">
+                                <button id="startRTT" class="btn btn-primary">启动RTT</button>
+                                <button id="stopRTT" class="btn btn-secondary">停止RTT</button>
+                            </div>
+                        </div>
+                        <!-- SystemView控制 -->
+                        <div class="api-section">
+                            <h4><i class="fas fa-chart-line"></i> SystemView 控制</h4>
+                            <div class="param-group">
+                                <label>RTT地址:</label>
+                                <input type="text" id="svAddr" value="0x20000000" class="param-input">
+                            </div>
+                            <div class="param-group">
+                                <label>搜索大小:</label>
+                                <input type="text" id="svSize" value="0x4000" class="param-input">
+                            </div>
+                            <div class="param-group">
+                                <label>通道:</label>
+                                <input type="number" id="svChannel" value="1" class="param-input">
+                            </div>
+                            <div class="button-group">
+                                <button id="startSystemView" class="btn btn-primary">启动SystemView</button>
+                            </div>
+                        </div>
+                        <!-- FLM下载算法 -->
+                        <div class="api-section">
+                            <h4><i class="fas fa-download"></i> FLM 下载算法</h4>
+                            <div class="param-group">
+                                <label>FLM路径:</label>
+                                <input type="text" id="flmPath" value="STM32/STM32F4xx_1024.FLM.o" class="param-input">
+                            </div>
+                            <div class="param-group">
+                                <label>Flash基地址:</label>
+                                <input type="text" id="baseAddr" value="0x08000000" class="param-input">
+                            </div>
+                            <div class="param-group">
+                                <label>RAM地址:</label>
+                                <input type="text" id="ramAddr" value="0x20000000" class="param-input">
+                            </div>
+                            <div class="button-group">
+                                <button id="loadFLM" class="btn btn-primary">加载FLM</button>
+                            </div>
+                        </div>
+                        <!-- 固件下载 -->
+                        <div class="api-section">
+                            <h4><i class="fas fa-upload"></i> 固件下载</h4>
+                            <div class="param-group">
+                                <label>BIN文件路径:</label>
+                                <input type="text" id="binPath" value="firmware.bin" class="param-input">
+                            </div>
+                            <div class="param-group">
+                                <label>下载地址:</label>
+                                <input type="text" id="binAddr" value="0x08000000" class="param-input">
+                            </div>
+                            <div class="button-group">
+                                <button id="loadBin" class="btn btn-primary">下载固件</button>
+                                <button id="offlineDownload" class="btn btn-warning">脱机下载</button>
+                            </div>
+                        </div>
+                        <!-- Ymodem传输 -->
+                        <div class="api-section">
+                            <h4><i class="fas fa-exchange-alt"></i> Ymodem 传输</h4>
+                            <div class="param-group">
+                                <label>文件路径:</label>
+                                <input type="text" id="ymodemFile" value="update.bin" class="param-input">
+                            </div>
+                            <div class="button-group">
+                                <button id="ymodemSend" class="btn btn-primary">发送文件</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- FLM配置内容 -->
+                <div id="flmPanel" class="center-content" style="display: none;">
+                    <div class="flm-parser-panel">
+                        <h2>FLM ELF解析器</h2>
+                        <p>将FLM ELF文件转换为.o格式，用于串口设备烧写</p>
+                        <input type="file" id="flmFile" accept=".FLM">
+                        <button id="convertBtn" disabled class="btn btn-warning">转换为 .o 文件</button>
+                        <a id="downloadLink" href="#" style="display: none;" class="btn btn-success">下载 .o 文件</a>
+                        <pre id="log"></pre>
+                        <!-- YMODEM发送区 -->
+                        <button id="flmYmodemSendBtn" class="btn btn-primary" disabled>发送FLM文件</button>
+                        <progress id="flmYmodemProgress" value="0" max="100" style="width:180px;vertical-align:middle;display:none;margin:8px 0 0 0;"></progress>
+                    </div>
+                </div>
+                <!-- Python脚本配置内容 -->
+                <div id="scriptPanel" class="center-content" style="display: none;">
+                    <div class="content">
+                        <div class="config-panel">
+                            <div class="config-group">
+                                <h2>拖拽下载FLM文件配置</h2>
+                                <div class="form-group">
+                                    <label for="customFlm">FLM文件名:</label>
+                                    <input type="text" id="customFlm" placeholder="例如: custom_flm.FLM.o">
+                                </div>
+                            </div>
+                            <div class="config-group">
+                                <h2>内存地址配置</h2>
+                                <div class="address-inputs">
+                                    <div class="form-group">
+                                        <label for="address1">FLASH基地址 (十六进制):</label>
+                                        <input type="text" id="address1" value="0X08000000" placeholder="例如: 0X08000000">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="address2">RAM基地址 (十六进制):</label>
+                                        <input type="text" id="address2" value="0x20000000" placeholder="例如: 0x20000000">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="config-group">
+                                <h2>多文件离线烧录配置</h2>
+                                <div class="multi-file-config">
+                                    <div class="file-table-header">
+                                        <span class="file-name-col">文件名</span>
+                                        <span class="file-address-col">地址</span>
+                                        <span class="file-algorithm-col">下载算法</span>
+                                        <span class="file-action-col">操作</span>
+                                    </div>
+                                    <div id="fileTableBody" class="file-table-body">
+                                        <!-- 动态生成的文件行将在这里 -->
+                                    </div>
+                                    <div class="file-table-actions">
+                                        <button type="button" id="addFileBtn" class="btn btn-success">
+                                            <i class="fas fa-plus"></i> 添加文件
+                                        </button>
+                                        <button type="button" id="clearFilesBtn" class="btn btn-warning">
+                                            <i class="fas fa-trash"></i> 清空所有
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="config-group">
+                                <h2>SWD下载速度配置</h2>
+                                <div class="form-group">
+                                    <label for="swdClockSpeed">SWD时钟速度:</label>
+                                    <select id="swdClockSpeed">
+                                        <option value="10M">10M (最快)</option>
+                                        <option value="5M">5M</option>
+                                        <option value="2M">2M</option>
+                                        <option value="1M">1M</option>
+                                        <option value="500K">500K</option>
+                                        <option value="200K">200K</option>
+                                        <option value="100K">100K</option>
+                                        <option value="50K">50K</option>
+                                        <option value="20K">20K</option>
+                                        <option value="10K">10K</option>
+                                        <option value="5K">5K</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="config-group">
+                                <button class="download-btn send-offline" id="pyYmodemSendOfflineBtn">发送离线下载python文件</button>
+                                <button class="download-btn send-drag" id="pyYmodemSendDragBtn">发送拖拽下载python文件</button>
+                                <progress id="pyYmodemProgress" value="0" max="100" style="width:180px;vertical-align:middle;display:none;margin-left:16px;"></progress>
+                                <pre id="pyYmodemLog" style="background:#23272e;color:#0f0;padding:8px 10px;border-radius:6px;min-height:36px;max-height:90px;overflow:auto;font-size:13px;margin-top:8px;font-family:'Consolas','Menlo','Monaco','monospace';"></pre>
+                            </div>
+                        </div>
+                        <!--
+                        <div class="preview-panel">
+                            <div class="code-header">
+                                <h2>生成的Python代码</h2>
+                                <div class="script-tabs">
+                                    <button class="script-tab active" onclick="switchScriptTab('offline')">离线下载脚本</button>
+                                    <button class="script-tab" onclick="switchScriptTab('drag')">拖拽下载脚本</button>
+                                </div>
+                            </div>
+                            <div id="offlineScript" class="script-content active">
+                                <div style="position:relative;">
+                                    <button class="code-copy-btn" id="copyOfflineBtn">复制</button>
+                                    <pre class="code-block"><code id="codePreview"></code></pre>
+                                </div>
+                            </div>
+                            <div id="dragScript" class="script-content">
+                                <div style="position:relative;">
+                                    <button class="code-copy-btn" id="copyDragBtn">复制</button>
+                                    <pre class="code-block"><code id="dragCodePreview"></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    -->
+                        
+                    </div>
+                </div>
+                <!-- 变量分析内容 -->
+                <div id="varPanel" class="center-content" style="display: none;">
+                    <style>
+                        /* 变量分析tab美化，统一主站风格 */
+                        #varPanel .container {
+                            background: #fff;
+                            border-radius: 12px;
+                            box-shadow: 0 2px 12px rgba(52,152,219,0.07);
+                            padding: 24px 24px 18px 24px;
+                            border: 1.5px solid #e3eaf2;
+                            margin-top: 18px;
+                            width: 100%;
+                            max-width: none;
+                        }
+                        #varPanel .header {
+                            background: linear-gradient(135deg, #3498db, #764ba2);
+                            color: #fff;
+                            padding: 18px 20px;
+                            border-radius: 10px;
+                            margin-bottom: 20px;
+                            box-shadow: 0 2px 8px rgba(52,152,219,0.08);
+                        }
+                        #varPanel .card {
+                            border-radius: 10px;
+                            box-shadow: 0 2px 8px rgba(52,152,219,0.06);
+                            margin-bottom: 20px;
+                            border: none;
+                        }
+                        #varPanel .card-header {
+                            background-color: #f0f3fa;
+                            border-bottom: 1px solid #e3eaf2;
+                            font-weight: 600;
+                            padding: 13px 18px;
+                            border-radius: 10px 10px 0 0 !important;
+                            color: #2980b9;
+                        }
+                        #varPanel .table-container {
+                            max-height: 400px;
+                            overflow-y: auto;
+                        }
+                        #varPanel .variable-table {
+                            width: 100%;
+                            font-size: 14px;
+                        }
+                        #varPanel .variable-table th {
+                            background-color: #eaf6fb;
+                            position: sticky;
+                            top: 0;
+                            z-index: 10;
+                        }
+                        #varPanel .memory-map {
+                            height: 300px;
+                            background-color: #f8fafc;
+                            border-radius: 8px;
+                            padding: 15px;
+                            margin-bottom: 20px;
+                            position: relative;
+                        }
+                        #varPanel .legend {
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 10px;
+                            margin-top: 15px;
+                        }
+                        #varPanel .legend-item {
+                            display: flex;
+                            align-items: center;
+                            font-size: 13px;
+                        }
+                        #varPanel .legend-color {
+                            width: 15px;
+                            height: 15px;
+                            border-radius: 3px;
+                            margin-right: 5px;
+                            border: 1px solid rgba(0,0,0,0.1);
+                        }
+                        #varPanel .status-bar {
+                            background-color: #eaf6fb;
+                            padding: 10px 15px;
+                            border-radius: 5px;
+                            margin-top: 20px;
+                            color: #2980b9;
+                        }
+                        #varPanel .detail-card {
+                            background-color: #f8f9fa;
+                            border-radius: 8px;
+                            padding: 15px;
+                            font-size: 14px;
+                            font-family: monospace;
+                            white-space: pre-wrap;
+                            max-height: 200px;
+                            overflow-y: auto;
+                        }
+                        #varPanel .file-info {
+                            background-color: #e7f4e4;
+                            padding: 10px;
+                            border-radius: 5px;
+                            margin-bottom: 15px;
+                            font-size: 13px;
+                        }
+                        #varPanel .btn-primary {
+                            background: #3498db;
+                            color: #fff;
+                            border: none;
+                            border-radius: 6px;
+                            font-weight: 600;
+                            font-size: 15px;
+                            padding: 8px 0;
+                            transition: background 0.2s;
+                        }
+                        #varPanel .btn-primary:disabled {
+                            background: #b3d3f7;
+                            color: #fff;
+                        }
+                        #varPanel .btn-primary:hover:not(:disabled) {
+                            background: #2980b9;
+                        }
+                        #varPanel .form-label {
+                            font-weight: 500;
+                            color: #2980b9;
+                        }
+                        #varPanel .progress-bar {
+                            background: linear-gradient(90deg, #3498db, #764ba2);
+                        }
+                        /* 变量分析页面新布局样式 */
+                        #varPanel .var-analysis-layout {
+                            display: grid;
+                            grid-template-columns: 1fr 1.5fr;
+                            gap: 25px;
+                            height: calc(100vh - 180px);
+                            width: 100%;
+                            max-width: none;
+                            margin: 0;
+                            padding: 0;
+                        }
+                        #varPanel .left-panel {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 20px;
+                            min-width: 320px;
+                            flex: 1;
+                        }
+                        #varPanel .right-panel {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 20px;
+                            min-width: 400px;
+                            flex: 1.5;
+                            align-items: stretch;
+                        }
+                        #varPanel .filter-section {
+                            background: #fff;
+                            border-radius: 12px;
+                            padding: 20px;
+                            box-shadow: 0 2px 8px rgba(52,152,219,0.06);
+                            border: 1.5px solid #e3eaf2;
+                        }
+                        #varPanel .filter-controls {
+                            display: flex;
+                            gap: 15px;
+                            align-items: center;
+                            margin-bottom: 15px;
+                            flex-wrap: wrap;
+                        }
+                        #varPanel .filter-controls select {
+                            padding: 8px 12px;
+                            border: 1px solid #d0d7de;
+                            border-radius: 6px;
+                            font-size: 14px;
+                            background: #f8fafc;
+                        }
+                        #varPanel .filter-controls input {
+                            padding: 8px 12px;
+                            border: 1px solid #d0d7de;
+                            border-radius: 6px;
+                            font-size: 14px;
+                            background: #f8fafc;
+                            width: 100%;
+                            min-width: 150px;
+                        }
+                        #varPanel .variable-table-container {
+                            background: #fff;
+                            border-radius: 12px;
+                            padding: 20px;
+                            box-shadow: 0 2px 8px rgba(52,152,219,0.06);
+                            border: 1.5px solid #e3eaf2;
+                            flex: 1;
+                            overflow: hidden;
+                            min-height: 350px;
+                            min-width: 0;
+                        }
+                        #varPanel .variable-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+                        #varPanel .variable-table th,
+                        #varPanel .variable-table td {
+                            padding: 10px 12px;
+                            text-align: left;
+                            border-bottom: 1px solid #e3eaf2;
+                        }
+                        #varPanel .variable-table th:first-child,
+                        #varPanel .variable-table td:first-child {
+                            width: 60px;
+                            text-align: center;
+                        }
+                        #varPanel .variable-table th:nth-child(2),
+                        #varPanel .variable-table td:nth-child(2) {
+                            white-space: normal;
+                            word-break: break-word;
+                            max-width: 0;
+                        }
+                        #varPanel .variable-table th:nth-child(3),
+                        #varPanel .variable-table td:nth-child(3) {
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+                        #varPanel .variable-table th:nth-child(4),
+                        #varPanel .variable-table td:nth-child(4) {
+                            white-space: nowrap;
+                            text-align: right;
+                        }
+                        #varPanel .variable-table th {
+                            background: linear-gradient(135deg, #eaf6fb 0%, #f0f8ff 100%);
+                            color: #2980b9;
+                            font-weight: 600;
+                            position: sticky;
+                            top: 0;
+                            z-index: 10;
+                        }
+                        #varPanel .variable-table tbody tr:hover {
+                            background: #f8fafc;
+                        }
+                        #varPanel .variable-table tbody tr.selected {
+                            background: #e3f2fd !important;
+                            border-left: 4px solid #2196f3;
+                        }
+                        #varPanel .variable-checkbox {
+                            margin-right: 8px;
+                        }
+                        /* 多变量图表容器样式 */
+                        .multi-chart-container {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 20px;
+                            width: 100%;
+                            transition: min-height 0.3s ease-in-out;
+                        }
+                        
+                        .variable-chart {
+                            background: #fff;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 8px rgba(52,152,219,0.06);
+                            padding: 20px;
+                            border: 1.5px solid #e3eaf2;
+                        }
+                        
+                        .variable-chart-header {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-bottom: 15px;
+                            padding-bottom: 10px;
+                            border-bottom: 1px solid #e3eaf2;
+                        }
+                        
+                        .variable-chart-title {
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: #2980b9;
+                        }
+                        
+                        .variable-chart-controls {
+                            display: flex;
+                            gap: 10px;
+                        }
+                        
+                        .variable-chart-controls button {
+                            padding: 4px 8px;
+                            font-size: 12px;
+                            border-radius: 4px;
+                        }
+                        
+                        #varPanel .hex-send-panel {
+                            background: #fff;
+                            border-radius: 12px;
+                            padding: 20px;
+                            box-shadow: 0 2px 8px rgba(52,152,219,0.06);
+                            border: 1.5px solid #e3eaf2;
+                            flex: 1;
+                            min-height: 250px;
+                            transition: min-height 0.3s ease-in-out;
+                        }
+                        
+                        /* 串口发送命令容器的特殊样式 */
+                        #varPanel .right-panel .hex-send-panel:first-child {
+                            flex-shrink: 0 !important;
+                            height: auto !important;
+                            min-height: 350px !important;
+                            max-height: none !important;
+                        }
+                        
+                        /* 确保HEX曲线图容器也有过渡效果 */
+                        .hex-send-panel {
+                            transition: min-height 0.3s ease-in-out;
+                        }
+                        #varPanel .hex-send-controls {
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 20px;
+                            align-items: flex-start;
+                            margin-bottom: 15px;
+                            height: 100%;
+                            width: 100%;
+                        }
+                        #varPanel .hex-send-controls input {
+                            padding: 8px 12px;
+                            border: 1px solid #d0d7de;
+                            border-radius: 6px;
+                            font-size: 14px;
+                            background: #f8fafc;
+                        }
+                        #varPanel .hex-send-controls button {
+                            padding: 8px 16px;
+                            border: none;
+                            border-radius: 6px;
+                            font-size: 14px;
+                            cursor: pointer;
+                            transition: all 0.2s;
+                        }
+                        #varPanel .hex-send-controls .btn-success {
+                            background: #2ecc71;
+                            color: white;
+                        }
+                        #varPanel .hex-send-controls .btn-danger {
+                            background: #e74c3c;
+                            color: white;
+                        }
+                        #varPanel .hex-send-controls .btn-primary {
+                            background: #3498db;
+                            color: white;
+                        }
+                        #varPanel .selected-variables-info {
+                            background: #e8f5e8;
+                            border: 1px solid #c3e6c3;
+                            border-radius: 8px;
+                            padding: 15px;
+                            margin-bottom: 15px;
+                        }
+                        #varPanel .selected-variables-info h5 {
+                            margin: 0 0 10px 0;
+                            color: #2d5a2d;
+                            font-size: 16px;
+                        }
+                        #varPanel .selected-variables-list {
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 8px;
+                            margin-bottom: 10px;
+                        }
+                        #varPanel .selected-variable-tag {
+                            background: #d4edda;
+                            color: #155724;
+                            padding: 4px 8px;
+                            border-radius: 4px;
+                            font-size: 12px;
+                            display: flex;
+                            align-items: center;
+                            gap: 5px;
+                        }
+                        #varPanel .selected-variable-tag .remove-btn {
+                            background: none;
+                            border: none;
+                            color: #155724;
+                            cursor: pointer;
+                            font-size: 14px;
+                            padding: 0;
+                            margin: 0;
+                        }
+                        #varPanel .total-size-info {
+                            background: #d1ecf1;
+                            border: 1px solid #bee5eb;
+                            border-radius: 6px;
+                            padding: 10px;
+                            color: #0c5460;
+                            font-weight: 500;
+                        }
+                    </style>
+                    
+                    <!-- 变量分析页面新布局 -->
+                    <div class="var-analysis-layout">
+                        <!-- 左侧面板：文件操作和变量列表 -->
+                        <div class="left-panel">
+                            <!-- 文件操作区域 -->
+                            <div class="filter-section">
+                                <h4 style="margin:0 0 15px 0;color:#2980b9;font-size:18px;">
+                                    <span style="margin-right:8px;">📁</span>文件操作
+                                </h4>
+                                <div style="margin-bottom:15px;">
+                                    <label for="axfFile" class="form-label" style="font-size:15px;margin-bottom:8px;">
+                                        <span style="margin-right:6px;">📂</span>选择 .axf 文件
+                                    </label>
+                                    <input class="form-control" type="file" id="axfFile" accept=".axf" 
+                                           style="padding:12px;border-radius:8px;border:2px solid #e3eaf2;font-size:14px;">
+                                    <div style="margin-top:6px;font-size:13px;color:#6c757d;">
+                                        <span id="fileStatus">未选择文件</span>
+                                    </div>
+                                </div>
+                                <button id="analyzeBtn" class="btn btn-primary" disabled 
+                                        style="padding:12px;font-size:15px;font-weight:600;border-radius:8px;width:100%;">
+                                    <span style="margin-right:6px;">🔬</span>分析文件
+                                </button>
+                                <div id="fileInfo" class="file-info d-none" style="margin-top:15px;">
+                                    <div style="margin-bottom:8px;"><strong>📄 文件信息：</strong> <span id="fileName">-</span></div>
+                                    <div style="margin-bottom:8px;"><strong>📊 文件大小：</strong> <span id="fileSize">-</span></div>
+                                    <div style="margin-bottom:8px;"><strong>🏷️ ELF 类型：</strong> <span id="elfType">-</span></div>
+                                    <div><strong>🎯 入口点：</strong> <span id="entryPoint">-</span></div>
+                                </div>
+                            </div>
+
+                            <!-- 变量筛选区域 -->
+                            <div class="filter-section">
+                                <h4 style="margin:0 0 15px 0;color:#2980b9;font-size:18px;">
+                                    <span style="margin-right:8px;">🔍</span>变量搜索
+                                </h4>
+                                <div class="filter-controls">
+                                    <input type="text" id="searchFilter" placeholder="搜索变量名..." style="width:100%;" />
+                                </div>
+                            </div>
+
+                            <!-- 变量列表区域 -->
+                            <div class="variable-table-container">
+                                <h4 style="margin:0 0 15px 0;color:#2980b9;font-size:18px;">
+                                    <span style="margin-right:8px;">📊</span>变量列表
+                                    <span style="margin-left:12px;font-size:13px;font-weight:normal;opacity:0.8;">
+                                        (勾选变量添加到串口发送区，最多9个)
+                                    </span>
+                                </h4>
+                                <div class="progress-container mb-3">
+                                    <div id="progressBar" class="progress d-none" style="height:8px;border-radius:6px;background:#f0f0f0;">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
+                                             style="width: 0%;background:linear-gradient(90deg, #3498db, #764ba2);border-radius:6px;"></div>
+                                    </div>
+                                </div>
+                                <div class="table-container" id="varTableContainer" style="max-height:500px;overflow-y:auto;">
+                                    <table class="variable-table">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:60px;"><input type="checkbox" id="selectAllVars" /></th>
+                                                <th style="width:40%;">变量名</th>
+                                                <th style="width:35%;">地址</th>
+                                                <th style="width:25%;">大小</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="variableTableBody">
+                                            <tr>
+                                                <td colspan="4" class="text-center text-muted" style="padding:40px 16px;font-size:15px;">
+                                                    <div style="margin-bottom:8px;">📁</div>
+                                                    请上传.axf文件并点击"分析文件"
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 右侧面板：串口发送和实时图表 -->
+                        <div class="right-panel">
+                            <!-- 串口发送区域 -->
+                            <div class="hex-send-panel" style="min-height: 350px !important; flex-shrink: 0 !important; height: auto !important; max-height: none !important;">
+                                <h4 style="margin:0 0 15px 0;color:#2980b9;font-size:18px;">
+                                    <span style="margin-right:8px;">📡</span>串口发送命令
+                                </h4>
+                                
+                                <!-- 已选择变量信息 -->
+                                <div id="selectedVariablesInfo" class="selected-variables-info" style="display:none;">
+                                    <h5>已选择的变量</h5>
+                                    <div id="selectedVariablesList" class="selected-variables-list"></div>
+                                    <div id="totalSizeInfo" class="total-size-info">
+                                        总大小: <span id="selectedTotalSize">0</span> 字节
+                                    </div>
+                                </div>
+
+                                <!-- 串口发送控制 -->
+                                <div class="hex-send-controls">
+                                    <div style="display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:120px;">
+                                        <div style="display:flex;align-items:center;gap:8px;">
+                                            <span style="color:#495057;font-size:13px;">采样率 (1-200Hz):</span>
+                                            <input id="hexSampleRateInput" type="number" min="1" max="200" value="100" style="width:80px;padding:4px 8px;border-radius:4px;border:1px solid #d0d7de;font-size:12px;">
+                                            <span style="color:#495057;font-size:13px;">Hz</span>
+                                        </div>
+                                        <div style="display:flex;align-items:center;gap:8px;">
+                                            <span style="color:#495057;font-size:13px;">显示范围 (1-30秒):</span>
+                                            <input id="timeDisplayRangeInput" type="number" min="1" max="30" value="10" style="width:80px;padding:4px 8px;border-radius:4px;border:1px solid #d0d7de;font-size:12px;">
+                                            <span style="color:#495057;font-size:13px;">秒</span>
+                                        </div>
+                                        <button id="sendHexCmdBtn" class="btn btn-primary" style="width:100%;padding:10px;">
+                                            <span style="margin-right:4px;">🚀</span>发送命令
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 实时HEX曲线图 -->
+                            <div class="hex-send-panel" style="flex:3;min-height:500px;flex-grow: 1;">
+                                <h4 style="margin:0 0 15px 0;color:#2980b9;font-size:18px;">
+                                    <span style="margin-right:8px;">📈</span>实时HEX曲线图
+                                </h4>
+                                <!-- 多变量图表容器 -->
+                                <div id="multiChartContainer" class="multi-chart-container">
+                                    <!-- 默认图表（当没有选择变量时显示） -->
+                                    <div id="realtimeChart" style="width:100%;height:600px;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(52,152,219,0.06);position:relative;margin-bottom:15px;"></div>
+                                </div>
+                                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                                    <button id="startChartBtn" class="btn btn-success">开始绘制</button>
+                                    <button id="clearChartBtn" class="btn btn-secondary">清空曲线</button>
+                                    <button id="stopChartBtn" class="btn btn-danger">终止绘制</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <!-- 右侧常驻监控栏 -->
+            <div class="monitor-panel">
+                <!-- 顶部连接控制区域 - 按键已移动到头部 -->
+                <!-- <div class="top-connection-controls">
+                    <div class="connection-button-group">
+                        <button id="connectBtn" class="btn btn-primary"><i class="fas fa-plug"></i> 连接串口</button>
+                        <button id="disconnectBtn" class="btn btn-secondary" disabled><i class="fas fa-times"></i> 断开连接</button>
+                    </div>
+                    <div class="utility-button-group">
+                        <button id="clearBtn" class="btn btn-warning"><i class="fas fa-trash"></i> 清空</button>
+                        <button id="saveLogBtn" class="btn btn-info"><i class="fas fa-save"></i> 保存日志</button>
+                    </div>
+                </div> -->
+                
+                <!-- 隐藏的串口配置（保留功能但不在页面上显示） -->
+                <div class="hidden-config" style="display: none;">
+                    <div class="config-row">
+                        <label for="baudRate">波特率:</label>
+                        <select id="baudRate">
+                            <option value="9600">9600</option>
+                            <option value="115200" selected>115200</option>
+                            <option value="1000000">1000000</option>
+                            <option value="custom">自定义</option>
+                        </select>
+                        <input type="number" id="customBaudRate" placeholder="自定义波特率" style="display:none;">
+                    </div>
+                    <div class="config-row">
+                        <label for="dataBits">数据位:</label>
+                        <select id="dataBits">
+                            <option value="7">7</option>
+                            <option value="8" selected>8</option>
+                        </select>
+                        <label for="parity">校验位:</label>
+                        <select id="parity">
+                            <option value="none" selected>无</option>
+                            <option value="even">偶</option>
+                            <option value="odd">奇</option>
+                        </select>
+                        <label for="stopBits">停止位:</label>
+                        <select id="stopBits">
+                            <option value="1" selected>1</option>
+                            <option value="2">2</option>
+                        </select>
+                    </div>
+                    <div class="display-options">
+                        <label class="checkbox-label"><input type="checkbox" id="hexMode"> HEX模式</label>
+                        <label class="checkbox-label"><input type="checkbox" id="showTimestamp" checked> 显示时间戳</label>
+                        <label class="checkbox-label"><input type="checkbox" id="autoScroll" checked> 自动滚动</label>
+                        <label class="checkbox-label"><input type="checkbox" id="enableBuffer" checked> 启用数据缓冲</label>
+                        <label class="checkbox-label"><input type="checkbox" id="virtualTerminalMode" checked> 命令发送模式</label>
+                        <label class="checkbox-label"><input type="checkbox" id="processAnsiSequences" checked> 处理ANSI序列</label>
+                        <label class="checkbox-label"><input type="checkbox" id="debugMode"> 调试模式</label>
+                        <label class="checkbox-label"><input type="checkbox" id="integrityCheck" checked> 数据完整性检查</label>
+                        <label class="checkbox-label"><input type="checkbox" id="enableDataValidation" checked> 启用数据验证</label>
+                        <div class="line-timeout-config">
+                            <label for="lineTimeout">分行超时:</label>
+                            <input type="number" id="lineTimeout" value="50" min="10" max="1000" step="10" class="timeout-input">
+                            <span>ms</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="monitor-log" style="margin-top:18px;">
+                    <div id="terminal" class="terminal">
+                        <div id="terminalOutput" class="terminal-output"></div>
+                        <div id="terminalInput" class="terminal-input">
+                            <span class="terminal-prompt">$ </span>
+                            <input type="text" id="terminalInputField" class="terminal-input-field" placeholder="输入命令后点击发送或按Enter键发送..." disabled>
+                            <button id="terminalSendBtn" class="btn btn-primary" style="margin-left: 8px; padding: 6px 12px; font-size: 12px;" disabled>发送</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 嵌入配置文件内容 -->
+    <script type="text/plain" id="embedded-config">
+# MicroLink Web Serial Configuration Parameters
+# 串口配置
+port=COM3
+baudrate=115200
+databits=8
+parity=N
+stopbits=1
+
+# RTT配置
+rtt_addr=0x20000000
+rtt_size=0x4000
+rtt_channel=0
+
+# SystemView配置
+systemview_addr=0x20000000
+systemview_size=0x4000
+systemview_channel=1
+
+# FLM配置
+flm_path=STM32/STM32F4xx_1024.FLM.o
+base_addr=0x08000000
+ram_addr=0x20000000
+
+# 下载配置
+bin_file_path=firmware.bin
+bin_addr=0x08000000
+
+# 自定义命令
+custom_commands=RTTView.start(0x20000000,1024,0);SystemView.start(0x20000000,1024,1);load.offline()
+    </script>
+
+    <script src="assets/script.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 右侧功能区切换逻辑（如有）
+        const panelSelect = document.getElementById('panelSelect');
+        const apiPanel = document.getElementById('apiPanel');
+        const flmPanel = document.getElementById('flmPanel');
+        const scriptPanel = document.getElementById('scriptPanel');
+        const varPanel = document.getElementById('varPanel');
+        if (panelSelect && apiPanel && flmPanel && scriptPanel && varPanel) {
+            function updatePanelDisplay() {
+                apiPanel.style.display = panelSelect.value === 'apiPanel' ? '' : 'none';
+                flmPanel.style.display = panelSelect.value === 'flmPanel' ? '' : 'none';
+                scriptPanel.style.display = panelSelect.value === 'scriptPanel' ? '' : 'none';
+                varPanel.style.display = panelSelect.value === 'varPanel' ? '' : 'none';
+            }
+            panelSelect.addEventListener('change', updatePanelDisplay);
+            updatePanelDisplay();
+        }
+
+        // ========== FLM ELF解析器核心功能 ==========
+        const flmFileInput = document.getElementById('flmFile');
+        const convertBtn = document.getElementById('convertBtn');
+        const log = document.getElementById('log');
+        const downloadLink = document.getElementById('downloadLink');
+        let flmArrayBuffer = null;
+        let flmFileName = '';
+        let convertedBlob = null;
+        function logMsg(msg) {
+            // 输出到主终端
+            appendToTerminalOutput(`<div class='log-prefix-flm'>[FLM] ${msg}</div>`);
+            // 同时输出到本地log元素（如果存在）
+            if (log) {
+                log.textContent += msg + '\n';
+                log.scrollTop = log.scrollHeight;
+            }
+        }
+        function parseELFHeader(buffer) {
+            const dv = new DataView(buffer);
+            if (dv.getUint8(0) !== 0x7f || dv.getUint8(1) !== 0x45 || dv.getUint8(2) !== 0x4c || dv.getUint8(3) !== 0x46) {
+                logMsg('不是有效的ELF文件！');
+                return null;
+            }
+            logMsg('ELF魔数校验通过');
+            const e_shoff = dv.getUint32(32, true);
+            const e_shentsize = dv.getUint16(46, true);
+            const e_shnum = dv.getUint16(48, true);
+            const e_shstrndx = dv.getUint16(50, true);
+            logMsg(`节头表偏移: 0x${e_shoff.toString(16)}, 节数量: ${e_shnum}, 节头大小: ${e_shentsize}, 节名字符串表索引: ${e_shstrndx}`);
+            return { e_shoff, e_shentsize, e_shnum, e_shstrndx };
+        }
+        function parseSectionHeaders(buffer, elfHeader) {
+            const dv = new DataView(buffer);
+            const sections = [];
+            for (let i = 0; i < elfHeader.e_shnum; i++) {
+                const offset = elfHeader.e_shoff + i * elfHeader.e_shentsize;
+                sections.push({
+                    sh_name: dv.getUint32(offset + 0, true),
+                    sh_type: dv.getUint32(offset + 4, true),
+                    sh_flags: dv.getUint32(offset + 8, true),
+                    sh_addr: dv.getUint32(offset + 12, true),
+                    sh_offset: dv.getUint32(offset + 16, true),
+                    sh_size: dv.getUint32(offset + 20, true),
+                    sh_link: dv.getUint32(offset + 24, true),
+                    sh_info: dv.getUint32(offset + 28, true),
+                    sh_addralign: dv.getUint32(offset + 32, true),
+                    sh_entsize: dv.getUint32(offset + 36, true)
+                });
+            }
+            return sections;
+        }
+        function getSectionNames(buffer, sections, shstrndx) {
+            const dv = new DataView(buffer);
+            const shstrtab = sections[shstrndx];
+            const names = [];
+            for (let i = 0; i < sections.length; i++) {
+                const nameOffset = shstrtab.sh_offset + sections[i].sh_name;
+                let name = '';
+                for (let j = 0; j < 64; j++) {
+                    const c = dv.getUint8(nameOffset + j);
+                    if (c === 0) break;
+                    name += String.fromCharCode(c);
+                }
+                names.push(name);
+            }
+            return names;
+        }
+        function findSectionByName(sectionNames, name) {
+            for (let i = 0; i < sectionNames.length; i++) {
+                if (sectionNames[i] === name) return i;
+            }
+            return -1;
+        }
+        function extractSectionData(buffer, section) {
+            return new Uint8Array(buffer, section.sh_offset, section.sh_size);
+        }
+        function findSymbolAddresses(buffer, sections, sectionNames, symbolNames) {
+            const symtabIdx = findSectionByName(sectionNames, '.symtab');
+            const strtabIdx = findSectionByName(sectionNames, '.strtab');
+            if (symtabIdx === -1 || strtabIdx === -1) {
+                logMsg('未找到 .symtab 或 .strtab 节！');
+                return null;
+            }
+            const symtab = sections[symtabIdx];
+            const strtab = sections[strtabIdx];
+            const dv = new DataView(buffer);
+            const symbolCount = symtab.sh_size / symtab.sh_entsize;
+            const addresses = {};
+            for (let i = 0; i < symbolCount; i++) {
+                const symOffset = symtab.sh_offset + i * symtab.sh_entsize;
+                const st_name = dv.getUint32(symOffset + 0, true);
+                const st_value = dv.getUint32(symOffset + 4, true);
+                let name = '';
+                for (let j = 0; j < 64; j++) {
+                    const c = dv.getUint8(strtab.sh_offset + st_name + j);
+                    if (c === 0) break;
+                    name += String.fromCharCode(c);
+                }
+                if (symbolNames.includes(name)) {
+                    addresses[name] = st_value;
+                }
+            }
+            return addresses;
+        }
+        function extractFlashInfoFromELF(buffer, sections, sectionNames) {
+            logMsg('查找DevDscr节:');
+            for (let i = 0; i < sections.length; i++) {
+                const section = sections[i];
+                const sectionName = sectionNames[i];
+                logMsg(`  节${i}: ${sectionName} (偏移: 0x${section.sh_offset.toString(16)}, 大小: ${section.sh_size})`);
+                if (sectionName === 'DevDscr') {
+                    logMsg(`找到DevDscr节: 偏移 0x${section.sh_offset.toString(16)}, 大小 ${section.sh_size}`);
+                    const devDscrData = extractSectionData(buffer, section);
+                    const flashInfoSize = 288;
+                    if (section.sh_size >= flashInfoSize) {
+                        const flashInfo = new ArrayBuffer(flashInfoSize);
+                        const flashDv = new DataView(flashInfo);
+                        const devDv = new DataView(devDscrData.buffer, devDscrData.byteOffset, devDscrData.byteLength);
+                        for (let i = 0; i < flashInfoSize; i++) {
+                            flashDv.setUint8(i, devDv.getUint8(i));
+                        }
+                        const vers = flashDv.getUint16(0, true);
+                        let devName = '';
+                        for (let i = 0; i < 128; i++) {
+                            const c = flashDv.getUint8(2 + i);
+                            if (c === 0) break;
+                            devName += String.fromCharCode(c);
+                        }
+                        if (vers !== 0 && devName.length > 0) {
+                            logMsg('Flash信息验证通过');
+                            logMsg('成功从DevDscr节提取Flash信息');
+                            return new Uint8Array(flashInfo);
+                        } else {
+                            logMsg('DevDscr节中的数据验证失败');
+                        }
+                    } else {
+                        logMsg(`DevDscr节大小不足: ${section.sh_size} < ${flashInfoSize}`);
+                    }
+                }
+            }
+            logMsg('未找到有效的Flash信息数据');
+            return null;
+        }
+        function createAlgorithmBlob(buffer, sections, sectionNames) {
+            logMsg('创建算法程序blob:');
+            logMsg('查找PrgCode节:');
+            for (let i = 0; i < sections.length; i++) {
+                const section = sections[i];
+                const sectionName = sectionNames[i];
+                logMsg(`  节${i}: ${sectionName} (偏移: 0x${section.sh_offset.toString(16)}, 大小: ${section.sh_size})`);
+                if (sectionName === 'PrgCode') {
+                    logMsg(`找到PrgCode节: 偏移 0x${section.sh_offset.toString(16)}, 大小 ${section.sh_size}`);
+                    const prgCodeData = extractSectionData(buffer, section);
+                    logMsg(`PrgCode节内容已提取，大小: ${prgCodeData.length} 字节`);
+                    let hexStr = '';
+                    for (let j = 0; j < 32 && j < prgCodeData.length; j++) {
+                        hexStr += prgCodeData[j].toString(16).padStart(2, '0');
+                    }
+                    logMsg(`PrgCode节前32字节: ${hexStr}`);
+                    return prgCodeData;
+                }
+            }
+            logMsg('未找到PrgCode节');
+            return null;
+        }
+        function createFinalBlobWithFlashInfo(programTarget, algorithmBlob, algorithmBlobSize, flashInfo) {
+            const ramSize = 8 * 4;
+            const finalBlobSize = 64 + ramSize + algorithmBlobSize + flashInfo.length;
+            logMsg(`最终blob创建成功，总大小: ${finalBlobSize} 字节 (结构体: 64 + RAM数组: ${ramSize} + 算法: ${algorithmBlobSize} + Flash信息: ${flashInfo.length})`);
+            const finalBlob = new Uint8Array(finalBlobSize);
+            let offset = 0;
+            finalBlob.set(programTarget, offset); offset += programTarget.length;
+            const ramArray = new Uint8Array(32);
+            const ramDv = new DataView(ramArray.buffer);
+            ramDv.setUint32(0, 0xE00ABE00, true);
+            ramDv.setUint32(4, 0x062D780D, true);
+            ramDv.setUint32(8, 0x24084068, true);
+            ramDv.setUint32(12, 0xD3000040, true);
+            ramDv.setUint32(16, 0x1E644058, true);
+            ramDv.setUint32(20, 0x1C49D1FA, true);
+            ramDv.setUint32(24, 0x2A001E52, true);
+            ramDv.setUint32(28, 0x4770D1F2, true);
+            finalBlob.set(ramArray, offset); offset += ramArray.length;
+            if (algorithmBlob && algorithmBlobSize > 0) {
+                finalBlob.set(algorithmBlob, offset); offset += algorithmBlobSize;
+            }
+            finalBlob.set(flashInfo, offset);
+            return finalBlob;
+        }
+        flmFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) {
+                convertBtn.disabled = true;
+                logMsg('未选择文件');
+                return;
+            }
+            flmFileName = file.name.replace(/\.[^/.]+$/, "");
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                flmArrayBuffer = evt.target.result;
+                convertBtn.disabled = false;
+                log.textContent = '';
+                logMsg(`已加载文件: ${file.name} (大小: ${file.size} 字节)`);
+            };
+            reader.onerror = function() {
+                logMsg('文件读取失败');
+                convertBtn.disabled = true;
+            };
+            reader.readAsArrayBuffer(file);
+        });
+        convertBtn.addEventListener('click', async () => {
+            if (!flmArrayBuffer) {
+                logMsg('请先选择FLM文件');
+                return;
+            }
+            logMsg('开始解析FLM文件...');
+            const elfHeader = parseELFHeader(flmArrayBuffer);
+            if (!elfHeader) return;
+            const sections = parseSectionHeaders(flmArrayBuffer, elfHeader);
+            const sectionNames = getSectionNames(flmArrayBuffer, sections, elfHeader.e_shstrndx);
+            logMsg('查找算法函数符号:');
+            const symbolNames = ['Init','UnInit','EraseChip','EraseSector','ProgramPage','Read','Verify'];
+            const symbolAddrs = findSymbolAddresses(flmArrayBuffer, sections, sectionNames, symbolNames);
+            if (!symbolAddrs) return;
+            for (const name of symbolNames) {
+                const addr = symbolAddrs[name] || 0;
+                if (addr !== 0) {
+                    logMsg(`  ${name}: 0x${addr.toString(16).padStart(8,'0')}`);
+                } else {
+                    logMsg(`  ${name}: 未找到`);
+                }
+            }
+            logMsg('从ELF文件中提取Flash信息:');
+            const flashInfo = extractFlashInfoFromELF(flmArrayBuffer, sections, sectionNames);
+            let flash_info;
+            if (!flashInfo) {
+                logMsg('警告: 无法从ELF文件中提取Flash信息，使用默认值');
+                const defaultFlashInfo = new ArrayBuffer(288);
+                const dv = new DataView(defaultFlashInfo);
+                dv.setUint16(0, 0x0101, true);
+                const devName = "STM32F7xx 1024KB Flash (默认)";
+                for (let i = 0; i < 128; i++) {
+                    dv.setUint8(2 + i, i < devName.length ? devName.charCodeAt(i) : 0);
+                }
+                dv.setUint16(130, 1, true);
+                dv.setUint32(132, 0x08000000, true);
+                dv.setUint32(136, 1024 * 1024, true);
+                dv.setUint32(140, 256, true);
+                dv.setUint32(144, 0, true);
+                dv.setUint8(148, 0xFF);
+                dv.setUint32(152, 1000, true);
+                dv.setUint32(156, 5000, true);
+                flash_info = new Uint8Array(defaultFlashInfo);
+            } else {
+                flash_info = flashInfo;
+            }
+            const algorithmBlob = createAlgorithmBlob(flmArrayBuffer, sections, sectionNames);
+            if (!algorithmBlob) {
+                logMsg('算法程序blob创建失败');
+                return;
+            }
+            const algorithm_blob = algorithmBlob;
+            const algorithm_blob_size = algorithmBlob.length;
+            logMsg(`算法程序blob创建成功，大小: ${algorithm_blob_size} 字节`);
+            logMsg('初始化program_target_t结构体:');
+            const program_target = {};
+            program_target.init = (symbolAddrs['Init'] || 0) + 0x20;
+            program_target.uninit = (symbolAddrs['UnInit'] || 0) + 0x20;
+            program_target.erase_chip = (symbolAddrs['EraseChip'] || 0) + 0x20;
+            program_target.erase_sector = (symbolAddrs['EraseSector'] || 0) + 0x20;
+            program_target.program_page = (symbolAddrs['ProgramPage'] || 0) + 0x20;
+            program_target.read = (symbolAddrs['Read'] !== undefined) ? symbolAddrs['Read'] + 0x20 : 0;
+            program_target.verify = (symbolAddrs['Verify'] !== undefined) ? symbolAddrs['Verify'] + 0x20 : 0;
+            program_target.breakpoint = 1;
+            program_target.static_base = algorithm_blob_size + 0x20 - 4;
+            program_target.stack_pointer = algorithm_blob_size + 0x20 + 0x1000;
+            program_target.program_buffer = algorithm_blob_size + 0x20 + 0x1800;
+            program_target.algo_start = 0;
+            program_target.algo_size = algorithm_blob_size + 0x20;
+            program_target.algo_blob = 0;
+            program_target.program_buffer_size = 0x1000;
+            program_target.algo_flags = 0;
+            logMsg(`  init: 0x${program_target.init.toString(16).padStart(8,'0')}`);
+            logMsg(`  uninit: 0x${program_target.uninit.toString(16).padStart(8,'0')}`);
+            logMsg(`  erase_chip: 0x${program_target.erase_chip.toString(16).padStart(8,'0')}`);
+            logMsg(`  erase_sector: 0x${program_target.erase_sector.toString(16).padStart(8,'0')}`);
+            logMsg(`  program_page: 0x${program_target.program_page.toString(16).padStart(8,'0')}`);
+            logMsg(`  read: 0x${program_target.read.toString(16).padStart(8,'0')}`);
+            logMsg(`  verify: 0x${program_target.verify.toString(16).padStart(8,'0')}`);
+            logMsg(`  sys_call_s.breakpoint: 0x${program_target.breakpoint.toString(16).padStart(8,'0')}`);
+            logMsg(`  sys_call_s.static_base: 0x${program_target.static_base.toString(16).padStart(8,'0')}`);
+            logMsg(`  sys_call_s.stack_pointer: 0x${program_target.stack_pointer.toString(16).padStart(8,'0')}`);
+            logMsg(`  program_buffer: 0x${program_target.program_buffer.toString(16).padStart(8,'0')}`);
+            logMsg(`  algo_start: 0x${program_target.algo_start.toString(16).padStart(8,'0')}`);
+            logMsg(`  algo_size: 0x${program_target.algo_size.toString(16).padStart(8,'0')}`);
+            logMsg(`  program_buffer_size: 0x${program_target.program_buffer_size.toString(16).padStart(8,'0')}`);
+            logMsg(`  algo_flags: 0x${program_target.algo_flags.toString(16).padStart(8,'0')}`);
+            const programTargetBuffer = new ArrayBuffer(64);
+            const ptDv = new DataView(programTargetBuffer);
+            let ptOffset = 0;
+            ptDv.setUint32(ptOffset, program_target.init, true); ptOffset += 4;
+            ptDv.setUint32(ptOffset, program_target.uninit, true); ptOffset += 4;
+            ptDv.setUint32(ptOffset, program_target.erase_chip, true); ptOffset += 4;
+            ptDv.setUint32(ptOffset, program_target.erase_sector, true); ptOffset += 4;
+            ptDv.setUint32(ptOffset, program_target.program_page, true); ptOffset += 4;
+            ptDv.setUint32(ptOffset, program_target.read, true); ptOffset += 4;
+            ptDv.setUint32(ptOffset, program_target.verify, true); ptOffset += 4;
+            ptDv.setUint32(ptOffset, program_target.breakpoint, true); ptOffset += 4;
+            ptDv.setUint32(ptOffset, program_target.static_base, true); ptOffset += 4;
+            ptDv.setUint32(ptOffset, program_target.stack_pointer, true); ptOffset += 4;
+            ptDv.setUint32(ptOffset, program_target.program_buffer, true); ptOffset += 4;
+            ptDv.setUint32(ptOffset, program_target.algo_start, true); ptOffset += 4;
+            ptDv.setUint32(ptOffset, program_target.algo_size, true); ptOffset += 4;
+            ptDv.setUint32(ptOffset, program_target.algo_blob, true); ptOffset += 4;
+            ptDv.setUint32(ptOffset, program_target.program_buffer_size, true); ptOffset += 4;
+            ptDv.setUint32(ptOffset, program_target.algo_flags, true); ptOffset += 4;
+            const programTarget = new Uint8Array(programTargetBuffer);
+            const finalBlob = createFinalBlobWithFlashInfo(programTarget, algorithm_blob, algorithm_blob_size, flash_info);
+            const blob = new Blob([finalBlob], {type: 'application/octet-stream'});
+            convertedBlob = blob;
+            const fileName = `${flmFileName}.FLM.o`;
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = fileName;
+            downloadLink.style.display = '';
+            downloadLink.textContent = '下载 .o 文件';
+            
+
+            
+            // 自动复制文件名到剪贴板
+            try {
+                await navigator.clipboard.writeText(fileName);
+                logMsg(`✅ 文件名 "${fileName}" 已自动复制到剪贴板`);
+            } catch (err) {
+                logMsg(`⚠️ 文件名复制失败: ${err.message}`);
+            }
+            
+            logMsg(`最终blob已保存到 ${fileName} (包含program_target_t结构体和Flash信息)`);
+            logMsg('ELF文件解析完成');
+        });
+        downloadLink.addEventListener('click', () => {
+            setTimeout(() => {
+                URL.revokeObjectURL(downloadLink.href);
+            }, 1000);
+        });
+        // ========== FLM ELF解析器 YMODEM发送功能 ==========
+        const flmYmodemSendBtn = document.getElementById('flmYmodemSendBtn');
+        const flmYmodemProgress = document.getElementById('flmYmodemProgress');
+        // const flmPanel = document.getElementById('flmPanel'); // 移除重复声明
+
+        function flmYlog(msg, color) {
+            // flmYmodemLog.innerHTML += `<div style='color:${color||'#0f0'}'>${msg}</div>`; // 移除此行
+            // flmYmodemLog.scrollTop = flmYmodemLog.scrollHeight; // 移除此行
+            logMsg(`[YMODEM] ${msg}`); // 同时输出到主日志区
+        }
+        function flmYlogClear() { 
+            // flmYmodemLog.innerHTML = ''; // 移除此行
+        }
+        function setFlmYmodemUIBusy(busy) {
+            flmYmodemSendBtn.disabled = busy || !convertedBlob || !isSerialConnected();
+            flmYmodemProgress.style.display = busy ? '' : 'none';
+        }
+        function updateFlmYmodemBtn() {
+            flmYmodemSendBtn.disabled = !convertedBlob || !isSerialConnected();
+        }
+        function isSerialConnected() {
+            return window.microLinkTerminal && window.microLinkTerminal.isConnected && window.microLinkTerminal.port;
+        }
+        // 生成.o文件后使发送按钮可用
+        convertBtn.addEventListener('click', function() {
+            updateFlmYmodemBtn();
+        });
+        // 发送按钮事件
+        flmYmodemSendBtn.addEventListener('click', async () => {
+            if (!convertedBlob) { flmYlog('请先生成.o文件', '#ff0'); return; }
+            if (!isSerialConnected()) {
+                flmYlog('请先连接串口', '#f66'); return;
+            }
+            
+            const ymodemMode = 'simple'; // 固定为简化模式
+            flmYlogClear();
+            setFlmYmodemUIBusy(true);
+            flmYmodemProgress.value = 0;
+            flmYmodemProgress.max = 100;
+            const port = window.microLinkTerminal.port;
+            
+            try {
+                if (window.microLinkTerminal.reader) {
+                    try { window.microLinkTerminal.reader.cancel(); } catch(e){}
+                    try { window.microLinkTerminal.reader.releaseLock(); } catch(e){}
+                    window.microLinkTerminal.reader = null;
+                    flmYlog('已暂停主串口监听，准备YMODEM发送...', '#0ff');
+                }
+                
+                // 只在最开始发送一次ym.receive()
+                const writer0 = port.writable.getWriter();
+                await writer0.write(new TextEncoder().encode('ym.receive()\r\n'));
+                writer0.releaseLock();
+                flmYlog('已发送 ym.receive()，正在等待设备C信号（最多10秒）...', '#0ff');
+                
+                // 强制监听串口满10秒，收到C或Ready立即进入下一步
+                let started = false;
+                let received = '';
+                const startTime = Date.now();
+                while (!started && (Date.now() - startTime) < 10000) {
+                    let reader = port.readable.getReader();
+                    try {
+                        const { value, done } = await Promise.race([
+                            reader.read(),
+                            new Promise(resolve => setTimeout(() => resolve({value: null, done: false}), 200))
+                        ]);
+                        if (value) {
+                            const text = new TextDecoder().decode(value);
+                            flmYlog('收到内容: ' + text, '#888');
+                            received += text;
+                            if (text.includes('C') || text.includes('Ready')) {
+                                started = true;
+                                flmYlog('收到设备C信号，准备发送YMODEM文件...', '#0f0');
+                                break;
+                            }
+                        }
+                    } finally {
+                        reader.releaseLock();
+                    }
+                    await new Promise(r => setTimeout(r, 100));
+                }
+                if (!started) {
+                    flmYlog('10秒内未收到设备C信号，YMODEM发送中止', '#f66');
+                    return;
+                }
+                
+                // 根据选择的模式使用不同的YMODEM函数
+                const arrayBuffer = await convertedBlob.arrayBuffer();
+                const uint8Array = new Uint8Array(arrayBuffer);
+                const fileName = flmFileName ? (flmFileName + '.FLM.o') : 'firmware.FLM.o';
+                
+                // ======= ELF tab YMODEM发送按钮事件，完全镜像PYTHON tab逻辑 =======
+                flmYlog('使用简化YMODEM模式（极保守配置）', '#0ff');
+                const simpleOptions = {
+                    retryDelay: 1000,       // 1秒包间延时
+                    maxRetries: 30,         // 30次重试
+                    packetTimeout: 30000,   // 30秒包超时
+                    restartDelay: 5000      // 5秒重启延时
+                };
+                
+                await window.ymodemSendFileViaSerialSimple(
+                    uint8Array,
+                    fileName,
+                    120000,
+                    progress => { flmYmodemProgress.value = progress; },
+                    msg => flmYlog(msg),
+                    {
+                        ...simpleOptions,
+                        buildHeaderPacket: window.buildHeaderPacketFlmYmodem
+                    }
+                );
+                // ======= 屏蔽原有ELF tab YMODEM流程 =======
+                /*
+                if (ymodemMode === 'simple') {
+                    // 使用简化模式
+                    flmYlog('使用简化YMODEM模式（极保守配置）', '#0ff');
+                    const simpleOptions = {
+                        retryDelay: 1000,       // 1秒包间延时
+                        maxRetries: 30,         // 30次重试
+                        packetTimeout: 30000,   // 30秒包超时
+                        restartDelay: 5000      // 5秒重启延时
+                    };
+                    
+                    await window.ymodemSendFileViaSerialSimple(
+                        uint8Array,
+                        fileName,
+                        120000,
+                        progress => { flmYmodemProgress.value = progress; },
+                        msg => flmYlog(msg),
+                        {
+                            ...simpleOptions,
+                            buildHeaderPacket: window.buildHeaderPacketFlmYmodem
+                        }
+                    );
+                } else {
+                    // 使用标准模式
+                    flmYlog('使用标准YMODEM模式', '#0ff');
+                    const ymodemOptions = {
+                        retryDelay: 800,       // 大幅增加包间延时，给设备端更多处理时间
+                        maxRetries: 25,        // 增加重试次数
+                        packetTimeout: 20000,  // 增加包超时时间到20秒
+                        restartDelay: 3000     // 重启传输前的延时
+                    };
+                    
+                    flmYlog(`使用YMODEM配置: 数据包大小128字节(SOH), 延时${ymodemOptions.retryDelay}ms, 重试${ymodemOptions.maxRetries}次, 超时${ymodemOptions.packetTimeout}ms`, '#0ff');
+                    
+                    await window.ymodemSendFileViaSerial(
+                        uint8Array,
+                        fileName,
+                        120000,
+                        progress => { flmYmodemProgress.value = progress; },
+                        msg => flmYlog(msg),
+                        ymodemOptions
+                    );
+                }
+                
+                flmYlog('✅ 文件发送完成', '#0f0');
+                */
+            } catch (e) {
+                // 静默失败，不输出任何报错日志
+                return;
+            } finally {
+                flmYlog('congratulations!', '#888');
+                setFlmYmodemUIBusy(false);
+            }
+        });
+        // .o文件生成后自动使按钮可用
+        if (typeof updateFlmYmodemBtn === 'function') updateFlmYmodemBtn();
+        // 串口连接状态变化时自动刷新按钮
+        // 页面切换到FLM解析器时也刷新一次
+        if (panelSelect) {
+            panelSelect.addEventListener('change', function() {
+                if (panelSelect.value === 'flmPanel') {
+                    updateFlmYmodemBtn();
+                }
+            });
+        }
+        // ========== Python脚本生成器核心功能 ==========
+        const swdClockSpeedMap = { '10M': '10000000', '5M': '5000000', '2M': '2000000', '1M': '1000000', '500K': '500000', '200K': '200000', '100K': '100000', '50K': '50000', '20K': '20000', '10K': '10000', '5K': '5000' };
+        const customFlmInput = document.getElementById('customFlm');
+        const address1Input = document.getElementById('address1');
+        const address2Input = document.getElementById('address2');
+
+        const swdClockSpeedSelect = document.getElementById('swdClockSpeed');
+        const codePreview = document.getElementById('codePreview');
+        const dragCodePreview = document.getElementById('dragCodePreview');
+        // 删除下载按钮相关代码
+        // 全局config对象，供script.js使用
+        window.config = { 
+            flmFile: 'custom_flm.FLM.o', 
+            address1: '0X08000000', 
+            address2: '0x20000000', 
+            swdClockSpeed: '10M',
+            files: [
+                {
+                    fileName: 'boot.bin',
+                    address: '0x08000000',
+                    algorithm: 'STM32F7x_1024.FLM.o'
+                },
+                {
+                    fileName: 'rtthread.bin',
+                    address: '0x08020000', 
+                    algorithm: 'STM32F7x_1024.FLM.o'
+                },
+                {
+                    fileName: 'HZK.bin',
+                    address: '0x90000000',
+                    algorithm: 'STM32F767_W25QXX.FLM.o'
+                }
+            ]
+        };
+        const config = window.config;
+        function switchScriptTab(scriptType) {
+            const tabs = document.querySelectorAll('.script-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            const contents = document.querySelectorAll('.script-content');
+            contents.forEach(content => content.classList.remove('active'));
+            if (scriptType === 'offline') {
+                document.querySelector('.script-tab:first-child').classList.add('active');
+                document.getElementById('offlineScript').classList.add('active');
+            } else {
+                document.querySelector('.script-tab:last-child').classList.add('active');
+                document.getElementById('dragScript').classList.add('active');
+            }
+        }
+        function updateCodePreview() {
+            const flmFile = config.flmFile;
+            const pythonSwdSpeed = swdClockSpeedMap[config.swdClockSpeed] || '10000000';
+            
+            // 生成多文件烧录代码
+            let offlineCode = `import FLMConfig\nimport PikaStdLib\nimport PikaStdDevice\nimport time\n\ntime = PikaStdDevice.Time()\nbuzzer = PikaStdDevice.GPIO()\nbuzzer.setPin('PA4')\nbuzzer.setMode('out')\n\n# 设置SWD下载速度\ncmd.set_swd_clock(${pythonSwdSpeed})\n\nReadFlm = FLMConfig.ReadFlm()`;
+            
+            // 按算法分组文件
+            const algorithmGroups = {};
+            config.files.forEach(file => {
+                if (file.algorithm && file.fileName && file.address) {
+                    if (!algorithmGroups[file.algorithm]) {
+                        algorithmGroups[file.algorithm] = [];
+                    }
+                    algorithmGroups[file.algorithm].push(file);
+                }
+            });
+            
+            // 为每个算法生成加载和烧录代码
+            Object.keys(algorithmGroups).forEach((algorithm, index) => {
+                const files = algorithmGroups[algorithm];
+                if (files.length > 0) {
+                    // 加载算法
+                    offlineCode += `\n# 加载 ${algorithm} 下载算法文件\nresult = ReadFlm.load("FLM/${algorithm}", ${config.address1}, ${config.address2})\nif result != 0:\n    return`;
+                    
+                    // 烧录该算法下的所有文件
+                    files.forEach(file => {
+                        offlineCode += `\n\n# 烧写 ${file.fileName}\nresult = load.bin("${file.fileName}", ${file.address})\nif result != 0:\n    return`;
+                    });
+                }
+            });
+            
+            offlineCode += `\n\n# 蜂鸣器响一声，表示烧写完成\nbuzzer.enable()\nbuzzer.high()\ntime.sleep_ms(500)\nbuzzer.low()\ntime.sleep_ms(500)`;
+            
+            const dragCode = `import FLMConfig\ncmd.set_swd_clock(${pythonSwdSpeed})\nReadFlm = FLMConfig.ReadFlm()\nres1 = ReadFlm.load(\"FLM/${flmFile}\",${config.address1},${config.address2})`;
+            
+            if (codePreview) {
+                codePreview.textContent = offlineCode;
+            }
+            if (dragCodePreview) {
+                dragCodePreview.textContent = dragCode;
+            }
+            
+            // 高亮显示
+            let highlightedCode = offlineCode;
+            config.files.forEach(file => {
+                if (file.fileName) {
+                    highlightedCode = highlightedCode.replace(
+                        new RegExp(`"${file.fileName}"`, 'g'), 
+                        `<span class="highlight">"${file.fileName}"</span>`
+                    );
+                }
+                if (file.address) {
+                    highlightedCode = highlightedCode.replace(
+                        new RegExp(file.address.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&'), 'g'), 
+                        `<span class="highlight">${file.address}</span>`
+                    );
+                }
+                if (file.algorithm) {
+                    highlightedCode = highlightedCode.replace(
+                        new RegExp(`"FLM/${file.algorithm}"`, 'g'), 
+                        `<span class="highlight">"FLM/${file.algorithm}"</span>`
+                    );
+                }
+            });
+            
+            if (codePreview) {
+                codePreview.innerHTML = highlightedCode
+                    .replace(new RegExp(config.address1.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&'), 'g'), `<span class="highlight">${config.address1}</span>`)
+                    .replace(new RegExp(config.address2.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&'), 'g'), `<span class="highlight">${config.address2}</span>`)
+                    .replace(new RegExp(pythonSwdSpeed.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&'), 'g'), `<span class="highlight">${pythonSwdSpeed}</span>`);
+            }
+            
+            if (dragCodePreview) {
+                dragCodePreview.innerHTML = dragCode.replace(`\"FLM/${flmFile}\"`, `<span class=\"highlight\">\"FLM/${flmFile}\"</span>`).replace(new RegExp(config.address1.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&'), 'g'), `<span class=\"highlight\">${config.address1}</span>`).replace(new RegExp(config.address2.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&'), 'g'), `<span class=\"highlight\">${config.address2}</span>`).replace(new RegExp(pythonSwdSpeed.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&'), 'g'), `<span class=\"highlight\">${pythonSwdSpeed}</span>`);
+            }
+        }
+        // 复制按钮逻辑
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text);
+            } else {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+        }
+        if (customFlmInput) {
+            customFlmInput.addEventListener('input', function() { config.flmFile = this.value || 'custom_flm.FLM.o'; updateCodePreview(); });
+        }
+        if (address1Input) {
+            address1Input.addEventListener('input', function() { config.address1 = this.value || '0X08000000'; updateCodePreview(); });
+        }
+        if (address2Input) {
+            address2Input.addEventListener('input', function() { config.address2 = this.value || '0x20000000'; updateCodePreview(); });
+        }
+        if (swdClockSpeedSelect) {
+            swdClockSpeedSelect.addEventListener('change', function() { config.swdClockSpeed = this.value; updateCodePreview(); });
+        }
+        
+        // 多文件配置功能已移至script.js中处理
+        
+
+        
+
+        
+
+        
+
+        // 删除下载按钮事件监听器
+        updateCodePreview();
+
+        // 只允许发送"离线下载脚本"和"拖拽下载脚本"，其它tab禁用发送按钮，不允许发送本地.py文件
+        // 1. 移除本地.py文件相关UI
+        // 2. 发送按钮只在"离线下载脚本"或"拖拽下载脚本"tab下可用，文件名分别为offline_download.py和drag_download.py
+        // 3. 其它tab禁用发送按钮
+        const pyYmodemSendBtn = document.getElementById('pyYmodemSendBtn');
+        const pyYmodemProgress = document.getElementById('pyYmodemProgress');
+        const pyYmodemLog = document.getElementById('pyYmodemLog');
+        function pyYlog(msg, color) {
+            appendToTerminalOutput(`<div class='log-prefix-python'>[PYTHON] ${msg}</div>`);
+        }
+        function pyYlogClear() {
+            // 不清空主终端
+        }
+        function updatePyYmodemSendBtnState() {
+            // 只允许离线下载脚本和拖拽下载脚本tab可用
+            const tab = document.querySelector('.script-tab.active');
+            if (tab && tab.textContent.includes('离线')) {
+                pyYmodemSendBtn.disabled = false;
+                pyYmodemSendBtn.setAttribute('data-pytype', 'offline');
+            } else if (tab && tab.textContent.includes('拖拽')) {
+                pyYmodemSendBtn.disabled = false;
+                pyYmodemSendBtn.setAttribute('data-pytype', 'drag');
+            } else {
+                pyYmodemSendBtn.disabled = true;
+                pyYmodemSendBtn.removeAttribute('data-pytype');
+            }
+        }
+        // 监听tab切换
+        const scriptTabs = document.querySelectorAll('.script-tab');
+        if (scriptTabs.length > 0) {
+            scriptTabs.forEach(tab => {
+                tab.addEventListener('click', updatePyYmodemSendBtnState);
+            });
+            updatePyYmodemSendBtnState();
+        }
+        // 以Python tab为例，统一YMODEM发送按钮事件
+        if (pyYmodemSendBtn) {
+            pyYmodemSendBtn.addEventListener('click', async () => {
+            if (pyYmodemSendBtn.disabled) return;
+            if (!window.microLinkTerminal || !window.microLinkTerminal.isConnected || !window.microLinkTerminal.port) {
+                pyYlog('请先连接串口', '#f66'); return;
+            }
+            pyYmodemSendBtn.disabled = true;
+            pyYmodemProgress.value = 0;
+            pyYmodemProgress.style.display = '';
+            pyYlogClear();
+            pyYlog('准备发送...', '#0ff');
+            // === 加锁管理和监听控制 ===
+            let wasConnected = false;
+            if (window.microLinkTerminal) {
+                if (window.microLinkTerminal.reader) {
+                    try { window.microLinkTerminal.reader.cancel(); } catch(e){}
+                    try { window.microLinkTerminal.reader.releaseLock(); } catch(e){}
+                    window.microLinkTerminal.reader = null;
+                }
+                wasConnected = window.microLinkTerminal.isConnected;
+                window.microLinkTerminal.isConnected = false;
+                await new Promise(r => setTimeout(r, 300));
+            }
+            try {
+                let code = '';
+                let fileName = '';
+                const tabType = pyYmodemSendBtn.getAttribute('data-pytype');
+                if (tabType === 'offline') {
+                    code = getOfflineCode();
+                    fileName = 'Python/offline_download.py';
+                } else if (tabType === 'drag') {
+                    code = getDragCode();
+                    fileName = 'Python/drag_download.py';
+                } else {
+                    pyYlog('只允许发送离线下载脚本或拖拽下载脚本', '#f66');
+                    return;
+                }
+                const uint8Array = new TextEncoder().encode(code);
+                const port = window.microLinkTerminal && window.microLinkTerminal.port;
+                if (!port) throw new Error('串口未连接');
+                let ok = await window.sendFileViaYmodem(
+                    port,
+                    uint8Array,
+                    fileName,
+                    uint8Array.length,
+                    msg => pyYlog(msg)
+                );
+                if (ok) {
+                    pyYlog('✅ 发送完成', '#0f0');
+                } else {
+                    pyYlog('❌ 发送失败', '#f66');
+                }
+            } catch (e) {
+                pyYlog('❌ 发送失败: ' + e.message, '#f66');
+                if (e && e.stack) pyYlog('错误堆栈: ' + e.stack, '#f66');
+            } finally {
+                // === 恢复主终端监听 ===
+                if (window.microLinkTerminal) {
+                    window.microLinkTerminal.isConnected = wasConnected;
+                    if (wasConnected && typeof window.microLinkTerminal.startReading === 'function') {
+                        window.microLinkTerminal.startReading();
+                    }
+                }
+                pyYmodemSendBtn.disabled = false;
+                pyYmodemProgress.style.display = 'none';
+            }
+        });
+        }
+        // 以ELF tab为例，统一YMODEM发送按钮事件
+        if (flmYmodemSendBtn) {
+            flmYmodemSendBtn.addEventListener('click', async () => {
+            if (!convertedBlob) { flmYlog('请先生成.o文件', '#ff0'); return; }
+            if (!isSerialConnected()) {
+                flmYlog('请先连接串口', '#f66'); return;
+            }
+            flmYlogClear();
+            setFlmYmodemUIBusy(true);
+            flmYmodemProgress.value = 0;
+            flmYmodemProgress.max = 100;
+            // === 加锁管理和监听控制 ===
+            let wasConnected = false;
+            if (window.microLinkTerminal) {
+                if (window.microLinkTerminal.reader) {
+                    try { window.microLinkTerminal.reader.cancel(); } catch(e){}
+                    try { window.microLinkTerminal.reader.releaseLock(); } catch(e){}
+                    window.microLinkTerminal.reader = null;
+                }
+                wasConnected = window.microLinkTerminal.isConnected;
+                window.microLinkTerminal.isConnected = false;
+                await new Promise(r => setTimeout(r, 300));
+            }
+            try {
+                const arrayBuffer = await convertedBlob.arrayBuffer();
+                const uint8Array = new Uint8Array(arrayBuffer);
+                const fileName = flmFileName ? (flmFileName + '.FLM.o') : 'firmware.FLM.o';
+                const port = window.microLinkTerminal && window.microLinkTerminal.port;
+                if (!port) throw new Error('串口未连接');
+                let ok = await window.sendFileViaYmodem(
+                    port,
+                    uint8Array,
+                    fileName,
+                    uint8Array.length,
+                    msg => flmYlog(msg)
+                );
+                if (ok) {
+                    flmYlog('✅ 文件发送完成', '#0f0');
+                } else {
+                    flmYlog('❌ 发送失败', '#f66');
+                }
+            } catch (e) {
+                // 静默失败，不输出任何报错日志
+                return;
+            } finally {
+                // === 恢复主终端监听 ===
+                if (window.microLinkTerminal) {
+                    window.microLinkTerminal.isConnected = wasConnected;
+                    if (wasConnected && typeof window.microLinkTerminal.startReading === 'function') {
+                        window.microLinkTerminal.startReading();
+                    }
+                }
+                flmYlog('YMODEM流程已结束', '#888');
+                setFlmYmodemUIBusy(false);
+            }
+        });
+        }
+
+        // 在tab切换到flmPanel时调用updateFlmYmodemBtn
+        if (panelSelect) {
+            panelSelect.addEventListener('change', function() {
+                if (panelSelect.value === 'flmPanel') {
+                    updateFlmYmodemBtn();
+                }
+            });
+        }
+        // 在convertBtn点击和串口连接事件后也调用updateFlmYmodemBtn
+        if (convertBtn) {
+            convertBtn.addEventListener('click', function() {
+                updateFlmYmodemBtn();
+            });
+        }
+        document.addEventListener('serialConnected', function() {
+            updateFlmYmodemBtn();
+        });
+        document.addEventListener('serialDisconnected', function() {
+            updateFlmYmodemBtn();
+        });
+    });
+    </script>
+    <!-- deepseek变量分析器脚本自动集成（完整JS） -->
+    <script>
+    // 内置 ELF 解析器
+    class ELFParser {
+        static parse(arrayBuffer) {
+            const dataView = new DataView(arrayBuffer);
+            // 检查 ELF 魔数
+            if (dataView.getUint32(0) !== 0x7F454C46) {
+                throw new Error("不是有效的 ELF 文件");
+            }
+            const is32Bit = dataView.getUint8(4) === 1; // ELFCLASS32
+            const isLE = dataView.getUint8(5) === 1; // ELFDATA2LSB
+            const header = {
+                e_type: dataView.getUint16(16, isLE),
+                e_machine: dataView.getUint16(18, isLE),
+                e_version: dataView.getUint32(20, isLE),
+                e_entry: dataView.getUint32(24, isLE),
+                e_phoff: is32Bit ? dataView.getUint32(28, isLE) : Number(dataView.getBigUint64(32, isLE)),
+                e_shoff: is32Bit ? dataView.getUint32(32, isLE) : Number(dataView.getBigUint64(40, isLE)),
+                e_flags: dataView.getUint32(36, isLE),
+                e_ehsize: dataView.getUint16(40, isLE),
+                e_phentsize: dataView.getUint16(42, isLE),
+                e_phnum: dataView.getUint16(44, isLE),
+                e_shentsize: dataView.getUint16(46, isLE),
+                e_shnum: dataView.getUint16(48, isLE),
+                e_shstrndx: dataView.getUint16(50, isLE)
+            };
+            // 解析节头
+            const sections = [];
+            const shoff = Number(header.e_shoff);
+            const shentsize = header.e_shentsize;
+            const shnum = header.e_shnum;
+            for (let i = 0; i < shnum; i++) {
+                const offset = shoff + i * shentsize;
+                const section = {
+                    sh_name: dataView.getUint32(offset, isLE),
+                    sh_type: dataView.getUint32(offset + 4, isLE),
+                    sh_flags: is32Bit ? dataView.getUint32(offset + 8, isLE) : Number(dataView.getBigUint64(offset + 8, isLE)),
+                    sh_addr: is32Bit ? dataView.getUint32(offset + 12, isLE) : Number(dataView.getBigUint64(offset + 16, isLE)),
+                    sh_offset: is32Bit ? dataView.getUint32(offset + 16, isLE) : Number(dataView.getBigUint64(offset + 24, isLE)),
+                    sh_size: is32Bit ? dataView.getUint32(offset + 20, isLE) : Number(dataView.getBigUint64(offset + 32, isLE)),
+                    sh_link: dataView.getUint32(offset + (is32Bit ? 24 : 40), isLE),
+                    sh_info: dataView.getUint32(offset + (is32Bit ? 28 : 44), isLE),
+                    sh_addralign: is32Bit ? dataView.getUint32(offset + 32, isLE) : Number(dataView.getBigUint64(offset + 48, isLE)),
+                    sh_entsize: is32Bit ? dataView.getUint32(offset + 36, isLE) : Number(dataView.getBigUint64(offset + 56, isLE))
+                };
+                sections.push(section);
+            }
+            // 获取节名称
+            const shstrtab = sections[header.e_shstrndx];
+            const shstrtabData = new Uint8Array(arrayBuffer, shstrtab.sh_offset, shstrtab.sh_size);
+            sections.forEach(section => {
+                section.name = this.readNullTerminatedString(shstrtabData, section.sh_name);
+            });
+            // 解析符号表
+            sections.forEach(section => {
+                if (section.sh_type === 2) { // SHT_SYMTAB
+                    const symbols = [];
+                    const strtab = sections[section.sh_link];
+                    const strtabData = new Uint8Array(arrayBuffer, strtab.sh_offset, strtab.sh_size);
+                    const count = section.sh_size / section.sh_entsize;
+                    for (let i = 0; i < count; i++) {
+                        const offset = section.sh_offset + i * section.sh_entsize;
+                        const st_name = dataView.getUint32(offset, isLE);
+                        const st_value = is32Bit ? dataView.getUint32(offset + 4, isLE) : Number(dataView.getBigUint64(offset + 8, isLE));
+                        const st_size = is32Bit ? dataView.getUint32(offset + 8, isLE) : Number(dataView.getBigUint64(offset + 16, isLE));
+                        const st_info = dataView.getUint8(offset + (is32Bit ? 12 : 4));
+                        const st_shndx = dataView.getUint16(offset + (is32Bit ? 14 : 6), isLE);
+                        symbols.push({
+                            name: this.readNullTerminatedString(strtabData, st_name),
+                            value: st_value,
+                            size: st_size,
+                            type: st_info & 0x0F,
+                            bind: st_info >> 4,
+                            sectionIndex: st_shndx
+                        });
+                    }
+                    section.symbols = symbols;
+                }
+            });
+            return {
+                header: header,
+                sections: sections
+            };
+        }
+        static readNullTerminatedString(data, offset) {
+            let str = "";
+            let i = offset;
+            while (i < data.length && data[i] !== 0) {
+                str += String.fromCharCode(data[i]);
+                i++;
+            }
+            return str;
+        }
+    }
+    
+    // 内存区域定义
+    const memoryRegions = [
+        { name: "Flash", start: 0x08000000, end: 0x08100000, color: "#4e9a06" },
+        { name: "RAM", start: 0x20000000, end: 0x20020000, color: "#3465a4" },
+        { name: "Peripherals", start: 0x40000000, end: 0x60000000, color: "#cc0000" }
+    ];
+    
+    // 段类型颜色映射
+    const sectionColors = {
+        '.bss': '#ffd700',
+        '.data': '#ff7f50',
+        '.rodata': '#ad7fa8',
+        '.heap': '#73d216',
+        '.stack': '#f57900',
+        'default': '#555555'
+    };
+    
+    // 当前分析的变量列表
+    let variables = [];
+    let elfFile = null;
+    let selectedVariables = new Set(); // 存储选中的变量
+    // 将selectedVariables挂载到全局，供数据处理函数使用
+    window.selectedVariables = selectedVariables;
+    let filteredVariables = []; // 存储筛选后的变量
+    
+    // DOM元素
+    const fileInput = document.getElementById('axfFile');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const variableTableBody = document.getElementById('variableTableBody');
+    const memoryMap = document.getElementById('memoryMap');
+    const variableDetail = document.getElementById('variableDetail');
+
+    const fileInfo = document.getElementById('fileInfo');
+    const progressBar = document.getElementById('progressBar');
+    const searchFilter = document.getElementById('searchFilter');
+    const selectAllVars = document.getElementById('selectAllVars');
+    const selectedVariablesInfo = document.getElementById('selectedVariablesInfo');
+    const selectedVariablesList = document.getElementById('selectedVariablesList');
+    const selectedTotalSize = document.getElementById('selectedTotalSize');
+    
+    // 文件选择事件
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            if (this.files.length > 0) {
+                analyzeBtn.disabled = false;
+                fileInfo.classList.add('d-none');
+                // 更新文件状态显示
+                const fileStatus = document.getElementById('fileStatus');
+                if (fileStatus) {
+                    fileStatus.textContent = `已选择: ${this.files[0].name}`;
+                    fileStatus.style.color = '#28a745';
+                }
+            } else {
+                analyzeBtn.disabled = true;
+                // 重置文件状态显示
+                const fileStatus = document.getElementById('fileStatus');
+                if (fileStatus) {
+                    fileStatus.textContent = '未选择文件';
+                    fileStatus.style.color = '#6c757d';
+                }
+            }
+        });
+    }
+    
+    // 筛选器事件监听
+            if (searchFilter) {
+            searchFilter.addEventListener('input', filterVariables);
+        }
+    
+    // 全选/取消全选
+    if (selectAllVars) {
+        selectAllVars.addEventListener('change', function() {
+            const checkboxes = variableTableBody.querySelectorAll('input[type="checkbox"]:not([id="selectAllVars"])');
+            
+            if (this.checked) {
+                // 全选（考虑9个变量限制）
+                let selectedCount = 0;
+                checkboxes.forEach(checkbox => {
+                    if (selectedCount < 9) {
+                        checkbox.checked = true;
+                        selectedVariables.add(checkbox.value);
+                        
+                        // 设置变量信息到全局对象
+                        const variable = variables.find(v => v.name === checkbox.value);
+                        if (variable) {
+                            if (!window.variableInfo) {
+                                window.variableInfo = {};
+                            }
+                            window.variableInfo[checkbox.value] = {
+                                size: variable.size,
+                                addr: variable.addr,
+                                type: variable.type,
+                                section: variable.section
+                            };
+                            console.log(`[全选] 设置变量 ${checkbox.value} 信息:`, window.variableInfo[checkbox.value]);
+                        }
+                        
+                        selectedCount++;
+                    }
+                });
+                
+                // 如果变量总数超过9个，显示提示
+                if (selectedVariables.size > 9) {
+                    alert('最多只能选择9个变量，已自动限制选择数量');
+                    // 移除超出限制的变量
+                    const selectedArray = Array.from(selectedVariables);
+                    for (let i = 9; i < selectedArray.length; i++) {
+                        selectedVariables.delete(selectedArray[i]);
+                        const checkbox = variableTableBody.querySelector(`input[value="${selectedArray[i]}"]`);
+                        if (checkbox) {
+                            checkbox.checked = false;
+                        }
+                    }
+                }
+            } else {
+                // 取消全选
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                    selectedVariables.delete(checkbox.value);
+                    
+                    // 从全局对象中移除变量信息
+                    if (window.variableInfo && window.variableInfo[checkbox.value]) {
+                        delete window.variableInfo[checkbox.value];
+                        console.log(`[取消全选] 移除变量 ${checkbox.value} 信息`);
+                    }
+                });
+            }
+            
+            // 更新显示
+            updateSelectedVariablesDisplay();
+            updateHexSendPanel();
+        });
+    }
+    
+    // 分析按钮事件
+    if (analyzeBtn) {
+        analyzeBtn.addEventListener('click', function() {
+            const file = fileInput.files[0];
+            if (!file) return;
+            
+            // 重置UI
+            variables = [];
+            selectedVariables.clear();
+            window.variableInfo = {}; // 清空变量信息
+            filteredVariables = [];
+            variableTableBody.innerHTML = '<tr><td colspan="6" class="text-center">分析中...</td></tr>';
+            if (memoryMap) memoryMap.innerHTML = '<div class="text-center text-muted mt-5">分析中...</div>';
+            if (variableDetail) variableDetail.innerHTML = '分析中...';
+    
+            if (progressBar) progressBar.classList.remove('d-none');
+            
+            // 显示进度条
+            const progress = progressBar ? progressBar.querySelector('.progress-bar') : null;
+            if (progress) progress.style.width = '0%';
+            
+            // 读取文件
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    console.log('开始解析ELF文件...');
+                    // 解析ELF文件
+                    const arrayBuffer = e.target.result;
+                    elfFile = ELFParser.parse(arrayBuffer);
+                    console.log('ELF文件解析成功:', elfFile);
+                    
+                    // 显示文件信息
+                    displayFileInfo(file, elfFile);
+                    console.log('文件信息显示完成');
+                    
+                    // 提取变量
+                    extractVariables(elfFile);
+                    console.log('变量提取完成，找到变量数量:', variables.length);
+                    
+                    // 更新进度条
+                    if (progress) progress.style.width = '100%';
+                    setTimeout(() => {
+                        if (progressBar) progressBar.classList.add('d-none');
+                    }, 500);
+                    
+                    // 显示结果
+                    displayVariables();
+                    drawMemoryMap();
+            
+                    console.log('变量分析完成');
+                } catch (error) {
+                    console.error('ELF解析错误:', error);
+                    variableTableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">解析错误: ${error.message}</td></tr>`;
+            
+                    if (progressBar) progressBar.classList.add('d-none');
+                }
+            };
+            reader.onprogress = function(e) {
+                if (e.lengthComputable && progress) {
+                    const percent = (e.loaded / e.total) * 100;
+                    progress.style.width = `${percent}%`;
+            
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    }
+    
+    // 显示文件信息
+    function displayFileInfo(file, elf) {
+        if (fileInfo) {
+            fileInfo.classList.remove('d-none');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const elfType = document.getElementById('elfType');
+            const entryPoint = document.getElementById('entryPoint');
+            
+            if (fileName) fileName.textContent = file.name;
+            if (fileSize) fileSize.textContent = formatFileSize(file.size);
+            if (elfType) elfType.textContent = elf.header.e_type;
+            if (entryPoint) entryPoint.textContent = `0x${elf.header.e_entry.toString(16).toUpperCase()}`;
+        }
+    }
+    
+    // 格式化文件大小
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' bytes';
+        else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        else return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+    
+    // 提取变量
+    function extractVariables(elf) {
+        variables = [];
+        console.log('开始提取变量，节数量:', elf.sections.length);
+        
+        // 遍历所有节
+        const sections = elf.sections;
+        for (let i = 0; i < sections.length; i++) {
+            const section = sections[i];
+            console.log(`节 ${i}: 名称=${section.name}, 类型=${section.sh_type}, 符号数量=${section.symbols ? section.symbols.length : 0}`);
+            
+            // 只处理符号表
+            if (section.symbols) {
+                // 遍历符号表
+                const symbols = section.symbols;
+                for (let j = 0; j < symbols.length; j++) {
+                    const symbol = symbols[j];
+                    // 只关注变量（类型为STT_OBJECT）
+                    if (symbol.type === 1) { // STT_OBJECT
+                        const addr = symbol.value;
+                        const size = symbol.size;
+                        const name = symbol.name;
+                        const sectionIndex = symbol.sectionIndex;
+                        let sectionName = "Undefined";
+                        // 获取段名称
+                        if (sectionIndex > 0 && sectionIndex < sections.length) {
+                            sectionName = sections[sectionIndex].name;
+                        }
+                        // 确定变量类型
+                        let varType = "其他";
+                        if (sectionName === '.bss') varType = "未初始化";
+                        else if (sectionName === '.data') varType = "已初始化";
+                        else if (sectionName === '.rodata') varType = "只读";
+                        else if (sectionName === '.heap') varType = "堆";
+                        else if (sectionName === '.stack') varType = "栈";
+                        // 只添加段为RW_IRAM1和RW_IRAM2的变量
+                        if (sectionName === 'RW_IRAM1' || sectionName === 'RW_IRAM2') {
+                            variables.push({
+                                name: name,
+                                addr: addr,
+                                size: size,
+                                type: varType,
+                                section: sectionName
+                            });
+                            console.log(`找到RW_IRAM1段变量: ${name}, 地址: 0x${addr.toString(16)}, 大小: ${size}, 类型: ${varType}, 段: ${sectionName}`);
+                        }
+                    }
+                }
+            }
+        }
+        
+        console.log(`变量提取完成，总共找到 ${variables.length} 个变量`);
+        
+        // 按地址排序
+        variables.sort((a, b) => a.addr - b.addr);
+        // 初始化筛选后的变量列表
+        filteredVariables = [...variables];
+    }
+    
+    // 筛选变量
+    function filterVariables() {
+        const searchValue = searchFilter ? searchFilter.value.toLowerCase() : '';
+        
+        filteredVariables = variables.filter(variable => {
+            // 名称搜索
+            if (searchValue && !variable.name.toLowerCase().includes(searchValue)) {
+                return false;
+            }
+            return true;
+        });
+        
+        displayVariables();
+        updateSelectedVariablesDisplay();
+    }
+    
+    // 显示变量表格
+    function displayVariables() {
+        if (filteredVariables.length === 0) {
+            variableTableBody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-muted" style="padding:40px 16px;font-size:15px;">
+                        <div style="margin-bottom:8px;">🔍</div>
+                        未找到符合条件的变量
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        let html = '';
+        filteredVariables.forEach((variable, index) => {
+            const isSelected = selectedVariables.has(variable.name);
+            const rowClass = isSelected ? 'selected' : '';
+            html += `
+                <tr class="${rowClass}" data-variable="${variable.name}">
+                    <td>
+                        <input type="checkbox" class="variable-checkbox" value="${variable.name}" 
+                               ${isSelected ? 'checked' : ''} onchange="toggleVariableSelection(this)">
+                    </td>
+                    <td>${variable.name}</td>
+                    <td>0x${variable.addr.toString(16).toUpperCase()}</td>
+                    <td>${variable.size} 字节</td>
+                </tr>
+            `;
+        });
+        
+        variableTableBody.innerHTML = html;
+        
+        // 更新统计信息
+        updateVariableStats();
+    }
+    
+    // 切换变量选择状态
+    function toggleVariableSelection(checkbox) {
+        if (checkbox.checked) {
+            // 检查变量数量限制（最多9个）
+            if (selectedVariables.size >= 9) {
+                alert('最多只能选择9个变量');
+                checkbox.checked = false;
+                return;
+            }
+            
+            selectedVariables.add(checkbox.value);
+            
+            // 设置变量信息到全局对象，供数据处理函数使用
+            const variable = variables.find(v => v.name === checkbox.value);
+            if (variable) {
+                if (!window.variableInfo) {
+                    window.variableInfo = {};
+                }
+                window.variableInfo[checkbox.value] = {
+                    size: variable.size,
+                    addr: variable.addr,
+                    type: variable.type,
+                    section: variable.section
+                };
+                console.log(`[变量选择] 设置变量 ${checkbox.value} 信息:`, window.variableInfo[checkbox.value]);
+            }
+            
+            // 为选中的变量创建图表
+            if (window.multiChartManager) {
+                window.multiChartManager.createChart(checkbox.value);
+            }
+        } else {
+            selectedVariables.delete(checkbox.value);
+            
+            // 从全局对象中移除变量信息
+            if (window.variableInfo && window.variableInfo[checkbox.value]) {
+                delete window.variableInfo[checkbox.value];
+                console.log(`[变量选择] 移除变量 ${checkbox.value} 信息`);
+            }
+            
+            // 删除对应的图表
+            if (window.multiChartManager) {
+                window.multiChartManager.removeChart(checkbox.value);
+            }
+        }
+        
+        // 更新全选状态
+        updateSelectAllState();
+        // 更新选中变量显示
+        updateSelectedVariablesDisplay();
+        // 更新串口发送区域
+        updateHexSendPanel();
+    }
+    
+    // 更新全选状态
+    function updateSelectAllState() {
+        if (selectAllVars) {
+            const checkboxes = variableTableBody.querySelectorAll('input[type="checkbox"]:not([id="selectAllVars"])');
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            selectAllVars.checked = checkedCount === checkboxes.length;
+            selectAllVars.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
+        }
+    }
+    
+    // 更新变量统计信息
+    function updateVariableStats() {
+        // 统计信息已移除，此函数保留以维持代码结构
+    }
+    
+    // 更新选中变量显示
+    function updateSelectedVariablesDisplay() {
+        if (selectedVariables.size === 0) {
+            if (selectedVariablesInfo) selectedVariablesInfo.style.display = 'none';
+            // 重置HEX曲线图容器高度
+            adjustHexChartContainerHeight(0);
+            return;
+        }
+        
+        if (selectedVariablesInfo) selectedVariablesInfo.style.display = 'block';
+        let html = '';
+        let totalSize = 0;
+        
+        selectedVariables.forEach(varName => {
+            const variable = variables.find(v => v.name === varName);
+            if (variable) {
+                totalSize += variable.size;
+                html += `
+                    <div class="selected-variable-tag">
+                        ${variable.name} (${variable.size}字节)
+                        <button class="remove-btn" onclick="removeVariableSelection('${varName}')">×</button>
+                    </div>
+                `;
+            }
+        });
+        
+        if (selectedVariablesList) selectedVariablesList.innerHTML = html;
+        if (selectedTotalSize) selectedTotalSize.textContent = totalSize;
+        
+        // 动态调整HEX曲线图容器高度
+        adjustHexChartContainerHeight(selectedVariables.size);
+    }
+    
+    // 动态调整HEX曲线图容器高度
+    function adjustHexChartContainerHeight(selectedCount) {
+        // 找到包含"实时HEX曲线图"标题的容器
+        const hexSendPanels = document.querySelectorAll('.hex-send-panel');
+        let hexChartPanel = null;
+        
+        for (let panel of hexSendPanels) {
+            const title = panel.querySelector('h4');
+            if (title && title.textContent.includes('实时HEX曲线图')) {
+                hexChartPanel = panel;
+                break;
+            }
+        }
+        
+        const multiChartContainer = document.getElementById('multiChartContainer');
+        
+        if (!hexChartPanel || !multiChartContainer) return;
+        
+        // 基础高度：标题栏 + 按钮栏 + 边距
+        const baseHeight = 120;
+        
+        // 每个变量图表的高度（包括间距）
+        const chartHeight = 500;
+        const chartMargin = 20;
+        
+        // 计算总高度
+        let totalHeight;
+        if (selectedCount === 0) {
+            // 没有选中变量时，使用默认高度
+            totalHeight = 600;
+        } else if (selectedCount === 1) {
+            // 单个变量时，使用适中的高度
+            totalHeight = baseHeight + chartHeight;
+        } else {
+            // 多个变量时，根据数量动态计算
+            totalHeight = baseHeight + (selectedCount * (chartHeight + chartMargin));
+        }
+        
+        // 设置最小和最大高度限制
+        const minHeight = 800;
+        const maxHeight = 3600;
+        totalHeight = Math.max(minHeight, Math.min(maxHeight, totalHeight));
+        
+        // 应用高度调整 - 修改正确的容器
+        hexChartPanel.style.minHeight = totalHeight + 'px';
+        multiChartContainer.style.minHeight = (totalHeight - baseHeight) + 'px';
+        
+        console.log(`[HEX曲线图容器调整] 选中变量数量: ${selectedCount}, 容器高度: ${totalHeight}px`);
+    }
+    
+    // 移除变量选择
+    function removeVariableSelection(varName) {
+        selectedVariables.delete(varName);
+        // 删除对应的图表
+        if (window.multiChartManager) {
+            window.multiChartManager.removeChart(varName);
+        }
+        // 更新表格中的复选框
+        const checkbox = variableTableBody.querySelector(`input[value="${varName}"]`);
+        if (checkbox) {
+            checkbox.checked = false;
+        }
+        // 更新显示
+        updateSelectAllState();
+        updateSelectedVariablesDisplay();
+        updateHexSendPanel();
+    }
+    
+    // 更新串口发送面板
+    function updateHexSendPanel() {
+        // 不再需要生成地址输入框，保持面板简洁
+        // 用户可以通过采样率设置来控制发送频率
+    }
+    
+    // 将函数挂载到全局作用域
+    window.displayVariables = displayVariables;
+    window.toggleVariableSelection = toggleVariableSelection;
+    window.removeVariableSelection = removeVariableSelection;
+    
+    // 显示变量详情
+    window.showVariableDetail = function(index) {
+        const varItem = variables[index];
+        
+        // 创建模态框显示详情
+        const modalHTML = `
+            <div id="variableDetailModal" style="
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                background: rgba(0,0,0,0.5); z-index: 9999; display: flex; 
+                align-items: center; justify-content: center;">
+                <div style="
+                    background: white; border-radius: 12px; padding: 24px; 
+                    max-width: 500px; width: 90%; max-height: 80%; overflow-y: auto;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h4 style="margin: 0; color: #2980b9; font-size: 18px;">
+                            <span style="margin-right:8px;">🔍</span>变量详细信息
+                        </h4>
+                        <button onclick="closeVariableDetail()" style="
+                            background: none; border: none; font-size: 24px; 
+                            cursor: pointer; color: #6c757d;">&times;</button>
+                    </div>
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 16px; font-family: monospace; font-size: 14px; line-height: 1.6;">
+                        <div style="margin-bottom: 8px;"><strong>📝 变量名:</strong> ${varItem.name}</div>
+                        <div style="margin-bottom: 8px;"><strong>📍 地址:</strong> 0x${varItem.addr.toString(16).toUpperCase().padStart(8, '0')}</div>
+                        <div style="margin-bottom: 8px;"><strong>📊 大小:</strong> ${varItem.size} 字节`;
+        
+        // 添加大小描述
+        if (varItem.size > 1024 * 1024) {
+            modalHTML += ` (${(varItem.size/(1024*1024)).toFixed(2)} MB)`;
+        } else if (varItem.size > 1024) {
+            modalHTML += ` (${(varItem.size/1024).toFixed(2)} KB)`;
+        }
+        
+        modalHTML += `</div>
+                        <div style="margin-bottom: 8px;"><strong>🏷️ 类型:</strong> ${varItem.type}</div>
+                        <div style="margin-bottom: 8px;"><strong>📂 段:</strong> ${varItem.section}</div>`;
+        
+        // 添加内存位置描述
+        if (varItem.addr >= 0x08000000 && varItem.addr < 0x09000000) {
+            modalHTML += `<div style="margin-bottom: 8px;"><strong>💾 位置:</strong> Flash 存储器</div>`;
+        } else if (varItem.addr >= 0x20000000 && varItem.addr < 0x30000000) {
+            modalHTML += `<div style="margin-bottom: 8px;"><strong>💾 位置:</strong> RAM</div>`;
+        } else if (varItem.addr >= 0x40000000 && varItem.addr < 0x60000000) {
+            modalHTML += `<div style="margin-bottom: 8px;"><strong>💾 位置:</strong> 外设寄存器区域</div>`;
+        } else {
+            modalHTML += `<div style="margin-bottom: 8px;"><strong>💾 位置:</strong> 未知内存区域</div>`;
+        }
+        
+        modalHTML += `
+                    </div>
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button onclick="closeVariableDetail()" style="
+                            background: #3498db; color: white; border: none; 
+                            padding: 10px 20px; border-radius: 6px; cursor: pointer;
+                            font-size: 14px;">关闭</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // 移除已存在的模态框
+        const existingModal = document.getElementById('variableDetailModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+        
+        // 添加新模态框
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    };
+    
+    // 关闭变量详情模态框
+    window.closeVariableDetail = function() {
+        const modal = document.getElementById('variableDetailModal');
+        if (modal) {
+            modal.remove();
+        }
+    };
+    
+    // 绘制内存映射
+    function drawMemoryMap() {
+        if (!memoryMap) return;
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = 800;
+        canvas.height = 400;
+        canvas.style.width = '100%';
+        canvas.style.height = 'auto';
+        
+        const ctx = canvas.getContext('2d');
+        
+        // 清空画布
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // 绘制内存区域
+        memoryRegions.forEach(region => {
+            const y = (region.start - 0x08000000) / (0x60000000 - 0x08000000) * canvas.height;
+            const height = (region.end - region.start) / (0x60000000 - 0x08000000) * canvas.height;
+            
+            ctx.fillStyle = region.color;
+            ctx.fillRect(0, y, canvas.width, height);
+            
+            // 添加标签
+            ctx.fillStyle = 'white';
+            ctx.font = '12px Arial';
+            ctx.fillText(region.name, 10, y + height / 2 + 4);
+        });
+        
+        // 绘制变量位置
+        variables.forEach(variable => {
+            const y = (variable.addr - 0x08000000) / (0x60000000 - 0x08000000) * canvas.height;
+            const height = Math.max(2, variable.size / (0x60000000 - 0x08000000) * canvas.height);
+            
+            ctx.fillStyle = sectionColors[variable.section] || sectionColors.default;
+            ctx.fillRect(100, y, 20, height);
+        });
+        
+        // 添加图例
+        let legendY = 20;
+        Object.entries(sectionColors).forEach(([section, color]) => {
+            ctx.fillStyle = color;
+            ctx.fillRect(canvas.width - 150, legendY, 15, 15);
+            ctx.fillStyle = 'black';
+            ctx.font = '10px Arial';
+            ctx.fillText(section, canvas.width - 130, legendY + 12);
+            legendY += 20;
+        });
+        
+        memoryMap.innerHTML = '';
+        memoryMap.appendChild(canvas);
+    }
+    
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', function() {
+        // 重置UI状态
+        if (variableTableBody) {
+            variableTableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center text-muted" style="padding:40px 16px;font-size:15px;">
+                        <div style="margin-bottom:8px;">📁</div>
+                        请上传.axf文件并点击"分析文件"
+                    </td>
+                </tr>
+            `;
+        }
+        
+
+        
+        // 隐藏选中变量信息
+        if (selectedVariablesInfo) {
+            selectedVariablesInfo.style.display = 'none';
+        }
+        
+        // 初始化HEX曲线图容器高度
+        adjustHexChartContainerHeight(0);
+        
+        // 初始化采样率输入框
+        const hexSampleRateInput = document.getElementById('hexSampleRateInput');
+        if (hexSampleRateInput) {
+            // 设置默认采样率
+            const defaultSampleRate = parseInt(hexSampleRateInput.value) || 100;
+            if (window.multiChartManager) {
+                window.multiChartManager.setSamplingRate(defaultSampleRate);
+            }
+            
+            hexSampleRateInput.addEventListener('input', function() {
+                const sampleRate = parseInt(this.value) || 500;
+                const period = Math.round(1000 / sampleRate);
+                console.log(`采样率: ${sampleRate} Hz, 对应周期: ${period} ms`);
+                
+                // 设置多变量图表的采样率
+                if (window.multiChartManager) {
+                    window.multiChartManager.setSamplingRate(sampleRate);
+                }
+            });
+        }
+        
+        // 初始化时间显示范围输入框
+        const timeDisplayRangeInput = document.getElementById('timeDisplayRangeInput');
+        if (timeDisplayRangeInput) {
+            // 设置默认时间显示范围
+            const defaultTimeDisplayRange = parseInt(timeDisplayRangeInput.value) || 10;
+            if (window.multiChartManager) {
+                window.multiChartManager.setTimeDisplayRange(defaultTimeDisplayRange);
+            }
+            
+            timeDisplayRangeInput.addEventListener('input', function() {
+                const timeDisplayRange = parseInt(this.value) || 10;
+                console.log(`时间显示范围: ${timeDisplayRange} 秒`);
+                
+                // 设置多变量图表的时间显示范围
+                if (window.multiChartManager) {
+                    window.multiChartManager.setTimeDisplayRange(timeDisplayRange);
+                }
+            });
+        }
+        
+        // 初始化串口发送功能的事件监听器
+        const sendHexCmdBtn = document.getElementById('sendHexCmdBtn');
+        
+        if (sendHexCmdBtn) {
+            sendHexCmdBtn.addEventListener('click', function() {
+                const hexSampleRateInput = document.getElementById('hexSampleRateInput');
+                
+                if (!hexSampleRateInput) {
+                    alert('采样率输入框未找到');
+                    return;
+                }
+                
+                // 检查是否有选中的变量
+                if (selectedVariables.size === 0) {
+                    alert('请先选择要监控的变量');
+                    return;
+                }
+                
+                const sampleRate = parseInt(hexSampleRateInput.value) || 100;
+                const period = Math.round(1000 / sampleRate); // 将采样率转换为周期（毫秒）
+                
+                // 根据选中的变量动态生成读取RAM的命令
+                let command = 'cmd.read_ram(';
+                let first = true;
+                
+                selectedVariables.forEach(varName => {
+                    const variable = variables.find(v => v.name === varName);
+                    if (variable) {
+                        if (!first) {
+                            command += ',';
+                        }
+                        command += `0x${variable.addr.toString(16).toUpperCase()},${variable.size}`;
+                        first = false;
+                    }
+                });
+                
+                command += `,${period})`;
+                
+                // 发送命令到串口
+                if (window.microLinkTerminal && window.microLinkTerminal.isConnected) {
+                    window.microLinkTerminal.sendCommand(command);
+                    console.log('发送命令:', command);
+                    console.log('采样率:', sampleRate, 'Hz, 周期:', period, 'ms');
+                    console.log('选中的变量数量:', selectedVariables.size);
+                } else {
+                    alert('请先连接串口');
+                }
+            });
+        }
+    });
+    </script>
+    <!-- ECharts - 使用本地文件 -->
+    <script src="assets/echarts.min.js"></script>
+    <!-- 备用CDN -->
+    <script>
+        if (typeof echarts === 'undefined') {
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"><\/script>');
+        }
+    </script>
+</body>
+</html>
