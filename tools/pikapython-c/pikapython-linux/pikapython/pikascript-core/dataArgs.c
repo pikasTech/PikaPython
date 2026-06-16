@@ -107,7 +107,7 @@ PIKA_RES args_setNone(Args* self, char* name) {
     return errCode;
 }
 
-PIKA_RES args_pushArg(Args* self, Arg* arg) {
+Arg* args_pushArgAndReturn(Args* self, Arg* arg) {
     Arg* new_arg = NULL;
     if (!arg_isSerialized(arg)) {
         new_arg = arg_copy(arg);
@@ -116,6 +116,11 @@ PIKA_RES args_pushArg(Args* self, Arg* arg) {
         new_arg = arg;
     }
     link_addNode(self, new_arg);
+    return new_arg;
+}
+
+PIKA_RES args_pushArg(Args* self, Arg* arg) {
+    args_pushArgAndReturn(self, arg);
     return PIKA_RES_OK;
 }
 

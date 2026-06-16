@@ -149,6 +149,10 @@ struct PikaVMFrame {
     PikaObj* oreg[16];
     pika_bool in_repl;
     PikaVMError error;
+    Hash local_cache_hash[8];
+    Arg* local_cache_arg[8];
+    const char* local_cache_name[8];
+    uint8_t local_cache_next;
 };
 
 typedef PikaObj* (*NewFun)(Args* args);
@@ -171,6 +175,10 @@ struct PikaObj {
     uint8_t refcnt;
     uint16_t flag;
     PikaVMFrame* vmFrame;
+    size_t list_len;
+    size_t list_capacity;
+    Arg** list_items;
+    Arg* list_top_arg;
 };
 
 typedef struct PikaGC PikaGC;

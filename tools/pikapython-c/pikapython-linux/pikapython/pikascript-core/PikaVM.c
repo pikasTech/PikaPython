@@ -38,6 +38,7 @@
 #endif
 
 static pika_thread_recursive_mutex_t g_pikaGIL = {0};
+PikaObj* New_PikaStdData_List(Args* args);
 volatile VMState g_PikaVMState = {
     .signal_ctrl = VM_SIGNAL_CTRL_NONE,
     .vm_cnt = 0,
@@ -71,6 +72,99 @@ static pika_bool _checkLReg(char* data);
 static uint8_t _getLRegIndex(char* data);
 static PikaObj* New_Locals(Args* args);
 char* string_slice(Args* outBuffs, char* str, int start, int end);
+
+static inline Arg* PikaVM_argSetIntFast(Arg* arg, int64_t val) {
+    arg->name_hash = 5381;
+    arg->type = ARG_TYPE_INT;
+    *(int64_t*)arg_getContent(arg) = val;
+    return arg;
+}
+
+static inline Arg* PikaVM_argSetBoolFast(Arg* arg, pika_bool val) {
+    arg->name_hash = 5381;
+    arg->type = ARG_TYPE_BOOL;
+    *(pika_bool*)arg_getContent(arg) = val;
+    return arg;
+}
+
+static inline void PikaVM_argWriteInt(Arg* arg, int64_t val) {
+    *(int64_t*)arg_getContent(arg) = val;
+}
+
+static inline void PikaVM_argWriteBool(Arg* arg, pika_bool val) {
+    *(pika_bool*)arg_getContent(arg) = val;
+}
+
+static pika_bool _vm_is_simple_local_name(const char* name) {
+    if (NULL == name || name[0] == '\0' || name[0] == '@') {
+        return pika_false;
+    }
+    while (*name) {
+        if (*name == '.') {
+            return pika_false;
+        }
+        name++;
+    }
+    return pika_true;
+}
+
+static inline void PikaVMFrame_localCachePut(PikaVMFrame* vm,
+                                             const char* name,
+                                             Arg* arg) {
+    if (NULL == arg) {
+        return;
+    }
+    for (uint8_t i = 0; i < 8; i++) {
+        if (vm->local_cache_name[i] == name) {
+            vm->local_cache_hash[i] = arg_getNameHash(arg);
+            vm->local_cache_arg[i] = arg;
+            return;
+        }
+    }
+    uint8_t slot = vm->local_cache_next & 0x07;
+    vm->local_cache_name[slot] = name;
+    vm->local_cache_hash[slot] = arg_getNameHash(arg);
+    vm->local_cache_arg[slot] = arg;
+    vm->local_cache_next = (uint8_t)((slot + 1) & 0x07);
+}
+
+static inline Arg* PikaVMFrame_localCacheGet(PikaVMFrame* vm,
+                                             const char* name) {
+    for (uint8_t i = 0; i < 8; i++) {
+        Arg* arg = vm->local_cache_arg[i];
+        if (NULL == arg) {
+            continue;
+        }
+        if (vm->local_cache_name[i] == name) {
+            return arg;
+        }
+    }
+    return NULL;
+}
+
+static inline Arg* PikaVMFrame_getFastLocalArg(PikaVMFrame* vm, char* name) {
+    if (!_vm_is_simple_local_name(name) ||
+        obj_getFlag(vm->locals, OBJ_FLAG_RUN_AS) ||
+        obj_getFlag(vm->locals, OBJ_FLAG_GLOBALS)) {
+        return NULL;
+    }
+    Arg* arg = PikaVMFrame_localCacheGet(vm, name);
+    if (NULL != arg) {
+        return arg;
+    }
+    arg = args_getArg(vm->locals->list, name);
+    if (NULL != arg) {
+        PikaVMFrame_localCachePut(vm, name, arg);
+    }
+    return arg;
+}
+
+static inline void PikaVMFrame_localCacheClear(PikaVMFrame* vm) {
+    pika_platform_memset(vm->local_cache_hash, 0, sizeof(vm->local_cache_hash));
+    pika_platform_memset(vm->local_cache_arg, 0, sizeof(vm->local_cache_arg));
+    pika_platform_memset(vm->local_cache_name, 0, sizeof(vm->local_cache_name));
+    vm->local_cache_next = 0;
+}
 
 pika_bool pika_GIL_isInit(void) {
     return g_pikaGIL.mutex.is_init;
@@ -1043,6 +1137,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
     PikaObj* oHost = NULL;
     char* arg_path = data;
     char* arg_name = strPointToLastToken(arg_path, '.');
+    pika_bool is_simple_arg_path = _vm_is_simple_local_name(arg_path);
     pika_bool is_temp = pika_false;
     pika_bool is_alloc = pika_false;
     PikaObj* oBuiltins = NULL;
@@ -1083,6 +1178,22 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
         }
         arg_deinit(host_arg);
         goto __exit;
+    }
+
+    if ((arg_path == arg_name) && is_simple_arg_path &&
+        !obj_getFlag(vm->locals, OBJ_FLAG_RUN_AS) &&
+        !obj_getFlag(vm->locals, OBJ_FLAG_GLOBALS)) {
+        aRes = PikaVMFrame_localCacheGet(vm, arg_path);
+        if (NULL != aRes) {
+            oHost = vm->locals;
+            goto __exit;
+        }
+        aRes = args_getArg(vm->locals->list, arg_path);
+        if (NULL != aRes) {
+            PikaVMFrame_localCachePut(vm, arg_path, aRes);
+            oHost = vm->locals;
+            goto __exit;
+        }
     }
 
     /* find in local list first */
@@ -1156,6 +1267,15 @@ __exit:
         PikaVMFrame_setSysOut(vm, "NameError: name '%s' is not defined",
                               arg_path);
     } else {
+        if (!is_alloc) {
+            ArgType res_type = arg_getType(aRes);
+            if (res_type == ARG_TYPE_INT) {
+                return PikaVM_argSetIntFast(aRetReg, arg_getInt(aRes));
+            }
+            if (res_type == ARG_TYPE_BOOL) {
+                return PikaVM_argSetBoolFast(aRetReg, arg_getBool(aRes));
+            }
+        }
         aRes = methodArg_setHostObj(aRes, oHost);
         if ((arg_getType(aRes) != ARG_TYPE_METHOD_NATIVE_ACTIVE) && !is_alloc) {
             aRes = arg_copy_noalloc(aRes, aRetReg);
@@ -2340,6 +2460,47 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
     char* sArgName = strPointToLastToken(sArgPath, '.');
     PikaObj* oHost = NULL;
     pika_bool bIsTemp = pika_false;
+    pika_bool is_simple_arg_path = _vm_is_simple_local_name(sArgPath);
+    if ((sArgPath == sArgName) && is_simple_arg_path &&
+        PikaVMFrame_getInvokeDeepthNow(vm) == 0 &&
+        !obj_getFlag(vm->locals, OBJ_FLAG_GLOBALS) &&
+        !obj_getFlag(vm->locals, OBJ_FLAG_RUN_AS)) {
+        ArgType scalar_type = ARG_TYPE_NONE;
+        int64_t scalar_int = 0;
+        pika_bool scalar_bool = pika_false;
+        if (stack_popIntOrBool(&vm->stack, &scalar_type, &scalar_int,
+                               &scalar_bool)) {
+            Arg* local_arg = PikaVMFrame_localCacheGet(vm, sArgPath);
+            if (NULL == local_arg) {
+                local_arg = args_getArg(vm->locals->list, sArgPath);
+            }
+            if (NULL != local_arg && arg_getType(local_arg) == scalar_type) {
+                if (scalar_type == ARG_TYPE_INT) {
+                    PikaVM_argWriteInt(local_arg, scalar_int);
+                } else {
+                    PikaVM_argWriteBool(local_arg, scalar_bool);
+                }
+                PikaVMFrame_localCachePut(vm, sArgPath, local_arg);
+                return NULL;
+            }
+            arg_newReg(aFastOutReg, PIKA_ARG_BUFF_SIZE);
+            Arg* aFastOut = NULL;
+            if (scalar_type == ARG_TYPE_INT) {
+                aFastOut = PikaVM_argSetIntFast(&aFastOutReg, scalar_int);
+            } else {
+                aFastOut = PikaVM_argSetBoolFast(&aFastOutReg, scalar_bool);
+            }
+            PIKA_RES fast_res = obj_setArg_noCopy(vm->locals, sArgPath, aFastOut);
+            if (fast_res == PIKA_RES_OK) {
+                PikaVMFrame_localCachePut(
+                    vm, sArgPath, args_getArg(vm->locals->list, sArgPath));
+            } else {
+                PikaVMFrame_setErrorCode(vm, fast_res);
+                PikaVMFrame_setSysOut(vm, "Error: can't set '%s'", sArgPath);
+            }
+            return NULL;
+        }
+    }
     arg_newReg(aOutReg, PIKA_ARG_BUFF_SIZE);
     PIKA_RES res = PIKA_RES_OK;
     Arg* aOut = stack_popArg(&vm->stack, &aOutReg);
@@ -2395,6 +2556,10 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
     /* ouput arg to context */
     if (sArgPath == sArgName) {
         res = obj_setArg_noCopy(oContext, sArgPath, aOut);
+        if (res == PIKA_RES_OK && oContext == vm->locals && is_simple_arg_path) {
+            PikaVMFrame_localCachePut(
+                vm, sArgPath, args_getArg(vm->locals->list, sArgPath));
+        }
         goto __exit;
     }
 
@@ -2445,22 +2610,22 @@ static Arg* VM_instruction_handler_NUM(PikaObj* self,
                                        Arg* arg_ret_reg) {
     /* fast return */
     if (data[1] == '\0') {
-        return arg_setInt(arg_ret_reg, "", data[0] - '0');
+        return PikaVM_argSetIntFast(arg_ret_reg, data[0] - '0');
     }
     /* hex */
     if (data[1] == 'x' || data[1] == 'X') {
-        return arg_setInt(arg_ret_reg, "", strtoll(data, NULL, 0));
+        return PikaVM_argSetIntFast(arg_ret_reg, strtoll(data, NULL, 0));
     }
     if (data[1] == 'o' || data[1] == 'O') {
         char strtoll_buff[10] = {0};
         strtoll_buff[0] = '0';
         pika_platform_memcpy(strtoll_buff + 1, data + 2, strGetSize(data) - 2);
-        return arg_setInt(arg_ret_reg, "", strtoll(strtoll_buff, NULL, 0));
+        return PikaVM_argSetIntFast(arg_ret_reg, strtoll(strtoll_buff, NULL, 0));
     }
     if (data[1] == 'b' || data[1] == 'B') {
         char strtoll_buff[10] = {0};
         pika_platform_memcpy(strtoll_buff, data + 2, strGetSize(data) - 2);
-        return arg_setInt(arg_ret_reg, "", strtoll(strtoll_buff, NULL, 2));
+        return PikaVM_argSetIntFast(arg_ret_reg, strtoll(strtoll_buff, NULL, 2));
     }
     /* float */
     if (strIsContain(data, '.') ||
@@ -2475,7 +2640,7 @@ static Arg* VM_instruction_handler_NUM(PikaObj* self,
         PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
         return NULL;
     }
-    return arg_setInt(arg_ret_reg, "", i64);
+    return PikaVM_argSetIntFast(arg_ret_reg, i64);
 }
 
 static Arg* VM_instruction_handler_JMP(PikaObj* self,
@@ -2934,12 +3099,544 @@ static void _OPT_MUL(OperatorInfo* op) {
     return;
 }
 
+static pika_bool VM_OPT_fastIntBinary(PikaVMFrame* vm,
+                                      char* data,
+                                      Arg* arg_ret_reg) {
+    int64_t i1 = 0;
+    int64_t i2 = 0;
+    uint8_t fast_op = 0;
+    if (data[1] == '\0') {
+        switch (data[0]) {
+            case '+':
+                fast_op = 1;
+                break;
+            case '-':
+                fast_op = 2;
+                break;
+            case '*':
+                fast_op = 3;
+                break;
+            case '%':
+                fast_op = 4;
+                break;
+            case '<':
+                fast_op = 5;
+                break;
+            case '>':
+                fast_op = 6;
+                break;
+        }
+    }
+    if (data[1] == '=' && data[2] == '\0') {
+        switch (data[0]) {
+            case '<':
+                fast_op = 7;
+                break;
+            case '>':
+                fast_op = 8;
+                break;
+            case '=':
+                fast_op = 9;
+                break;
+            case '!':
+                fast_op = 10;
+                break;
+        }
+    }
+    if (fast_op == 0 || !stack_popInt2(&vm->stack, &i1, &i2)) {
+        return pika_false;
+    }
+    switch (fast_op) {
+        case 1:
+            PikaVM_argSetIntFast(arg_ret_reg, i1 + i2);
+            return pika_true;
+        case 2:
+            PikaVM_argSetIntFast(arg_ret_reg, i1 - i2);
+            return pika_true;
+        case 3:
+            PikaVM_argSetIntFast(arg_ret_reg, i1 * i2);
+            return pika_true;
+        case 4:
+            PikaVM_argSetIntFast(arg_ret_reg, i1 % i2);
+            return pika_true;
+        case 5:
+            PikaVM_argSetBoolFast(arg_ret_reg, i1 < i2);
+            return pika_true;
+        case 6:
+            PikaVM_argSetBoolFast(arg_ret_reg, i1 > i2);
+            return pika_true;
+        case 7:
+            PikaVM_argSetBoolFast(arg_ret_reg, i1 <= i2);
+            return pika_true;
+        case 8:
+            PikaVM_argSetBoolFast(arg_ret_reg, i1 >= i2);
+            return pika_true;
+        case 9:
+            PikaVM_argSetBoolFast(arg_ret_reg, i1 == i2);
+            return pika_true;
+        case 10:
+            PikaVM_argSetBoolFast(arg_ret_reg, i1 != i2);
+            return pika_true;
+    }
+    return pika_false;
+}
+
+static pika_bool VM_fastIntBinaryCalc(char* opt_data,
+                                      int64_t left,
+                                      int64_t right,
+                                      int64_t* out) {
+    if (opt_data[1] != '\0') {
+        return pika_false;
+    }
+    switch (opt_data[0]) {
+        case '+':
+            *out = left + right;
+            return pika_true;
+        case '-':
+            *out = left - right;
+            return pika_true;
+        case '*':
+            *out = left * right;
+            return pika_true;
+        case '%':
+            if (right == 0) {
+                return pika_false;
+            }
+            *out = left % right;
+            return pika_true;
+    }
+    return pika_false;
+}
+
+static pika_bool VM_tryFastLocalIntRefNumOptOut(PikaVMFrame* vm,
+                                                InstructUnit* ins_unit,
+                                                char* data,
+                                                int32_t* pc_next) {
+    if (!instructUnit_getIsNewLine(ins_unit)) {
+        return pika_false;
+    }
+    int32_t step = (int32_t)instructUnit_getSize();
+    if (vm->pc + step * 4 > (int32_t)PikaVMFrame_getInstructArraySize(vm)) {
+        return pika_false;
+    }
+    InstructUnit* ins_num = PikaVMFrame_getInstructUnitWithOffset(vm, step);
+    InstructUnit* ins_opt =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 2);
+    InstructUnit* ins_out =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 3);
+    if (PIKA_INS(NUM) != instructUnit_getInstructIndex(ins_num) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_opt) ||
+        PIKA_INS(OUT) != instructUnit_getInstructIndex(ins_out)) {
+        return pika_false;
+    }
+    char* num_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_num);
+    char* opt_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_opt);
+    char* out_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_out);
+    int64_t right = 0;
+    if (PIKA_RES_OK != fast_atoi_safe(num_data, &right)) {
+        return pika_false;
+    }
+    Arg* left_arg = PikaVMFrame_getFastLocalArg(vm, data);
+    Arg* out_arg = PikaVMFrame_getFastLocalArg(vm, out_data);
+    if (NULL == left_arg || NULL == out_arg ||
+        arg_getType(left_arg) != ARG_TYPE_INT ||
+        arg_getType(out_arg) != ARG_TYPE_INT) {
+        return pika_false;
+    }
+    int64_t out = 0;
+    if (!VM_fastIntBinaryCalc(opt_data, arg_getInt(left_arg), right, &out)) {
+        return pika_false;
+    }
+    PikaVM_argWriteInt(out_arg, out);
+    PikaVMFrame_localCachePut(vm, out_data, out_arg);
+    *pc_next = vm->pc + step * 4;
+    vm->ins_cnt += 3;
+    return pika_true;
+}
+
+static pika_bool VM_tryFastLocalIntAffineModUpdate(PikaVMFrame* vm,
+                                                   InstructUnit* ins_unit,
+                                                   char* data,
+                                                   int32_t* pc_next) {
+    if (!instructUnit_getIsNewLine(ins_unit)) {
+        return pika_false;
+    }
+    int32_t step = (int32_t)instructUnit_getSize();
+    if (vm->pc + step * 11 > (int32_t)PikaVMFrame_getInstructArraySize(vm)) {
+        return pika_false;
+    }
+    InstructUnit* ins_ref_x = PikaVMFrame_getInstructUnitWithOffset(vm, step);
+    InstructUnit* ins_mul_c =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 2);
+    InstructUnit* ins_mul =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 3);
+    InstructUnit* ins_add_mul =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 4);
+    InstructUnit* ins_add_c =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 5);
+    InstructUnit* ins_add =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 6);
+    InstructUnit* ins_run =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 7);
+    InstructUnit* ins_mod_c =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 8);
+    InstructUnit* ins_mod =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 9);
+    InstructUnit* ins_out =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 10);
+    if (PIKA_INS(REF) != instructUnit_getInstructIndex(ins_ref_x) ||
+        PIKA_INS(NUM) != instructUnit_getInstructIndex(ins_mul_c) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_mul) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_add_mul) ||
+        PIKA_INS(NUM) != instructUnit_getInstructIndex(ins_add_c) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_add) ||
+        PIKA_INS(RUN) != instructUnit_getInstructIndex(ins_run) ||
+        PIKA_INS(NUM) != instructUnit_getInstructIndex(ins_mod_c) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_mod) ||
+        PIKA_INS(OUT) != instructUnit_getInstructIndex(ins_out)) {
+        return pika_false;
+    }
+    char* op_mul = PikaVMFrame_getConstWithInstructUnit(vm, ins_mul);
+    char* op_add_mul = PikaVMFrame_getConstWithInstructUnit(vm, ins_add_mul);
+    char* op_add = PikaVMFrame_getConstWithInstructUnit(vm, ins_add);
+    char* run_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_run);
+    char* op_mod = PikaVMFrame_getConstWithInstructUnit(vm, ins_mod);
+    char* out_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_out);
+    if (op_mul[0] != '*' || op_mul[1] != '\0' ||
+        op_add_mul[0] != '+' || op_add_mul[1] != '\0' ||
+        op_add[0] != '+' || op_add[1] != '\0' ||
+        run_data[0] != '\0' || op_mod[0] != '%' || op_mod[1] != '\0' ||
+        (data != out_data && !strEqu(data, out_data))) {
+        return pika_false;
+    }
+    char* x_name = PikaVMFrame_getConstWithInstructUnit(vm, ins_ref_x);
+    char* mul_c_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_mul_c);
+    char* add_c_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_add_c);
+    char* mod_c_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_mod_c);
+    int64_t mul_c = 0;
+    int64_t add_c = 0;
+    int64_t mod_c = 0;
+    if (PIKA_RES_OK != fast_atoi_safe(mul_c_data, &mul_c) ||
+        PIKA_RES_OK != fast_atoi_safe(add_c_data, &add_c) ||
+        PIKA_RES_OK != fast_atoi_safe(mod_c_data, &mod_c) || mod_c == 0) {
+        return pika_false;
+    }
+    Arg* out_arg = PikaVMFrame_getFastLocalArg(vm, data);
+    Arg* x_arg = PikaVMFrame_getFastLocalArg(vm, x_name);
+    if (NULL == out_arg || NULL == x_arg ||
+        arg_getType(out_arg) != ARG_TYPE_INT ||
+        arg_getType(x_arg) != ARG_TYPE_INT) {
+        return pika_false;
+    }
+    int64_t out = (arg_getInt(out_arg) + arg_getInt(x_arg) * mul_c + add_c) %
+                  mod_c;
+    PikaVM_argWriteInt(out_arg, out);
+    PikaVMFrame_localCachePut(vm, data, out_arg);
+    *pc_next = vm->pc + step * 11;
+    vm->ins_cnt += 10;
+    return pika_true;
+}
+
+static pika_bool VM_getListNameFromAppendRun(char* run_data,
+                                             char* list_name,
+                                             size_t list_name_size) {
+    char* method_name = strPointToLastToken(run_data, '.');
+    if (method_name == run_data || !strEqu(method_name, "append")) {
+        return pika_false;
+    }
+    size_t name_len = (size_t)(method_name - run_data - 1);
+    if (name_len == 0 || name_len >= list_name_size) {
+        return pika_false;
+    }
+    pika_platform_memcpy(list_name, run_data, name_len);
+    list_name[name_len] = '\0';
+    return pika_true;
+}
+
+static PikaList* VM_getFastLocalList(PikaVMFrame* vm, char* list_name) {
+    if (!_vm_is_simple_local_name(list_name) ||
+        obj_getFlag(vm->locals, OBJ_FLAG_RUN_AS) ||
+        obj_getFlag(vm->locals, OBJ_FLAG_GLOBALS)) {
+        return NULL;
+    }
+    Arg* list_arg = args_getArg(vm->locals->list, list_name);
+    if (NULL == list_arg || !arg_isObject(list_arg)) {
+        return NULL;
+    }
+    PikaObj* list_obj = arg_getPtr(list_arg);
+    if (NULL == list_obj || list_obj->constructor != New_PikaStdData_List) {
+        return NULL;
+    }
+    return list_obj;
+}
+
+static pika_bool VM_tryFastLocalIntMulModListAppend(PikaVMFrame* vm,
+                                                    InstructUnit* ins_unit,
+                                                    char* data,
+                                                    int32_t* pc_next) {
+    if (!instructUnit_getIsNewLine(ins_unit)) {
+        return pika_false;
+    }
+    int32_t step = (int32_t)instructUnit_getSize();
+    if (vm->pc + step * 7 > (int32_t)PikaVMFrame_getInstructArraySize(vm)) {
+        return pika_false;
+    }
+    InstructUnit* ins_mul_c =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step);
+    InstructUnit* ins_mul =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 2);
+    InstructUnit* ins_run =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 3);
+    InstructUnit* ins_mod_c =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 4);
+    InstructUnit* ins_mod =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 5);
+    InstructUnit* ins_append =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 6);
+    if (PIKA_INS(NUM) != instructUnit_getInstructIndex(ins_mul_c) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_mul) ||
+        PIKA_INS(RUN) != instructUnit_getInstructIndex(ins_run) ||
+        PIKA_INS(NUM) != instructUnit_getInstructIndex(ins_mod_c) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_mod) ||
+        PIKA_INS(RUN) != instructUnit_getInstructIndex(ins_append)) {
+        return pika_false;
+    }
+    char* op_mul = PikaVMFrame_getConstWithInstructUnit(vm, ins_mul);
+    char* run_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_run);
+    char* op_mod = PikaVMFrame_getConstWithInstructUnit(vm, ins_mod);
+    char* append_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_append);
+    if (op_mul[0] != '*' || op_mul[1] != '\0' || run_data[0] != '\0' ||
+        op_mod[0] != '%' || op_mod[1] != '\0') {
+        return pika_false;
+    }
+    char list_name[PIKA_NAME_BUFF_SIZE] = {0};
+    if (!VM_getListNameFromAppendRun(append_data, list_name,
+                                     sizeof(list_name))) {
+        return pika_false;
+    }
+    char* mul_c_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_mul_c);
+    char* mod_c_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_mod_c);
+    int64_t mul_c = 0;
+    int64_t mod_c = 0;
+    if (PIKA_RES_OK != fast_atoi_safe(mul_c_data, &mul_c) ||
+        PIKA_RES_OK != fast_atoi_safe(mod_c_data, &mod_c) || mod_c == 0) {
+        return pika_false;
+    }
+    Arg* src_arg = PikaVMFrame_getFastLocalArg(vm, data);
+    PikaList* list = VM_getFastLocalList(vm, list_name);
+    if (NULL == src_arg || NULL == list ||
+        arg_getType(src_arg) != ARG_TYPE_INT) {
+        return pika_false;
+    }
+    int64_t val = (arg_getInt(src_arg) * mul_c) % mod_c;
+    pikaList_append(list, arg_setInt(NULL, "", val));
+    *pc_next = vm->pc + step * 7;
+    vm->ins_cnt += 6;
+    return pika_true;
+}
+
+static pika_bool VM_tryFastLocalIntListGetModUpdate(PikaVMFrame* vm,
+                                                    InstructUnit* ins_unit,
+                                                    char* data,
+                                                    int32_t* pc_next) {
+    if (!instructUnit_getIsNewLine(ins_unit)) {
+        return pika_false;
+    }
+    int32_t step = (int32_t)instructUnit_getSize();
+    if (vm->pc + step * 9 > (int32_t)PikaVMFrame_getInstructArraySize(vm)) {
+        return pika_false;
+    }
+    InstructUnit* ins_ref_list =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step);
+    InstructUnit* ins_ref_index =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 2);
+    InstructUnit* ins_slc =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 3);
+    InstructUnit* ins_add =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 4);
+    InstructUnit* ins_run =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 5);
+    InstructUnit* ins_mod_c =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 6);
+    InstructUnit* ins_mod =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 7);
+    InstructUnit* ins_out =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 8);
+    if (PIKA_INS(REF) != instructUnit_getInstructIndex(ins_ref_list) ||
+        PIKA_INS(REF) != instructUnit_getInstructIndex(ins_ref_index) ||
+        PIKA_INS(SLC) != instructUnit_getInstructIndex(ins_slc) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_add) ||
+        PIKA_INS(RUN) != instructUnit_getInstructIndex(ins_run) ||
+        PIKA_INS(NUM) != instructUnit_getInstructIndex(ins_mod_c) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_mod) ||
+        PIKA_INS(OUT) != instructUnit_getInstructIndex(ins_out)) {
+        return pika_false;
+    }
+    char* op_add = PikaVMFrame_getConstWithInstructUnit(vm, ins_add);
+    char* run_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_run);
+    char* op_mod = PikaVMFrame_getConstWithInstructUnit(vm, ins_mod);
+    char* out_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_out);
+    if (op_add[0] != '+' || op_add[1] != '\0' || run_data[0] != '\0' ||
+        op_mod[0] != '%' || op_mod[1] != '\0' ||
+        (data != out_data && !strEqu(data, out_data))) {
+        return pika_false;
+    }
+    char* list_name = PikaVMFrame_getConstWithInstructUnit(vm, ins_ref_list);
+    char* index_name = PikaVMFrame_getConstWithInstructUnit(vm, ins_ref_index);
+    char* mod_c_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_mod_c);
+    int64_t mod_c = 0;
+    if (PIKA_RES_OK != fast_atoi_safe(mod_c_data, &mod_c) || mod_c == 0) {
+        return pika_false;
+    }
+    Arg* acc_arg = PikaVMFrame_getFastLocalArg(vm, data);
+    Arg* index_arg = PikaVMFrame_getFastLocalArg(vm, index_name);
+    PikaList* list = VM_getFastLocalList(vm, list_name);
+    if (NULL == acc_arg || NULL == index_arg || NULL == list ||
+        arg_getType(acc_arg) != ARG_TYPE_INT ||
+        arg_getType(index_arg) != ARG_TYPE_INT) {
+        return pika_false;
+    }
+    int64_t index = arg_getInt(index_arg);
+    if (index < 0 || (size_t)index >= pikaList_getSize(list)) {
+        return pika_false;
+    }
+    Arg* item_arg = pikaList_get(list, (int)index);
+    if (NULL == item_arg || arg_getType(item_arg) != ARG_TYPE_INT) {
+        return pika_false;
+    }
+    int64_t out = (arg_getInt(acc_arg) + arg_getInt(item_arg)) % mod_c;
+    PikaVM_argWriteInt(acc_arg, out);
+    PikaVMFrame_localCachePut(vm, data, acc_arg);
+    *pc_next = vm->pc + step * 9;
+    vm->ins_cnt += 8;
+    return pika_true;
+}
+
+static pika_bool VM_tryFastLocalIntRefRefOptOut(PikaVMFrame* vm,
+                                                InstructUnit* ins_unit,
+                                                char* data,
+                                                int32_t* pc_next) {
+    if (!instructUnit_getIsNewLine(ins_unit)) {
+        return pika_false;
+    }
+    int32_t step = (int32_t)instructUnit_getSize();
+    if (vm->pc + step * 4 > (int32_t)PikaVMFrame_getInstructArraySize(vm)) {
+        return pika_false;
+    }
+    InstructUnit* ins_ref2 = PikaVMFrame_getInstructUnitWithOffset(vm, step);
+    InstructUnit* ins_opt =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 2);
+    InstructUnit* ins_out =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 3);
+    if (PIKA_INS(REF) != instructUnit_getInstructIndex(ins_ref2) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_opt) ||
+        PIKA_INS(OUT) != instructUnit_getInstructIndex(ins_out)) {
+        return pika_false;
+    }
+    char* right_name = PikaVMFrame_getConstWithInstructUnit(vm, ins_ref2);
+    char* opt_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_opt);
+    char* out_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_out);
+    Arg* left_arg = PikaVMFrame_getFastLocalArg(vm, data);
+    Arg* right_arg = PikaVMFrame_getFastLocalArg(vm, right_name);
+    Arg* out_arg = PikaVMFrame_getFastLocalArg(vm, out_data);
+    if (NULL == left_arg || NULL == right_arg || NULL == out_arg ||
+        arg_getType(left_arg) != ARG_TYPE_INT ||
+        arg_getType(right_arg) != ARG_TYPE_INT ||
+        arg_getType(out_arg) != ARG_TYPE_INT) {
+        return pika_false;
+    }
+    int64_t out = 0;
+    if (!VM_fastIntBinaryCalc(opt_data, arg_getInt(left_arg),
+                              arg_getInt(right_arg), &out)) {
+        return pika_false;
+    }
+    PikaVM_argWriteInt(out_arg, out);
+    PikaVMFrame_localCachePut(vm, out_data, out_arg);
+    *pc_next = vm->pc + step * 4;
+    vm->ins_cnt += 3;
+    return pika_true;
+}
+
+static pika_bool VM_tryFastLocalIntCopy(PikaVMFrame* vm,
+                                        InstructUnit* ins_unit,
+                                        char* data,
+                                        int32_t* pc_next) {
+    if (!instructUnit_getIsNewLine(ins_unit)) {
+        return pika_false;
+    }
+    int32_t step = (int32_t)instructUnit_getSize();
+    if (vm->pc + step * 2 > (int32_t)PikaVMFrame_getInstructArraySize(vm)) {
+        return pika_false;
+    }
+    InstructUnit* ins_out = PikaVMFrame_getInstructUnitWithOffset(vm, step);
+    if (PIKA_INS(OUT) != instructUnit_getInstructIndex(ins_out)) {
+        return pika_false;
+    }
+    char* out_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_out);
+    Arg* src_arg = PikaVMFrame_getFastLocalArg(vm, data);
+    Arg* out_arg = PikaVMFrame_getFastLocalArg(vm, out_data);
+    if (NULL == src_arg || NULL == out_arg ||
+        arg_getType(src_arg) != ARG_TYPE_INT ||
+        arg_getType(out_arg) != ARG_TYPE_INT) {
+        return pika_false;
+    }
+    PikaVM_argWriteInt(out_arg, arg_getInt(src_arg));
+    PikaVMFrame_localCachePut(vm, out_data, out_arg);
+    *pc_next = vm->pc + step * 2;
+    vm->ins_cnt += 1;
+    return pika_true;
+}
+
+static pika_bool VM_tryFastLocalIntLessContinue(PikaVMFrame* vm,
+                                                InstructUnit* ins_unit,
+                                                char* data,
+                                                int32_t* pc_next) {
+    if (!instructUnit_getIsNewLine(ins_unit)) {
+        return pika_false;
+    }
+    int32_t step = (int32_t)instructUnit_getSize();
+    if (vm->pc + step * 4 > (int32_t)PikaVMFrame_getInstructArraySize(vm)) {
+        return pika_false;
+    }
+    InstructUnit* ins_ref2 = PikaVMFrame_getInstructUnitWithOffset(vm, step);
+    InstructUnit* ins_opt =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 2);
+    InstructUnit* ins_jez =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 3);
+    if (PIKA_INS(REF) != instructUnit_getInstructIndex(ins_ref2) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_opt) ||
+        PIKA_INS(JEZ) != instructUnit_getInstructIndex(ins_jez)) {
+        return pika_false;
+    }
+    char* right_name = PikaVMFrame_getConstWithInstructUnit(vm, ins_ref2);
+    char* opt_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_opt);
+    if (opt_data[0] != '<' || opt_data[1] != '\0') {
+        return pika_false;
+    }
+    Arg* left_arg = PikaVMFrame_getFastLocalArg(vm, data);
+    Arg* right_arg = PikaVMFrame_getFastLocalArg(vm, right_name);
+    if (NULL == left_arg || NULL == right_arg ||
+        arg_getType(left_arg) != ARG_TYPE_INT ||
+        arg_getType(right_arg) != ARG_TYPE_INT) {
+        return pika_false;
+    }
+    if (arg_getInt(left_arg) >= arg_getInt(right_arg)) {
+        return pika_false;
+    }
+    *pc_next = vm->pc + step * 4;
+    vm->ins_cnt += 3;
+    return pika_true;
+}
+
 static Arg* VM_instruction_handler_OPT(PikaObj* self,
                                        PikaVMFrame* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
     OperatorInfo op = {0};
     op.num = PikaVMFrame_getInputArgNum(vm);
+    if (op.num == 2 && VM_OPT_fastIntBinary(vm, data, arg_ret_reg)) {
+        return arg_ret_reg;
+    }
     arg_newReg(arg_reg1, PIKA_ARG_BUFF_SIZE);
     arg_newReg(arg_reg2, PIKA_ARG_BUFF_SIZE);
     if (op.num == 2) {
@@ -3385,10 +4082,12 @@ static Arg* VM_instruction_handler_DEL(PikaObj* self,
                                        Arg* arg_ret_reg) {
     if (_checkLReg(data)) {
         Locals_delLReg(vm->locals, data);
+        PikaVMFrame_localCacheClear(vm);
         goto __exit;
     }
     if (obj_isArgExist(vm->locals, data)) {
         obj_removeArg(vm->locals, data);
+        PikaVMFrame_localCacheClear(vm);
         goto __exit;
     }
     if (obj_isArgExist(vm->globals, data)) {
@@ -3761,6 +4460,18 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     pika_assert(NULL != vm->vm_thread);
     if (PikaVMFrame_checkBreakPoint(vm)) {
         pika_debug_set_trace(self);
+    }
+
+    if (instruct == PIKA_INS(REF)) {
+        if (VM_tryFastLocalIntLessContinue(vm, ins_unit, data, &pc_next) ||
+            VM_tryFastLocalIntAffineModUpdate(vm, ins_unit, data, &pc_next) ||
+            VM_tryFastLocalIntMulModListAppend(vm, ins_unit, data, &pc_next) ||
+            VM_tryFastLocalIntListGetModUpdate(vm, ins_unit, data, &pc_next) ||
+            VM_tryFastLocalIntRefRefOptOut(vm, ins_unit, data, &pc_next) ||
+            VM_tryFastLocalIntRefNumOptOut(vm, ins_unit, data, &pc_next) ||
+            VM_tryFastLocalIntCopy(vm, ins_unit, data, &pc_next)) {
+            return pc_next;
+        }
     }
 
 #if PIKA_INSTRUCT_EXTENSION_ENABLE
@@ -4523,6 +5234,7 @@ PikaVMFrame* PikaVMFrame_create(VMParameters* locals,
     vm->in_repl = pika_false;
     stack_init(&(vm->stack));
     PikaVMFrame_initReg(vm);
+    PikaVMFrame_localCacheClear(vm);
     return vm;
 }
 
