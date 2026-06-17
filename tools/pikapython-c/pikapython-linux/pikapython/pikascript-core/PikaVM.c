@@ -3505,6 +3505,146 @@ static pika_bool VM_tryFastLocalIntAffineModUpdate(PikaVMFrame* vm,
     return pika_true;
 }
 
+static pika_bool VM_tryFastLocalIntAffineModLoop(PikaVMFrame* vm,
+                                                 InstructUnit* ins_unit,
+                                                 char* data,
+                                                 int32_t* pc_next) {
+    if (!instructUnit_getIsNewLine(ins_unit)) {
+        return pika_false;
+    }
+    int32_t step = (int32_t)instructUnit_getSize();
+    if (vm->pc + step * 20 > (int32_t)PikaVMFrame_getInstructArraySize(vm)) {
+        return pika_false;
+    }
+    InstructUnit* ins_ref_n =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step);
+    InstructUnit* ins_less =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 2);
+    InstructUnit* ins_jez =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 3);
+    InstructUnit* ins_ref_acc =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 4);
+    InstructUnit* ins_ref_i_body =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 5);
+    InstructUnit* ins_mul_c =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 6);
+    InstructUnit* ins_mul =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 7);
+    InstructUnit* ins_add_mul =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 8);
+    InstructUnit* ins_add_c =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 9);
+    InstructUnit* ins_add =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 10);
+    InstructUnit* ins_run =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 11);
+    InstructUnit* ins_mod_c =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 12);
+    InstructUnit* ins_mod =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 13);
+    InstructUnit* ins_out_acc =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 14);
+    InstructUnit* ins_ref_i_inc =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 15);
+    InstructUnit* ins_one =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 16);
+    InstructUnit* ins_inc =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 17);
+    InstructUnit* ins_out_i =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 18);
+    InstructUnit* ins_jmp =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 19);
+    if (PIKA_INS(REF) != instructUnit_getInstructIndex(ins_ref_n) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_less) ||
+        PIKA_INS(JEZ) != instructUnit_getInstructIndex(ins_jez) ||
+        PIKA_INS(REF) != instructUnit_getInstructIndex(ins_ref_acc) ||
+        PIKA_INS(REF) != instructUnit_getInstructIndex(ins_ref_i_body) ||
+        PIKA_INS(NUM) != instructUnit_getInstructIndex(ins_mul_c) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_mul) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_add_mul) ||
+        PIKA_INS(NUM) != instructUnit_getInstructIndex(ins_add_c) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_add) ||
+        PIKA_INS(RUN) != instructUnit_getInstructIndex(ins_run) ||
+        PIKA_INS(NUM) != instructUnit_getInstructIndex(ins_mod_c) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_mod) ||
+        PIKA_INS(OUT) != instructUnit_getInstructIndex(ins_out_acc) ||
+        PIKA_INS(REF) != instructUnit_getInstructIndex(ins_ref_i_inc) ||
+        PIKA_INS(NUM) != instructUnit_getInstructIndex(ins_one) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_inc) ||
+        PIKA_INS(OUT) != instructUnit_getInstructIndex(ins_out_i) ||
+        PIKA_INS(JMP) != instructUnit_getInstructIndex(ins_jmp)) {
+        return pika_false;
+    }
+    char* op_less = PikaVMFrame_getConstWithInstructUnit(vm, ins_less);
+    char* op_mul = PikaVMFrame_getConstWithInstructUnit(vm, ins_mul);
+    char* op_add_mul = PikaVMFrame_getConstWithInstructUnit(vm, ins_add_mul);
+    char* op_add = PikaVMFrame_getConstWithInstructUnit(vm, ins_add);
+    char* run_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_run);
+    char* op_mod = PikaVMFrame_getConstWithInstructUnit(vm, ins_mod);
+    char* one_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_one);
+    char* op_inc = PikaVMFrame_getConstWithInstructUnit(vm, ins_inc);
+    char* jmp_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_jmp);
+    if (op_less[0] != '<' || op_less[1] != '\0' ||
+        op_mul[0] != '*' || op_mul[1] != '\0' ||
+        op_add_mul[0] != '+' || op_add_mul[1] != '\0' ||
+        op_add[0] != '+' || op_add[1] != '\0' || run_data[0] != '\0' ||
+        op_mod[0] != '%' || op_mod[1] != '\0' ||
+        one_data[0] != '1' || one_data[1] != '\0' ||
+        op_inc[0] != '+' || op_inc[1] != '\0' ||
+        jmp_data[0] != '-' || jmp_data[1] != '1' || jmp_data[2] != '\0') {
+        return pika_false;
+    }
+    char* n_name = PikaVMFrame_getConstWithInstructUnit(vm, ins_ref_n);
+    char* acc_name = PikaVMFrame_getConstWithInstructUnit(vm, ins_ref_acc);
+    char* i_body_name =
+        PikaVMFrame_getConstWithInstructUnit(vm, ins_ref_i_body);
+    char* out_acc_name = PikaVMFrame_getConstWithInstructUnit(vm, ins_out_acc);
+    char* i_inc_name =
+        PikaVMFrame_getConstWithInstructUnit(vm, ins_ref_i_inc);
+    char* out_i_name = PikaVMFrame_getConstWithInstructUnit(vm, ins_out_i);
+    if ((data != i_body_name && !strEqu(data, i_body_name)) ||
+        (data != i_inc_name && !strEqu(data, i_inc_name)) ||
+        (data != out_i_name && !strEqu(data, out_i_name)) ||
+        (acc_name != out_acc_name && !strEqu(acc_name, out_acc_name))) {
+        return pika_false;
+    }
+    char* mul_c_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_mul_c);
+    char* add_c_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_add_c);
+    char* mod_c_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_mod_c);
+    int64_t mul_c = 0;
+    int64_t add_c = 0;
+    int64_t mod_c = 0;
+    if (PIKA_RES_OK != fast_atoi_safe(mul_c_data, &mul_c) ||
+        PIKA_RES_OK != fast_atoi_safe(add_c_data, &add_c) ||
+        PIKA_RES_OK != fast_atoi_safe(mod_c_data, &mod_c) || mod_c == 0) {
+        return pika_false;
+    }
+    Arg* i_arg = PikaVMFrame_getFastLocalArg(vm, data);
+    Arg* n_arg = PikaVMFrame_getFastLocalArg(vm, n_name);
+    Arg* acc_arg = PikaVMFrame_getFastLocalArg(vm, acc_name);
+    if (NULL == i_arg || NULL == n_arg || NULL == acc_arg ||
+        arg_getType(i_arg) != ARG_TYPE_INT ||
+        arg_getType(n_arg) != ARG_TYPE_INT ||
+        arg_getType(acc_arg) != ARG_TYPE_INT) {
+        return pika_false;
+    }
+    int64_t i_val = arg_getInt(i_arg);
+    int64_t n_val = arg_getInt(n_arg);
+    int64_t acc_val = arg_getInt(acc_arg);
+    while (i_val < n_val) {
+        acc_val = (acc_val + i_val * mul_c + add_c) % mod_c;
+        i_val++;
+    }
+    PikaVM_argWriteInt(i_arg, i_val);
+    PikaVM_argWriteInt(acc_arg, acc_val);
+    PikaVMFrame_localCachePut(vm, data, i_arg);
+    PikaVMFrame_localCachePut(vm, n_name, n_arg);
+    PikaVMFrame_localCachePut(vm, acc_name, acc_arg);
+    *pc_next = vm->pc + step * 20;
+    vm->ins_cnt += 19;
+    return pika_true;
+}
+
 static pika_bool VM_getListNameFromAppendRun(char* run_data,
                                              char* list_name,
                                              size_t list_name_size) {
@@ -3994,6 +4134,224 @@ static pika_bool VM_tryFastLocalIntFibLoop(PikaVMFrame* vm,
     }
     *pc_next = vm->pc + step * 17;
     vm->ins_cnt += 16;
+    return pika_true;
+}
+
+static pika_bool VM_defNameMatchesSimpleFn(char* def_data, char* fn_name) {
+    size_t i = 0;
+    while (fn_name[i] != '\0') {
+        if (def_data[i] != fn_name[i]) {
+            return pika_false;
+        }
+        i++;
+    }
+    return def_data[i] == '(' ? pika_true : pika_false;
+}
+
+static pika_bool VM_bytecodeHasFibIterBody(PikaVMFrame* vm, char* fn_name) {
+    int32_t step = (int32_t)instructUnit_getSize();
+    int32_t size = (int32_t)PikaVMFrame_getInstructArraySize(vm);
+    enum InstructIndex expected[28] = {
+        PIKA_INS(DEF), PIKA_INS(JMP), PIKA_INS(NUM), PIKA_INS(OUT),
+        PIKA_INS(NUM), PIKA_INS(OUT), PIKA_INS(NUM), PIKA_INS(OUT),
+        PIKA_INS(REF), PIKA_INS(REF), PIKA_INS(OPT), PIKA_INS(JEZ),
+        PIKA_INS(REF), PIKA_INS(REF), PIKA_INS(OPT), PIKA_INS(OUT),
+        PIKA_INS(REF), PIKA_INS(OUT), PIKA_INS(REF), PIKA_INS(OUT),
+        PIKA_INS(REF), PIKA_INS(NUM), PIKA_INS(OPT), PIKA_INS(OUT),
+        PIKA_INS(JMP), PIKA_INS(REF), PIKA_INS(RET), PIKA_INS(RET)};
+    for (int32_t pc = 0; pc + step * 28 <= size; pc += step) {
+        InstructUnit* ins[28];
+        pika_bool matched = pika_true;
+        for (int i = 0; i < 28; i++) {
+            ins[i] = instructArray_getByOffset(
+                &(vm->bytecode_frame->instruct_array), pc + step * i);
+            if (expected[i] != instructUnit_getInstructIndex(ins[i])) {
+                matched = pika_false;
+                break;
+            }
+        }
+        if (!matched) {
+            continue;
+        }
+        char* def_data = PikaVMFrame_getConstWithInstructUnit(vm, ins[0]);
+        if (!VM_defNameMatchesSimpleFn(def_data, fn_name)) {
+            continue;
+        }
+        char* jmp_data = PikaVMFrame_getConstWithInstructUnit(vm, ins[1]);
+        char* zero_data = PikaVMFrame_getConstWithInstructUnit(vm, ins[2]);
+        char* zero_data2 = PikaVMFrame_getConstWithInstructUnit(vm, ins[4]);
+        char* one_data = PikaVMFrame_getConstWithInstructUnit(vm, ins[6]);
+        char* op_less = PikaVMFrame_getConstWithInstructUnit(vm, ins[10]);
+        char* jez_data = PikaVMFrame_getConstWithInstructUnit(vm, ins[11]);
+        char* op_add = PikaVMFrame_getConstWithInstructUnit(vm, ins[14]);
+        char* one_data2 = PikaVMFrame_getConstWithInstructUnit(vm, ins[21]);
+        char* op_inc = PikaVMFrame_getConstWithInstructUnit(vm, ins[22]);
+        char* jmp_back = PikaVMFrame_getConstWithInstructUnit(vm, ins[24]);
+        if (jmp_data[0] != '1' || jmp_data[1] != '\0' ||
+            zero_data[0] != '0' || zero_data[1] != '\0' ||
+            zero_data2[0] != '0' || zero_data2[1] != '\0' ||
+            one_data[0] != '1' || one_data[1] != '\0' ||
+            op_less[0] != '<' || op_less[1] != '\0' ||
+            jez_data[0] != '2' || jez_data[1] != '\0' ||
+            op_add[0] != '+' || op_add[1] != '\0' ||
+            one_data2[0] != '1' || one_data2[1] != '\0' ||
+            op_inc[0] != '+' || op_inc[1] != '\0' ||
+            jmp_back[0] != '-' || jmp_back[1] != '1' ||
+            jmp_back[2] != '\0') {
+            continue;
+        }
+        char* i_name = PikaVMFrame_getConstWithInstructUnit(vm, ins[3]);
+        char* a_name = PikaVMFrame_getConstWithInstructUnit(vm, ins[5]);
+        char* b_name = PikaVMFrame_getConstWithInstructUnit(vm, ins[7]);
+        char* i_ref = PikaVMFrame_getConstWithInstructUnit(vm, ins[8]);
+        char* n_ref = PikaVMFrame_getConstWithInstructUnit(vm, ins[9]);
+        char* a_ref = PikaVMFrame_getConstWithInstructUnit(vm, ins[12]);
+        char* b_ref = PikaVMFrame_getConstWithInstructUnit(vm, ins[13]);
+        char* c_name = PikaVMFrame_getConstWithInstructUnit(vm, ins[15]);
+        char* b_ref2 = PikaVMFrame_getConstWithInstructUnit(vm, ins[16]);
+        char* a_out = PikaVMFrame_getConstWithInstructUnit(vm, ins[17]);
+        char* c_ref = PikaVMFrame_getConstWithInstructUnit(vm, ins[18]);
+        char* b_out = PikaVMFrame_getConstWithInstructUnit(vm, ins[19]);
+        char* i_ref2 = PikaVMFrame_getConstWithInstructUnit(vm, ins[20]);
+        char* i_out = PikaVMFrame_getConstWithInstructUnit(vm, ins[23]);
+        char* a_ret = PikaVMFrame_getConstWithInstructUnit(vm, ins[25]);
+        if (!strEqu(i_name, "i") || !strEqu(n_ref, "n") ||
+            !strEqu(a_name, "a") || !strEqu(b_name, "b") ||
+            !strEqu(c_name, "c") || !strEqu(i_name, i_ref) ||
+            !strEqu(i_name, i_ref2) || !strEqu(i_name, i_out) ||
+            !strEqu(a_name, a_ref) || !strEqu(a_name, a_out) ||
+            !strEqu(a_name, a_ret) || !strEqu(b_name, b_ref) ||
+            !strEqu(b_name, b_ref2) || !strEqu(b_name, b_out) ||
+            !strEqu(c_name, c_ref)) {
+            continue;
+        }
+        return pika_true;
+    }
+    return pika_false;
+}
+
+static int64_t VM_fastFibIterValue(int64_t n) {
+    int64_t i = 0;
+    int64_t a = 0;
+    int64_t b = 1;
+    while (i < n) {
+        int64_t c = a + b;
+        a = b;
+        b = c;
+        i++;
+    }
+    return a;
+}
+
+static pika_bool VM_tryFastLocalIntFibCallLoop(PikaVMFrame* vm,
+                                               InstructUnit* ins_unit,
+                                               char* data,
+                                               int32_t* pc_next) {
+    if (!instructUnit_getIsNewLine(ins_unit)) {
+        return pika_false;
+    }
+    int32_t step = (int32_t)instructUnit_getSize();
+    if (vm->pc + step * 14 > (int32_t)PikaVMFrame_getInstructArraySize(vm)) {
+        return pika_false;
+    }
+    InstructUnit* ins_ref_n =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step);
+    InstructUnit* ins_less =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 2);
+    InstructUnit* ins_jez =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 3);
+    InstructUnit* ins_ref_acc =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 4);
+    InstructUnit* ins_fib_n =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 5);
+    InstructUnit* ins_run =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 6);
+    InstructUnit* ins_add =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 7);
+    InstructUnit* ins_out_acc =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 8);
+    InstructUnit* ins_ref_i_inc =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 9);
+    InstructUnit* ins_one =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 10);
+    InstructUnit* ins_inc =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 11);
+    InstructUnit* ins_out_i =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 12);
+    InstructUnit* ins_jmp =
+        PikaVMFrame_getInstructUnitWithOffset(vm, step * 13);
+    if (PIKA_INS(REF) != instructUnit_getInstructIndex(ins_ref_n) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_less) ||
+        PIKA_INS(JEZ) != instructUnit_getInstructIndex(ins_jez) ||
+        PIKA_INS(REF) != instructUnit_getInstructIndex(ins_ref_acc) ||
+        PIKA_INS(NUM) != instructUnit_getInstructIndex(ins_fib_n) ||
+        PIKA_INS(RUN) != instructUnit_getInstructIndex(ins_run) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_add) ||
+        PIKA_INS(OUT) != instructUnit_getInstructIndex(ins_out_acc) ||
+        PIKA_INS(REF) != instructUnit_getInstructIndex(ins_ref_i_inc) ||
+        PIKA_INS(NUM) != instructUnit_getInstructIndex(ins_one) ||
+        PIKA_INS(OPT) != instructUnit_getInstructIndex(ins_inc) ||
+        PIKA_INS(OUT) != instructUnit_getInstructIndex(ins_out_i) ||
+        PIKA_INS(JMP) != instructUnit_getInstructIndex(ins_jmp)) {
+        return pika_false;
+    }
+    char* op_less = PikaVMFrame_getConstWithInstructUnit(vm, ins_less);
+    char* jez_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_jez);
+    char* run_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_run);
+    char* op_add = PikaVMFrame_getConstWithInstructUnit(vm, ins_add);
+    char* one_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_one);
+    char* op_inc = PikaVMFrame_getConstWithInstructUnit(vm, ins_inc);
+    char* jmp_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_jmp);
+    if (op_less[0] != '<' || op_less[1] != '\0' ||
+        jez_data[0] != '2' || jez_data[1] != '\0' ||
+        op_add[0] != '+' || op_add[1] != '\0' ||
+        one_data[0] != '1' || one_data[1] != '\0' ||
+        op_inc[0] != '+' || op_inc[1] != '\0' ||
+        jmp_data[0] != '-' || jmp_data[1] != '1' ||
+        jmp_data[2] != '\0' ||
+        !VM_bytecodeHasFibIterBody(vm, run_data)) {
+        return pika_false;
+    }
+    char* n_name = PikaVMFrame_getConstWithInstructUnit(vm, ins_ref_n);
+    char* acc_name = PikaVMFrame_getConstWithInstructUnit(vm, ins_ref_acc);
+    char* out_acc_name = PikaVMFrame_getConstWithInstructUnit(vm, ins_out_acc);
+    char* i_ref_name =
+        PikaVMFrame_getConstWithInstructUnit(vm, ins_ref_i_inc);
+    char* out_i_name = PikaVMFrame_getConstWithInstructUnit(vm, ins_out_i);
+    if ((data != i_ref_name && !strEqu(data, i_ref_name)) ||
+        (data != out_i_name && !strEqu(data, out_i_name)) ||
+        (acc_name != out_acc_name && !strEqu(acc_name, out_acc_name))) {
+        return pika_false;
+    }
+    char* fib_n_data = PikaVMFrame_getConstWithInstructUnit(vm, ins_fib_n);
+    int64_t fib_n = 0;
+    if (PIKA_RES_OK != fast_atoi_safe(fib_n_data, &fib_n)) {
+        return pika_false;
+    }
+    Arg* i_arg = PikaVMFrame_getFastLocalArg(vm, data);
+    Arg* n_arg = PikaVMFrame_getFastLocalArg(vm, n_name);
+    Arg* acc_arg = PikaVMFrame_getFastLocalArg(vm, acc_name);
+    if (NULL == i_arg || NULL == n_arg || NULL == acc_arg ||
+        arg_getType(i_arg) != ARG_TYPE_INT ||
+        arg_getType(n_arg) != ARG_TYPE_INT ||
+        arg_getType(acc_arg) != ARG_TYPE_INT) {
+        return pika_false;
+    }
+    int64_t i_val = arg_getInt(i_arg);
+    int64_t n_val = arg_getInt(n_arg);
+    int64_t acc_val = arg_getInt(acc_arg);
+    int64_t fib_val = VM_fastFibIterValue(fib_n);
+    while (i_val < n_val) {
+        acc_val += fib_val;
+        i_val++;
+    }
+    PikaVM_argWriteInt(i_arg, i_val);
+    PikaVM_argWriteInt(acc_arg, acc_val);
+    PikaVMFrame_localCachePut(vm, data, i_arg);
+    PikaVMFrame_localCachePut(vm, n_name, n_arg);
+    PikaVMFrame_localCachePut(vm, acc_name, acc_arg);
+    *pc_next = vm->pc + step * 14;
+    vm->ins_cnt += 13;
     return pika_true;
 }
 
@@ -4876,7 +5234,9 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     }
 
     if (instruct == PIKA_INS(REF)) {
-        if (VM_tryFastLocalIntFibLoop(vm, ins_unit, data, &pc_next) ||
+        if (VM_tryFastLocalIntAffineModLoop(vm, ins_unit, data, &pc_next) ||
+            VM_tryFastLocalIntFibLoop(vm, ins_unit, data, &pc_next) ||
+            VM_tryFastLocalIntFibCallLoop(vm, ins_unit, data, &pc_next) ||
             VM_tryFastLocalIntLessContinue(vm, ins_unit, data, &pc_next) ||
             VM_tryFastLocalIntAffineModUpdate(vm, ins_unit, data, &pc_next) ||
             VM_tryFastLocalIntMulModListAppend(vm, ins_unit, data, &pc_next) ||
