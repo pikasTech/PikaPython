@@ -14,7 +14,7 @@ Arg* PikaStdData_Dict_get(PikaObj* self, char* key) {
         obj_setSysOut(self, "KeyError: %s", key);
         return NULL;
     }
-    return arg_copy(pikaDict_get(self, key));
+    return arg_copy(aRet);
 }
 
 void PikaStdData_Dict___init__(PikaObj* self) {

@@ -40,6 +40,55 @@ static void while_loop_10000(benchmark::State& state) {
 }
 BENCHMARK(while_loop_10000)->Unit(benchmark::kMillisecond);
 
+static void function_call_1000(benchmark::State& state) {
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pika_lines2Asm(
+        buffs, (char*)
+                   "def collect(a, b=2, *args, **kwargs):\n"
+                   "    return a + b\n"
+                   "i = 0\n"
+                   "while i < 1000:\n"
+                   "    collect(i, 3, 4, 5, alpha=6, beta=7)\n"
+                   "    i = i + 1\n"
+                   "\n");
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    for (auto _ : state) {
+        PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+        pikaVM_runByteCodeFrame(pikaMain, &bytecode_frame);
+        obj_deinit(pikaMain);
+    }
+    byteCodeFrame_deinit(&bytecode_frame);
+    args_deinit(buffs);
+}
+BENCHMARK(function_call_1000)->Unit(benchmark::kMillisecond);
+
+static void function_call_starred_1000(benchmark::State& state) {
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pika_lines2Asm(
+        buffs, (char*)
+                   "def collect(a, b=2, *args, **kwargs):\n"
+                   "    return a + b\n"
+                   "values = (3, 4, 5)\n"
+                   "i = 0\n"
+                   "while i < 1000:\n"
+                   "    collect(i, *values, alpha=6, beta=7)\n"
+                   "    i = i + 1\n"
+                   "\n");
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    for (auto _ : state) {
+        PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+        pikaVM_runByteCodeFrame(pikaMain, &bytecode_frame);
+        obj_deinit(pikaMain);
+    }
+    byteCodeFrame_deinit(&bytecode_frame);
+    args_deinit(buffs);
+}
+BENCHMARK(function_call_starred_1000)->Unit(benchmark::kMillisecond);
+
 void __platform_printf(char* fmt, ...) {}
 static void for_print_1000(benchmark::State& state) {
     Args* buffs = New_strBuff();

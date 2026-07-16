@@ -56,7 +56,7 @@ uint32_t stack_spFree(Stack* stack) {
 }
 
 uint32_t stack_spSizeFree(Stack* stack) {
-    return stack->stack_totle_size / 4 -
+    return stack->stack_totle_size / sizeof(int32_t) -
            ((uintptr_t)stack->sp_size - (uintptr_t)stack_getSpSizeStart(stack));
 }
 
@@ -79,12 +79,14 @@ int32_t stack_init(Stack* stack) {
 };
 
 void stack_pushSize(Stack* stack, int32_t size) {
-    *(stack->sp_size) = size;
-    stack->sp_size++;
-    if (stack_spSizeFree(stack) < sizeof(int32_t)) {
+    if ((uintptr_t)stack->sp_size -
+            (uintptr_t)stack_getSpSizeStart(stack) >=
+        stack->stack_totle_size / sizeof(int32_t)) {
         _stack_overflow_handler(stack,
                                 stack->stack_totle_size + sizeof(int32_t) * 4);
     }
+    *(stack->sp_size) = size;
+    stack->sp_size++;
 }
 
 int32_t stack_popSize(Stack* stack) {

@@ -64,6 +64,40 @@ PikaObj* New_USART(Args* args) {
     return self;
 }
 
+void vofaSend(PikaObj* self, Args* args) {}
+
+PikaObj* New_Vofa(Args* args) {
+    PikaObj* self = New_TinyObj(args);
+    class_defineMethod(self, "send",
+                       "a0,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14,"
+                       "a15,a16",
+                       vofaSend);
+    return self;
+}
+
+PikaObj* New_VofaRoot(Args* args) {
+    PikaObj* self = New_BaseObj(args);
+    obj_newObj(self, "vofa", "Vofa", (NewFun)New_Vofa);
+    return self;
+}
+
+#if !PIKA_NANO_ENABLE
+TEST(object_test, native_arg_limit_is_catchable) {
+    PikaObj* root = newRootObj("root", New_VofaRoot);
+    __platform_printf("BEGIN\r\n");
+    obj_run(root,
+            "try:\n"
+            "    vofa.send(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, "
+            "13, 14, 15, 16)\n"
+            "except:\n"
+            "    print('PASS')\n");
+    EXPECT_STREQ(log_buff[0], "PASS\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
 PikaObj* New_MYROOT1(Args* args) {
     /*  Derive from the base object class .
         BaseObj is the smallest object that can

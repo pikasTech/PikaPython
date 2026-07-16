@@ -491,7 +491,7 @@ TEST(stddata, kw_fun) {
             "test(a=1, b=2)\n");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "{'177670': 1, '177671': 2}\r\n");
+    EXPECT_STREQ(log_buff[0], "{'a': 1, 'b': 2}\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

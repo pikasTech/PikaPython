@@ -1,6 +1,19 @@
 #include "test_common.h"
 TEST_START
 
+extern "C" uint32_t stack_spSizeFree(Stack* stack);
+
+TEST(stack, size_array_capacity) {
+    Stack stack = {0};
+    _stack_init(&stack, 64);
+    EXPECT_EQ(stack_spSizeFree(&stack), 16);
+    stack_pushSize(&stack, 1);
+    EXPECT_EQ(stack_spSizeFree(&stack), 12);
+    stack_reset(&stack);
+    stack_deinit(&stack);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(pikaMain, init) {
     g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = pikaScriptInit();

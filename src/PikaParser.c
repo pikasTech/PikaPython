@@ -2096,6 +2096,9 @@ char* _defGetDefault(Args* outBuffs, char** sDeclearOut_p) {
     int iArgNum = _Cursor_count(sArgList, TOKEN_devider, ",", pika_true) + 1;
     for (int i = 0; i < iArgNum; i++) {
         char* sItem = Cursor_popToken(&buffs, &sArgList, ",");
+        if (sItem[0] == '\0' && sArgList[0] != '\0') {
+            goto __exit;
+        }
         char* sDefaultVal = NULL;
         char* sDefaultKey = NULL;
         pika_bool bDefault = 0;
@@ -2123,6 +2126,7 @@ char* _defGetDefault(Args* outBuffs, char** sDeclearOut_p) {
     *sDeclearOut_p = strsCopy(outBuffs, arg_getStr(aDeclear));
     sDefaultOut = strsCopy(outBuffs, arg_getStr(aDefault));
     strPopLastToken(sDefaultOut, ',');
+__exit:
     arg_deinit(aDeclear);
     arg_deinit(aDefault);
     strsDeinit(&buffs);
@@ -2379,6 +2383,11 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
             goto __exit;
         }
         char* sDefaultStmt = _defGetDefault(&buffs, &sDeclare);
+        if (NULL == sDefaultStmt) {
+            obj_deinit(oAst);
+            oAst = NULL;
+            goto __exit;
+        }
         AST_setNodeBlock(oAst, "def");
         AST_setNodeAttr(oAst, "declare", sDeclare);
         if (sDefaultStmt[0] != '\0') {
@@ -2832,6 +2841,11 @@ char* parser_line2Target(Parser* self, char* sLine) {
         }
         /* gen ASM from AST */
         char* sBackendCode = self->fn_ast2Target(self, oAst);
+        if (NULL == sBackendCode) {
+            AST_deinit(oAst);
+            oAst = NULL;
+            goto __exit;
+        }
         if (sOut == NULL) {
             sOut = sBackendCode;
         } else {
@@ -3489,9 +3503,17 @@ char* AST_genAsm_top(AST* oAST, Args* outBuffs) {
 
                 AST* ast_this = line2Ast_withBlockDeepth(
                     stmt, AST_getBlockDeepthNow(oAST) + 1);
-                sPikaAsm = strsAppend(&buffs, sPikaAsm,
-                                      AST_genAsm_top(ast_this, &buffs));
+                if (NULL == ast_this) {
+                    sPikaAsm = NULL;
+                    goto __exit;
+                }
+                char* item_asm = AST_genAsm_top(ast_this, &buffs);
                 AST_deinit(ast_this);
+                if (NULL == item_asm) {
+                    sPikaAsm = NULL;
+                    goto __exit;
+                }
+                sPikaAsm = strsAppend(&buffs, sPikaAsm, item_asm);
                 out_num++;
             }
             sPikaAsm = ASM_addBlockDeepth(oAST, outBuffs, sPikaAsm, 1);
