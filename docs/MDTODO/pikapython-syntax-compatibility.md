@@ -192,3 +192,27 @@
 ### R9.3 [completed]
 
 运行相同定向、default/minimal 全量和资源验收，记录剩余差额，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R9.3_Task_Report.md)。
+
+## R10 [completed]
+
+批量探测下一轮 Python 3 非法赋值目标、控制流头部和容器/推导式分隔符；优先关联可读取的已有 issue，在不扩语法、不改架构的前提下修复错误接受、崩溃和错误不可见，并补表驱动测试，正确性与资源优化继续分阶段，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R10_Task_Report.md)。
+
+### R10.1 [completed]
+
+恢复 GitHub 可见性后筛选已有语法 issue，并建立 CPython 3 差分样例矩阵，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R10.1_Task_Report.md)。
+
+### R10.2 [completed]
+
+批量运行非法赋值目标、控制流头部和容器/推导式分隔符探针，定位错误接受或崩溃，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R10.2_Task_Report.md)。
+
+### R10.3 [completed]
+
+实现不扩语法、不改架构的本批最小正确性修复并补表驱动测试，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R10.3_Task_Report.md)。
+
+### R10.4 [completed]
+
+运行定向及 default/minimal 隔离回归，量化临时资源增量并移交独立优化阶段，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R10.4_Task_Report.md)。
+
+## R11
+
+跟踪 R10 剩余 9 类 Python 3 非法语法：orphan else/elif/except/finally、循环或函数外 break/continue/return、list/tuple 项缺逗号；GitHub 受控入口恢复后先检索并合并已有 issue，没有同类 issue 再创建，按 block 上下文与通用 token 邻接分批修复，不改变架构和 VM/runtime 热路径，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R11_Task_Report.md)。

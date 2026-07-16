@@ -153,6 +153,10 @@ TEST(parser, malformed_syntax_batch_valid_neighbors) {
         "pair = (1,)\n"
         "mapping = {'a': 1}\n"
         "text = ',, + }'\n"
+        "values = [1, 2]\n"
+        "left, right = values\n"
+        "mapping['a'] = left\n"
+        "copy = [item for item in values]\n"
         "empty()\n"
         "trailing(1,)\n";
     ByteCodeFrame bytecode_frame = {0};
@@ -195,6 +199,48 @@ TEST(parser, semantic_syntax_batch_valid_neighbors) {
     byteCodeFrame_init(&bytecode_frame);
     EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source), PIKA_RES_OK);
     byteCodeFrame_deinit(&bytecode_frame);
+}
+TEST(parser, python3_invalid_syntax_batch_r10) {
+    char literal_target[] = "1 = x\n";
+    char call_target[] = "f() = 1\n";
+    char operator_target[] = "a + b = 1\n";
+    char none_target[] = "None = 1\n";
+    char tuple_multiple_star[] = "(a, *b, *c) = values\n";
+    char list_multiple_star[] = "[a, *b, *c] = values\n";
+    char for_missing_in[] = "for x []:\n    pass\n";
+    char for_missing_iterable[] = "for x in:\n    pass\n";
+    char if_duplicate_colon[] = "if True::\n    pass\n";
+    char while_duplicate_colon[] = "while True::\n    pass\n";
+    char dict_missing_comma[] = "x = {'a': 1 'b': 2}\n";
+    char comprehension_missing_target[] = "x = [i for in values]\n";
+    char comprehension_missing_expr[] = "x = [for i in values]\n";
+    char comprehension_missing_in[] = "x = [i for i values]\n";
+    char comprehension_missing_iterable[] = "x = [i for i in]\n";
+    char* sources[] = {
+        literal_target,
+        call_target,
+        operator_target,
+        none_target,
+        tuple_multiple_star,
+        list_multiple_star,
+        for_missing_in,
+        for_missing_iterable,
+        if_duplicate_colon,
+        while_duplicate_colon,
+        dict_missing_comma,
+        comprehension_missing_target,
+        comprehension_missing_expr,
+        comprehension_missing_in,
+        comprehension_missing_iterable,
+    };
+    for (char* source : sources) {
+        SCOPED_TRACE(source);
+        ByteCodeFrame bytecode_frame = {0};
+        byteCodeFrame_init(&bytecode_frame);
+        EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source),
+                  PIKA_RES_ERR_SYNTAX_ERROR);
+        byteCodeFrame_deinit(&bytecode_frame);
+    }
 }
 TEST_RUN_SINGLE_FILE(vm,
                      issue_star_dict,

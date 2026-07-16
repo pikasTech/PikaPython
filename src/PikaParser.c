@@ -1674,31 +1674,43 @@ static PIKA_RES _AST_parse_list(AST* ast, Args* buffs, char* sStmt) {
     return PIKA_RES_OK;
 }
 
-static void _AST_parse_comprehension(AST* ast, Args* outBuffs, char* sStmt) {
+static PIKA_RES _AST_parse_comprehension(AST* ast,
+                                         Args* outBuffs,
+                                         char* sStmt) {
 #if PIKA_NANO_ENABLE
-    return;
+    return PIKA_RES_OK;
 #endif
     /* [ substmt1 for substmt2 in substmt3 ] */
     Args buffs = {0};
-    AST_setNodeAttr(ast, (char*)"comprehension", "");
     char* sSubStmts = strsCut(&buffs, sStmt, '[', ']');
     char* sSubStms1 = Cursor_splitCollect(&buffs, sSubStmts, " for ", 0);
     char* sSubStms23 = Cursor_splitCollect(&buffs, sSubStmts, " for ", 1);
+    if (NULL == sSubStms1 || strEqu(sSubStms1, "") ||
+        NULL == sSubStms23 ||
+        !Cursor_isContain(sSubStms23, TOKEN_operator, " in ")) {
+        strsDeinit(&buffs);
+        return PIKA_RES_ERR_SYNTAX_ERROR;
+    }
     char* sSubStms2 = Cursor_splitCollect(&buffs, sSubStms23, " in ", 0);
     char* sSubStms3 = Cursor_splitCollect(&buffs, sSubStms23, " in ", 1);
+    if (NULL == sSubStms2 || strEqu(sSubStms2, "") ||
+        NULL == sSubStms3 || strEqu(sSubStms3, "")) {
+        strsDeinit(&buffs);
+        return PIKA_RES_ERR_SYNTAX_ERROR;
+    }
+    AST_setNodeAttr(ast, (char*)"comprehension", "");
     AST_setNodeAttr(ast, (char*)"substmt1", sSubStms1);
     AST_setNodeAttr(ast, (char*)"substmt2", sSubStms2);
     AST_setNodeAttr(ast, (char*)"substmt3", sSubStms3);
     strsDeinit(&buffs);
-    return;
+    return PIKA_RES_OK;
 }
 
 static PIKA_RES _AST_parse_list_comprehension(AST* ast,
                                                Args* buffs,
                                                char* sStmt) {
     if (Cursor_isContain(sStmt, TOKEN_keyword, " for ")) {
-        _AST_parse_comprehension(ast, buffs, sStmt);
-        return PIKA_RES_OK;
+        return _AST_parse_comprehension(ast, buffs, sStmt);
     }
     return _AST_parse_list(ast, buffs, sStmt);
 }
@@ -1889,7 +1901,13 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
 
     /* set left */
     if (bLeftExist) {
-        if (strEqu(sLeft, "")) {
+        enum StmtType eLeftType = Lexer_matchStmtType(sLeft);
+        if (strEqu(sLeft, "") || strEqu(sLeft, "None") ||
+            strEqu(sLeft, "True") || strEqu(sLeft, "False") ||
+            (STMT_reference != eLeftType && STMT_chain != eLeftType &&
+             STMT_tuple != eLeftType && STMT_list != eLeftType) ||
+            (STMT_list == eLeftType &&
+             _Cursor_count(sLeft, TOKEN_operator, "*", pika_false) > 1)) {
             eResult = PIKA_RES_ERR_SYNTAX_ERROR;
             goto __exit;
         }
@@ -2329,6 +2347,12 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
         uint8_t sKeywordLen = normal_keywords[i].length;
         if (strIsStartWith(sLineStart, sKeyword) &&
             (sLineStart[sKeywordLen] == ' ')) {
+            if (1 !=
+                _Cursor_count(sLineStart, TOKEN_devider, ":", pika_true)) {
+                obj_deinit(oAst);
+                oAst = NULL;
+                goto __exit;
+            }
             sStmt = strsCut(&buffs, sLineStart, ' ', ':');
             if (NULL == sStmt || strEqu(sStmt, "")) {
                 obj_deinit(oAst);
