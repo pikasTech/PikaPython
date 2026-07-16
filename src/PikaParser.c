@@ -2182,7 +2182,12 @@ static char* Suger_multiReturn(Args* out_buffs, char* sLine) {
 const char control_keywords[][9] = {"break", "continue"};
 
 /* normal keyward */
-const char normal_keywords[][7] = {"while", "if", "elif"};
+typedef struct {
+    char keyword[6];
+    uint8_t length;
+} NormalKeyword;
+static const NormalKeyword normal_keywords[] = {
+    {{"while"}, 5}, {{"if"}, 2}, {{"elif"}, 4}};
 
 AST* parser_line2Ast(Parser* self, char* sLine) {
     BlockState* blockState = &self->blockState;
@@ -2246,9 +2251,10 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
     sStmt = sLineStart;
 
     // "while" "if" "elif"
-    for (uint32_t i = 0; i < sizeof(normal_keywords) / 7; i++) {
-        char* sKeyword = (char*)normal_keywords[i];
-        uint8_t sKeywordLen = strGetSize(sKeyword);
+    for (uint32_t i = 0; i < sizeof(normal_keywords) / sizeof(NormalKeyword);
+         i++) {
+        char* sKeyword = (char*)normal_keywords[i].keyword;
+        uint8_t sKeywordLen = normal_keywords[i].length;
         if (strIsStartWith(sLineStart, sKeyword) &&
             (sLineStart[sKeywordLen] == ' ')) {
             sStmt = strsCut(&buffs, sLineStart, ' ', ':');
@@ -2267,7 +2273,7 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
     /* "break", "continue" */
     for (uint32_t i = 0; i < sizeof(control_keywords) / 8; i++) {
         char* sKeyward = (char*)control_keywords[i];
-        uint8_t keyward_size = strGetSize(sKeyward);
+        uint8_t keyward_size = 5 + i * 3;
         if ((strIsStartWith(sLineStart, sKeyward)) &&
             ((sLineStart[keyward_size] == ' ') ||
              (sLineStart[keyward_size] == 0))) {

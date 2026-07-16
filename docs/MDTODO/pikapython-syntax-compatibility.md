@@ -141,18 +141,18 @@
 
 审核本批边界、登记未解决问题并完成报告，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R6.4_Task_Report.md)。
 
-## R7
+## R7 [completed]
 
-保持 R6 语义合同，独立执行资源与性能回收，分别回收 default text 355 字节和 minimal text 403 字节并评估 parser 热路径，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R7_Task_Report.md)。
+保持 R6 语义合同和 VM/runtime 性能优先级，独立回收 default/minimal 资源占用；parser 微基准仅作辅助证据，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R7_Task_Report.md)。
 
-### R7.1
+### R7.1 [completed]
 
-建立 R6 前后 parser 编译吞吐、分配次数和 default/minimal 资源基线，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R7.1_Task_Report.md)。
+建立 R6 的 default/minimal 资源、分配次数和辅助 parser 编译基线，不把 parser 微基准置于 VM/runtime 性能之上，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R7.1_Task_Report.md)。
 
-### R7.2
+### R7.2 [completed]
 
 在不改变 15 项错误合同的前提下消除重复扫描和错误路径冗余，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R7.2_Task_Report.md)。
 
-### R7.3
+### R7.3 [completed]
 
 运行相同语义回归、性能基准和两档资源验收，记录未回收差额，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R7.3_Task_Report.md)。
