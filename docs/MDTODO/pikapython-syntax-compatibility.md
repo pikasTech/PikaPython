@@ -176,3 +176,19 @@
 ### R8.4 [completed]
 
 更新 #367 证据、审核边界并完成本轮报告，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R8.4_Task_Report.md)。
+
+## R9 [completed]
+
+保持 R8 语义与崩溃合同，独立回收 default 1016 字节和 minimal 296 字节临时 text 增量，VM/runtime 性能优先于 parser 性能，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R9_Task_Report.md)。
+
+### R9.1 [completed]
+
+定位 R8 的 default/minimal 对象级尺寸增量和 parser 成功路径额外状态，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R9.1_Task_Report.md)。
+
+### R9.2 [completed]
+
+在不改变错误合同和 VM/runtime 热路径的前提下做局部尺寸与临时 RAM 回收，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R9.2_Task_Report.md)。
+
+### R9.3 [completed]
+
+运行相同定向、default/minimal 全量和资源验收，记录剩余差额，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R9.3_Task_Report.md)。

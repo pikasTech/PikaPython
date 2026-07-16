@@ -1751,13 +1751,9 @@ static PIKA_RES _AST_parse_slice(AST* ast, Args* buffs, char* sStmt) {
     while (1) {
         char* sSlice = Parser_popSubStmt(buffs, &sSliceList, ":");
         if (iIndex == 0 && strEqu(sSlice, "")) {
-            if (PIKA_RES_OK != AST_parseSubStmt(ast, "0")) {
-                return PIKA_RES_ERR_SYNTAX_ERROR;
-            }
+            AST_parseSubStmt(ast, "0");
         } else if (iIndex == 1 && strEqu(sSlice, "")) {
-            if (PIKA_RES_OK != AST_parseSubStmt(ast, "-99999")) {
-                return PIKA_RES_ERR_SYNTAX_ERROR;
-            }
+            AST_parseSubStmt(ast, "-99999");
         } else {
             if (PIKA_RES_OK != AST_parseSubStmt(ast, sSlice)) {
                 return PIKA_RES_ERR_SYNTAX_ERROR;
@@ -2176,12 +2172,6 @@ char* _defGetDefault(Args* outBuffs, char** sDeclearOut_p) {
     pika_bool bDefaultSeen = pika_false;
     pika_bool bKeywordOnly = pika_false;
     pika_assert(NULL != sArgList);
-    if (strEqu(sArgList, "")) {
-        aDeclear = arg_strAppend(aDeclear, ")");
-        *sDeclearOut_p = strsCopy(outBuffs, arg_getStr(aDeclear));
-        sDefaultOut = strsCopy(outBuffs, "");
-        goto __exit;
-    }
     int iArgNum = _Cursor_count(sArgList, TOKEN_devider, ",", pika_true) + 1;
     for (int i = 0; i < iArgNum; i++) {
         char* sItem = Cursor_popToken(&buffs, &sArgList, ",");
