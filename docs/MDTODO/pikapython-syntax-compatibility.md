@@ -80,3 +80,43 @@
 ### R3.4 [completed]
 
 审核变更、更新 #366 证据并完成任务报告，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R3.4_Task_Report.md)。
+
+## R4 [completed]
+
+继续优先处理已有 [#356](https://github.com/pikasTech/PikaPython/issues/356)：复现 nano 模式下 main.py 顶层函数定义后引用偶发 NameError，区分当前语法/符号注册问题与旧版本或固件裁剪问题；只做非架构、非扩语法且不增加 RAM/Flash 的修复，并补 Linux 单元测试，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R4_Task_Report.md)。
+
+### R4.1 [completed]
+
+完整复现 #356 的三个顶层函数定义、直接调用和函数对象赋值，在 default/minimal 下确认当前行为与定义顺序影响，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R4.1_Task_Report.md)。
+
+### R4.2 [completed]
+
+定位 nano 模式符号注册、函数对象引用和编译资产路径，若仍存在问题则实现最小修复并补单元测试，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R4.2_Task_Report.md)。
+
+### R4.3 [completed]
+
+运行隔离后的 default/minimal 与相关配置回归，比较 R3 资源门槛，任何 RAM/Flash 增长项退出，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R4.3_Task_Report.md)。
+
+### R4.4 [completed]
+
+审核变更边界、更新 #356 证据并完成报告，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R4.4_Task_Report.md)。
+
+## R5 [completed]
+
+优先处理已有 [#328](https://github.com/pikasTech/PikaPython/issues/328)：调查带 keyword 的 C 模块 API 在调用时不加 keyword 的行为，按 Python 3 边界覆盖原生方法的位置、混合、全关键字及非法位置调用；只做非架构、非扩语法且不增加 RAM/Flash 的修复，并补 Linux 单元测试，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R5_Task_Report.md)。
+
+### R5.1 [completed]
+
+完整读取 #328 并从 C 模块绑定合同复现位置、混合、全关键字及非法调用行为，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R5.1_Task_Report.md)。
+
+### R5.2 [completed]
+
+定位原生 C 方法 keyword 参数绑定与 Python 3 的差异，若可复现则实现不增资源的最小修复并补测试，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R5.2_Task_Report.md)。
+
+### R5.3 [completed]
+
+运行隔离后的 default/minimal 和相关配置回归，比较 R3 资源门槛，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R5.3_Task_Report.md)。
+
+### R5.4 [completed]
+
+审核变更边界、更新 #328 证据并完成任务报告，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R5.4_Task_Report.md)。

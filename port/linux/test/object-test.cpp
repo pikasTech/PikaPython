@@ -157,6 +157,33 @@ TEST(object_test, test6) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if !PIKA_NANO_ENABLE
+TEST(issue, issue328_native_method_keyword_compatibility) {
+    PikaObj* obj = newRootObj("test", New_PikaObj_test);
+    obj_run(obj,
+            "pos = add(1, 2)\n"
+            "mixed = add(1, val2=2)\n"
+            "keywords = add(val2=2, val1=1)\n"
+            "missing_caught = 0\n"
+            "unknown_caught = 0\n"
+            "try:\n"
+            "    add(1)\n"
+            "except:\n"
+            "    missing_caught = 1\n"
+            "try:\n"
+            "    add(val1=1, other=2)\n"
+            "except:\n"
+            "    unknown_caught = 1\n");
+    EXPECT_EQ(3, obj_getInt(obj, "pos"));
+    EXPECT_EQ(3, obj_getInt(obj, "mixed"));
+    EXPECT_EQ(3, obj_getInt(obj, "keywords"));
+    EXPECT_EQ(1, obj_getInt(obj, "missing_caught"));
+    EXPECT_EQ(1, obj_getInt(obj, "unknown_caught"));
+    obj_deinit(obj);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
 TEST(object_test, test8) {
     PikaObj* sys = newRootObj("sys", New_PikaStdLib_SysObj);
     obj_run(sys, "a=1");

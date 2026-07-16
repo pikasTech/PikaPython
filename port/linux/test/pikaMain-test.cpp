@@ -14,6 +14,21 @@ TEST(stack, size_array_capacity) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST_RUN_LINES_EXCEPT_OUTPUT(
+    issue,
+    issue356_top_level_function_refs,
+    "def blinkTest():\n"
+    "    return 'blink'\n"
+    "def statTest():\n"
+    "    return 'stat'\n"
+    "def initTimer():\n"
+    "    return 'timer'\n"
+    "blinkFunc = blinkTest\n"
+    "statFunc = statTest\n"
+    "initTimerFunc = initTimer\n"
+    "print(blinkFunc(), statFunc(), initTimerFunc())\n",
+    "blink stat timer\r\n")
+
 TEST(pikaMain, init) {
     g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = pikaScriptInit();

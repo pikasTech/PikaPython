@@ -1331,20 +1331,24 @@ static int _kw_to_pos_one(FunctionArgsInfo* f,
     return 1;
 }
 
-static void _kw_to_pos_all(FunctionArgsInfo* f, int* argc, Arg* argv[]) {
+#if !PIKA_NANO_ENABLE
+static pika_bool _kw_to_pos_all(FunctionArgsInfo* f, int* argc, Arg* argv[]) {
     int arg_num_need = f->n_positional - f->n_positional_got;
     if (0 == arg_num_need) {
-        return;
+        return pika_true;
     }
     for (int i = 0; i < arg_num_need; i++) {
         char* arg_name = strPopLastToken(f->type_list, ',');
-        pika_assert(f->kw != NULL);
         Arg* pos_arg = pikaDict_get(f->kw, arg_name);
-        pika_assert(pos_arg != NULL);
+        if (pos_arg == NULL) {
+            return pika_false;
+        }
         argv[(*argc)++] = arg_copy(pos_arg);
         pikaDict_removeArg(f->kw, pos_arg);
     }
+    return pika_true;
 }
+#endif
 
 static void _loadLocalsFromArgv(Args* locals, int argc, Arg* argv[]) {
     for (int i = 0; i < argc; i++) {
@@ -1706,7 +1710,10 @@ static int PikaVMFrame_loadArgsFromMethodArg(PikaVMFrame* vm,
         _kw_pos_to_default_all(&f, arg_name, &argc, argv, NULL);
     }
     /* load kw to pos */
-    _kw_to_pos_all(&f, &argc, argv);
+    if (!_kw_to_pos_all(&f, &argc, argv)) {
+        PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
+        PikaVMFrame_setSysOut(vm, "TypeError: invalid keyword args");
+    }
 #endif
 
     if (f.tuple != NULL) {
