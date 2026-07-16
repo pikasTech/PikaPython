@@ -128,6 +128,34 @@ static uint8_t Lexer_isError(char* line) {
         uRes = 1; /* lex error */
         goto __exit;
     }
+    /* Validate adjacent tokens without constructing another Cursor. */
+    char* token = sTokenStream;
+    char last_type = TOKEN_strEnd;
+    char last_value = 0;
+    while ('\0' != *token) {
+        token++;
+        char type = *token++;
+        char value = *token;
+        while ('\0' != *token && 0x1F != *token) {
+            token++;
+        }
+        if ((TOKEN_operator == last_type && TOKEN_devider == type &&
+             (',' == value || ')' == value || ']' == value ||
+              '}' == value)) ||
+            (TOKEN_devider == last_type && TOKEN_devider == type &&
+             ((',' == value &&
+               ('(' == last_value || '[' == last_value ||
+                '{' == last_value || ',' == last_value)) ||
+              ('}' == value && ':' == last_value)))) {
+            uRes = 1;
+            break;
+        }
+        last_type = type;
+        last_value = value;
+    }
+    if (TOKEN_operator == last_type) {
+        uRes = 1;
+    }
     goto __exit;
 __exit:
     strsDeinit(&buffs);
@@ -2224,6 +2252,11 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
         if (strIsStartWith(sLineStart, sKeyword) &&
             (sLineStart[sKeywordLen] == ' ')) {
             sStmt = strsCut(&buffs, sLineStart, ' ', ':');
+            if (NULL == sStmt || strEqu(sStmt, "")) {
+                obj_deinit(oAst);
+                oAst = NULL;
+                goto __exit;
+            }
             AST_setNodeBlock(oAst, sKeyword);
             stack_pushStr(blockState->stack, sKeyword);
             goto __block_matched;
@@ -2256,9 +2289,21 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
             goto __exit;
         }
         char* sArgIn = strsPopToken(list_buffs, &sLineBuff, ' ');
+        if (strEqu(sArgIn, "") || strEqu(sArgIn, "in")) {
+            args_deinit(list_buffs);
+            obj_deinit(oAst);
+            oAst = NULL;
+            goto __exit;
+        }
         AST_setNodeAttr(oAst, "arg_in", sArgIn);
         strsPopToken(list_buffs, &sLineBuff, ' ');
         char* sListIn = Cursor_splitCollect(list_buffs, sLineBuff, ":", 0);
+        if (strEqu(sListIn, "")) {
+            args_deinit(list_buffs);
+            obj_deinit(oAst);
+            oAst = NULL;
+            goto __exit;
+        }
         sListIn = strsAppend(list_buffs, "iter(", sListIn);
         sListIn = strsAppend(list_buffs, sListIn, ")");
         sListIn = strsCopy(&buffs, sListIn);

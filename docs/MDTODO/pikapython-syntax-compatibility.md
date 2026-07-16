@@ -120,3 +120,39 @@
 ### R5.4 [completed]
 
 审核变更边界、更新 #328 证据并完成任务报告，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R5.4_Task_Report.md)。
+
+## R6 [completed]
+
+批量探测并修复下一轮语法错误：正确性阶段允许量化的临时资源增量，性能与占用回收转入独立阶段，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R6_Task_Report.md)。
+
+### R6.1 [completed]
+
+建立表驱动语法探针，批量比较非法函数声明、调用参数、集合和表达式的编译结果，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R6.1_Task_Report.md)。
+
+### R6.2 [completed]
+
+定位本批错误接受、错误传播或崩溃根因，实现非架构且不扩语法的最小修复并补回归，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R6.2_Task_Report.md)。
+
+### R6.3 [completed]
+
+运行 default/minimal 隔离全量并量化临时资源增量，将资源债务移交独立优化阶段，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R6.3_Task_Report.md)。
+
+### R6.4 [completed]
+
+审核本批边界、登记未解决问题并完成报告，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R6.4_Task_Report.md)。
+
+## R7
+
+保持 R6 语义合同，独立执行资源与性能回收，分别回收 default text 355 字节和 minimal text 403 字节并评估 parser 热路径，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R7_Task_Report.md)。
+
+### R7.1
+
+建立 R6 前后 parser 编译吞吐、分配次数和 default/minimal 资源基线，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R7.1_Task_Report.md)。
+
+### R7.2
+
+在不改变 15 项错误合同的前提下消除重复扫描和错误路径冗余，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R7.2_Task_Report.md)。
+
+### R7.3
+
+运行相同语义回归、性能基准和两档资源验收，记录未回收差额，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R7.3_Task_Report.md)。

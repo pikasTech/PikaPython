@@ -106,14 +106,55 @@ TEST(parser, malformed_syntax_returns_error) {
         byteCodeFrame_deinit(&bytecode_frame);
     }
 }
-TEST(parser, function_arg_commas_valid) {
+TEST(parser, malformed_syntax_batch_probe) {
+    char default_missing[] = "def f(a=):\n    pass\n";
+    char bare_star[] = "def f(*):\n    pass\n";
+    char bare_double_star[] = "def f(**):\n    pass\n";
+    char call_leading_comma[] = "f(,1)\n";
+    char call_duplicate_comma[] = "f(1,,2)\n";
+    char call_keyword_comma[] = "f(a=1,,b=2)\n";
+    char list_duplicate_comma[] = "x = [1,,2]\n";
+    char tuple_duplicate_comma[] = "x = (1,,2)\n";
+    char dict_missing_value[] = "x = {'a':}\n";
+    char operator_missing_rhs[] = "x = 1 +\n";
+    char assignment_missing_rhs[] = "x =\n";
+    char parenthesized_missing_rhs[] = "x = (1 + )\n";
+    char if_missing_condition[] = "if :\n    pass\n";
+    char while_missing_condition[] = "while :\n    pass\n";
+    char for_missing_target[] = "for in []:\n    pass\n";
+    char* sources[] = {
+        default_missing,          bare_star,
+        bare_double_star,         call_leading_comma,
+        call_duplicate_comma,     call_keyword_comma,
+        list_duplicate_comma,     tuple_duplicate_comma,
+        dict_missing_value,       operator_missing_rhs,
+        assignment_missing_rhs,   parenthesized_missing_rhs,
+        if_missing_condition,     while_missing_condition,
+        for_missing_target,
+    };
+    for (char* source : sources) {
+        SCOPED_TRACE(source);
+        ByteCodeFrame bytecode_frame = {0};
+        byteCodeFrame_init(&bytecode_frame);
+        EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source),
+                  PIKA_RES_ERR_SYNTAX_ERROR);
+        byteCodeFrame_deinit(&bytecode_frame);
+    }
+}
+TEST(parser, malformed_syntax_batch_valid_neighbors) {
     char source[] =
         "def empty():\n"
         "    pass\n"
         "def trailing(a,):\n"
         "    return a\n"
         "def nested(a=(1, 2), b=',,'):\n"
-        "    return a\n";
+        "    return a\n"
+        "values = [1,]\n"
+        "pair = (1,)\n"
+        "mapping = {'a': 1}\n"
+        "text = ',, + }'\n"
+        "empty()\n"
+        "trailing(1,)\n";
     ByteCodeFrame bytecode_frame = {0};
     byteCodeFrame_init(&bytecode_frame);
     EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source), PIKA_RES_OK);
