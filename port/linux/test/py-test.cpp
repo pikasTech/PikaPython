@@ -160,6 +160,42 @@ TEST(parser, malformed_syntax_batch_valid_neighbors) {
     EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source), PIKA_RES_OK);
     byteCodeFrame_deinit(&bytecode_frame);
 }
+TEST(parser, semantic_syntax_batch_probe) {
+    char required_after_default[] = "def f(a=1, b):\n    pass\n";
+    char duplicate_parameter[] = "def f(a, a):\n    pass\n";
+    char positional_after_keyword[] = "f(a=1, 2)\n";
+    char duplicate_keyword[] = "f(a=1, a=2)\n";
+    char dict_missing_colon[] = "x = {'a' 1}\n";
+    char nested_positional_after_keyword[] = "f(g(a=1, 2))\n";
+    char nested_duplicate_keyword[] = "f(g(a=1, a=2))\n";
+    char nested_dict_missing_colon[] = "x = [{'a' 1}]\n";
+    char* sources[] = {required_after_default, duplicate_parameter,
+                       positional_after_keyword, duplicate_keyword,
+                       dict_missing_colon, nested_positional_after_keyword,
+                       nested_duplicate_keyword, nested_dict_missing_colon};
+    for (char* source : sources) {
+        SCOPED_TRACE(source);
+        ByteCodeFrame bytecode_frame = {0};
+        byteCodeFrame_init(&bytecode_frame);
+        EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source),
+                  PIKA_RES_ERR_SYNTAX_ERROR);
+        byteCodeFrame_deinit(&bytecode_frame);
+    }
+}
+TEST(parser, semantic_syntax_batch_valid_neighbors) {
+    char source[] =
+        "def defaults(a=1, b=2):\n"
+        "    return a\n"
+        "def distinct(a, b):\n"
+        "    return a\n"
+        "defaults(1, b=2)\n"
+        "defaults(a=1, b=2)\n"
+        "mapping = {'a': 1}\n";
+    ByteCodeFrame bytecode_frame = {0};
+    byteCodeFrame_init(&bytecode_frame);
+    EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source), PIKA_RES_OK);
+    byteCodeFrame_deinit(&bytecode_frame);
+}
 TEST_RUN_SINGLE_FILE(vm,
                      issue_star_dict,
                      "test/python/issue/issue_star_dict.py")

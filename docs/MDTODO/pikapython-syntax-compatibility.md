@@ -156,3 +156,23 @@
 ### R7.3 [completed]
 
 运行相同语义回归、性能基准和两档资源验收，记录未回收差额，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R7.3_Task_Report.md)。
+
+## R8 [completed]
+
+优先处理已有 [#367](https://github.com/pikasTech/PikaPython/issues/367) 的五类 Python 3 语义语法错误，在不改变架构和 VM/runtime 热路径的前提下批量修复并补单元测试，正确性阶段允许量化的临时资源增量，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R8_Task_Report.md)。
+
+### R8.1 [completed]
+
+建立 #367 五类非法语法和相邻合法语法的表驱动探针，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R8.1_Task_Report.md)。
+
+### R8.2 [completed]
+
+定位函数声明、调用参数和字典 AST 的错误接受路径，实现非架构最小修复，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R8.2_Task_Report.md)。
+
+### R8.3 [completed]
+
+运行 default/minimal 隔离回归并量化资源变化，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R8.3_Task_Report.md)。
+
+### R8.4 [completed]
+
+更新 #367 证据、审核边界并完成本轮报告，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R8.4_Task_Report.md)。

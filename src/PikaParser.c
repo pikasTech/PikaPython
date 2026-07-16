@@ -1548,7 +1548,9 @@ char* AST_getThisBlock(AST* ast) {
 
 PIKA_RES AST_parseSubStmt(AST* ast, char* sNodeContent) {
     queueObj_pushObj(ast, (char*)"stmt");
-    AST_parseStmt(queueObj_getCurrentObj(ast), sNodeContent);
+    if (NULL == AST_parseStmt(queueObj_getCurrentObj(ast), sNodeContent)) {
+        return PIKA_RES_ERR_SYNTAX_ERROR;
+    }
     return PIKA_RES_OK;
 }
 
@@ -1653,21 +1655,23 @@ char* Parser_popLastSubStmt(Args* outbuffs, char** sStmt_p, char* sDelimiter) {
     return _Parser_popLastSubStmt(outbuffs, sStmt_p, sDelimiter, pika_true);
 }
 
-static void _AST_parse_list(AST* ast, Args* buffs, char* sStmt) {
+static PIKA_RES _AST_parse_list(AST* ast, Args* buffs, char* sStmt) {
 #if !PIKA_BUILTIN_STRUCT_ENABLE
-    return;
+    return PIKA_RES_OK;
 #endif
     AST_setNodeAttr(ast, (char*)"list", "list");
     char* sSubStmts = strsCut(buffs, sStmt, '[', ']');
     sSubStmts = strsAppend(buffs, sSubStmts, ",");
     while (1) {
         char* sSubStmt = Parser_popSubStmt(buffs, &sSubStmts, ",");
-        AST_parseSubStmt(ast, sSubStmt);
+        if (PIKA_RES_OK != AST_parseSubStmt(ast, sSubStmt)) {
+            return PIKA_RES_ERR_SYNTAX_ERROR;
+        }
         if (strEqu(sSubStmts, "")) {
             break;
         }
     }
-    return;
+    return PIKA_RES_OK;
 }
 
 static void _AST_parse_comprehension(AST* ast, Args* outBuffs, char* sStmt) {
@@ -1689,41 +1693,57 @@ static void _AST_parse_comprehension(AST* ast, Args* outBuffs, char* sStmt) {
     return;
 }
 
-static void _AST_parse_list_comprehension(AST* ast, Args* buffs, char* sStmt) {
+static PIKA_RES _AST_parse_list_comprehension(AST* ast,
+                                               Args* buffs,
+                                               char* sStmt) {
     if (Cursor_isContain(sStmt, TOKEN_keyword, " for ")) {
         _AST_parse_comprehension(ast, buffs, sStmt);
-        return;
+        return PIKA_RES_OK;
     }
-    _AST_parse_list(ast, buffs, sStmt);
+    return _AST_parse_list(ast, buffs, sStmt);
 }
 
-static void _AST_parse_dict(AST* ast, Args* buffs, char* sStmt) {
+static PIKA_RES _AST_parse_dict(AST* ast, Args* buffs, char* sStmt) {
 #if !PIKA_BUILTIN_STRUCT_ENABLE
-    return;
+    return PIKA_RES_OK;
 #endif
     AST_setNodeAttr(ast, (char*)"dict", "dict");
     char* subStmts = strsCut(buffs, sStmt, '{', '}');
+    if (strEqu(subStmts, "")) {
+        return PIKA_RES_OK;
+    }
     subStmts = strsAppend(buffs, subStmts, ",");
     while (1) {
         char* sSubStmt = Parser_popSubStmt(buffs, &subStmts, ",");
+        if (strEqu(sSubStmt, "")) {
+            break;
+        }
+        if (1 != _Cursor_count(sSubStmt, TOKEN_devider, ":", pika_true)) {
+            return PIKA_RES_ERR_SYNTAX_ERROR;
+        }
         char* sKey = Parser_popSubStmt(buffs, &sSubStmt, ":");
         char* sValue = sSubStmt;
-        AST_parseSubStmt(ast, sKey);
-        AST_parseSubStmt(ast, sValue);
+        if (PIKA_RES_OK != AST_parseSubStmt(ast, sKey) ||
+            PIKA_RES_OK != AST_parseSubStmt(ast, sValue)) {
+            return PIKA_RES_ERR_SYNTAX_ERROR;
+        }
         if (strEqu(subStmts, "")) {
             break;
         }
     }
+    return PIKA_RES_OK;
 }
 
-static void _AST_parse_slice(AST* ast, Args* buffs, char* sStmt) {
+static PIKA_RES _AST_parse_slice(AST* ast, Args* buffs, char* sStmt) {
 #if !PIKA_SYNTAX_SLICE_ENABLE
-    return;
+    return PIKA_RES_OK;
 #endif
     AST_setNodeAttr(ast, (char*)"slice", "slice");
     sStmt = strsCopy(buffs, sStmt);
     char* sLaststmt = _Parser_popLastSubStmt(buffs, &sStmt, "[", pika_false);
-    AST_parseSubStmt(ast, sStmt);
+    if (PIKA_RES_OK != AST_parseSubStmt(ast, sStmt)) {
+        return PIKA_RES_ERR_SYNTAX_ERROR;
+    }
     char* sSliceList = strsCut(buffs, sLaststmt, '[', ']');
     pika_assert(sSliceList != NULL);
     sSliceList = strsAppend(buffs, sSliceList, ":");
@@ -1731,17 +1751,24 @@ static void _AST_parse_slice(AST* ast, Args* buffs, char* sStmt) {
     while (1) {
         char* sSlice = Parser_popSubStmt(buffs, &sSliceList, ":");
         if (iIndex == 0 && strEqu(sSlice, "")) {
-            AST_parseSubStmt(ast, "0");
+            if (PIKA_RES_OK != AST_parseSubStmt(ast, "0")) {
+                return PIKA_RES_ERR_SYNTAX_ERROR;
+            }
         } else if (iIndex == 1 && strEqu(sSlice, "")) {
-            AST_parseSubStmt(ast, "-99999");
+            if (PIKA_RES_OK != AST_parseSubStmt(ast, "-99999")) {
+                return PIKA_RES_ERR_SYNTAX_ERROR;
+            }
         } else {
-            AST_parseSubStmt(ast, sSlice);
+            if (PIKA_RES_OK != AST_parseSubStmt(ast, sSlice)) {
+                return PIKA_RES_ERR_SYNTAX_ERROR;
+            }
         }
         iIndex++;
         if (strEqu("", sSliceList)) {
             break;
         }
     }
+    return PIKA_RES_OK;
 }
 
 char* _Suger_process(Args* out_buffs,
@@ -1811,6 +1838,7 @@ char* Suger_is_not(Args* out_buffs, char* sLine) {
 
 AST* AST_parseStmt(AST* ast, char* sStmt) {
     Args buffs = {0};
+    Args keywordNames = {0};
     char* assignment = Cursor_splitCollect(&buffs, sStmt, "(", 0);
     char* sMethod = NULL;
     char* sRef = NULL;
@@ -1891,20 +1919,22 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
         char* sRightBuff = strsCopy(&buffs, sRight);
         char* sSubStmt2 = Cursor_popLastToken(&buffs, &sRightBuff, operator);
         char* sSubStmt1 = sRightBuff;
-        AST_parseSubStmt(ast, sSubStmt1);
-        AST_parseSubStmt(ast, sSubStmt2);
+        if (PIKA_RES_OK != AST_parseSubStmt(ast, sSubStmt1) ||
+            PIKA_RES_OK != AST_parseSubStmt(ast, sSubStmt2)) {
+            eResult = PIKA_RES_ERR_SYNTAX_ERROR;
+        }
         goto __exit;
     }
 
     /* solve list stmt */
     if (STMT_list == eStmtType) {
-        _AST_parse_list_comprehension(ast, &buffs, sRight);
+        eResult = _AST_parse_list_comprehension(ast, &buffs, sRight);
         goto __exit;
     }
 
     /* solve dict stmt */
     if (STMT_dict == eStmtType) {
-        _AST_parse_dict(ast, &buffs, sRight);
+        eResult = _AST_parse_dict(ast, &buffs, sRight);
         goto __exit;
     }
 
@@ -1912,14 +1942,16 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
     if (STMT_chain == eStmtType) {
         char* sHost = strsCopy(&buffs, sRight);
         char* sMethodStmt = Parser_popLastSubStmt(&buffs, &sHost, ".");
-        AST_parseSubStmt(ast, sHost);
-        AST_parseStmt(ast, sMethodStmt);
+        if (PIKA_RES_OK != AST_parseSubStmt(ast, sHost) ||
+            NULL == AST_parseStmt(ast, sMethodStmt)) {
+            eResult = PIKA_RES_ERR_SYNTAX_ERROR;
+        }
         goto __exit;
     }
 
     if (STMT_slice == eStmtType) {
         /* solve slice stmt */
-        _AST_parse_slice(ast, &buffs, sRight);
+        eResult = _AST_parse_slice(ast, &buffs, sRight);
         goto __exit;
     }
 
@@ -1942,7 +1974,10 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
                     sLastStmt = strsAppend(&buffs, ".", sLastStmt);
                 }
             }
-            AST_parseSubStmt(ast, sMethodStmt);
+            if (PIKA_RES_OK != AST_parseSubStmt(ast, sMethodStmt)) {
+                eResult = PIKA_RES_ERR_SYNTAX_ERROR;
+                goto __exit;
+            }
         }
         sMethod = strsGetFirstToken(&buffs, sLastStmt, '(');
         char* sSubStmts = strsCut(&buffs, sLastStmt, '(', ')');
@@ -1953,9 +1988,26 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
         /* add ',' at the end */
         sSubStmts = strsAppend(&buffs, sSubStmts, ",");
         int iSubStmtsNum = Parser_getSubStmtNum(sSubStmts, ",");
+        pika_bool bKeywordSeen = pika_false;
         for (int i = 0; i < iSubStmtsNum; i++) {
             char* substmt = Parser_popSubStmt(&buffs, &sSubStmts, ",");
-            AST_parseSubStmt(ast, substmt);
+            if (1 == _Cursor_count(substmt, TOKEN_operator, "=", pika_true)) {
+                char* sKeyword =
+                    Cursor_splitCollect(&buffs, substmt, "=", 0);
+                if (args_isArgExist(&keywordNames, sKeyword)) {
+                    eResult = PIKA_RES_ERR_SYNTAX_ERROR;
+                    goto __exit;
+                }
+                args_setInt(&keywordNames, sKeyword, 1);
+                bKeywordSeen = pika_true;
+            } else if (bKeywordSeen && '*' != substmt[0]) {
+                eResult = PIKA_RES_ERR_SYNTAX_ERROR;
+                goto __exit;
+            }
+            if (PIKA_RES_OK != AST_parseSubStmt(ast, substmt)) {
+                eResult = PIKA_RES_ERR_SYNTAX_ERROR;
+                goto __exit;
+            }
             if (strOnly(sSubStmts, ',')) {
                 if (i < iSubStmtsNum - 2) {
                     eResult = PIKA_RES_ERR_SYNTAX_ERROR;
@@ -2043,9 +2095,9 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
         goto __exit;
     }
 __exit:
+    args_deinit_stack(&keywordNames);
     strsDeinit(&buffs);
     if (eResult != PIKA_RES_OK) {
-        AST_deinit(ast);
         return NULL;
     }
     return ast;
@@ -2114,18 +2166,30 @@ char* _defGetDefault(Args* outBuffs, char** sDeclearOut_p) {
     return "";
 #endif
     Args buffs = {0};
+    Args paramNames = {0};
     char* sDeclear = strsCopy(&buffs, *sDeclearOut_p);
     char* sFnName = strsGetFirstToken(&buffs, sDeclear, '(');
     Arg* aDeclear = arg_strAppend(arg_newStr(sFnName), "(");
     Arg* aDefault = arg_newStr("");
     char* sArgList = strsCut(&buffs, sDeclear, '(', ')');
     char* sDefaultOut = NULL;
+    pika_bool bDefaultSeen = pika_false;
+    pika_bool bKeywordOnly = pika_false;
     pika_assert(NULL != sArgList);
+    if (strEqu(sArgList, "")) {
+        aDeclear = arg_strAppend(aDeclear, ")");
+        *sDeclearOut_p = strsCopy(outBuffs, arg_getStr(aDeclear));
+        sDefaultOut = strsCopy(outBuffs, "");
+        goto __exit;
+    }
     int iArgNum = _Cursor_count(sArgList, TOKEN_devider, ",", pika_true) + 1;
     for (int i = 0; i < iArgNum; i++) {
         char* sItem = Cursor_popToken(&buffs, &sArgList, ",");
         if (sItem[0] == '\0' && sArgList[0] != '\0') {
             goto __exit;
+        }
+        if (sItem[0] == '\0') {
+            break;
         }
         char* sDefaultVal = NULL;
         char* sDefaultKey = NULL;
@@ -2143,6 +2207,23 @@ char* _defGetDefault(Args* outBuffs, char** sDeclearOut_p) {
         } else {
             sDefaultKey = sItem;
         }
+        char* sParamName =
+            Cursor_splitCollect(&buffs, sDefaultKey, ":", 0);
+        while ('*' == sParamName[0]) {
+            bKeywordOnly = pika_true;
+            sParamName++;
+        }
+        if ('\0' == sParamName[0] ||
+            args_isArgExist(&paramNames, sParamName)) {
+            goto __exit;
+        }
+        args_setInt(&paramNames, sParamName, 1);
+        if (!bDefault && bDefaultSeen && !bKeywordOnly) {
+            goto __exit;
+        }
+        if (bDefault && !bKeywordOnly) {
+            bDefaultSeen = pika_true;
+        }
         aDeclear = arg_strAppend(aDeclear, sDefaultKey);
         if (bDefault) {
             aDeclear = arg_strAppend(aDeclear, "=");
@@ -2155,6 +2236,7 @@ char* _defGetDefault(Args* outBuffs, char** sDeclearOut_p) {
     sDefaultOut = strsCopy(outBuffs, arg_getStr(aDefault));
     strPopLastToken(sDefaultOut, ',');
 __exit:
+    args_deinit_stack(&paramNames);
     arg_deinit(aDeclear);
     arg_deinit(aDefault);
     strsDeinit(&buffs);
@@ -2391,7 +2473,11 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
         /* assert expr [, msg] */
         while (1) {
             char* sSubStmt = Parser_popSubStmt(&buffs, &sLineBuff, ",");
-            AST_parseSubStmt(oAst, sSubStmt);
+            if (PIKA_RES_OK != AST_parseSubStmt(oAst, sSubStmt)) {
+                AST_deinit(oAst);
+                oAst = NULL;
+                goto __exit;
+            }
             if (strEqu(sLineBuff, "")) {
                 break;
             }
@@ -2469,7 +2555,10 @@ __block_matched:
         goto __exit;
     }
     sStmt = Cursor_getCleanStmt(&buffs, sStmt);
-    oAst = AST_parseStmt(oAst, sStmt);
+    if (NULL == AST_parseStmt(oAst, sStmt)) {
+        AST_deinit(oAst);
+        oAst = NULL;
+    }
     goto __exit;
 __exit:
     strsDeinit(&buffs);
