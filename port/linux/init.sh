@@ -9,6 +9,10 @@ chmod +x *.sh
 sh update-compiler.sh
 chmod +x package/pikascript/rust-msc-latest-linux
 cp package/pikascript/rust-msc-latest-linux /bin 
+find package/pikascript/pikascript-lib/pika_lvgl -type f -delete
+find package/pikascript -maxdepth 1 -name 'pika_lvgl.pyi' -type f -delete
+find package/pikascript/pikascript-api -maxdepth 1 \
+    \( -name '__pikaBinding.c' -o -name 'pika_lvgl*.h' \) -type f -delete
 cd package/pikascript/pikascript-core
 # git checkout master
 cd $ROOT

@@ -42,7 +42,6 @@ fsm
 subsrc.mod1
 flashdb
 fuzzypid
-pika_lvgl
 import_err
 _from_import_pyi
 threading
