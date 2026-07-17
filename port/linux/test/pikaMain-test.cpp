@@ -270,6 +270,52 @@ TEST(pikaMain, and_or_not) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(pikaMain, python3_operator_associativity_and_short_circuit) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    VMParameters* globals = obj_run(
+        pikaMain,
+        "calls = 0\n"
+        "def side_effect():\n"
+        "    global calls\n"
+        "    calls += 1\n"
+        "    return 9\n"
+        "pow_right = 2 ** 3 ** 2\n"
+        "pow_left = (2 ** 3) ** 2\n"
+        "and_skip = False and side_effect()\n"
+        "or_skip = True or side_effect()\n"
+        "and_value = True and side_effect()\n"
+        "or_value = False or side_effect()\n"
+        "false_operand = 0 and 5\n"
+        "true_operand = 3 or 5\n"
+        "string_or = '' or 'fallback'\n"
+        "string_and = 'left' and 'right'\n"
+        "chain_and = 1 and 2 and 3\n"
+        "chain_or = 0 or 0 or 4\n"
+        "nested_and = False and (True and side_effect())\n"
+        "nested_or = True or (False or side_effect())\n"
+        "nested_eval = True and (False or side_effect())\n");
+
+    EXPECT_EQ(obj_getInt(globals, "pow_right"), 512);
+    EXPECT_EQ(obj_getInt(globals, "pow_left"), 64);
+    EXPECT_FALSE(obj_getBool(globals, "and_skip"));
+    EXPECT_TRUE(obj_getBool(globals, "or_skip"));
+    EXPECT_EQ(obj_getInt(globals, "and_value"), 9);
+    EXPECT_EQ(obj_getInt(globals, "or_value"), 9);
+    EXPECT_EQ(obj_getInt(globals, "false_operand"), 0);
+    EXPECT_EQ(obj_getInt(globals, "true_operand"), 3);
+    EXPECT_STREQ(obj_getStr(globals, "string_or"), "fallback");
+    EXPECT_STREQ(obj_getStr(globals, "string_and"), "right");
+    EXPECT_EQ(obj_getInt(globals, "chain_and"), 3);
+    EXPECT_EQ(obj_getInt(globals, "chain_or"), 4);
+    EXPECT_FALSE(obj_getBool(globals, "nested_and"));
+    EXPECT_TRUE(obj_getBool(globals, "nested_or"));
+    EXPECT_EQ(obj_getInt(globals, "nested_eval"), 9);
+    EXPECT_EQ(obj_getInt(globals, "calls"), 3);
+
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(pikaMain, err_scop) {
     /* init */
     g_PikaMemInfo.heapUsedMax = 0;

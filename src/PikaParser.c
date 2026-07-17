@@ -1988,8 +1988,15 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
         }
         AST_setNodeAttr(ast, (char*)"operator", operator);
         char* sRightBuff = strsCopy(&buffs, sRight);
-        char* sSubStmt2 = Cursor_popLastToken(&buffs, &sRightBuff, operator);
-        char* sSubStmt1 = sRightBuff;
+        char* sSubStmt1 = NULL;
+        char* sSubStmt2 = NULL;
+        if (strEqu(operator, "**")) {
+            sSubStmt1 = Cursor_popToken(&buffs, &sRightBuff, operator);
+            sSubStmt2 = sRightBuff;
+        } else {
+            sSubStmt2 = Cursor_popLastToken(&buffs, &sRightBuff, operator);
+            sSubStmt1 = sRightBuff;
+        }
         if (PIKA_RES_OK != AST_parseSubStmt(ast, sSubStmt1) ||
             PIKA_RES_OK != AST_parseSubStmt(ast, sSubStmt2)) {
             eResult = PIKA_RES_ERR_SYNTAX_ERROR;
@@ -3557,10 +3564,26 @@ char* _comprehension2Asm(Args* outBuffs,
     return sAsmOut;
 }
 
+static int _ASM_countBlockMarkers(char* pikaAsm) {
+    int count = 0;
+    pika_bool is_line_start = pika_true;
+    for (char* p = pikaAsm; '\0' != *p; p++) {
+        if (is_line_start && 'B' == *p) {
+            count++;
+        }
+        is_line_start = ('\n' == *p);
+    }
+    return count;
+}
+
 char* AST_genAsm(AST* oAST, AST* subAst, Args* outBuffs, char* sPikaAsm) {
     int deepth = obj_getInt(oAST, "deepth");
     Args buffs = {0};
     char* buff = args_getBuff(&buffs, PIKA_SPRINTF_BUFF_SIZE);
+    char* operator = AST_getNodeAttr(subAst, "operator");
+    pika_bool is_short_circuit =
+        NULL != operator &&
+        (strEqu(operator, " and ") || strEqu(operator, " or "));
 
     /* comprehension */
     if (NULL != AST_getNodeAttr(subAst, "list")) {
@@ -3569,13 +3592,37 @@ char* AST_genAsm(AST* oAST, AST* subAst, Args* outBuffs, char* sPikaAsm) {
     }
 
     /* Solve sub stmt */
-    while (1) {
-        QueueObj* subStmt = queueObj_popObj(subAst);
-        if (NULL == subStmt) {
-            break;
-        }
+    if (is_short_circuit) {
+        QueueObj* left = queueObj_popObj(subAst);
+        QueueObj* right = queueObj_popObj(subAst);
+        char control_asm[96] = {0};
+        char temp_name[12] = {0};
+
         obj_setInt(oAST, "deepth", deepth + 1);
-        sPikaAsm = AST_genAsm(oAST, subStmt, &buffs, sPikaAsm);
+        sPikaAsm = AST_genAsm(oAST, left, &buffs, sPikaAsm);
+        obj_setInt(oAST, "deepth", deepth + 1);
+        char* right_asm = AST_genAsm(oAST, right, &buffs, "");
+        int jump_lines = _ASM_countBlockMarkers(right_asm) + 2;
+
+        pika_sprintf(temp_name, "$sc%d", deepth);
+        pika_sprintf(control_asm, "0 OUT %s\n%d REF %s\n%d %s %d\nB%d\n",
+                     temp_name, deepth, temp_name, deepth,
+                     strEqu(operator, " and ") ? "JEZ" : "JNZ", jump_lines,
+                     AST_getBlockDeepthNow(oAST));
+        sPikaAsm = strsAppend(&buffs, sPikaAsm, control_asm);
+        sPikaAsm = strsAppend(&buffs, sPikaAsm, right_asm);
+        pika_sprintf(control_asm, "0 OUT %s\nB%d\n%d REF %s\n", temp_name,
+                     AST_getBlockDeepthNow(oAST), deepth, temp_name);
+        sPikaAsm = strsAppend(&buffs, sPikaAsm, control_asm);
+    } else {
+        while (1) {
+            QueueObj* subStmt = queueObj_popObj(subAst);
+            if (NULL == subStmt) {
+                break;
+            }
+            obj_setInt(oAST, "deepth", deepth + 1);
+            sPikaAsm = AST_genAsm(oAST, subStmt, &buffs, sPikaAsm);
+        }
     }
 
     /* Byte code generate rules */
@@ -3609,6 +3656,9 @@ char* AST_genAsm(AST* oAST, AST* subAst, Args* outBuffs, char* sPikaAsm) {
     /* append the syntax item */
     for (size_t i = 0; i < sizeof(rules_after) / sizeof(GenRule); i++) {
         GenRule rule = rules_after[i];
+        if (is_short_circuit && strEqu(rule.ast, "operator")) {
+            continue;
+        }
         char* sNodeVal = AST_getNodeAttr(subAst, rule.ast);
         if (NULL != sNodeVal) {
             /* e.g. "0 RUN print \n" */
