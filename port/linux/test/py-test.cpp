@@ -266,6 +266,55 @@ TEST(parser, empty_import_target_valid_neighbors) {
     EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source), PIKA_RES_OK);
     byteCodeFrame_deinit(&bytecode_frame);
 }
+TEST(parser, invalid_block_context_returns_syntax_error) {
+    char orphan_else[] = "else:\n    pass\n";
+    char orphan_elif[] = "elif True:\n    pass\n";
+    char orphan_except[] = "except:\n    pass\n";
+    char orphan_finally[] = "finally:\n    pass\n";
+    char outside_break[] = "break\n";
+    char outside_continue[] = "continue\n";
+    char outside_return[] = "return 1\n";
+    char outside_yield[] = "yield 1\n";
+    char list_missing_comma[] = "x = [1 2]\n";
+    char tuple_missing_comma[] = "x = (1 2)\n";
+    char* sources[] = {
+        orphan_else,     orphan_elif,      orphan_except,
+        orphan_finally,  outside_break,    outside_continue,
+        outside_return,  outside_yield,    list_missing_comma,
+        tuple_missing_comma,
+    };
+    for (char* source : sources) {
+        SCOPED_TRACE(source);
+        ByteCodeFrame bytecode_frame = {0};
+        byteCodeFrame_init(&bytecode_frame);
+        EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source),
+                  PIKA_RES_ERR_SYNTAX_ERROR);
+        byteCodeFrame_deinit(&bytecode_frame);
+    }
+}
+TEST(parser, valid_block_context_neighbors) {
+    char source[] =
+        "def f(value):\n"
+        "    while value:\n"
+        "        if value == 1:\n"
+        "            break\n"
+        "        elif value == 2:\n"
+        "            continue\n"
+        "        else:\n"
+        "            return value\n"
+        "    try:\n"
+        "        raise\n"
+        "    except:\n"
+        "        return 0\n"
+        "for item in [1, 2]:\n"
+        "    pass\n"
+        "else:\n"
+        "    pass\n";
+    ByteCodeFrame bytecode_frame = {0};
+    byteCodeFrame_init(&bytecode_frame);
+    EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source), PIKA_RES_OK);
+    byteCodeFrame_deinit(&bytecode_frame);
+}
 TEST_RUN_SINGLE_FILE(vm,
                      issue_star_dict,
                      "test/python/issue/issue_star_dict.py")

@@ -151,6 +151,7 @@ static uint8_t Lexer_isError(char* line) {
     char* token = sTokenStream;
     char last_type = TOKEN_strEnd;
     char last_value = 0;
+    int8_t bracket_deepth = 0;
     while ('\0' != *token) {
         token++;
         char type = *token++;
@@ -168,6 +169,19 @@ static uint8_t Lexer_isError(char* line) {
               ('}' == value && ':' == last_value)))) {
             uRes = 1;
             break;
+        }
+        if (bracket_deepth > 0 && TOKEN_literal == last_type &&
+            TOKEN_literal == type && last_value >= '0' && last_value <= '9' &&
+            value >= '0' && value <= '9') {
+            uRes = 1;
+            break;
+        }
+        if (TOKEN_devider == type) {
+            if ('(' == value || '[' == value || '{' == value) {
+                bracket_deepth++;
+            } else if (')' == value || ']' == value || '}' == value) {
+                bracket_deepth--;
+            }
         }
         last_type = type;
         last_value = value;
@@ -2298,6 +2312,23 @@ typedef struct {
 static const NormalKeyword normal_keywords[] = {
     {{"while"}, 5}, {{"if"}, 2}, {{"elif"}, 4}};
 
+static pika_bool _Parser_isInBlock(BlockState* blockState,
+                                   char* block1,
+                                   char* block2) {
+    for (int i = 0; i < stack_getTop(blockState->stack); i++) {
+        Arg* block = stack_checkArg(blockState->stack, i);
+        char* block_type = arg_getStr(block);
+        if (strEqu(block_type, block1) ||
+            (NULL != block2 && strEqu(block_type, block2))) {
+            return pika_true;
+        }
+        if (strEqu(block_type, "def") || strEqu(block_type, "class")) {
+            return pika_false;
+        }
+    }
+    return pika_false;
+}
+
 AST* parser_line2Ast(Parser* self, char* sLine) {
     BlockState* blockState = &self->blockState;
     /* line is not exist */
@@ -2310,6 +2341,7 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
     Args buffs = {0};
     int8_t iBlockDeepthNow, iBlockDeepthLast = -1;
     char *sLineStart, *sStmt;
+    char sPreviousBlock[10] = {0};
 
     /* docsting */
     if (strIsStartWith(sLine, "@docstring")) {
@@ -2351,6 +2383,7 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
             }
             char buff[10] = {0};
             char* sBlockType = stack_popStr(blockState->stack, buff);
+            strcpy(sPreviousBlock, sBlockType);
             /* push exit block type to exit_block queue */
             queueObj_pushStr(exit_block_queue, sBlockType);
         }
@@ -2366,6 +2399,13 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
         uint8_t sKeywordLen = normal_keywords[i].length;
         if (strIsStartWith(sLineStart, sKeyword) &&
             (sLineStart[sKeywordLen] == ' ')) {
+            if (strEqu(sKeyword, "elif") &&
+                !strEqu(sPreviousBlock, "if") &&
+                !strEqu(sPreviousBlock, "elif")) {
+                obj_deinit(oAst);
+                oAst = NULL;
+                goto __exit;
+            }
             if (1 !=
                 _Cursor_count(sLineStart, TOKEN_devider, ":", pika_true)) {
                 obj_deinit(oAst);
@@ -2392,6 +2432,11 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
         if ((strIsStartWith(sLineStart, sKeyward)) &&
             ((sLineStart[keyward_size] == ' ') ||
              (sLineStart[keyward_size] == 0))) {
+            if (!_Parser_isInBlock(blockState, "for", "while")) {
+                obj_deinit(oAst);
+                oAst = NULL;
+                goto __exit;
+            }
             AST_setNodeAttr(oAst, sKeyward, "");
             sStmt = "";
             goto __block_matched;
@@ -2439,6 +2484,15 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
     /* else */
     if (strIsStartWith(sLineStart, "else")) {
         if ((sLineStart[4] == ' ') || (sLineStart[4] == ':')) {
+            if (!strEqu(sPreviousBlock, "if") &&
+                !strEqu(sPreviousBlock, "elif") &&
+                !strEqu(sPreviousBlock, "for") &&
+                !strEqu(sPreviousBlock, "while") &&
+                !strEqu(sPreviousBlock, "except")) {
+                obj_deinit(oAst);
+                oAst = NULL;
+                goto __exit;
+            }
             sStmt = "";
             AST_setNodeBlock(oAst, "else");
             stack_pushStr(blockState->stack, "else");
@@ -2460,6 +2514,12 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
     /* except */
     if (strIsStartWith(sLineStart, "except")) {
         if ((sLineStart[6] == ' ') || (sLineStart[6] == ':')) {
+            if (!strEqu(sPreviousBlock, "try") &&
+                !strEqu(sPreviousBlock, "except")) {
+                obj_deinit(oAst);
+                oAst = NULL;
+                goto __exit;
+            }
             sStmt = "";
             AST_setNodeBlock(oAst, "except");
             stack_pushStr(blockState->stack, "except");
@@ -2468,12 +2528,39 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
     }
 #endif
 
+    if (strIsStartWith(sLineStart, "finally") &&
+        (sLineStart[7] == ' ' || sLineStart[7] == ':') &&
+        !strEqu(sPreviousBlock, "try") &&
+        !strEqu(sPreviousBlock, "except")) {
+        obj_deinit(oAst);
+        oAst = NULL;
+        goto __exit;
+    }
+
+    if ((strEqu(sLineStart, "yield") ||
+         strIsStartWith(sLineStart, "yield ")) &&
+        !_Parser_isInBlock(blockState, "def", NULL)) {
+        obj_deinit(oAst);
+        oAst = NULL;
+        goto __exit;
+    }
+
     if (strEqu(sLineStart, "return")) {
+        if (!_Parser_isInBlock(blockState, "def", NULL)) {
+            obj_deinit(oAst);
+            oAst = NULL;
+            goto __exit;
+        }
         AST_setNodeAttr(oAst, "return", "");
         sStmt = "";
         goto __block_matched;
     }
     if (strIsStartWith(sLineStart, "return ")) {
+        if (!_Parser_isInBlock(blockState, "def", NULL)) {
+            obj_deinit(oAst);
+            oAst = NULL;
+            goto __exit;
+        }
         char* lineBuff = strsCopy(&buffs, sLineStart);
         strsPopToken(&buffs, &lineBuff, ' ');
         sStmt = lineBuff;
