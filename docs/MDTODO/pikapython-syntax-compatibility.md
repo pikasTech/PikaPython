@@ -254,7 +254,7 @@ P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩
 #### R12.2.3 [completed]
 
 修复附加候选中的非法 lambda、条件表达式、slice、await 与 async for，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.2.3_Task_Report.md)。
-### R12.3 [in_progress]
+### R12.3 [completed]
 
 修复默认参数、短路、运算符结合、推导式作用域、解包和局部变量绑定的运行语义，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.3_Task_Report.md)。
 
@@ -264,7 +264,7 @@ P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩
 #### R12.3.2 [completed]
 
 修复默认参数定义时求值和未绑定局部变量错误合同，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.3.2_Task_Report.md)。
-#### R12.3.3
+#### R12.3.3 [completed]
 
 修复推导式作用域、星号解包及定长解包数量/错误类型合同，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.3.3_Task_Report.md)。
 ### R12.4

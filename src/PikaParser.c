@@ -1297,7 +1297,7 @@ char* Suger_leftSlice(Args* outBuffs, char* sRight, char** sLeft_p) {
     }
     /* exit when not match
          (symble|iteral)'['
-    */
+     */
     Cursor_forEach(cs, sLeft) {
         Cursor_iterStart(&cs);
         if (strEqu(cs.token2.pyload, "[")) {
@@ -2871,7 +2871,7 @@ Arg* arg_strAddIndentMulti(Arg* aStrInMuti, int indent) {
 static char* Suger_multiAssign(Args* out_buffs, char* sLine) {
 #if PIKA_NANO_ENABLE
     return sLine;
-#endif
+#else
     if (!strIsContain(sLine, '=') || !strIsContain(sLine, ',')) {
         return sLine;
     }
@@ -2881,11 +2881,12 @@ static char* Suger_multiAssign(Args* out_buffs, char* sLine) {
     pika_bool bAssign = pika_false;
     Arg* aStmt = arg_newStr("");
     Arg* aOutList = arg_newStr("");
-    Arg* aOutItem = arg_newStr("");
     Arg* aLineOut = arg_newStr("");
     char* sLineItem = NULL;
     char* sOutList = NULL;
-    int iOutNum = 0;
+    int target_num = 0;
+    int star_index = -1;
+    int star_num = 0;
     Cursor_forEach(cs, sLine) {
         Cursor_iterStart(&cs);
         if (cs.bracket_deepth == 0 && strEqu(cs.token1.pyload, "=")) {
@@ -2912,10 +2913,8 @@ static char* Suger_multiAssign(Args* out_buffs, char* sLine) {
         goto __exit;
     }
 
-    sLineItem = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "$tmp= %s\n",
+    sLineItem = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "$tmp = %s\n",
                            arg_getStr(aStmt));
-
-    /* add space */
     aLineOut = arg_strAppend(aLineOut, sLineItem);
 
     sOutList = arg_getStr(aOutList);
@@ -2924,24 +2923,87 @@ static char* Suger_multiAssign(Args* out_buffs, char* sLine) {
         if (item[0] == '\0') {
             break;
         }
-        char* sLineItem = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
-                                     "%s = $tmp[%d]\n", item, iOutNum);
-        /* add space */
-        aLineOut = arg_strAppend(aLineOut, sLineItem);
-        iOutNum++;
+        while (' ' == *item || '\t' == *item) {
+            item++;
+        }
+        if ('*' == *item) {
+            star_index = target_num;
+            star_num++;
+        }
+        target_num++;
     }
-    /* add space */
-    aLineOut = arg_strAppend(aLineOut, "del $tmp");
+    if (star_num > 1) {
+        sLineOut = sLine;
+        goto __exit;
+    }
+
+    aLineOut = arg_strAppend(aLineOut, "$unpack_len = len($tmp)\n");
+    if (0 == star_num) {
+        sLineItem = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
+                               "if $unpack_len < %d:\n", target_num);
+        aLineOut = arg_strAppend(aLineOut, sLineItem);
+        aLineOut = arg_strAppend(
+            aLineOut,
+            "    del $tmp\n"
+            "    del $unpack_len\n"
+            "    raise ValueError(\"not enough values to unpack\")\n");
+        sLineItem = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
+                               "if $unpack_len > %d:\n", target_num);
+        aLineOut = arg_strAppend(aLineOut, sLineItem);
+        aLineOut = arg_strAppend(
+            aLineOut,
+            "    del $tmp\n"
+            "    del $unpack_len\n"
+            "    raise ValueError(\"too many values to unpack\")\n");
+    } else {
+        sLineItem = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
+                               "if $unpack_len < %d:\n", target_num - 1);
+        aLineOut = arg_strAppend(aLineOut, sLineItem);
+        aLineOut = arg_strAppend(
+            aLineOut,
+            "    del $tmp\n"
+            "    del $unpack_len\n"
+            "    raise ValueError(\"not enough values to unpack\")\n");
+    }
+
+    sOutList = arg_getStr(aOutList);
+    for (int target_index = 0; target_index < target_num; target_index++) {
+        char* item = Cursor_popToken(&buffs, &sOutList, ",");
+        while (' ' == *item || '\t' == *item) {
+            item++;
+        }
+        if (target_index == star_index) {
+            item++;
+            while (' ' == *item || '\t' == *item) {
+                item++;
+            }
+            int suffix_num = target_num - star_index - 1;
+            sLineItem = strsFormat(
+                &buffs, PIKA_LINE_BUFF_SIZE,
+                "%s = list($tmp[%d:$unpack_len - %d])\n", item, star_index,
+                suffix_num);
+        } else if (star_index >= 0 && target_index > star_index) {
+            int suffix_index = target_num - target_index;
+            sLineItem = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
+                                   "%s = $tmp[$unpack_len - %d]\n", item,
+                                   suffix_index);
+        } else {
+            sLineItem = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
+                                   "%s = $tmp[%d]\n", item, target_index);
+        }
+        aLineOut = arg_strAppend(aLineOut, sLineItem);
+    }
+    aLineOut = arg_strAppend(aLineOut, "del $tmp\ndel $unpack_len");
     aLineOut = arg_strAddIndentMulti(aLineOut, iIndent);
     sLineOut = strsCopy(out_buffs, arg_getStr(aLineOut));
     goto __exit;
 __exit:
     arg_deinit(aStmt);
     arg_deinit(aOutList);
-    arg_deinit(aOutItem);
     arg_deinit(aLineOut);
     strsDeinit(&buffs);
     return sLineOut;
+#endif
 }
 
 static char* Suger_from_import_as(Args* buffs_p, char* sLine) {
@@ -3535,19 +3597,64 @@ char* _comprehension2Asm(Args* outBuffs,
                          char* sSbuStmt2,
                          char* sSubStmt3) {
     Args buffs = {0};
+#if !PIKA_NANO_ENABLE
+    char scope_old[16] = {0};
+    char scope_had[16] = {0};
+    pika_bool isolate_target =
+        STMT_reference == Lexer_matchStmtType(sSbuStmt2);
+    if (isolate_target) {
+        pika_sprintf(scope_old, "$co%d", iBlockDeepth);
+        pika_sprintf(scope_had, "$ch%d", iBlockDeepth);
+    }
+#endif
     /*
      * generate code for comprehension:
      * $tmp = []
      * for <substmt2> in <substmt3>:
      *   $tmp.append(<substmt1>)
-     */
+    */
+#if !PIKA_NANO_ENABLE
+    Arg* aLineOut = arg_newStr("");
+    if (isolate_target) {
+        aLineOut = arg_strAppend(
+            aLineOut,
+            strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
+                       "%s = False\n"
+                       "%s = None\n"
+                       "try:\n"
+                       "    %s = %s\n"
+                       "    %s = True\n"
+                       "except NameError:\n"
+                       "    pass\n",
+                       scope_had, scope_old, scope_old, sSbuStmt2,
+                       scope_had));
+    }
+    aLineOut = arg_strAppend(aLineOut, "$tmp = []\n");
+#else
     Arg* aLineOut = arg_newStr("$tmp = []\n");
+#endif
     aLineOut = arg_strAppend(
         aLineOut, strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "for %s in %s:\n",
                              sSbuStmt2, sSubStmt3));
     aLineOut = arg_strAppend(
         aLineOut, strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
                              "    $tmp.append(%s)\npass\n", sSubStmt1));
+#if !PIKA_NANO_ENABLE
+    if (isolate_target) {
+        aLineOut = arg_strAppend(
+            aLineOut,
+            strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
+                       "if %s:\n"
+                       "    %s = %s\n"
+                       "else:\n"
+                       "    %s = None\n"
+                       "    del %s\n"
+                       "del %s\n"
+                       "del %s\n",
+                       scope_had, sSbuStmt2, scope_old, sSbuStmt2,
+                       sSbuStmt2, scope_old, scope_had));
+    }
+#endif
     aLineOut = arg_strAddIndentMulti(aLineOut, 4 * iBlockDeepth);
     char* sLineOut = arg_getStr(aLineOut);
     Parser* parser = parser_create();
