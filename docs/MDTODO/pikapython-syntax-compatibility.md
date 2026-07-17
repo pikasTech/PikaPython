@@ -241,7 +241,7 @@
 
 P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩溃并补回归，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.1_Task_Report.md)。
 
-### R12.2 [in_progress]
+### R12.2 [completed]
 
 修复孤立 block clause、作用域外控制语句、缺逗号及附加 parser 错误接受，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.2_Task_Report.md)。
 
@@ -251,7 +251,7 @@ P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩
 #### R12.2.2 [completed]
 
 修复附加候选中的非法声明、参数形态、赋值/删除/循环目标和注解目标，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.2.2_Task_Report.md)。
-#### R12.2.3
+#### R12.2.3 [completed]
 
 修复附加候选中的非法 lambda、条件表达式、slice、await 与 async for，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.2.3_Task_Report.md)。
 ### R12.3

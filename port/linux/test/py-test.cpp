@@ -357,6 +357,36 @@ TEST(parser, valid_declaration_and_target_neighbors) {
     EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source), PIKA_RES_OK);
     byteCodeFrame_deinit(&bytecode_frame);
 }
+TEST(parser, invalid_expression_form_returns_syntax_error) {
+    char invalid_lambda[] = "x = lambda:\n";
+    char invalid_conditional[] = "x = 1 if else 2\n";
+    char excessive_slice[] = "x = values[1:2:3:4]\n";
+    char outside_await[] = "await f()\n";
+    char async_for[] = "async for item in []:\n    pass\n";
+    char* sources[] = {invalid_lambda, invalid_conditional, excessive_slice,
+                       outside_await, async_for};
+    for (char* source : sources) {
+        SCOPED_TRACE(source);
+        ByteCodeFrame bytecode_frame = {0};
+        byteCodeFrame_init(&bytecode_frame);
+        EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source),
+                  PIKA_RES_ERR_SYNTAX_ERROR);
+        byteCodeFrame_deinit(&bytecode_frame);
+    }
+}
+TEST(parser, invalid_expression_form_valid_neighbors) {
+    char source[] =
+        "text = 'lambda value if else await async for'\n"
+        "await_result = 1\n"
+        "values = [1, 2, 3]\n"
+        "part = values[0:2:1]\n"
+        "for item in values:\n"
+        "    pass\n";
+    ByteCodeFrame bytecode_frame = {0};
+    byteCodeFrame_init(&bytecode_frame);
+    EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source), PIKA_RES_OK);
+    byteCodeFrame_deinit(&bytecode_frame);
+}
 TEST_RUN_SINGLE_FILE(vm,
                      issue_star_dict,
                      "test/python/issue/issue_star_dict.py")

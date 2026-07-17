@@ -1791,6 +1791,9 @@ static PIKA_RES _AST_parse_slice(AST* ast, Args* buffs, char* sStmt) {
     }
     char* sSliceList = strsCut(buffs, sLaststmt, '[', ']');
     pika_assert(sSliceList != NULL);
+    if (_Cursor_count(sSliceList, TOKEN_devider, ":", pika_true) > 2) {
+        return PIKA_RES_ERR_SYNTAX_ERROR;
+    }
     sSliceList = strsAppend(buffs, sSliceList, ":");
     int iIndex = 0;
     while (1) {
@@ -1924,6 +1927,12 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
         bAugmentedAssign =
             Suger_selfOperator(&buffs, sStmt, &sRight, &sLeft);
         bLeftExist = bAugmentedAssign;
+    }
+    if (strEqu(sRight, "lambda") || strIsStartWith(sRight, "lambda ") ||
+        strIsStartWith(sRight, "lambda:") ||
+        Cursor_isContain(sRight, TOKEN_keyword, " if ")) {
+        eResult = PIKA_RES_ERR_SYNTAX_ERROR;
+        goto __exit;
     }
 
     /* remove hint */
@@ -2423,7 +2432,10 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
     sStmt = sLineStart;
 
     if (strEqu(sLineStart, "assert") || strEqu(sLineStart, "nonlocal") ||
-        strIsStartWith(sLineStart, "nonlocal ")) {
+        strIsStartWith(sLineStart, "nonlocal ") ||
+        strEqu(sLineStart, "await") ||
+        strIsStartWith(sLineStart, "await ") ||
+        strIsStartWith(sLineStart, "async for ")) {
         obj_deinit(oAst);
         oAst = NULL;
         goto __exit;
