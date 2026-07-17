@@ -237,7 +237,7 @@
 
 修复 R11 确认的 20 个解析期/运行期语法处理错误，优先消除空 import 两种形式的 SIGSEGV，再按共同 parser block/token 根因和 runtime 语义合同分批处理；保持非架构改动，正确性阶段允许量化临时资源增量，资源与性能回收独立执行且 VM/runtime 性能优先，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12_Task_Report.md)。
 
-### R12.1
+### R12.1 [completed]
 
 P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩溃并补回归，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.1_Task_Report.md)。
 

@@ -242,6 +242,30 @@ TEST(parser, python3_invalid_syntax_batch_r10) {
         byteCodeFrame_deinit(&bytecode_frame);
     }
 }
+TEST(parser, empty_import_target_returns_syntax_error) {
+    char empty_import[] = "import \n";
+    char empty_from_import[] = "from module import \n";
+    char* sources[] = {empty_import, empty_from_import};
+    for (char* source : sources) {
+        SCOPED_TRACE(source);
+        ByteCodeFrame bytecode_frame = {0};
+        byteCodeFrame_init(&bytecode_frame);
+        EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source),
+                  PIKA_RES_ERR_SYNTAX_ERROR);
+        byteCodeFrame_deinit(&bytecode_frame);
+    }
+}
+TEST(parser, empty_import_target_valid_neighbors) {
+    char source[] =
+        "import module\n"
+        "import module as alias\n"
+        "from module import name\n"
+        "from module import name as alias2\n";
+    ByteCodeFrame bytecode_frame = {0};
+    byteCodeFrame_init(&bytecode_frame);
+    EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source), PIKA_RES_OK);
+    byteCodeFrame_deinit(&bytecode_frame);
+}
 TEST_RUN_SINGLE_FILE(vm,
                      issue_star_dict,
                      "test/python/issue/issue_star_dict.py")

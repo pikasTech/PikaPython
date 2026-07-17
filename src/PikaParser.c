@@ -123,6 +123,25 @@ char* Cursor_getCleanStmt(Args* outBuffs, char* cmd) {
 static uint8_t Lexer_isError(char* line) {
     Args buffs = {0};
     uint8_t uRes = 0; /* not error */
+    char* stmt = line + strGetIndent(line);
+    char* import_target = NULL;
+    if (strIsStartWith(stmt, "import")) {
+        import_target = stmt + 6;
+    } else if (strIsStartWith(stmt, "from ")) {
+        import_target = strstr(stmt + 5, " import");
+        if (NULL != import_target) {
+            import_target += 7;
+        }
+    }
+    if (NULL != import_target) {
+        while (' ' == *import_target || '\t' == *import_target) {
+            import_target++;
+        }
+        if ('\0' == *import_target) {
+            uRes = 1;
+            goto __exit;
+        }
+    }
     char* sTokenStream = Lexer_getTokenStream(&buffs, line);
     if (NULL == sTokenStream) {
         uRes = 1; /* lex error */
