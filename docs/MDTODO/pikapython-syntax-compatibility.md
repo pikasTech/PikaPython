@@ -322,3 +322,7 @@ P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩
 ### R14.7 [completed]
 
 修复 Linux Action 暴露的逻辑组合比较被链式比较门禁错误拒绝问题，保持非法链式比较稳定拒绝并恢复已有 and/or 条件子集，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.7_Task_Report.md)。
+
+### R14.8 [completed]
+
+修复 Linux Action 的 VALGRIND 未复用网络隔离和超时边界问题，使内存检查与 core TEST 使用同一默认过滤合同并保留显式 filter 覆盖，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.8_Task_Report.md)。

@@ -1,4 +1,6 @@
 #!/bin/sh
+set -e
+
 sh make.sh
 
 # 初始化参数变量
@@ -23,6 +25,11 @@ do
     esac
 done
 
+if [ -z "$gtest_filter" ]; then
+    PIKA_GTEST_FILTER=${PIKA_GTEST_FILTER:--mqtt.*:network.*:socket.*:requests.*:jrpc.BlockingRequestBetweenTwoJRPC}
+    gtest_filter="--gtest_filter=$PIKA_GTEST_FILTER"
+fi
+
 # 设置 valgrind 命令的公共参数
 if [ "$massif" = true ]; then
     valgrind_common_options=""
@@ -31,4 +38,4 @@ else
 fi
 
 # 执行 valgrind 命令
-valgrind $tool_option $valgrind_common_options build/test/pikascript_test $gtest_filter
+timeout 10m valgrind $tool_option $valgrind_common_options build/test/pikascript_test $gtest_filter
