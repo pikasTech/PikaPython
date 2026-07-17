@@ -1919,8 +1919,11 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
         Cursor_deinit(&cs);
     }
     /* solve the += -= /= *= stmt */
+    pika_bool bAugmentedAssign = pika_false;
     if (!bLeftExist) {
-        bLeftExist = Suger_selfOperator(&buffs, sStmt, &sRight, &sLeft);
+        bAugmentedAssign =
+            Suger_selfOperator(&buffs, sStmt, &sRight, &sLeft);
+        bLeftExist = bAugmentedAssign;
     }
 
     /* remove hint */
@@ -1939,12 +1942,24 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
             strEqu(sLeft, "True") || strEqu(sLeft, "False") ||
             (STMT_reference != eLeftType && STMT_chain != eLeftType &&
              STMT_tuple != eLeftType && STMT_list != eLeftType) ||
+            (bAugmentedAssign &&
+             (STMT_tuple == eLeftType || STMT_list == eLeftType)) ||
             (STMT_list == eLeftType &&
              _Cursor_count(sLeft, TOKEN_operator, "*", pika_false) > 1)) {
             eResult = PIKA_RES_ERR_SYNTAX_ERROR;
             goto __exit;
         }
         AST_setNodeAttr(ast, (char*)"left", sLeft);
+    }
+    if (!bLeftExist &&
+        1 == _Cursor_count(sStmt, TOKEN_devider, ":", pika_true)) {
+        char* sHintTarget = Cursor_splitCollect(&buffs, sStmt, ":", 0);
+        enum StmtType eHintTargetType = Lexer_matchStmtType(sHintTarget);
+        if (STMT_reference != eHintTargetType &&
+            STMT_chain != eHintTargetType) {
+            eResult = PIKA_RES_ERR_SYNTAX_ERROR;
+            goto __exit;
+        }
     }
     /* match statment type */
     eStmtType = Lexer_matchStmtType(sRight);
@@ -2222,6 +2237,8 @@ char* _defGetDefault(Args* outBuffs, char** sDeclearOut_p) {
     char* sDefaultOut = NULL;
     pika_bool bDefaultSeen = pika_false;
     pika_bool bKeywordOnly = pika_false;
+    pika_bool bVarArgsSeen = pika_false;
+    pika_bool bKwArgsSeen = pika_false;
     pika_assert(NULL != sArgList);
     int iArgNum = _Cursor_count(sArgList, TOKEN_devider, ",", pika_true) + 1;
     for (int i = 0; i < iArgNum; i++) {
@@ -2250,9 +2267,22 @@ char* _defGetDefault(Args* outBuffs, char** sDeclearOut_p) {
         }
         char* sParamName =
             Cursor_splitCollect(&buffs, sDefaultKey, ":", 0);
+        uint8_t star_count = 0;
         while ('*' == sParamName[0]) {
             bKeywordOnly = pika_true;
+            star_count++;
             sParamName++;
+        }
+        if (bKwArgsSeen || star_count > 2 ||
+            (1 == star_count && bVarArgsSeen) ||
+            (2 == star_count && bKwArgsSeen)) {
+            goto __exit;
+        }
+        if (1 == star_count) {
+            bVarArgsSeen = pika_true;
+        }
+        if (2 == star_count) {
+            bKwArgsSeen = pika_true;
         }
         if ('\0' == sParamName[0] ||
             args_isArgExist(&paramNames, sParamName)) {
@@ -2392,6 +2422,13 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
     sLineStart = sLine + (iBlockDeepthNow - blockState->deepth) * 4;
     sStmt = sLineStart;
 
+    if (strEqu(sLineStart, "assert") || strEqu(sLineStart, "nonlocal") ||
+        strIsStartWith(sLineStart, "nonlocal ")) {
+        obj_deinit(oAst);
+        oAst = NULL;
+        goto __exit;
+    }
+
     // "while" "if" "elif"
     for (uint32_t i = 0; i < sizeof(normal_keywords) / sizeof(NormalKeyword);
          i++) {
@@ -2455,7 +2492,10 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
             goto __exit;
         }
         char* sArgIn = strsPopToken(list_buffs, &sLineBuff, ' ');
-        if (strEqu(sArgIn, "") || strEqu(sArgIn, "in")) {
+        enum StmtType eTargetType = Lexer_matchStmtType(sArgIn);
+        if (strEqu(sArgIn, "") || strEqu(sArgIn, "in") ||
+            (STMT_reference != eTargetType && STMT_tuple != eTargetType &&
+             STMT_list != eTargetType)) {
             args_deinit(list_buffs);
             obj_deinit(oAst);
             oAst = NULL;
@@ -2621,6 +2661,14 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
             sDelDir = sLineStart + sizeof("del ") - 1;
         }
         sDelDir = Cursor_getCleanStmt(&buffs, sDelDir);
+        enum StmtType eTargetType = Lexer_matchStmtType(sDelDir);
+        if (STMT_reference != eTargetType && STMT_chain != eTargetType &&
+            STMT_slice != eTargetType && STMT_tuple != eTargetType &&
+            STMT_list != eTargetType) {
+            obj_deinit(oAst);
+            oAst = NULL;
+            goto __exit;
+        }
         AST_setNodeAttr(oAst, "del", sDelDir);
         goto __block_matched;
     }
@@ -2635,6 +2683,12 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
         sDeclare = Cursor_getCleanStmt(&buffs, sDeclare);
         AST_setNodeAttr(oAst, "raw", sDeclare);
         if (!strIsContain(sDeclare, '(') || !strIsContain(sDeclare, ')')) {
+            obj_deinit(oAst);
+            oAst = NULL;
+            goto __exit;
+        }
+        char* sFnName = strsGetFirstToken(&buffs, sDeclare, '(');
+        if (STMT_reference != Lexer_matchStmtType(sFnName)) {
             obj_deinit(oAst);
             oAst = NULL;
             goto __exit;
@@ -2662,6 +2716,12 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
             goto __exit;
         }
         sDeclare = Cursor_getCleanStmt(&buffs, sDeclare);
+        char* sClassName = strsGetFirstToken(&buffs, sDeclare, '(');
+        if (STMT_reference != Lexer_matchStmtType(sClassName)) {
+            obj_deinit(oAst);
+            oAst = NULL;
+            goto __exit;
+        }
         AST_setNodeBlock(oAst, "class");
         AST_setNodeAttr(oAst, "declare", sDeclare);
         stack_pushStr(blockState->stack, "class");

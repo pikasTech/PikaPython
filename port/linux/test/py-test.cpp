@@ -315,6 +315,48 @@ TEST(parser, valid_block_context_neighbors) {
     EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source), PIKA_RES_OK);
     byteCodeFrame_deinit(&bytecode_frame);
 }
+TEST(parser, invalid_declaration_and_target_returns_syntax_error) {
+    char module_nonlocal[] = "nonlocal value\n";
+    char empty_assert[] = "assert\n";
+    char literal_del[] = "del 1\n";
+    char invalid_def_name[] = "def 1():\n    pass\n";
+    char invalid_class_name[] = "class 1:\n    pass\n";
+    char invalid_for_target[] = "for 1 in [1]:\n    pass\n";
+    char param_after_kwargs[] = "def f(**kwargs, value):\n    pass\n";
+    char duplicate_varargs[] = "def f(*args, *more):\n    pass\n";
+    char tuple_augmented[] = "a, b += (1, 2)\n";
+    char literal_annotation[] = "1: int\n";
+    char* sources[] = {
+        module_nonlocal,   empty_assert,       literal_del,
+        invalid_def_name,  invalid_class_name, invalid_for_target,
+        param_after_kwargs, duplicate_varargs, tuple_augmented,
+        literal_annotation,
+    };
+    for (char* source : sources) {
+        SCOPED_TRACE(source);
+        ByteCodeFrame bytecode_frame = {0};
+        byteCodeFrame_init(&bytecode_frame);
+        EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source),
+                  PIKA_RES_ERR_SYNTAX_ERROR);
+        byteCodeFrame_deinit(&bytecode_frame);
+    }
+}
+TEST(parser, valid_declaration_and_target_neighbors) {
+    char source[] =
+        "class Device:\n"
+        "    pass\n"
+        "def f(value, *args, **kwargs):\n"
+        "    assert value\n"
+        "    local: int = value\n"
+        "    del local\n"
+        "for item in [1, 2]:\n"
+        "    pass\n"
+        "value += 1\n";
+    ByteCodeFrame bytecode_frame = {0};
+    byteCodeFrame_init(&bytecode_frame);
+    EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source), PIKA_RES_OK);
+    byteCodeFrame_deinit(&bytecode_frame);
+}
 TEST_RUN_SINGLE_FILE(vm,
                      issue_star_dict,
                      "test/python/issue/issue_star_dict.py")
