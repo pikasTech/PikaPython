@@ -57,3 +57,7 @@
 ### R2.4 [completed]
 
 审核第二轮性能变更并完成报告，完成任务后将详细报告写入[任务报告](./details/pikapython-runtime-efficiency/R2.4_Task_Report.md)。
+
+## R3 [completed]
+
+基于现有 benchmark、PikaMemInfo 和 Linux perf 证据定位 VM/runtime CPU 热点后再做一轮性能优化：优先使用仓库自带测量工具，不改变 VM/对象模型/字节码大架构，不增加常驻 RAM；没有可重复热点证据的候选不得修改，完成后记录热点占比、优化前后 A/B、分配与 default/minimal 资源证据，完成任务后将详细报告写入[任务报告](./details/pikapython-runtime-efficiency/R3_Task_Report.md)。

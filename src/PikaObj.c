@@ -400,14 +400,23 @@ static PIKA_RES _obj_setArg(PikaObj* self,
                             uint8_t is_copy) {
     pika_assert(obj_checkAlive(self));
     /* setArg would copy arg */
+#if PIKA_NANO_ENABLE
     PikaObj* host = obj_getHostObj(self, argPath);
+    char* sArgName = strPointToLastToken(argPath, '.');
+#else
+    PikaObj* host = self;
+    char* sArgName = argPath;
+    if (NULL != strchr(argPath, '.')) {
+        host = obj_getHostObj(self, argPath);
+        sArgName = strPointToLastToken(argPath, '.');
+    }
+#endif
     PikaObj* oNew = NULL;
     pika_bool bNew = pika_false;
     if (NULL == host) {
         /* object no found */
         return PIKA_RES_ERR_ARG_NO_FOUND;
     }
-    char* sArgName = strPointToLastToken(argPath, '.');
     Arg* aNew;
     if (is_copy) {
         aNew = arg_copy(arg);

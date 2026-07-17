@@ -320,6 +320,19 @@ TEST(object_test, bytes_0_size) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(object_test, set_arg_simple_and_nested_path) {
+    PikaObj* root = newRootObj("root", New_BaseObj);
+    obj_newObj(root, "child", "TinyObj", New_TinyObj);
+
+    EXPECT_EQ(PIKA_RES_OK, obj_setInt(root, "plain", 1));
+    EXPECT_EQ(PIKA_RES_OK, obj_setInt(root, "child.value", 2));
+    EXPECT_EQ(1, obj_getInt(root, "plain"));
+    EXPECT_EQ(2, obj_getInt(root, "child.value"));
+
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(object, str_set_int) {
     PikaObj* root = newRootObj("root", New_BaseObj);
     obj_setStr(root, "test", "teststr");
