@@ -4542,6 +4542,7 @@ void _do_vsysOut(char* fmt, va_list args) {
 
 void obj_setSysOut(PikaObj* self, char* fmt, ...) {
     if (NULL != self->vmFrame) {
+        pikaVMFrame_setExceptionTypeFromName(self->vmFrame, fmt);
         if (self->vmFrame->error.code == PIKA_RES_OK) {
             self->vmFrame->error.code = PIKA_RES_ERR_RUNTIME_ERROR;
         }

@@ -357,6 +357,108 @@ TEST(pikaMain, floor_division_and_modulo_zero_errors) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(pikaMain, python3_typed_except_runtime_matrix) {
+    struct ExceptCase {
+        const char* source;
+        int expected;
+    };
+    const ExceptCase cases[] = {
+        {"result=1\ntry:\n    pass\nexcept:\n    result=2\n", 1},
+        {"result=1\ntry:\n    1/0\nexcept:\n    result=2\n", 2},
+        {"result=0\ntry:\n    1/0\nexcept ZeroDivisionError:\n    result=2\n",
+         2},
+        {"result=0\ntry:\n    1/0\nexcept ValueError:\n    result=1\nexcept "
+         "ZeroDivisionError:\n    result=2\n",
+         2},
+        {"result=0\ntry:\n    raise ValueError\nexcept ValueError:\n    "
+         "result=1\n",
+         1},
+        {"result=0\ntry:\n    raise ValueError()\nexcept ValueError:\n    "
+         "result=1\n",
+         1},
+        {"result=0\ntry:\n    raise ValueError\nexcept ValueError:\n    "
+         "result=result+1\nexcept ZeroDivisionError:\n    result=result+2\n",
+         1},
+        {"result=0\ntry:\n    raise ValueError\nexcept ValueError:\n    "
+         "result=1\nexcept:\n    result=2\n",
+         1},
+        {"result=0\ntry:\n    1/0\nexcept ValueError:\n    result=1\nexcept:\n"
+         "    result=2\n",
+         2},
+        {"result=1\ntry:\n    pass\nexcept TypeError:\n    result=2\nexcept "
+         "ValueError:\n    result=3\n",
+         1},
+        {"result=0\ntry:\n    raise ValueError\nexcept ValueError as err:\n"
+         "    result=isinstance(err, ValueError)\n",
+         1},
+        {"result=0\ntry:\n    try:\n        1/0\n    except ValueError:\n"
+         "        result=1\nexcept ZeroDivisionError:\n    result=2\n",
+         2},
+        {"result=0\ntry:\n    1/0\nexcept Exception:\n    result=1\n", 1},
+        {"result=0\ntry:\n    1/0\nexcept ArithmeticError:\n    result=1\n",
+         1},
+        {"result=0\ntry:\n    [1][3]\nexcept LookupError:\n    result=1\n",
+         1},
+        {"result=0\ntry:\n    1+'a'\nexcept TypeError:\n    result=1\n", 1},
+        {"result=0\ntry:\n    int('x')\nexcept ValueError:\n    result=1\n",
+         1},
+        {"result=0\ntry:\n    raise 3\nexcept TypeError:\n    result=1\n", 1},
+        {"result=0\ntry:\n    raise ValueError\nexcept ValueError:\n    "
+         "result=result+1\ntry:\n    1/0\nexcept ValueError:\n    "
+         "result=9\nexcept ZeroDivisionError:\n    result=result+2\n",
+         3},
+        {"result=0\ntry:\n    1/0\nexcept ZeroDivisionError:\n    result=1\n"
+         "result=result+2\n",
+         3},
+        {"def f():\n    try:\n        return 3\n    except:\n        return 4\n"
+         "result=f()\n",
+         3},
+        {"result=0\nfor i in [1,2]:\n    try:\n        break\n    except:\n"
+         "        result=9\n    result=8\nresult=result+1\n",
+         1},
+        {"result=0\nfor i in [1,2]:\n    try:\n        continue\n    except:\n"
+         "        result=9\n    result=8\nresult=result+1\n",
+         1},
+    };
+
+    for (const ExceptCase& test_case : cases) {
+        SCOPED_TRACE(test_case.source);
+        PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+        VMParameters* globals = obj_run(pikaMain, (char*)test_case.source);
+        EXPECT_EQ(obj_getInt(globals, "result"), test_case.expected);
+        obj_deinit(pikaMain);
+        EXPECT_EQ(pikaMemNow(), 0);
+    }
+}
+
+TEST(pikaMain, legacy_untyped_exp_bytecode) {
+    char legacy_asm[] =
+        "B0\n"
+        "0 NUM 0\n"
+        "0 OUT result\n"
+        "B0\n"
+        "0 TRY \n"
+        "B1\n"
+        "1 NUM 1\n"
+        "1 NUM 0\n"
+        "0 OPT /\n"
+        "B0\n"
+        "0 NTR \n"
+        "0 GER \n"
+        "0 JEZ 2\n"
+        "B0\n"
+        "0 EXP \n"
+        "B1\n"
+        "0 NUM 7\n"
+        "0 OUT result\n"
+        "B0\n";
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    VMParameters* globals = pikaVM_runAsm(pikaMain, legacy_asm);
+    EXPECT_EQ(obj_getInt(globals, "result"), 7);
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(pikaMain, python3_duplicate_position_keyword) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     VMParameters* globals = obj_run(

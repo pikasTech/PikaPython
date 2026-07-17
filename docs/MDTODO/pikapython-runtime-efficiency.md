@@ -62,6 +62,22 @@
 
 基于现有 benchmark、PikaMemInfo 和 Linux perf 证据定位 VM/runtime CPU 热点后再做一轮性能优化：优先使用仓库自带测量工具，不改变 VM/对象模型/字节码大架构，不增加常驻 RAM；没有可重复热点证据的候选不得修改，完成后记录热点占比、优化前后 A/B、分配与 default/minimal 资源证据，完成任务后将详细报告写入[任务报告](./details/pikapython-runtime-efficiency/R3_Task_Report.md)。
 
+## R4 [in_progress]
+
+继续在现有 PikaPython 语法子集内批量探测并修复语法、runtime 和 VM bug 及 Python 3 不兼容行为：不改变 VM/对象模型/字节码大架构，不扩大语法范围，优先修复可稳定复现的问题；每批加入对应单元测试，完成 default/minimal 回归及 text/data/bss、分配和堆残留对比，确保资源占用总体不膨胀，完成任务后将详细报告写入[任务报告](./details/pikapython-runtime-efficiency/R4_Task_Report.md)。
+
+### R4.1 [completed]
+
+调查并复现 #368 typed except、异常分支匹配和 except as alias 的 parser/字节码/runtime 数据流，明确现有架构内可修边界，完成任务后将详细报告写入[任务报告](./details/pikapython-runtime-efficiency/R4.1_Task_Report.md)。
+### R4.2 [completed]
+
+在不改变 VM、对象模型和字节码大架构的前提下修复可局部解决的异常语义问题；无法正确执行的已接受语法改为稳定拒绝，并增加 Python 3 合法/非法邻接单元测试，完成任务后将详细报告写入[任务报告](./details/pikapython-runtime-efficiency/R4.2_Task_Report.md)。
+### R4.3 [completed]
+
+批量探测至少 20 个异常传播、finally 邻接、raise、循环控制流、调用错误和错误后恢复场景，修复其中稳定复现的 runtime/VM bug 并验证零堆残留，完成任务后将详细报告写入[任务报告](./details/pikapython-runtime-efficiency/R4.3_Task_Report.md)。
+### R4.4 [in_progress]
+
+运行 default/minimal 核心回归和同配置 text/data/bss A/B，确保总体资源不膨胀，记录隔离包限制、剩余风险并更新 #368，完成任务后将详细报告写入[任务报告](./details/pikapython-runtime-efficiency/R4.4_Task_Report.md)。
 ## R5 [completed]
 
 继续在现有 PikaPython 语法子集内批量探测并修复语法、runtime 和 VM bug 及 Python 3 不兼容行为：不改变 VM/对象模型/字节码大架构，不扩大语法范围，优先修复可稳定复现的问题；每批加入对应单元测试，完成 default/minimal 回归及 text/data/bss、分配和堆残留对比，确保资源占用总体不膨胀，完成任务后将详细报告写入[任务报告](./details/pikapython-runtime-efficiency/R5_Task_Report.md)。

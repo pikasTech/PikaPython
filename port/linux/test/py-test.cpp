@@ -322,6 +322,46 @@ TEST(parser, comparison_and_exception_valid_neighbors) {
     EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source), PIKA_RES_OK);
     byteCodeFrame_deinit(&bytecode_frame);
 }
+
+TEST(parser, typed_except_invalid_forms) {
+    char invalid_try[] = "try value:\n    pass\nexcept:\n    pass\n";
+    char missing_type[] = "try:\n    pass\nexcept as err:\n    pass\n";
+    char missing_alias[] =
+        "try:\n    pass\nexcept ValueError as:\n    pass\n";
+    char tuple_type[] =
+        "try:\n    pass\nexcept (TypeError, ValueError):\n    pass\n";
+    char except_after_bare[] =
+        "try:\n    pass\nexcept:\n    pass\nexcept ValueError:\n    pass\n";
+    char duplicate_as[] =
+        "try:\n    pass\nexcept ValueError as first as second:\n    pass\n";
+    char* sources[] = {invalid_try,       missing_type, missing_alias,
+                       tuple_type,        except_after_bare,
+                       duplicate_as};
+    for (char* source : sources) {
+        SCOPED_TRACE(source);
+        ByteCodeFrame bytecode_frame = {0};
+        byteCodeFrame_init(&bytecode_frame);
+        EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source),
+                  PIKA_RES_ERR_SYNTAX_ERROR);
+        byteCodeFrame_deinit(&bytecode_frame);
+    }
+}
+
+TEST(parser, typed_except_valid_neighbors) {
+    char source[] =
+        "try:\n"
+        "    raise ValueError\n"
+        "except TypeError:\n"
+        "    result = 1\n"
+        "except ValueError as err:\n"
+        "    result = isinstance(err, ValueError)\n"
+        "except:\n"
+        "    result = 3\n";
+    ByteCodeFrame bytecode_frame = {0};
+    byteCodeFrame_init(&bytecode_frame);
+    EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source), PIKA_RES_OK);
+    byteCodeFrame_deinit(&bytecode_frame);
+}
 TEST(parser, valid_block_context_neighbors) {
     char source[] =
         "def f(value):\n"
