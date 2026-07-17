@@ -213,6 +213,42 @@
 
 运行定向及 default/minimal 隔离回归，量化临时资源增量并移交独立优化阶段，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R10.4_Task_Report.md)。
 
-## R11
+## R11 [completed]
 
-跟踪 R10 剩余 9 类 Python 3 非法语法：orphan else/elif/except/finally、循环或函数外 break/continue/return、list/tuple 项缺逗号；GitHub 受控入口恢复后先检索并合并已有 issue，没有同类 issue 再创建，按 block 上下文与通用 token 邻接分批修复，不改变架构和 VM/runtime 热路径，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R11_Task_Report.md)。
+再测试一轮并确认至少 20 个独立语法处理错误，同时覆盖解析阶段和运行阶段：保留 R10 剩余 9 类解析问题，新增运行时崩溃、错误绑定、错误结果或异常不可见问题；每项记录 CPython 3 预期、PikaPython 实际阶段和最小复现，本轮只探测、分类和固化测试，不混入修复，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R11_Task_Report.md)。
+
+### R11.1 [completed]
+
+建立至少 20 项解析/运行时差分候选矩阵和独立问题计数口径，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R11.1_Task_Report.md)。
+
+### R11.2 [completed]
+
+批量验证解析阶段错误接受、错误码丢失和崩溃，确认可重复问题，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R11.2_Task_Report.md)。
+
+### R11.3 [completed]
+
+批量验证已解析语法的运行时错误绑定、错误结果、异常不可见和崩溃，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R11.3_Task_Report.md)。
+
+### R11.4 [completed]
+
+汇总至少 20 个独立问题、最小复现、阶段和后续修复优先级，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R11.4_Task_Report.md)。
+
+## R12
+
+修复 R11 确认的 20 个解析期/运行期语法处理错误，优先消除空 import 两种形式的 SIGSEGV，再按共同 parser block/token 根因和 runtime 语义合同分批处理；保持非架构改动，正确性阶段允许量化临时资源增量，资源与性能回收独立执行且 VM/runtime 性能优先，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12_Task_Report.md)。
+
+### R12.1
+
+P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩溃并补回归，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.1_Task_Report.md)。
+
+### R12.2
+
+修复孤立 block clause、作用域外控制语句、缺逗号及附加 parser 错误接受，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.2_Task_Report.md)。
+
+### R12.3
+
+修复默认参数、短路、运算符结合、推导式作用域、解包和局部变量绑定的运行语义，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.3_Task_Report.md)。
+
+### R12.4
+
+运行 default/minimal 隔离回归并独立量化、回收 RAM/Flash 与性能变化，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.4_Task_Report.md)。
