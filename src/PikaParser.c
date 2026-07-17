@@ -2000,12 +2000,13 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
         sRight = Suger_not_in(&buffs, sRight);
         sRight = Suger_is_not(&buffs, sRight);
         char* rightWithoutSubStmt = _remove_sub_stmt(&buffs, sRight);
-        if (_countComparisonOperators(rightWithoutSubStmt) > 1) {
+        char* operator = Lexer_getOperator(&buffs, rightWithoutSubStmt);
+        if (NULL == operator) {
             eResult = PIKA_RES_ERR_SYNTAX_ERROR;
             goto __exit;
         }
-        char* operator= Lexer_getOperator(&buffs, rightWithoutSubStmt);
-        if (NULL == operator) {
+        if (!strEqu(operator, " and ") && !strEqu(operator, " or ") &&
+            _countComparisonOperators(rightWithoutSubStmt) > 1) {
             eResult = PIKA_RES_ERR_SYNTAX_ERROR;
             goto __exit;
         }

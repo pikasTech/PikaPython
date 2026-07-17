@@ -313,6 +313,8 @@ TEST(parser, comparison_and_exception_valid_neighbors) {
         "less = 1 < 2\n"
         "nested = (1 < 2) == True\n"
         "member = 1 in [1]\n"
+        "both = 1 < 2 and 2 < 3\n"
+        "either = 3 < 2 or 2 < 3\n"
         "try:\n"
         "    raise\n"
         "except:\n"
