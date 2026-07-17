@@ -64,6 +64,54 @@ static void function_call_1000(benchmark::State& state) {
 }
 BENCHMARK(function_call_1000)->Unit(benchmark::kMillisecond);
 
+static void function_call_default_1000(benchmark::State& state) {
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pika_lines2Asm(
+        buffs, (char*)
+                   "def add(a, b=2):\n"
+                   "    return a + b\n"
+                   "i = 0\n"
+                   "while i < 1000:\n"
+                   "    add(i)\n"
+                   "    i = i + 1\n"
+                   "\n");
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    for (auto _ : state) {
+        PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+        pikaVM_runByteCodeFrame(pikaMain, &bytecode_frame);
+        obj_deinit(pikaMain);
+    }
+    byteCodeFrame_deinit(&bytecode_frame);
+    args_deinit(buffs);
+}
+BENCHMARK(function_call_default_1000)->Unit(benchmark::kMillisecond);
+
+static void function_call_kwargs_1000(benchmark::State& state) {
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pika_lines2Asm(
+        buffs, (char*)
+                   "def collect(a, **kwargs):\n"
+                   "    return a\n"
+                   "i = 0\n"
+                   "while i < 1000:\n"
+                   "    collect(a=i, alpha=1, beta=2)\n"
+                   "    i = i + 1\n"
+                   "\n");
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    for (auto _ : state) {
+        PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+        pikaVM_runByteCodeFrame(pikaMain, &bytecode_frame);
+        obj_deinit(pikaMain);
+    }
+    byteCodeFrame_deinit(&bytecode_frame);
+    args_deinit(buffs);
+}
+BENCHMARK(function_call_kwargs_1000)->Unit(benchmark::kMillisecond);
+
 static void function_call_starred_1000(benchmark::State& state) {
     Args* buffs = New_strBuff();
     char* pikaAsm = pika_lines2Asm(

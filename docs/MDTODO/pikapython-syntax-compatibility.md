@@ -290,3 +290,23 @@ P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩
 ### R13.4 [completed]
 
 独立量化并优化 RAM、Flash、分配次数和 runtime 影响，保持语义合同且 runtime 性能优先，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R13.4_Task_Report.md)。
+
+## R14 [completed]
+
+继续在 PikaPython 已有语法子集范围内探测并修复一批 runtime 正确性和 VM 热路径性能问题，优先闭环 [#347](https://github.com/pikasTech/PikaPython/issues/347)、[#348](https://github.com/pikasTech/PikaPython/issues/348)、[#349](https://github.com/pikasTech/PikaPython/issues/349) 的函数默认参数、变长参数和 keyword 绑定问题；不扩大语法、不改变 VM 大架构，runtime 性能优先并控制 RAM/Flash，完成任务后将详细报告写入任务报告，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14_Task_Report.md)。
+
+### R14.1 [completed]
+
+复现 #347-#349 并建立普通调用、默认参数、星号解包、keyword 绑定和循环控制的语义、分配与 runtime 基线，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.1_Task_Report.md)。
+
+### R14.2 [completed]
+
+按共同根因修复已确认的运行期错误、崩溃或错误不可见问题，补充 Linux 单元测试并保持现有语法范围，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.2_Task_Report.md)。
+
+### R14.3 [completed]
+
+在语义合同固定后优化函数调用和参数绑定 VM 热路径，优先消除重复扫描、分配和字典操作，并用同机 A/B 验证，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.3_Task_Report.md)。
+
+### R14.4 [completed]
+
+同步 core 后运行 default/minimal 定向与必要全量回归，量化 text/data/bss、分配次数和 runtime，更新 issue 与总报告，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.4_Task_Report.md)。

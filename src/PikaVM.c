@@ -1438,10 +1438,15 @@ static void _type_list_parse(FunctionArgsInfo* f) {
         f->n_positional = 0;
         return;
     }
-    int8_t iArgc = strCountSign(f->type_list, ',') + 1;
+    int8_t iArgc = 1;
+    int8_t iStar = 0;
+    int8_t iAssign = 0;
+    for (char* p = f->type_list; '\0' != *p; p++) {
+        iArgc += ',' == *p;
+        iStar += '*' == *p;
+        iAssign += '=' == *p;
+    }
     f->n_arg = iArgc;
-    int8_t iStar = strCountSign(f->type_list, '*');
-    int8_t iAssign = strCountSign(f->type_list, '=');
     /* default */
     if (iAssign > 0) {
         iArgc -= iAssign;
@@ -1667,6 +1672,33 @@ __unpack:
 
 #define vars_or_keys_or_default (f.is_vars || f.is_keys || f.is_default)
 #define METHOD_TYPE_LIST_MAX_LEN PIKA_LINE_BUFF_SIZE * 2
+
+static void _type_list_load_var_names(FunctionArgsInfo* f) {
+    while (pika_true) {
+        char* arg_def = strrchr(f->type_list, ',');
+        if (NULL == arg_def) {
+            arg_def = f->type_list;
+        } else {
+            arg_def++;
+        }
+        if ('*' != arg_def[0]) {
+            return;
+        }
+        if ('*' == arg_def[1]) {
+            f->kw_dict_name = arg_def + 2;
+            f->kw = New_PikaDict();
+        } else {
+            f->var_tuple_name = arg_def + 1;
+            f->tuple = New_pikaTuple();
+        }
+        if (arg_def == f->type_list) {
+            f->type_list[0] = '\0';
+        } else {
+            arg_def[-1] = '\0';
+        }
+    }
+}
+
 static int PikaVMFrame_loadArgsFromMethodArg(PikaVMFrame* vm,
                                              PikaObj* oMethodHost,
                                              Args* aLoclas,
@@ -1676,13 +1708,11 @@ static int PikaVMFrame_loadArgsFromMethodArg(PikaVMFrame* vm,
                                              int iNumUsed) {
     int argc = 0;
     const uint32_t argv_size = sizeof(Arg*) * PIKA_ARG_NUM_MAX;
-    const uint32_t scratch_size = argv_size + METHOD_TYPE_LIST_MAX_LEN * 2;
+    const uint32_t scratch_size = argv_size + METHOD_TYPE_LIST_MAX_LEN;
     uint8_t* scratch = (uint8_t*)pikaMalloc(scratch_size);
     Arg** argv = (Arg**)scratch;
     char* buffs1 = (char*)(scratch + argv_size);
-    char* buffs2 = buffs1 + METHOD_TYPE_LIST_MAX_LEN;
     FunctionArgsInfo f = {0};
-    char* type_list_buff = NULL;
     /* get method type list */
     f.type_list =
         methodArg_getTypeList(aMethod, buffs1, METHOD_TYPE_LIST_MAX_LEN);
@@ -1777,32 +1807,8 @@ static int PikaVMFrame_loadArgsFromMethodArg(PikaVMFrame* vm,
     }
 
     /* create tuple/dict for vars/keys */
-    if (vars_or_keys_or_default) {
-        type_list_buff = strCopy(buffs2, f.type_list);
-        uint8_t n_typelist = strCountSign(type_list_buff, ',') + 1;
-        for (int i = 0; i < n_typelist; i++) {
-            char* arg_def = strPopLastToken(type_list_buff, ',');
-            if (arg_def[0] == '*' && arg_def[1] != '*') {
-                /* get variable tuple name */
-                /* skip the '*' */
-                f.var_tuple_name = arg_def + 1;
-                /* create tuple */
-                if (NULL == f.tuple) {
-                    f.tuple = New_pikaTuple();
-                    /* remove the format arg */
-                    strPopLastToken(f.type_list, ',');
-                }
-                continue;
-            }
-            if (arg_def[0] == '*' && arg_def[1] == '*') {
-                /* get kw dict name */
-                f.kw_dict_name = arg_def + 2;
-                f.kw = New_PikaDict();
-                /* remove the format arg */
-                strPopLastToken(f.type_list, ',');
-                continue;
-            }
-        }
+    if (f.is_vars || f.is_keys) {
+        _type_list_load_var_names(&f);
     }
 
     /* load args */
