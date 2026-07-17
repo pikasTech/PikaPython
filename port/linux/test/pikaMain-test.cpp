@@ -618,6 +618,25 @@ TEST(pikaMain, python3_unpack_value_errors) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, python3_iter_error_recovery) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    VMParameters* globals = obj_run(
+        pikaMain,
+        "iter_error = False\n"
+        "try:\n"
+        "    for item in 1:\n"
+        "        pass\n"
+        "except TypeError:\n"
+        "    iter_error = True\n"
+        "after_errors = 7\n");
+
+    EXPECT_TRUE(obj_getBool(globals, "iter_error"));
+    EXPECT_EQ(obj_getInt(globals, "after_errors"), 7);
+
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 #endif
 
 TEST(pikaMain, err_scop) {

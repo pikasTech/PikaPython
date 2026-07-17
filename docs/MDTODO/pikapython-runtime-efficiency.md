@@ -61,3 +61,23 @@
 ## R3 [completed]
 
 基于现有 benchmark、PikaMemInfo 和 Linux perf 证据定位 VM/runtime CPU 热点后再做一轮性能优化：优先使用仓库自带测量工具，不改变 VM/对象模型/字节码大架构，不增加常驻 RAM；没有可重复热点证据的候选不得修改，完成后记录热点占比、优化前后 A/B、分配与 default/minimal 资源证据，完成任务后将详细报告写入[任务报告](./details/pikapython-runtime-efficiency/R3_Task_Report.md)。
+
+## R5 [completed]
+
+继续在现有 PikaPython 语法子集内批量探测并修复语法、runtime 和 VM bug 及 Python 3 不兼容行为：不改变 VM/对象模型/字节码大架构，不扩大语法范围，优先修复可稳定复现的问题；每批加入对应单元测试，完成 default/minimal 回归及 text/data/bss、分配和堆残留对比，确保资源占用总体不膨胀，完成任务后将详细报告写入[任务报告](./details/pikapython-runtime-efficiency/R5_Task_Report.md)。
+
+### R5.1 [completed]
+
+语法与 Python 3 兼容性批量探测：对已有子集的表达式、控制流、函数参数和异常语法建立合法/非法邻接样例，记录解析期错误与运行期错误，修复稳定复现且不扩大语法范围的问题并补回归测试，完成任务后将详细报告写入[任务报告](./details/pikapython-runtime-efficiency/R5.1_Task_Report.md)。
+
+### R5.2 [completed]
+
+异常可见性与 runtime 状态批量探测：覆盖类型错误、名称错误、除零、不可调用对象、迭代器和错误后的下一次合法调用，确保错误可捕获、不会静默执行或崩溃，并验证堆无残留，完成任务后将详细报告写入[任务报告](./details/pikapython-runtime-efficiency/R5.2_Task_Report.md)。
+
+### R5.3 [completed]
+
+VM 参数绑定与栈恢复批量探测：覆盖位置参数、默认参数、关键字参数、重复参数、多余参数、方法调用和较多参数，检查报错后 VM 栈及对象状态，修复可复现问题并补单元测试，完成任务后将详细报告写入[任务报告](./details/pikapython-runtime-efficiency/R5.3_Task_Report.md)。
+
+### R5.4 [completed]
+
+多配置验证与资源门禁：运行 default/minimal 定向及全量 Linux 回归，比较 text/data/bss、分配次数和峰值/当前堆；发现局部资源增加时按整体预算评估并记录补偿或退出本批，完成任务后将详细报告写入[任务报告](./details/pikapython-runtime-efficiency/R5.4_Task_Report.md)。

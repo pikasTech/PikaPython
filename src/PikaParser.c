@@ -1810,7 +1810,7 @@ static PIKA_RES _AST_parse_slice(AST* ast, Args* buffs, char* sStmt) {
     }
     char* sSliceList = strsCut(buffs, sLaststmt, '[', ']');
     pika_assert(sSliceList != NULL);
-    if (_Cursor_count(sSliceList, TOKEN_devider, ":", pika_true) > 2) {
+    if (_Cursor_count(sSliceList, TOKEN_devider, ":", pika_true) > 1) {
         return PIKA_RES_ERR_SYNTAX_ERROR;
     }
     sSliceList = strsAppend(buffs, sSliceList, ":");

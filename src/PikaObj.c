@@ -3610,11 +3610,14 @@ char* builtins_str(PikaObj* self, Arg* arg) {
 
 PikaObj* New_builtins_RangeObj(Args* args);
 Arg* builtins_iter(PikaObj* self, Arg* arg) {
-    pika_assert(NULL != arg);
     /* object */
     pika_bool bIsTemp = pika_false;
     PikaObj* oArg = _arg_to_obj(arg, &bIsTemp);
-    pika_assert(NULL != oArg);
+    if (NULL == oArg) {
+        obj_setSysOut(self, "TypeError: object is not iterable");
+        obj_setErrorCode(self, PIKA_RES_ERR_INVALID_PARAM);
+        return NULL;
+    }
     NewFun _clsptr = (NewFun)oArg->constructor;
     if (_clsptr == New_builtins_RangeObj) {
         /* found RangeObj, return directly */
