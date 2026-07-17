@@ -316,6 +316,100 @@ TEST(pikaMain, python3_operator_associativity_and_short_circuit) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(pikaMain, python3_floor_division_and_modulo) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    VMParameters* globals = obj_run(
+        pikaMain,
+        "floor_left = -3 // 2\n"
+        "mod_left = -3 % 2\n"
+        "floor_right = 3 // -2\n"
+        "mod_right = 3 % -2\n");
+
+    EXPECT_EQ(obj_getInt(globals, "floor_left"), -2);
+    EXPECT_EQ(obj_getInt(globals, "mod_left"), 1);
+    EXPECT_EQ(obj_getInt(globals, "floor_right"), -2);
+    EXPECT_EQ(obj_getInt(globals, "mod_right"), -1);
+
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+#if !PIKA_NANO_ENABLE
+TEST(pikaMain, floor_division_and_modulo_zero_errors) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    VMParameters* globals = obj_run(
+        pikaMain,
+        "floor_zero = False\n"
+        "mod_zero = False\n"
+        "try:\n"
+        "    ignored = 1 // 0\n"
+        "except ZeroDivisionError:\n"
+        "    floor_zero = True\n"
+        "try:\n"
+        "    ignored = 1 % 0\n"
+        "except ZeroDivisionError:\n"
+        "    mod_zero = True\n");
+
+    EXPECT_TRUE(obj_getBool(globals, "floor_zero"));
+    EXPECT_TRUE(obj_getBool(globals, "mod_zero"));
+
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, python3_duplicate_position_keyword) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    VMParameters* globals = obj_run(
+        pikaMain,
+        "def combine(a, b=5):\n"
+        "    return a * 10 + b\n"
+        "def combine_required(a, b):\n"
+        "    return a * 10 + b\n"
+        "def combine_three(a, b, c):\n"
+        "    return a * 100 + b * 10 + c\n"
+        "duplicate_function = False\n"
+        "duplicate_required = False\n"
+        "duplicate_multi = False\n"
+        "duplicate_method = False\n"
+        "try:\n"
+        "    combine(1, a=2)\n"
+        "except TypeError:\n"
+        "    duplicate_function = True\n"
+        "valid_function = combine(1, b=2)\n"
+        "try:\n"
+        "    combine_required(1, a=2)\n"
+        "except TypeError:\n"
+        "    duplicate_required = True\n"
+        "valid_required = combine_required(1, b=4)\n"
+        "try:\n"
+        "    combine_three(1, 2, a=3)\n"
+        "except TypeError:\n"
+        "    duplicate_multi = True\n"
+        "valid_after_multi = combine_three(1, 2, 3)\n"
+        "class Combiner:\n"
+        "    def combine(self, a, b=5):\n"
+        "        return a * 10 + b\n"
+        "combiner = Combiner()\n"
+        "try:\n"
+        "    combiner.combine(1, a=2)\n"
+        "except TypeError:\n"
+        "    duplicate_method = True\n"
+        "valid_method = combiner.combine(1, b=3)\n");
+
+    EXPECT_TRUE(obj_getBool(globals, "duplicate_function"));
+    EXPECT_TRUE(obj_getBool(globals, "duplicate_required"));
+    EXPECT_TRUE(obj_getBool(globals, "duplicate_multi"));
+    EXPECT_TRUE(obj_getBool(globals, "duplicate_method"));
+    EXPECT_EQ(obj_getInt(globals, "valid_function"), 12);
+    EXPECT_EQ(obj_getInt(globals, "valid_required"), 14);
+    EXPECT_EQ(obj_getInt(globals, "valid_after_multi"), 123);
+    EXPECT_EQ(obj_getInt(globals, "valid_method"), 13);
+
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
 #if !PIKA_NANO_ENABLE
 TEST(pikaMain, python3_default_argument_definition_time) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);

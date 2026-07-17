@@ -48,6 +48,7 @@ typedef struct {
     pika_bool is_vars;
     pika_bool is_keys;
     pika_bool is_default;
+    int8_t n_keyword;
     ArgType method_type;
     PikaTuple* tuple;
     PikaDict* kw;

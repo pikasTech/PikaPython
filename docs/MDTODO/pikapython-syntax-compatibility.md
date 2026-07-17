@@ -270,3 +270,23 @@ P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩
 ### R12.4 [completed]
 
 运行 default/minimal 隔离回归并独立量化、回收 RAM/Flash 与性能变化，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.4_Task_Report.md)。
+
+## R13 [completed]
+
+继续在 PikaPython 已有语法子集范围内批量探测并修复一批解析期语法问题和运行期语义、崩溃或错误可见性问题；不扩大语法能力、不改变 parser/ASM/VM 大架构，每项修复配单元测试，正确性与资源优化分阶段且 VM/runtime 性能优先，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R13_Task_Report.md)。
+
+### R13.1 [completed]
+
+批量差分探测当前子集的解析期与运行期候选，去重 R10-R12 已覆盖语料并固定最小复现和 CPython 3 预期，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R13.1_Task_Report.md)。
+
+### R13.2 [completed]
+
+按共同根因修复已确认问题并为每项行为补充 Linux 单元测试，不扩大语法范围或引入新 VM 指令，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R13.2_Task_Report.md)。
+
+### R13.3 [completed]
+
+同步 core 后隔离 LVGL、网络和非语法组件，运行 default/minimal 定向与必要全量回归，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R13.3_Task_Report.md)。
+
+### R13.4 [completed]
+
+独立量化并优化 RAM、Flash、分配次数和 runtime 影响，保持语义合同且 runtime 性能优先，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R13.4_Task_Report.md)。

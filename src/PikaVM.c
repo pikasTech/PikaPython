@@ -1496,28 +1496,73 @@ static void _kw_push(PikaVMFrame* vm, FunctionArgsInfo* f, Arg* call_arg) {
     Hash kw_hash = call_arg->name_hash;
     char buff[32] = {0};
     _pikaDict_setVal(f->kw, call_arg);
+    f->n_keyword++;
     char* sHash = fast_itoa(buff, kw_hash);
     char* kw_name = _kw_get_name(vm, kw_hash);
     args_setStr(_OBJ2KEYS(f->kw), sHash, kw_name == NULL ? sHash : kw_name);
 }
 
-static void _load_call_arg(PikaVMFrame* vm,
-                           Arg* call_arg,
-                           FunctionArgsInfo* f,
-                           int* i,
-                           int* argc,
-                           Arg* argv[]) {
+static pika_bool _kw_check_positional_overlap(PikaVMFrame* vm,
+                                               FunctionArgsInfo* f) {
+    if (0 == f->n_keyword || 0 != f->n_positional_got) {
+        return pika_false;
+    }
+    int positional = f->n_input - f->n_keyword;
+    char* parameter = f->type_list;
+    if (ARG_TYPE_METHOD_OBJECT == f->method_type) {
+        parameter = strchr(parameter, ',');
+        if (NULL == parameter) {
+            return pika_false;
+        }
+        parameter++;
+    }
+    for (int i = 0; i < positional && '\0' != parameter[0]; i++) {
+        char* end = strchr(parameter, ',');
+        if (NULL == end) {
+            end = parameter + strlen(parameter);
+        }
+        char* default_mark = strchr(parameter, '=');
+        char* name_end =
+            NULL != default_mark && default_mark < end ? default_mark : end;
+        char saved = name_end[0];
+        name_end[0] = '\0';
+        pika_bool duplicate = NULL != pikaDict_get(f->kw, parameter);
+        if (duplicate) {
+            PikaVMFrame_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
+            PikaVMFrame_setSysOut(
+                vm, "TypeError: got multiple values for argument '%s'",
+                parameter);
+        }
+        name_end[0] = saved;
+        if (duplicate || '\0' == end[0]) {
+            return duplicate;
+        }
+        parameter = end + 1;
+    }
+    return pika_false;
+}
+
+static pika_bool _load_call_arg(PikaVMFrame* vm,
+                                Arg* call_arg,
+                                FunctionArgsInfo* f,
+                                int* i,
+                                int* argc,
+                                Arg* argv[]) {
     /* load the kw arg */
     pika_assert(NULL != call_arg);
     if (arg_getIsKeyword(call_arg)) {
         _kw_push(vm, f, call_arg);
-        return;
+        return pika_true;
+    }
+    if (_kw_check_positional_overlap(vm, f)) {
+        arg_deinit(call_arg);
+        return pika_false;
     }
     /* load variable arg */
     if (f->i_arg > f->n_positional + f->n_default) {
         if (f->is_vars) {
             pikaList_append(f->tuple, call_arg);
-            return;
+            return pika_true;
         }
     }
     char* arg_name = strPopLastToken(f->type_list, ',');
@@ -1525,7 +1570,7 @@ static void _load_call_arg(PikaVMFrame* vm,
     arg_name = _kw_pos_to_default_all(f, arg_name, argc, argv, call_arg);
     if (((char*)1) == arg_name) {
         /* load default from pos */
-        return;
+        return pika_true;
     }
     /* load position arg */
     if (_kw_to_pos_one(f, arg_name, argc, argv)) {
@@ -1534,13 +1579,14 @@ static void _load_call_arg(PikaVMFrame* vm,
         /* restore the stack */
         (*i)--;
         stack_pushArg(&(vm->stack), call_arg);
-        return;
+        return pika_true;
     }
     /*load pos from pos */
     arg_setNameHash(call_arg, hash_time33EndWith(arg_name, ':'));
     pika_assert(call_arg != NULL);
     argv[(*argc)++] = call_arg;
     (f->n_positional_got)++;
+    return pika_true;
 }
 
 static uint32_t _get_n_input_with_unpack(PikaVMFrame* vm, int n_used) {
@@ -1771,7 +1817,9 @@ static int PikaVMFrame_loadArgsFromMethodArg(PikaVMFrame* vm,
         if (NULL == call_arg) {
             call_arg = arg_newNone();
         }
-        _load_call_arg(vm, call_arg, &f, &i, &argc, argv);
+        if (!_load_call_arg(vm, call_arg, &f, &i, &argc, argv)) {
+            break;
+        }
     }
 
     if (f.kw != NULL) {
@@ -3068,12 +3116,39 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             goto __exit;
         case '%':
             if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
-                op.res = arg_setInt(op.res, "", op.i1 % op.i2);
+                if (0 == op.i2) {
+                    PikaVMFrame_setErrorCode(
+                        vm, PIKA_RES_ERR_OPERATION_FAILED);
+                    PikaVMFrame_setSysOut(
+                        vm, "ZeroDivisionError: integer modulo by zero");
+                    op.res = NULL;
+                    goto __exit;
+                }
+                int64_t mod = 0;
+                if (!(INT64_MIN == op.i1 && -1 == op.i2)) {
+                    mod = op.i1 % op.i2;
+                    if (0 != mod && ((mod < 0) != (op.i2 < 0))) {
+                        mod += op.i2;
+                    }
+                }
+                op.res = arg_setInt(op.res, "", mod);
                 goto __exit;
             }
 #if PIKA_MATH_ENABLE
             if (op.t1 == ARG_TYPE_FLOAT || op.t2 == ARG_TYPE_FLOAT) {
-                op.res = arg_setFloat(op.res, "", fmod(op.f1, op.f2));
+                if (0 == op.f2) {
+                    PikaVMFrame_setErrorCode(
+                        vm, PIKA_RES_ERR_OPERATION_FAILED);
+                    PikaVMFrame_setSysOut(vm,
+                                          "ZeroDivisionError: modulo by zero");
+                    op.res = NULL;
+                    goto __exit;
+                }
+                pika_float mod = fmod(op.f1, op.f2);
+                if (0 != mod && ((mod < 0) != (op.f2 < 0))) {
+                    mod += op.f2;
+                }
+                op.res = arg_setFloat(op.res, "", mod);
                 goto __exit;
             }
 #endif
@@ -3235,11 +3310,40 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
     }
     if (data[0] == '/' && data[1] == '/') {
         if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
-            op.res = arg_setInt(op.res, "", op.i1 / op.i2);
+            if (0 == op.i2) {
+                PikaVMFrame_setErrorCode(vm,
+                                         PIKA_RES_ERR_OPERATION_FAILED);
+                PikaVMFrame_setSysOut(
+                    vm, "ZeroDivisionError: integer division by zero");
+                op.res = NULL;
+                goto __exit;
+            }
+            if (INT64_MIN == op.i1 && -1 == op.i2) {
+                PikaVMFrame_setErrorCode(vm,
+                                         PIKA_RES_ERR_OPERATION_FAILED);
+                PikaVMFrame_setSysOut(
+                    vm, "OverflowError: integer division overflow");
+                op.res = NULL;
+                goto __exit;
+            }
+            int64_t quotient = op.i1 / op.i2;
+            int64_t remainder = op.i1 % op.i2;
+            if (0 != remainder && ((remainder < 0) != (op.i2 < 0))) {
+                quotient--;
+            }
+            op.res = arg_setInt(op.res, "", quotient);
             goto __exit;
         }
 #if PIKA_MATH_ENABLE
         if ((op.t1 == ARG_TYPE_FLOAT) || (op.t2 == ARG_TYPE_FLOAT)) {
+            if (0 == op.f2) {
+                PikaVMFrame_setErrorCode(vm,
+                                         PIKA_RES_ERR_OPERATION_FAILED);
+                PikaVMFrame_setSysOut(
+                    vm, "ZeroDivisionError: float floor division by zero");
+                op.res = NULL;
+                goto __exit;
+            }
             op.res = arg_setFloat(op.res, "", floor(op.f1 / op.f2));
             goto __exit;
         }

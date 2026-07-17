@@ -292,6 +292,36 @@ TEST(parser, invalid_block_context_returns_syntax_error) {
         byteCodeFrame_deinit(&bytecode_frame);
     }
 }
+TEST(parser, unsupported_comparison_chain_and_finally) {
+    char less_chain[] = "value = 1 < 2 < 3\n";
+    char mixed_chain[] = "value = 1 == 1 in [1]\n";
+    char try_finally[] = "try:\n    pass\nfinally:\n    pass\n";
+    char except_finally[] =
+        "try:\n    pass\nexcept:\n    pass\nfinally:\n    pass\n";
+    char* sources[] = {less_chain, mixed_chain, try_finally, except_finally};
+    for (char* source : sources) {
+        SCOPED_TRACE(source);
+        ByteCodeFrame bytecode_frame = {0};
+        byteCodeFrame_init(&bytecode_frame);
+        EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source),
+                  PIKA_RES_ERR_SYNTAX_ERROR);
+        byteCodeFrame_deinit(&bytecode_frame);
+    }
+}
+TEST(parser, comparison_and_exception_valid_neighbors) {
+    char source[] =
+        "less = 1 < 2\n"
+        "nested = (1 < 2) == True\n"
+        "member = 1 in [1]\n"
+        "try:\n"
+        "    raise\n"
+        "except:\n"
+        "    handled = True\n";
+    ByteCodeFrame bytecode_frame = {0};
+    byteCodeFrame_init(&bytecode_frame);
+    EXPECT_EQ(pika_lines2Bytes(&bytecode_frame, source), PIKA_RES_OK);
+    byteCodeFrame_deinit(&bytecode_frame);
+}
 TEST(parser, valid_block_context_neighbors) {
     char source[] =
         "def f(value):\n"

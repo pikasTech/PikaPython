@@ -941,6 +941,19 @@ static const char operators[][9] = {
     "==",  " is ", " in ",  "%=",    "/=",   "//=",     "-=", "+=", "*=",
     "**=", "^=",   " not ", " and ", " or ", " import "};
 
+static int _countComparisonOperators(char* sStmt) {
+    static const char comparisons[][5] = {"<",  "<=", ">",   ">=",
+                                           "!=", "==", " is ", " in "};
+    int count = 0;
+    for (uint32_t i = 0; i < sizeof(comparisons) / sizeof(comparisons[0]);
+         i++) {
+        count +=
+            _Cursor_count(sStmt, TOKEN_operator, (char*)comparisons[i],
+                          pika_true);
+    }
+    return count;
+}
+
 char* Lexer_getOperator(Args* outBuffs, char* sStmt) {
     Args buffs = {0};
     char* sOperator = NULL;
@@ -980,6 +993,12 @@ char* Lexer_getOperator(Args* outBuffs, char* sStmt) {
     /* match the last operator in equal level */
     sOperator = _solveEqualLevelOperator(&buffs, sOperator, "+", "-", sStmt);
     sOperator = _solveEqualLevelOperator(&buffs, sOperator, "*", "/", sStmt);
+    if ('-' == sStmt[0] && strEqu(sOperator, "-")) {
+        char* nestedOperator = Lexer_getOperator(&buffs, sStmt + 1);
+        if (NULL != nestedOperator && !strEqu(nestedOperator, "**")) {
+            sOperator = nestedOperator;
+        }
+    }
     /* out put */
     if (NULL == sOperator) {
         return NULL;
@@ -1981,6 +2000,10 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
         sRight = Suger_not_in(&buffs, sRight);
         sRight = Suger_is_not(&buffs, sRight);
         char* rightWithoutSubStmt = _remove_sub_stmt(&buffs, sRight);
+        if (_countComparisonOperators(rightWithoutSubStmt) > 1) {
+            eResult = PIKA_RES_ERR_SYNTAX_ERROR;
+            goto __exit;
+        }
         char* operator= Lexer_getOperator(&buffs, rightWithoutSubStmt);
         if (NULL == operator) {
             eResult = PIKA_RES_ERR_SYNTAX_ERROR;
@@ -2588,9 +2611,7 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
 #endif
 
     if (strIsStartWith(sLineStart, "finally") &&
-        (sLineStart[7] == ' ' || sLineStart[7] == ':') &&
-        !strEqu(sPreviousBlock, "try") &&
-        !strEqu(sPreviousBlock, "except")) {
+        (sLineStart[7] == ' ' || sLineStart[7] == ':')) {
         obj_deinit(oAst);
         oAst = NULL;
         goto __exit;
