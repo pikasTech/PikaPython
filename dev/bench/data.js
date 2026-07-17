@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1748848850542,
+  "lastUpdate": 1784330699250,
   "repoUrl": "https://github.com/pikasTech/PikaPython",
   "entries": {
     "Benchmark": [
@@ -113567,6 +113567,96 @@ window.BENCHMARK_DATA = {
             "value": 0.005000102512075769,
             "unit": "ms/iter",
             "extra": "iterations: 349767\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "pikastech",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "pikastech",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "94c0d053fb1fcd63ef16dd943ae19d3afd7e3964",
+          "message": "ci: isolate unstable REPL assertions",
+          "timestamp": "2026-07-18T01:12:08+02:00",
+          "tree_id": "dafb53aee638d1509cd7d78a592eec9bbcddac44",
+          "url": "https://github.com/pikasTech/PikaPython/commit/94c0d053fb1fcd63ef16dd943ae19d3afd7e3964"
+        },
+        "date": 1784330691691,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 17387.88812738641,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 17387.88812738641 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 21.49702428973727,
+            "unit": "ms/iter",
+            "extra": "iterations: 81\ncpu: 21.495981864834548 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 12.610866404005163,
+            "unit": "ms/iter",
+            "extra": "iterations: 140\ncpu: 12.609688951953704 ms\nthreads: 1"
+          },
+          {
+            "name": "function_call_1000",
+            "value": 14.756238998705674,
+            "unit": "ms/iter",
+            "extra": "iterations: 117\ncpu: 14.75495659767016 ms\nthreads: 1"
+          },
+          {
+            "name": "function_call_default_1000",
+            "value": 4.4907961047773295,
+            "unit": "ms/iter",
+            "extra": "iterations: 389\ncpu: 4.490372547730208 ms\nthreads: 1"
+          },
+          {
+            "name": "function_call_kwargs_1000",
+            "value": 9.076971737683689,
+            "unit": "ms/iter",
+            "extra": "iterations: 190\ncpu: 9.076021403501965 ms\nthreads: 1"
+          },
+          {
+            "name": "function_call_kwargs_large_constpool_1000",
+            "value": 10.280263843671841,
+            "unit": "ms/iter",
+            "extra": "iterations: 169\ncpu: 10.279145746726599 ms\nthreads: 1"
+          },
+          {
+            "name": "function_call_starred_1000",
+            "value": 27.175317931406227,
+            "unit": "ms/iter",
+            "extra": "iterations: 64\ncpu: 27.17317816743957 ms\nthreads: 1"
+          },
+          {
+            "name": "for_print_1000",
+            "value": 11.272273338164391,
+            "unit": "ms/iter",
+            "extra": "iterations: 155\ncpu: 11.271417007316177 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 2.8758401299225897,
+            "unit": "ms/iter",
+            "extra": "iterations: 595\ncpu: 2.8755648548973927 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000487473482468,
+            "unit": "ms/iter",
+            "extra": "iterations: 348680\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
