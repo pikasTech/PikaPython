@@ -2398,7 +2398,13 @@ static pika_bool _Parser_isInBlock(BlockState* blockState,
     return pika_false;
 }
 
-AST* parser_line2Ast(Parser* self, char* sLine) {
+#if defined(__GNUC__) && !defined(__clang__)
+    #define PIKA_PARSER_OPTIMIZE_SIZE __attribute__((optimize("Os")))
+#else
+    #define PIKA_PARSER_OPTIMIZE_SIZE
+#endif
+
+PIKA_PARSER_OPTIMIZE_SIZE AST* parser_line2Ast(Parser* self, char* sLine) {
     BlockState* blockState = &self->blockState;
     /* line is not exist */
     if (sLine == NULL) {
@@ -2570,8 +2576,11 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
                 !strEqu(sPreviousBlock, "elif") &&
                 !strEqu(sPreviousBlock, "for") &&
                 !strEqu(sPreviousBlock, "while") &&
-                !strEqu(sPreviousBlock, "except") &&
-                !strEqu(sPreviousBlock, "exall")) {
+                !strEqu(sPreviousBlock, "except")
+#if PIKA_SYNTAX_EXCEPTION_ENABLE
+                && !strEqu(sPreviousBlock, "exall")
+#endif
+            ) {
                 obj_deinit(oAst);
                 oAst = NULL;
                 goto __exit;
@@ -3899,7 +3908,7 @@ char* GenRule_toAsm(GenRule rule,
     return pikaAsm;
 }
 
-char* AST_genAsm_top(AST* oAST, Args* outBuffs) {
+PIKA_PARSER_OPTIMIZE_SIZE char* AST_genAsm_top(AST* oAST, Args* outBuffs) {
     const GenRule rules_topAst[] = {
         {.ins = "CTN", .type = VAL_NONEVAL, .ast = "continue"},
         {.ins = "BRK", .type = VAL_NONEVAL, .ast = "break"},
@@ -3912,7 +3921,11 @@ char* AST_genAsm_top(AST* oAST, Args* outBuffs) {
     /* generate code for block ast */
     const GenRule rules_block[] = {
         {.ins = "TRY", .type = VAL_NONEVAL, .ast = "try"},
+#if PIKA_SYNTAX_EXCEPTION_ENABLE
         {.ins = "EXP", .type = VAL_DYNAMIC, .ast = "except"},
+#else
+        {.ins = "EXP", .type = VAL_NONEVAL, .ast = "except"},
+#endif
         {.ins = "NEL", .type = VAL_STATIC_, .ast = "else", .val = "1"},
         {.ins = "JEZ", .type = VAL_STATIC_, .ast = "if", .val = "1"},
         {.ins = "JEZ", .type = VAL_STATIC_, .ast = "while", .val = "2"},
@@ -4210,6 +4223,7 @@ char* AST_genAsm_top(AST* oAST, Args* outBuffs) {
         GenRule rule = rules_block[i];
         if (strEqu(AST_getThisBlock(oAST), rule.ast)) {
             sPikaAsm = GenRule_toAsm(rule, &buffs, oAST, sPikaAsm, 0);
+#if PIKA_SYNTAX_EXCEPTION_ENABLE
             if (strEqu(rule.ast, "except")) {
                 sPikaAsm = strsAppend(&buffs, sPikaAsm, "0 JEZ 1\n");
                 char* sAlias = AST_getNodeAttr(oAST, "except_alias");
@@ -4222,6 +4236,7 @@ char* AST_genAsm_top(AST* oAST, Args* outBuffs) {
                     sPikaAsm = strsAppend(&buffs, sPikaAsm, "\n");
                 }
             }
+#endif
             bblockMatched = 1;
             goto __exit;
         }

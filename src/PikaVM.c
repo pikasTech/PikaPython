@@ -455,13 +455,21 @@ static VMParameters* _pikaVM_runByteCodeFrameWithState(
 
 /* head declare end */
 
-Arg* _type(Arg* arg);
+#if defined(__GNUC__) && !defined(__clang__)
+    #define PIKA_EXCEPTION_OPTIMIZE_SIZE __attribute__((optimize("Os")))
+#else
+    #define PIKA_EXCEPTION_OPTIMIZE_SIZE
+#endif
 
 static void PikaVMFrame_setErrorCode(PikaVMFrame* vm, int8_t error_code) {
     vm->error.code = error_code;
 }
 
-static PikaExceptionType _exceptionTypeFromName(char* name) {
+#if PIKA_SYNTAX_EXCEPTION_ENABLE
+Arg* _type(Arg* arg);
+
+PIKA_EXCEPTION_OPTIMIZE_SIZE static PikaExceptionType _exceptionTypeFromName(
+    char* name) {
     static const Hash exception_hashes[] = {
         1142003074, 1346345301, 984971860, 1581723060, 675810883,
         2000609318, 603406554,  1802197452, 366528582, 351017945,
@@ -521,17 +529,21 @@ static PikaExceptionType _exceptionTypeFromName(char* name) {
     return PIKA_EXCEPTION_NONE;
 }
 
-void pikaVMFrame_setExceptionTypeFromName(PikaVMFrame* vm, char* name) {
+PIKA_EXCEPTION_OPTIMIZE_SIZE void pikaVMFrame_setExceptionTypeFromName(
+    PikaVMFrame* vm, char* name) {
     PikaExceptionType type = _exceptionTypeFromName(name);
     if (PIKA_EXCEPTION_NONE != type) {
         vm->error.exception_type = type;
     }
 }
+#endif
 
 void _do_vsysOut(char* fmt, va_list args);
 void PikaVMFrame_setSysOut(PikaVMFrame* vm, char* fmt, ...) {
     pika_assert(NULL != vm);
+#if PIKA_SYNTAX_EXCEPTION_ENABLE
     pikaVMFrame_setExceptionTypeFromName(vm, fmt);
+#endif
     if (vm->error.code == PIKA_RES_OK) {
         vm->error.code = PIKA_RES_ERR_RUNTIME_ERROR;
     }
@@ -1056,8 +1068,10 @@ static Arg* VM_instruction_handler_TRY(PikaObj* self,
     return NULL;
 }
 
-static pika_bool _exceptionTypeIsMatch(PikaExceptionType actual,
-                                       PikaExceptionType expected) {
+#if PIKA_SYNTAX_EXCEPTION_ENABLE
+PIKA_EXCEPTION_OPTIMIZE_SIZE static pika_bool _exceptionTypeIsMatch(
+    PikaExceptionType actual,
+    PikaExceptionType expected) {
     static const uint8_t exception_parent[] = {
         [PIKA_EXCEPTION_BASE] = PIKA_EXCEPTION_NONE,
         [PIKA_EXCEPTION_EXCEPTION] = PIKA_EXCEPTION_BASE,
@@ -1098,11 +1112,17 @@ static pika_bool _exceptionTypeIsMatch(PikaExceptionType actual,
     }
     return pika_false;
 }
+#endif
 
-static Arg* VM_instruction_handler_EXP(PikaObj* self,
-                                       PikaVMFrame* vm,
-                                       char* data,
-                                       Arg* arg_ret_reg) {
+PIKA_EXCEPTION_OPTIMIZE_SIZE static Arg* VM_instruction_handler_EXP(
+    PikaObj* self,
+    PikaVMFrame* vm,
+    char* data,
+    Arg* arg_ret_reg) {
+#if !PIKA_SYNTAX_EXCEPTION_ENABLE
+    pikaVMThread_clearExceptionStack(vm->vm_thread);
+    return NULL;
+#else
     if (PIKA_INS(JEZ) != PikaVMFrame_getInstructWithOffset(
                              vm, instructUnit_getSize())) {
         pikaVMThread_clearExceptionStack(vm->vm_thread);
@@ -1129,6 +1149,7 @@ static Arg* VM_instruction_handler_EXP(PikaObj* self,
         pikaVMThread_clearExceptionStack(vm->vm_thread);
     }
     return arg_setBool(arg_ret_reg, "", is_match);
+#endif
 }
 
 static Arg* VM_instruction_handler_NTR(PikaObj* self,
@@ -3764,10 +3785,11 @@ static Arg* VM_instruction_handler_CLS(PikaObj* self,
     return __VM_instruction_handler_DEF(self, vm, data, 1);
 }
 
-static Arg* VM_instruction_handler_RIS(PikaObj* self,
-                                       PikaVMFrame* vm,
-                                       char* data,
-                                       Arg* arg_ret_reg) {
+PIKA_EXCEPTION_OPTIMIZE_SIZE static Arg* VM_instruction_handler_RIS(
+    PikaObj* self,
+    PikaVMFrame* vm,
+    char* data,
+    Arg* arg_ret_reg) {
 #if PIKA_NANO_ENABLE
     return NULL;
 #endif
@@ -3784,10 +3806,13 @@ static Arg* VM_instruction_handler_RIS(PikaObj* self,
     }
     if (arg_isConstructor(err_arg)) {
         MethodProp* method_prop = methodArg_getProp(err_arg);
+#if PIKA_SYNTAX_EXCEPTION_ENABLE
         pikaVMFrame_setExceptionTypeFromName(vm, method_prop->name);
+#endif
         PikaVMFrame_setErrorCode(vm, (uintptr_t)method_prop->ptr);
         goto __exit;
     }
+#if PIKA_SYNTAX_EXCEPTION_ENABLE
     if (arg_isObject(err_arg)) {
         Arg* type_arg = _type(err_arg);
         if (arg_isConstructor(type_arg)) {
@@ -3804,6 +3829,7 @@ static Arg* VM_instruction_handler_RIS(PikaObj* self,
         PikaVMFrame_setSysOut(
             vm, "TypeError: exceptions must derive from BaseException");
     }
+#endif
 __exit:
     arg_deinit(err_arg);
     return NULL;
@@ -5167,7 +5193,9 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
             stack_reset(&(vm->stack));
             vm->error.code = 0;
             vm->error.line_code = 0;
+#if PIKA_SYNTAX_EXCEPTION_ENABLE
             vm->error.exception_type = PIKA_EXCEPTION_NONE;
+#endif
         }
         self->vmFrame = vm;
         vm->pc = pikaVM_runInstructUnit(self, vm, this_ins_unit);

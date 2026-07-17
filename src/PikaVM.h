@@ -332,7 +332,9 @@ int pikaVMThread_clearErrorStack(PikaVMThread* state);
 int pikaVMThread_clearExceptionStack(PikaVMThread* vmThread);
 int pikaVMFrame_checkExceptionStack(PikaVMFrame* vm);
 int pikaVMThread_convertExceptionStack(PikaVMThread* vmThread);
+#if PIKA_SYNTAX_EXCEPTION_ENABLE
 void pikaVMFrame_setExceptionTypeFromName(PikaVMFrame* vm, char* name);
+#endif
 PikaVMError* pikaVMThread_getErrorCurrent(PikaVMThread* state);
 InstructUnit* instructArray_getNow(InstructArray* self);
 InstructUnit* instructArray_getNext(InstructArray* self);
