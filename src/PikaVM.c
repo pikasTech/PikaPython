@@ -1476,24 +1476,41 @@ static void _type_list_parse(FunctionArgsInfo* f) {
     return;
 }
 
-static char* _kw_get_name(PikaVMFrame* vm, Hash kw_hash) {
+static void _kw_load_names(PikaVMFrame* vm, FunctionArgsInfo* f) {
+    Args* keys = _OBJ2KEYS(f->kw);
+    int unresolved = args_getSize(keys);
+    if (0 == unresolved) {
+        return;
+    }
     ConstPool* const_pool = &(vm->bytecode_frame->const_pool);
     char* const_pool_start = (char*)constPool_getStart(const_pool);
     if (NULL == const_pool_start) {
-        return NULL;
+        return;
     }
     size_t offset = 0;
     while (offset < const_pool->size) {
         char* name = const_pool_start + offset;
-        if (hash_time33(name) == kw_hash) {
-            return name;
+        Hash name_hash = hash_time33(name);
+        Arg* key = args_getArg_hash(keys, name_hash);
+        if (NULL != key) {
+            char buff[32] = {0};
+            char* sHash = fast_itoa(buff, name_hash);
+            if (strEqu(arg_getStr(key), sHash)) {
+                Arg* resolved = arg_setStr(key, "", name);
+                arg_setNameHash(resolved, name_hash);
+                if (resolved != key) {
+                    args_setArg(keys, resolved);
+                }
+                if (0 == --unresolved) {
+                    return;
+                }
+            }
         }
         offset += strGetSize(name) + 1;
     }
-    return NULL;
 }
 
-static void _kw_push(PikaVMFrame* vm, FunctionArgsInfo* f, Arg* call_arg) {
+static void _kw_push(FunctionArgsInfo* f, Arg* call_arg) {
     if (NULL == f->kw) {
         f->kw = New_PikaDict();
     }
@@ -1503,8 +1520,9 @@ static void _kw_push(PikaVMFrame* vm, FunctionArgsInfo* f, Arg* call_arg) {
     _pikaDict_setVal(f->kw, call_arg);
     f->n_keyword++;
     char* sHash = fast_itoa(buff, kw_hash);
-    char* kw_name = _kw_get_name(vm, kw_hash);
-    args_setStr(_OBJ2KEYS(f->kw), sHash, kw_name == NULL ? sHash : kw_name);
+    Arg* key = arg_newStr(sHash);
+    arg_setNameHash(key, kw_hash);
+    args_setArg(_OBJ2KEYS(f->kw), key);
 }
 
 static pika_bool _kw_check_positional_overlap(PikaVMFrame* vm,
@@ -1556,7 +1574,7 @@ static pika_bool _load_call_arg(PikaVMFrame* vm,
     /* load the kw arg */
     pika_assert(NULL != call_arg);
     if (arg_getIsKeyword(call_arg)) {
-        _kw_push(vm, f, call_arg);
+        _kw_push(f, call_arg);
         return pika_true;
     }
     if (_kw_check_positional_overlap(vm, f)) {
@@ -1829,6 +1847,7 @@ static int PikaVMFrame_loadArgsFromMethodArg(PikaVMFrame* vm,
     }
 
     if (f.kw != NULL) {
+        _kw_load_names(vm, &f);
         pikaDict_reverse(f.kw);
     }
 

@@ -112,6 +112,52 @@ static void function_call_kwargs_1000(benchmark::State& state) {
 }
 BENCHMARK(function_call_kwargs_1000)->Unit(benchmark::kMillisecond);
 
+static void function_call_kwargs_large_constpool_1000(
+    benchmark::State& state) {
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pika_lines2Asm(
+        buffs, (char*)
+                   "def collect(a, **kwargs):\n"
+                   "    return a\n"
+                   "c0 = 'constant_00'\n"
+                   "c1 = 'constant_01'\n"
+                   "c2 = 'constant_02'\n"
+                   "c3 = 'constant_03'\n"
+                   "c4 = 'constant_04'\n"
+                   "c5 = 'constant_05'\n"
+                   "c6 = 'constant_06'\n"
+                   "c7 = 'constant_07'\n"
+                   "c8 = 'constant_08'\n"
+                   "c9 = 'constant_09'\n"
+                   "c10 = 'constant_10'\n"
+                   "c11 = 'constant_11'\n"
+                   "c12 = 'constant_12'\n"
+                   "c13 = 'constant_13'\n"
+                   "c14 = 'constant_14'\n"
+                   "c15 = 'constant_15'\n"
+                   "c16 = 'constant_16'\n"
+                   "c17 = 'constant_17'\n"
+                   "c18 = 'constant_18'\n"
+                   "c19 = 'constant_19'\n"
+                   "i = 0\n"
+                   "while i < 1000:\n"
+                   "    collect(a=i, alpha=1, beta=2)\n"
+                   "    i = i + 1\n"
+                   "\n");
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    for (auto _ : state) {
+        PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+        pikaVM_runByteCodeFrame(pikaMain, &bytecode_frame);
+        obj_deinit(pikaMain);
+    }
+    byteCodeFrame_deinit(&bytecode_frame);
+    args_deinit(buffs);
+}
+BENCHMARK(function_call_kwargs_large_constpool_1000)
+    ->Unit(benchmark::kMillisecond);
+
 static void function_call_starred_1000(benchmark::State& state) {
     Args* buffs = New_strBuff();
     char* pikaAsm = pika_lines2Asm(

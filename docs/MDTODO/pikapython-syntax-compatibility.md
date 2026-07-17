@@ -310,3 +310,7 @@ P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩
 ### R14.4 [completed]
 
 同步 core 后运行 default/minimal 定向与必要全量回归，量化 text/data/bss、分配次数和 runtime，更新 issue 与总报告，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.4_Task_Report.md)。
+
+### R14.5 [completed]
+
+继续解决 [#348](https://github.com/pikasTech/PikaPython/issues/348) 的 VM 性能债务：优化 kwargs 名称恢复中的常量池重复扫描，在不扩大语法、不改变 VM 大架构且不增加常驻 RAM 的前提下完成同机 A/B、default/minimal 资源和语义回归，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.5_Task_Report.md)。
