@@ -333,6 +333,23 @@ TEST(object_test, set_arg_simple_and_nested_path) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(object_test, get_host_obj_simple_and_nested_path) {
+    PikaObj* root = newRootObj("root", New_BaseObj);
+    obj_newObj(root, "child", "TinyObj", New_TinyObj);
+    PikaObj* child = obj_getObj(root, "child");
+
+    EXPECT_EQ(root, obj_getHostObj(root, "plain"));
+    EXPECT_EQ(root, obj_getHostObj(root, "."));
+    EXPECT_EQ(child, obj_getHostObj(root, "child.value"));
+
+    pika_bool is_temp = pika_false;
+    EXPECT_EQ(root, obj_getHostObjWithIsTemp(root, "plain", &is_temp));
+    EXPECT_EQ(pika_false, is_temp);
+
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(object, str_set_int) {
     PikaObj* root = newRootObj("root", New_BaseObj);
     obj_setStr(root, "test", "teststr");

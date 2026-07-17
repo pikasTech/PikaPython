@@ -942,6 +942,11 @@ static PikaObj* _obj_getObjWithKeepDeepth(PikaObj* self,
         return self;
     }
     pika_assert(strGetSize(objPath) < PIKA_PATH_BUFF_SIZE);
+#if !PIKA_NANO_ENABLE
+    if (1 == keepDeepth && NULL == strchr(objPath, '.')) {
+        return self;
+    }
+#endif
     strcpy(objPath_buff, objPath);
     int32_t token_num = strGetTokenNum(objPath, '.');
     PikaObj* objThis = self;
