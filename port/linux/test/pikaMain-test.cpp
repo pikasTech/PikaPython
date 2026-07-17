@@ -316,6 +316,122 @@ TEST(pikaMain, python3_operator_associativity_and_short_circuit) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if !PIKA_NANO_ENABLE
+TEST(pikaMain, python3_default_argument_definition_time) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    VMParameters* globals = obj_run(
+        pikaMain,
+        "seed = 1\n"
+        "default_calls = 0\n"
+        "def make_default():\n"
+        "    global default_calls\n"
+        "    default_calls += 1\n"
+        "    return []\n"
+        "def use_default(value=seed, items=make_default()):\n"
+        "    items.append(1)\n"
+        "    return value * 100 + len(items)\n"
+        "seed = 2\n"
+        "default_first = use_default()\n"
+        "default_second = use_default()\n"
+        "default_explicit = use_default(3, [])\n"
+        "global_value = 7\n"
+        "def use_global():\n"
+        "    global global_value\n"
+        "    before = global_value\n"
+        "    global_value = 8\n"
+        "    return before\n"
+        "global_before = use_global()\n"
+        "class DefaultOwner:\n"
+        "    def value(self, item=4):\n"
+        "        return item\n"
+        "class_default = DefaultOwner().value()\n");
+
+    EXPECT_EQ(obj_getInt(globals, "default_first"), 101);
+    EXPECT_EQ(obj_getInt(globals, "default_second"), 102);
+    EXPECT_EQ(obj_getInt(globals, "default_explicit"), 301);
+    EXPECT_EQ(obj_getInt(globals, "default_calls"), 1);
+    EXPECT_EQ(obj_getInt(globals, "global_before"), 7);
+    EXPECT_EQ(obj_getInt(globals, "global_value"), 8);
+    EXPECT_EQ(obj_getInt(globals, "class_default"), 4);
+
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+TEST(pikaMain, python3_unbound_local_error) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    obj_run(pikaMain,
+            "value = 7\n"
+            "def read_before_assignment():\n"
+            "    before = value\n"
+            "    value = 8\n"
+            "    return before\n"
+            "read_before_assignment()\n");
+
+    pika_bool found = pika_false;
+    for (int i = 0; i < LOG_BUFF_MAX; i++) {
+        if (strEqu(log_buff[i],
+                   "UnboundLocalError: local variable 'value' referenced "
+                   "before assignment\n")) {
+            found = pika_true;
+            break;
+        }
+    }
+    EXPECT_TRUE(found);
+
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, python3_definition_scope_neighbors) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    VMParameters* globals = obj_run(
+        pikaMain,
+        "def read_parameter(value):\n"
+        "    return value\n"
+        "def assigned_before_read():\n"
+        "    value = 6\n"
+        "    return value\n"
+        "outer_value = 9\n"
+        "def outer():\n"
+        "    def inner():\n"
+        "        outer_value = 10\n"
+        "        return outer_value\n"
+        "    return outer_value\n"
+        "parameter_value = read_parameter(5)\n"
+        "assigned_value = assigned_before_read()\n"
+        "nested_value = outer()\n");
+
+    EXPECT_EQ(obj_getInt(globals, "parameter_value"), 5);
+    EXPECT_EQ(obj_getInt(globals, "assigned_value"), 6);
+    EXPECT_EQ(obj_getInt(globals, "nested_value"), 9);
+
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+#if !PIKA_NANO_ENABLE
+TEST(pikaMain, python3_definition_metadata_across_runs) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    obj_run(pikaMain,
+            "def first(value=11):\n"
+            "    return value\n");
+    obj_run(pikaMain,
+            "def second(value=22):\n"
+            "    return value\n");
+    VMParameters* globals = obj_run(pikaMain,
+                                    "first_value = first()\n"
+                                    "second_value = second()\n");
+
+    EXPECT_EQ(obj_getInt(globals, "first_value"), 11);
+    EXPECT_EQ(obj_getInt(globals, "second_value"), 22);
+
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
 TEST(pikaMain, err_scop) {
     /* init */
     g_PikaMemInfo.heapUsedMax = 0;

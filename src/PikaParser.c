@@ -3920,6 +3920,32 @@ char* AST_genAsm_top(AST* oAST, Args* outBuffs) {
 #if !PIKA_NANO_ENABLE
         char* sDefaultStmts = AST_getNodeAttr(oAST, "default");
 #endif
+#if !PIKA_NANO_ENABLE
+        if (NULL != sDefaultStmts) {
+            char* sDefaultEval = strsCopy(&buffs, sDefaultStmts);
+            int iStmtNum =
+                _Cursor_count(sDefaultEval, TOKEN_devider, ",", pika_true) + 1;
+            for (int i = 0; i < iStmtNum; i++) {
+                char* sStmt = Cursor_popToken(&buffs, &sDefaultEval, ",");
+                char* sArgName = Cursor_splitCollect(&buffs, sStmt, "=", 0);
+                char* sDefaultExpr =
+                    Cursor_splitCollect(&buffs, sStmt, "=", 1);
+                AST* default_ast = line2Ast_withBlockDeepth(
+                    sDefaultExpr, AST_getBlockDeepthNow(oAST));
+                if (NULL == default_ast) {
+                    sPikaAsm = NULL;
+                    goto __exit;
+                }
+                obj_setInt(default_ast, "deepth", 1);
+                sPikaAsm =
+                    AST_genAsm(default_ast, default_ast, &buffs, sPikaAsm);
+                AST_deinit(default_ast);
+                sPikaAsm = strsAppend(&buffs, sPikaAsm, "1 OUT ");
+                sPikaAsm = strsAppend(&buffs, sPikaAsm, sArgName);
+                sPikaAsm = strsAppend(&buffs, sPikaAsm, "\n");
+            }
+        }
+#endif
         sPikaAsm = strsAppend(&buffs, sPikaAsm, "0 DEF ");
         sPikaAsm =
             strsAppend(&buffs, sPikaAsm, AST_getNodeAttr(oAST, "declare"));

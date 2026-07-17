@@ -261,7 +261,7 @@ P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩
 #### R12.3.1 [completed]
 
 修复 and/or 短路求值与幂运算右结合语义，并补副作用回归，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.3.1_Task_Report.md)。
-#### R12.3.2
+#### R12.3.2 [completed]
 
 修复默认参数定义时求值和未绑定局部变量错误合同，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.3.2_Task_Report.md)。
 #### R12.3.3
