@@ -64,14 +64,16 @@ jobs:
     - name: BENCHMARK
       run: cd ${{github.workspace}}/port/linux && bash ci_benchmark.sh
       
-    - name: CLEAR
-      run: cd ${{github.workspace}}/port/linux && rm *.sh
+    - name: PREPARE_BENCHMARK_RESULT
+      run: |
+        cp ${{github.workspace}}/port/linux/benchmark_result.json ${{runner.temp}}/benchmark_result.json
+        git restore --worktree .
       
     - name: Store benchmark result
       uses: benchmark-action/github-action-benchmark@v1
       with:
         tool: 'googlecpp'
-        output-file-path: ${{github.workspace}}/port/linux/benchmark_result.json
+        output-file-path: ${{runner.temp}}/benchmark_result.json
         github-token: ${{ secrets.GITHUB_TOKEN }}
         auto-push: true
         

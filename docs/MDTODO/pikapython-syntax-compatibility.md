@@ -326,3 +326,7 @@ P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩
 ### R14.8 [completed]
 
 修复 Linux Action 的 VALGRIND 未复用网络隔离和超时边界问题，使内存检查与 core TEST 使用同一默认过滤合同并保留显式 filter 覆盖，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.8_Task_Report.md)。
+
+### R14.9 [completed]
+
+修复 benchmark 结果发布因 Linux 构建覆盖 tracked 生成物而无法切换 gh-pages 的 Action 失败，只恢复 tracked 工作树并保留 benchmark 输出，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.9_Task_Report.md)。
