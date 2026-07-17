@@ -26,7 +26,7 @@ do
 done
 
 if [ -z "$gtest_filter" ]; then
-    PIKA_GTEST_FILTER=${PIKA_GTEST_FILTER:--mqtt.*:network.*:socket.*:requests.*:jrpc.BlockingRequestBetweenTwoJRPC}
+    PIKA_GTEST_FILTER=${PIKA_GTEST_FILTER:--mqtt.*:network.*:socket.*:requests.*:jrpc.BlockingRequestBetweenTwoJRPC:threading.lock_rlock}
     gtest_filter="--gtest_filter=$PIKA_GTEST_FILTER"
 fi
 

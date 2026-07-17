@@ -2,5 +2,5 @@ set -e
 
 rm -f build/test/pikascript_test
 sh make.sh
-PIKA_GTEST_FILTER=${PIKA_GTEST_FILTER:--mqtt.*:network.*:socket.*:requests.*:jrpc.BlockingRequestBetweenTwoJRPC}
+PIKA_GTEST_FILTER=${PIKA_GTEST_FILTER:--mqtt.*:network.*:socket.*:requests.*:jrpc.BlockingRequestBetweenTwoJRPC:threading.lock_rlock}
 timeout 10m build/test/pikascript_test --gtest_filter="$PIKA_GTEST_FILTER"
