@@ -233,7 +233,7 @@
 
 汇总至少 20 个独立问题、最小复现、阶段和后续修复优先级，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R11.4_Task_Report.md)。
 
-## R12
+## R12 [completed]
 
 修复 R11 确认的 20 个解析期/运行期语法处理错误，优先消除空 import 两种形式的 SIGSEGV，再按共同 parser block/token 根因和 runtime 语义合同分批处理；保持非架构改动，正确性阶段允许量化临时资源增量，资源与性能回收独立执行且 VM/runtime 性能优先，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12_Task_Report.md)。
 
@@ -267,6 +267,6 @@ P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩
 #### R12.3.3 [completed]
 
 修复推导式作用域、星号解包及定长解包数量/错误类型合同，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.3.3_Task_Report.md)。
-### R12.4
+### R12.4 [completed]
 
 运行 default/minimal 隔离回归并独立量化、回收 RAM/Flash 与性能变化，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R12.4_Task_Report.md)。

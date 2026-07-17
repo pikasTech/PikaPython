@@ -2937,32 +2937,29 @@ static char* Suger_multiAssign(Args* out_buffs, char* sLine) {
         goto __exit;
     }
 
-    aLineOut = arg_strAppend(aLineOut, "$unpack_len = len($tmp)\n");
+    aLineOut = arg_strAppend(aLineOut, "$ul = len($tmp)\n");
     if (0 == star_num) {
         sLineItem = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
-                               "if $unpack_len < %d:\n", target_num);
+                               "if $ul != %d:\n"
+                               "    if $ul < %d:\n",
+                               target_num, target_num);
         aLineOut = arg_strAppend(aLineOut, sLineItem);
         aLineOut = arg_strAppend(
             aLineOut,
+            "        del $tmp\n"
+            "        del $ul\n"
+            "        raise ValueError(\"not enough values to unpack\")\n"
             "    del $tmp\n"
-            "    del $unpack_len\n"
-            "    raise ValueError(\"not enough values to unpack\")\n");
-        sLineItem = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
-                               "if $unpack_len > %d:\n", target_num);
-        aLineOut = arg_strAppend(aLineOut, sLineItem);
-        aLineOut = arg_strAppend(
-            aLineOut,
-            "    del $tmp\n"
-            "    del $unpack_len\n"
+            "    del $ul\n"
             "    raise ValueError(\"too many values to unpack\")\n");
     } else {
         sLineItem = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
-                               "if $unpack_len < %d:\n", target_num - 1);
+                               "if $ul < %d:\n", target_num - 1);
         aLineOut = arg_strAppend(aLineOut, sLineItem);
         aLineOut = arg_strAppend(
             aLineOut,
             "    del $tmp\n"
-            "    del $unpack_len\n"
+            "    del $ul\n"
             "    raise ValueError(\"not enough values to unpack\")\n");
     }
 
@@ -2980,12 +2977,12 @@ static char* Suger_multiAssign(Args* out_buffs, char* sLine) {
             int suffix_num = target_num - star_index - 1;
             sLineItem = strsFormat(
                 &buffs, PIKA_LINE_BUFF_SIZE,
-                "%s = list($tmp[%d:$unpack_len - %d])\n", item, star_index,
+                "%s = list($tmp[%d:$ul - %d])\n", item, star_index,
                 suffix_num);
         } else if (star_index >= 0 && target_index > star_index) {
             int suffix_index = target_num - target_index;
             sLineItem = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
-                                   "%s = $tmp[$unpack_len - %d]\n", item,
+                                   "%s = $tmp[$ul - %d]\n", item,
                                    suffix_index);
         } else {
             sLineItem = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
@@ -2993,7 +2990,7 @@ static char* Suger_multiAssign(Args* out_buffs, char* sLine) {
         }
         aLineOut = arg_strAppend(aLineOut, sLineItem);
     }
-    aLineOut = arg_strAppend(aLineOut, "del $tmp\ndel $unpack_len");
+    aLineOut = arg_strAppend(aLineOut, "del $tmp\ndel $ul");
     aLineOut = arg_strAddIndentMulti(aLineOut, iIndent);
     sLineOut = strsCopy(out_buffs, arg_getStr(aLineOut));
     goto __exit;
