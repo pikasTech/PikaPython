@@ -540,7 +540,14 @@ TEST(pikaMain, python3_default_argument_definition_time) {
         "class DefaultOwner:\n"
         "    def value(self, item=4):\n"
         "        return item\n"
-        "class_default = DefaultOwner().value()\n");
+        "    def enabled(self, stop_on_error: bool=False):\n"
+        "        return stop_on_error\n"
+        "class_default = DefaultOwner().value()\n"
+        "method_false_default = DefaultOwner().enabled()\n"
+        "def false_default(stop_on_error=False):\n"
+        "    return stop_on_error\n"
+        "false_default_value = false_default()\n"
+        "false_default_override = false_default(True)\n");
 
     EXPECT_EQ(obj_getInt(globals, "default_first"), 101);
     EXPECT_EQ(obj_getInt(globals, "default_second"), 102);
@@ -549,6 +556,9 @@ TEST(pikaMain, python3_default_argument_definition_time) {
     EXPECT_EQ(obj_getInt(globals, "global_before"), 7);
     EXPECT_EQ(obj_getInt(globals, "global_value"), 8);
     EXPECT_EQ(obj_getInt(globals, "class_default"), 4);
+    EXPECT_EQ(obj_getInt(globals, "method_false_default"), 0);
+    EXPECT_EQ(obj_getInt(globals, "false_default_value"), 0);
+    EXPECT_EQ(obj_getInt(globals, "false_default_override"), 1);
 
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

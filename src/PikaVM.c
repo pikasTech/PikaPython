@@ -3636,7 +3636,8 @@ static pika_bool _methodLocalCandidate(char* name) {
 static void _methodStoreDefinitionMeta(PikaObj* context,
                                        PikaVMFrame* vm,
                                        Method method,
-                                       int def_block_deepth) {
+                                       int def_block_deepth,
+                                       char* declaration) {
     char key[2 + sizeof(uintptr_t) * 2 + 1] = {0};
     MethodDefinitionMeta meta = {0};
     uint32_t default_num = PikaVMFrame_getInputArgNum(vm);
@@ -3701,12 +3702,35 @@ static void _methodStoreDefinitionMeta(PikaObj* context,
         }
     }
 
+    Args parameter_names = {0};
+    Args parameter_buffs = {0};
+    char* parameters = strsCut(&parameter_buffs, declaration, '(', ')');
+    while (NULL != parameters && '\0' != parameters[0]) {
+        char* parameter = strPopFirstToken(&parameters, ',');
+        while ('*' == parameter[0]) {
+            parameter++;
+        }
+        char* end = strchr(parameter, ':');
+        if (NULL == end) {
+            end = strchr(parameter, '=');
+        }
+        if (NULL != end) {
+            end[0] = '\0';
+        }
+        if ('\0' != parameter[0]) {
+            args_setNone(&parameter_names, parameter);
+        }
+    }
     for (int i = args_getSize(meta.local_names) - 1; i >= 0; i--) {
         Arg* local_name = args_getArgByIndex(meta.local_names, i);
-        if (args_isArgExist_hash(global_names, arg_getNameHash(local_name))) {
+        Hash name_hash = arg_getNameHash(local_name);
+        if (args_isArgExist_hash(global_names, name_hash) ||
+            args_isArgExist_hash(&parameter_names, name_hash)) {
             args_removeArg(meta.local_names, local_name);
         }
     }
+    args_deinit_stack(&parameter_names);
+    strsDeinit(&parameter_buffs);
     args_deinit(global_names);
 
     if (0 == args_getSize(meta.local_names)) {
@@ -3765,7 +3789,7 @@ static Arg* __VM_instruction_handler_DEF(PikaObj* self,
     }
 
     if (!is_class && NULL != method) {
-        _methodStoreDefinitionMeta(self, vm, method, thisBlockDeepth);
+        _methodStoreDefinitionMeta(self, vm, method, thisBlockDeepth, data);
     }
 
     return NULL;
