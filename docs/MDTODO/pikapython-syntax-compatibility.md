@@ -354,3 +354,7 @@ P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩
 ### R14.15 [completed]
 
 增加排除 parser 时间并校验结果的 Fibonacci runtime benchmark，使用仓库现有 gprof/Callgrind 工具定位 fib workload 热点，只实施不改变 VM 大架构且资源总体不膨胀的优化，并完成同配置 A/B、单元测试和 Linux 回归，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.15_Task_Report.md)。
+
+### R14.16 [completed]
+
+在上一轮递归调用查找优化基础上重新采样 runtime/VM 热点，选择至少一个由 benchmark 证明且不改变大架构的性能债务完成同配置 A/B；同步探测相关 runtime 错误边界并补单元测试，保持 RAM/Flash 总体不膨胀，CI 仅后台验收不阻塞本轮开发，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.16_Task_Report.md)。

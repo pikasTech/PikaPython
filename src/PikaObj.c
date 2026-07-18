@@ -656,9 +656,9 @@ __exit:
     return aMethod;
 }
 
-Arg* _obj_getMethodArgWithFullPath(PikaObj* obj,
-                                   char* methodPath,
-                                   Arg* arg_reg) {
+static Arg* _obj_getMethodArgWithFullPath(PikaObj* obj,
+                                          char* methodPath,
+                                          Arg* arg_reg) {
     char* methodName = strPointToLastToken(methodPath, '.');
     return _obj_getMethodArg(obj, methodName, arg_reg);
 }
@@ -935,18 +935,18 @@ static PikaObj* _obj_getObjWithKeepDeepth(PikaObj* self,
                                           char* objPath,
                                           pika_bool* pIsTemp,
                                           int32_t keepDeepth) {
-    char objPath_buff[PIKA_PATH_BUFF_SIZE];
-    char* objPath_ptr = objPath_buff;
     pika_assert(NULL != objPath);
     if ('.' == objPath[0] && '\0' == objPath[1]) {
         return self;
     }
-    pika_assert(strGetSize(objPath) < PIKA_PATH_BUFF_SIZE);
 #if !PIKA_NANO_ENABLE
     if (1 == keepDeepth && NULL == strchr(objPath, '.')) {
         return self;
     }
 #endif
+    char objPath_buff[PIKA_PATH_BUFF_SIZE];
+    char* objPath_ptr = objPath_buff;
+    pika_assert(strGetSize(objPath) < PIKA_PATH_BUFF_SIZE);
     strcpy(objPath_buff, objPath);
     int32_t token_num = strGetTokenNum(objPath, '.');
     PikaObj* objThis = self;

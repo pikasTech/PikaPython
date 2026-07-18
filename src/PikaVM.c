@@ -5239,11 +5239,14 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     #endif
 #endif
         // push vm frame error to thread error stack
-        if (pikaVMFrame_checkErrorCode(vm) != PIKA_RES_OK) {
+        PIKA_RES error_code = pikaVMFrame_checkErrorCode(vm);
+        if (error_code != PIKA_RES_OK) {
             pikaVMThread_pushError(vm->vm_thread, &(vm->error));
         }
         // handle error
-        if (pikaVMFrame_checkErrorStack(vm) != PIKA_RES_OK) {
+        if (error_code != PIKA_RES_OK ||
+            (NULL != vm->vm_thread->error_stack &&
+             pikaVMFrame_checkErrorStack(vm) != PIKA_RES_OK)) {
             vm->error.line_code = vm->error.code;
             InstructUnit* head_ins_unit = this_ins_unit;
             /* get first ins of a line */

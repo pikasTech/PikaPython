@@ -256,6 +256,30 @@ TEST(pikaMain, recursive_global_function_lookup) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(pikaMain, recursive_call_error_propagation) {
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    pikaVM_run(pikaMain,
+               (char*)"def recurse(n):\n"
+                      "    if n == 0:\n"
+                      "        return missing_name\n"
+                      "    return recurse(n - 1)\n"
+                      "result = recurse(3)\n");
+
+    pika_bool found = pika_false;
+    for (int i = 0; i < LOG_BUFF_MAX; i++) {
+        if (strEqu(log_buff[i],
+                   "NameError: name 'missing_name' is not defined\n")) {
+            found = pika_true;
+            break;
+        }
+    }
+    EXPECT_TRUE(found);
+    EXPECT_FALSE(obj_isArgExist(pikaMain, (char*)"result"));
+
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(pikaMain, and_or_not) {
     /* init */
     g_PikaMemInfo.heapUsedMax = 0;
