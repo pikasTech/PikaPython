@@ -397,6 +397,7 @@ PikaObj* obj_newObjFromConstructor(PikaObj* self,
                                    NewFun newClassFun);
 PikaObj* newRootObj(char* name, NewFun newObjFun);
 PikaObj* obj_getClassObj(PikaObj* obj);
+NativeProperty* obj_getProp(PikaObj* self);
 Arg* obj_getMethodArg(PikaObj* obj, char* methodName);
 Arg* obj_getMethodArg_noalloc(PikaObj* obj, char* methodName, Arg* arg_reg);
 Arg* obj_getMethodArgWithFullPath(PikaObj* obj, char* methodPath);

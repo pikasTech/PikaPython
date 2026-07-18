@@ -504,9 +504,16 @@ TEST(pikaMain, python3_typed_except_runtime_matrix) {
         {"result=0\ntry:\n    raise ValueError\nexcept ValueError as err:\n"
          "    result=isinstance(err, ValueError)\n",
          1},
+        {"result=0\ntry:\n    1/0\nexcept ArithmeticError as err:\n"
+         "    result=isinstance(err, ZeroDivisionError)\n",
+         1},
         {"result=0\ntry:\n    try:\n        1/0\n    except ValueError:\n"
          "        result=1\nexcept ZeroDivisionError:\n    result=2\n",
          2},
+        {"result=0\ntry:\n    try:\n        raise ValueError\n"
+         "    except ValueError:\n        raise TypeError\n"
+         "except TypeError:\n    result=1\n",
+         1},
         {"result=0\ntry:\n    1/0\nexcept Exception:\n    result=1\n", 1},
         {"result=0\ntry:\n    1/0\nexcept ArithmeticError:\n    result=1\n",
          1},

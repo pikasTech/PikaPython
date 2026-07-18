@@ -436,6 +436,10 @@ void pika_vmSignal_setCtrlClear(void) {
 
 /* head declare start */
 static uint32_t PikaVMFrame_getInputArgNum(PikaVMFrame* vm);
+static Arg* VM_instruction_handler_RUN(PikaObj* self,
+                                       PikaVMFrame* vm,
+                                       char* data,
+                                       Arg* arg_ret_reg);
 static VMParameters* __pikaVM_runByteCodeFrameWithState(
     PikaObj* self,
     VMParameters* locals,
@@ -468,52 +472,54 @@ static void PikaVMFrame_setErrorCode(PikaVMFrame* vm, int8_t error_code) {
 #if PIKA_SYNTAX_EXCEPTION_ENABLE
 Arg* _type(Arg* arg);
 
+static const Hash exception_hashes[] = {
+    1142003074, 1346345301, 984971860, 1581723060, 675810883,
+    2000609318, 603406554,  1802197452, 366528582, 351017945,
+    1985385347, 650622313,  489249939,  1035868745, 799477063,
+    823649752,  247530422,  838371290,  1538545476, 1777242020,
+    2134842892, 1950608113, 742300048,  1836878090, 746628451,
+    1016945095, 282021160,  196451025,  1431286868, 173529092,
+    1299431183, 1326281044, 1956727606,
+};
+
+static const uint8_t exception_types[] = {
+    PIKA_EXCEPTION_MODULE_NOT_FOUND,
+    PIKA_EXCEPTION_UNBOUND_LOCAL,
+    PIKA_EXCEPTION_ZERO_DIVISION,
+    PIKA_EXCEPTION_NOT_IMPLEMENTED,
+    PIKA_EXCEPTION_KEYBOARD_INTERRUPT,
+    PIKA_EXCEPTION_GENERATOR_EXIT,
+    PIKA_EXCEPTION_STOP_ITERATION,
+    PIKA_EXCEPTION_INDENTATION,
+    PIKA_EXCEPTION_TAB,
+    PIKA_EXCEPTION_ARITHMETIC,
+    PIKA_EXCEPTION_OVERFLOW,
+    PIKA_EXCEPTION_RECURSION,
+    PIKA_EXCEPTION_RUNTIME,
+    PIKA_EXCEPTION_LOOKUP,
+    PIKA_EXCEPTION_INDEX,
+    PIKA_EXCEPTION_KEY,
+    PIKA_EXCEPTION_UNICODE,
+    PIKA_EXCEPTION_UNICODE,
+    PIKA_EXCEPTION_UNICODE,
+    PIKA_EXCEPTION_UNICODE,
+    PIKA_EXCEPTION_VALUE,
+    PIKA_EXCEPTION_TYPE,
+    PIKA_EXCEPTION_NAME,
+    PIKA_EXCEPTION_IMPORT,
+    PIKA_EXCEPTION_ATTRIBUTE,
+    PIKA_EXCEPTION_ASSERTION,
+    PIKA_EXCEPTION_MEMORY,
+    PIKA_EXCEPTION_OS,
+    PIKA_EXCEPTION_SYSTEM,
+    PIKA_EXCEPTION_SYSTEM_EXIT,
+    PIKA_EXCEPTION_BASE,
+    PIKA_EXCEPTION_EXCEPTION,
+    PIKA_EXCEPTION_SYNTAX,
+};
+
 PIKA_EXCEPTION_OPTIMIZE_SIZE static PikaExceptionType _exceptionTypeFromName(
     char* name) {
-    static const Hash exception_hashes[] = {
-        1142003074, 1346345301, 984971860, 1581723060, 675810883,
-        2000609318, 603406554,  1802197452, 366528582, 351017945,
-        1985385347, 650622313,  489249939,  1035868745, 799477063,
-        823649752,  247530422,  838371290,  1538545476, 1777242020,
-        2134842892, 1950608113, 742300048,  1836878090, 746628451,
-        1016945095, 282021160,  196451025,  1431286868, 173529092,
-        1299431183, 1326281044, 1956727606,
-    };
-    static const uint8_t exception_types[] = {
-        PIKA_EXCEPTION_MODULE_NOT_FOUND,
-        PIKA_EXCEPTION_UNBOUND_LOCAL,
-        PIKA_EXCEPTION_ZERO_DIVISION,
-        PIKA_EXCEPTION_NOT_IMPLEMENTED,
-        PIKA_EXCEPTION_KEYBOARD_INTERRUPT,
-        PIKA_EXCEPTION_GENERATOR_EXIT,
-        PIKA_EXCEPTION_STOP_ITERATION,
-        PIKA_EXCEPTION_INDENTATION,
-        PIKA_EXCEPTION_TAB,
-        PIKA_EXCEPTION_ARITHMETIC,
-        PIKA_EXCEPTION_OVERFLOW,
-        PIKA_EXCEPTION_RECURSION,
-        PIKA_EXCEPTION_RUNTIME,
-        PIKA_EXCEPTION_LOOKUP,
-        PIKA_EXCEPTION_INDEX,
-        PIKA_EXCEPTION_KEY,
-        PIKA_EXCEPTION_UNICODE,
-        PIKA_EXCEPTION_UNICODE,
-        PIKA_EXCEPTION_UNICODE,
-        PIKA_EXCEPTION_UNICODE,
-        PIKA_EXCEPTION_VALUE,
-        PIKA_EXCEPTION_TYPE,
-        PIKA_EXCEPTION_NAME,
-        PIKA_EXCEPTION_IMPORT,
-        PIKA_EXCEPTION_ATTRIBUTE,
-        PIKA_EXCEPTION_ASSERTION,
-        PIKA_EXCEPTION_MEMORY,
-        PIKA_EXCEPTION_OS,
-        PIKA_EXCEPTION_SYSTEM,
-        PIKA_EXCEPTION_SYSTEM_EXIT,
-        PIKA_EXCEPTION_BASE,
-        PIKA_EXCEPTION_EXCEPTION,
-        PIKA_EXCEPTION_SYNTAX,
-    };
     if (NULL == name) {
         return PIKA_EXCEPTION_NONE;
     }
@@ -547,7 +553,7 @@ void PikaVMFrame_setSysOut(PikaVMFrame* vm, char* fmt, ...) {
     if (vm->error.code == PIKA_RES_OK) {
         vm->error.code = PIKA_RES_ERR_RUNTIME_ERROR;
     }
-    if (vm->vm_thread->try_state == TRY_STATE_INNER) {
+    if (vm->vm_thread->try_state != TRY_STATE_NONE) {
         return;
     }
     va_list args;
@@ -1064,7 +1070,7 @@ static Arg* VM_instruction_handler_TRY(PikaObj* self,
                                        char* data,
                                        Arg* arg_ret_reg) {
     pika_assert(NULL != vm->vm_thread);
-    vm->vm_thread->try_state = TRY_STATE_INNER;
+    vm->vm_thread->try_state++;
     return NULL;
 }
 
@@ -1112,6 +1118,28 @@ PIKA_EXCEPTION_OPTIMIZE_SIZE static pika_bool _exceptionTypeIsMatch(
     }
     return pika_false;
 }
+
+static char* _exceptionTypeNameInScope(PikaObj* scope,
+                                       PikaExceptionType type) {
+    Hash exception_hash = 0;
+    for (size_t i = 0; i < sizeof(exception_types); i++) {
+        if (exception_types[i] == type) {
+            exception_hash = exception_hashes[i];
+            break;
+        }
+    }
+    NativeProperty* prop = obj_getProp(scope);
+    while (NULL != prop) {
+        for (int i = 0; i < (int)prop->methodGroupCount; i++) {
+            Arg* method = (Arg*)(prop->methodGroup + i);
+            if (method->name_hash == exception_hash) {
+                return methodArg_getProp(method)->name;
+            }
+        }
+        prop = (NativeProperty*)prop->super;
+    }
+    return NULL;
+}
 #endif
 
 PIKA_EXCEPTION_OPTIMIZE_SIZE static Arg* VM_instruction_handler_EXP(
@@ -1146,6 +1174,22 @@ PIKA_EXCEPTION_OPTIMIZE_SIZE static Arg* VM_instruction_handler_EXP(
         }
     }
     if (is_match) {
+        if (PIKA_INS(OUT) ==
+            PikaVMFrame_getInstructWithOffset(
+                vm, 2 * (int)instructUnit_getSize())) {
+            PikaObj* builtins = obj_getBuiltins();
+            char* exception_name = _exceptionTypeNameInScope(
+                builtins, error->exception_type);
+            obj_deinit(builtins);
+            if (NULL == exception_name) {
+                exception_name = data;
+            }
+            Arg* exception_arg = VM_instruction_handler_RUN(
+                self, vm, exception_name, arg_ret_reg);
+            if (NULL != exception_arg) {
+                stack_pushArg(&vm->stack, exception_arg);
+            }
+        }
         pikaVMThread_clearExceptionStack(vm->vm_thread);
     }
     return arg_setBool(arg_ret_reg, "", is_match);
@@ -1156,7 +1200,9 @@ static Arg* VM_instruction_handler_NTR(PikaObj* self,
                                        PikaVMFrame* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    vm->vm_thread->try_state = TRY_STATE_NONE;
+    if (vm->vm_thread->try_state != TRY_STATE_NONE) {
+        vm->vm_thread->try_state--;
+    }
     pikaVMThread_convertExceptionStack(vm->vm_thread);
     return NULL;
 }
@@ -4315,7 +4361,7 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     if (pikaVMFrame_checkErrorStack(vm) != PIKA_RES_OK ||
         VMSignal_getCtrl() == VM_SIGNAL_CTRL_EXIT) {
         /* raise jmp */
-        if (vm->vm_thread->try_state == TRY_STATE_INNER) {
+        if (vm->vm_thread->try_state != TRY_STATE_NONE) {
             vm->jmp = VM_JMP_RAISE;
         } else {
             /* exit */

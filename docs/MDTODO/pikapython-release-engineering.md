@@ -22,10 +22,16 @@
 
 将 release_diff.py 改为不 checkout 工作区的只读比较，并增加 release-check 统一校验运行时版本、version_config、CMSIS Pack、包索引 commit 和 tag 一致性；依赖 R1.2，完成任务后将详细报告写入[任务报告](./details/pikapython-release-engineering/R1.3_Task_Report.md)。
 
-### R1.4
+### R1.4 [in_progress]
 
 复验并收口 Issue #367、#368、#369：已修复项补证据后关闭，仍复现的现有语法子集误拒绝作为 RC blocker 最小修复并回归；依赖 R1.1，完成任务后将详细报告写入[任务报告](./details/pikapython-release-engineering/R1.4_Task_Report.md)。
 
+#### R1.4.1 [completed]
+
+补齐并修复 Issue #368 剩余的 handler 内再次抛出到外层及父类捕获子类时 alias 保留原始异常实例语义；只在现有 typed except 子集和 VM 错误状态框架内最小处理，不改变异常/字节码大架构，完成 default/minimal 回归与资源核算，完成任务后将详细报告写入[任务报告](./details/pikapython-release-engineering/R1.4.1_Task_Report.md)。
+#### R1.4.2 [in_progress]
+
+第二阶段回收 R1.4.1 异常正确性修复的 Flash 增量：以同配置 Release A/B 为准，在不改变 typed except、嵌套传播和 alias 实际类型合同、不降低 VM/runtime 性能且不增加 RAM 的前提下，回收 default 328 B、minimal 16 B text；允许由其他低风险位置补偿，分别记录原增量、补偿收益和最终净变化，完成任务后将详细报告写入[任务报告](./details/pikapython-release-engineering/R1.4.2_Task_Report.md)。
 ### R1.5
 
 修复 Issue #372 的 optimize_speed runtime 缓存受 GTest 注册和分配布局影响问题，补不依赖偶然布局的回归并保持资源总体不膨胀；依赖 R1.1，完成任务后将详细报告写入[任务报告](./details/pikapython-release-engineering/R1.5_Task_Report.md)。

@@ -4229,10 +4229,7 @@ PIKA_PARSER_OPTIMIZE_SIZE char* AST_genAsm_top(AST* oAST, Args* outBuffs) {
                 sPikaAsm = strsAppend(&buffs, sPikaAsm, "0 JEZ 1\n");
                 char* sAlias = AST_getNodeAttr(oAST, "except_alias");
                 if (NULL != sAlias) {
-                    sPikaAsm = strsAppend(&buffs, sPikaAsm, "0 RUN ");
-                    sPikaAsm = strsAppend(
-                        &buffs, sPikaAsm, AST_getNodeAttr(oAST, "except"));
-                    sPikaAsm = strsAppend(&buffs, sPikaAsm, "\n0 OUT ");
+                    sPikaAsm = strsAppend(&buffs, sPikaAsm, "0 OUT ");
                     sPikaAsm = strsAppend(&buffs, sPikaAsm, sAlias);
                     sPikaAsm = strsAppend(&buffs, sPikaAsm, "\n");
                 }

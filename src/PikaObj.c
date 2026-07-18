@@ -4550,7 +4550,7 @@ void obj_setSysOut(PikaObj* self, char* fmt, ...) {
         if (self->vmFrame->error.code == PIKA_RES_OK) {
             self->vmFrame->error.code = PIKA_RES_ERR_RUNTIME_ERROR;
         }
-        if (self->vmFrame->vm_thread->try_state == TRY_STATE_INNER) {
+        if (self->vmFrame->vm_thread->try_state != TRY_STATE_NONE) {
             return;
         }
     }
