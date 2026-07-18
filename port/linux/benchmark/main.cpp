@@ -183,6 +183,32 @@ static void function_call_starred_1000(benchmark::State& state) {
 }
 BENCHMARK(function_call_starred_1000)->Unit(benchmark::kMillisecond);
 
+static void fibonacci_recursive_20(benchmark::State& state) {
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pika_lines2Asm(
+        buffs, (char*)
+                   "def fib(n):\n"
+                   "    if n < 2:\n"
+                   "        return n\n"
+                   "    return fib(n - 1) + fib(n - 2)\n"
+                   "result = fib(20)\n"
+                   "\n");
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    for (auto _ : state) {
+        PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+        pikaVM_runByteCodeFrame(pikaMain, &bytecode_frame);
+        if (6765 != obj_getInt(pikaMain, (char*)"result")) {
+            state.SkipWithError("recursive fibonacci result mismatch");
+        }
+        obj_deinit(pikaMain);
+    }
+    byteCodeFrame_deinit(&bytecode_frame);
+    args_deinit(buffs);
+}
+BENCHMARK(fibonacci_recursive_20)->Unit(benchmark::kMillisecond);
+
 static void embedded_control_loop_1000(benchmark::State& state) {
     Args* buffs = New_strBuff();
     char* pikaAsm = pika_lines2Asm(

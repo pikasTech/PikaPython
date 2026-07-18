@@ -243,6 +243,19 @@ TEST(dataString, point_to_last_token) {
     EXPECT_EQ(strPointToLastToken(empty, '.'), empty);
 }
 
+TEST(pikaMain, recursive_global_function_lookup) {
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    pikaVM_run(pikaMain,
+               (char*)"def fib(n):\n"
+                      "    if n < 2:\n"
+                      "        return n\n"
+                      "    return fib(n - 1) + fib(n - 2)\n"
+                      "result = fib(10)\n");
+    EXPECT_EQ(obj_getInt(pikaMain, (char*)"result"), 55);
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(pikaMain, and_or_not) {
     /* init */
     g_PikaMemInfo.heapUsedMax = 0;

@@ -2462,7 +2462,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
 
     if (sArgName == sRunPath) {
         /* find method in locals */
-        if (NULL == aMethod) {
+        if (NULL == aMethod && oMethodHost != vm->locals) {
             aMethod = obj_getMethodArg_noalloc(vm->locals, sArgName, &arg_reg1);
         }
         /* find method in global */
@@ -5039,11 +5039,11 @@ void PikaVMFrame_solveUnusedStack(PikaVMFrame* vm) {
     }
 }
 
-PikaVMFrame* PikaVMFrame_create(VMParameters* locals,
-                                VMParameters* globals,
-                                ByteCodeFrame* bytecode_frame,
-                                int32_t pc,
-                                PikaVMThread* vm_thread) {
+static PikaVMFrame* PikaVMFrame_create(VMParameters* locals,
+                                       VMParameters* globals,
+                                       ByteCodeFrame* bytecode_frame,
+                                       int32_t pc,
+                                       PikaVMThread* vm_thread) {
     PikaVMFrame* vm = (PikaVMFrame*)pikaMalloc(sizeof(PikaVMFrame));
     vm->bytecode_frame = bytecode_frame;
     vm->locals = locals;
@@ -5062,7 +5062,7 @@ PikaVMFrame* PikaVMFrame_create(VMParameters* locals,
     return vm;
 }
 
-int PikaVMFrame_destroy(PikaVMFrame* vm) {
+static int PikaVMFrame_destroy(PikaVMFrame* vm) {
     // PikaVMError* err = pikaVMThread_popError(vm->vm_thread);
     // if (NULL != err) {
     //     pikaFree(err, sizeof(PikaVMError));
