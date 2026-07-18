@@ -346,3 +346,7 @@ P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩
 ### R14.13
 
 跟踪并修复 [Issue #372](https://github.com/pikasTech/PikaPython/issues/372) 的 `optimize_speed` runtime 缓存受 GTest 注册数量和启动分配布局影响问题，定位缓存键、失效与对象生命周期根因，在不改变大架构且资源总体不膨胀的前提下增加稳定回归，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.13_Task_Report.md)。
+
+### R14.14 [completed]
+
+增加代表嵌入式对象、属性、方法、分支和数值状态更新的复合 runtime benchmark；先用多轮统计与 gprof 定位 VM 热点，再实施不改变大架构的性能优化，并以交错 A/B、控制基准、分配次数和 text/data/bss 验证总体资源不膨胀，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.14_Task_Report.md)。

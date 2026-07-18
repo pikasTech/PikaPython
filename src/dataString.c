@@ -156,16 +156,14 @@ size_t strGetSize(char* pData) {
 
 char* strPointToLastToken(char* strIn, char sign) {
     pika_assert(NULL != strIn);
-    if (!strIsContain(strIn, sign)) {
-        return strIn;
-    }
-    int32_t size = strGetSize(strIn);
-    for (int32_t i = size - 1; i > -1; i--) {
-        if (strIn[i] == sign) {
-            return strIn + i + 1;
+    char* last_token = strIn;
+    while (*strIn) {
+        if (*strIn == sign) {
+            last_token = strIn + 1;
         }
+        strIn++;
     }
-    return strIn;
+    return last_token;
 }
 
 char* strPopLastToken(char* strIn, char sign) {

@@ -229,6 +229,20 @@ TEST(pikaMain, less_equ) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(dataString, point_to_last_token) {
+    char nested[] = "controller.state.output";
+    char plain[] = "output";
+    char leading[] = ".output";
+    char trailing[] = "controller.";
+    char empty[] = "";
+
+    EXPECT_STREQ(strPointToLastToken(nested, '.'), "output");
+    EXPECT_EQ(strPointToLastToken(plain, '.'), plain);
+    EXPECT_STREQ(strPointToLastToken(leading, '.'), "output");
+    EXPECT_STREQ(strPointToLastToken(trailing, '.'), "");
+    EXPECT_EQ(strPointToLastToken(empty, '.'), empty);
+}
+
 TEST(pikaMain, and_or_not) {
     /* init */
     g_PikaMemInfo.heapUsedMax = 0;
