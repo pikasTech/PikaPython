@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784343667627,
+  "lastUpdate": 1784356092348,
   "repoUrl": "https://github.com/pikasTech/PikaPython",
   "entries": {
     "Benchmark": [
@@ -113747,6 +113747,102 @@ window.BENCHMARK_DATA = {
             "value": 0.00500001728533845,
             "unit": "ms/iter",
             "extra": "iterations: 362801\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "pikastech",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "pikastech",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "0506bb424da66a291313954c71d789f9dc62a4db",
+          "message": "perf: add representative VM benchmark",
+          "timestamp": "2026-07-18T08:12:53+02:00",
+          "tree_id": "e3cfa01efb5ddc2d9b5298ca4d92a90038b4f0a7",
+          "url": "https://github.com/pikasTech/PikaPython/commit/0506bb424da66a291313954c71d789f9dc62a4db"
+        },
+        "date": 1784356085068,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 19248.62165998151,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 19248.62165998151 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 18.30986643784367,
+            "unit": "ms/iter",
+            "extra": "iterations: 88\ncpu: 18.30926323569331 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 11.225927332511016,
+            "unit": "ms/iter",
+            "extra": "iterations: 143\ncpu: 11.22581852051732 ms\nthreads: 1"
+          },
+          {
+            "name": "function_call_1000",
+            "value": 12.928272050200126,
+            "unit": "ms/iter",
+            "extra": "iterations: 124\ncpu: 12.928197598471652 ms\nthreads: 1"
+          },
+          {
+            "name": "function_call_default_1000",
+            "value": 3.9000689375354236,
+            "unit": "ms/iter",
+            "extra": "iterations: 410\ncpu: 3.899991748801065 ms\nthreads: 1"
+          },
+          {
+            "name": "function_call_kwargs_1000",
+            "value": 7.975057759271963,
+            "unit": "ms/iter",
+            "extra": "iterations: 201\ncpu: 7.974829760584272 ms\nthreads: 1"
+          },
+          {
+            "name": "function_call_kwargs_large_constpool_1000",
+            "value": 9.052067589497714,
+            "unit": "ms/iter",
+            "extra": "iterations: 177\ncpu: 9.05164579119947 ms\nthreads: 1"
+          },
+          {
+            "name": "function_call_starred_1000",
+            "value": 23.493119798606795,
+            "unit": "ms/iter",
+            "extra": "iterations: 69\ncpu: 23.49318825844924 ms\nthreads: 1"
+          },
+          {
+            "name": "embedded_control_loop_1000",
+            "value": 14.338619576453265,
+            "unit": "ms/iter",
+            "extra": "iterations: 112\ncpu: 14.337616291511873 ms\nthreads: 1"
+          },
+          {
+            "name": "for_print_1000",
+            "value": 9.80291745240273,
+            "unit": "ms/iter",
+            "extra": "iterations: 164\ncpu: 9.80282795416787 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 2.5978822275939994,
+            "unit": "ms/iter",
+            "extra": "iterations: 619\ncpu: 2.5975885901457336 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000137412885794,
+            "unit": "ms/iter",
+            "extra": "iterations: 320911\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
