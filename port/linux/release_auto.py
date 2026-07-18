@@ -31,7 +31,7 @@ for folder in os.listdir(PACKAGE_PATH):
         if diff != '':
             newVersion = pkgReleases.versionRelease(
                 folder,
-                VersoinType.PATCH,
+                VersionType.PATCH,
                 commit_head
             )
             print(f"Changes detected: {folder} --> {newVersion}")

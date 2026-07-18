@@ -1,62 +1,123 @@
-import subprocess
-import os
+import argparse
+import json
+from pathlib import Path
+
 import git
-import sys
-from release_helper import *
 
-repo = git.Repo(REPO_PATH)
-commit_head = repo.head.commit.hexsha
-pkgReleases = PackageReleaseList(PACKAGE_RELEASE_PATH)
+from release_helper import PackageReleaseList
 
-# argv[1] is the commit hash
-if len(sys.argv) > 1:
-    commit_diff = sys.argv[1]
-else:
-    print("No commit hash specified")
-    commit_diff = "f8b529a956da57d8623247bea594e65469cac1c5"
 
-tag = commit_diff  # 替换为您要使用的标签
-output_file = "diff.md"  # 替换为您要写入的文件名
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
-f = open(output_file, "w")
 
-# checkout to the commit_diff
-repo.git.checkout(commit_diff)
-pkgReleases_diff = PackageReleaseList(PACKAGE_RELEASE_PATH)
+def build_release_diff(repo: git.Repo, baseline: str):
+    current = PackageReleaseList(REPO_ROOT / "packages.toml")
+    baseline_text = repo.git.show(f"{baseline}:packages.toml")
+    previous = PackageReleaseList.from_text(baseline_text)
+    previous_by_name = {package.name: package for package in previous.packages}
+    current_by_name = {package.name: package for package in current.packages}
+    packages = []
 
-# checkout master
-repo.git.checkout("master")
+    for name, package in current_by_name.items():
+        old_package = previous_by_name.get(name)
+        if old_package is None:
+            packages.append(
+                {
+                    "name": name,
+                    "state": "create",
+                    "version": package.latestVersion().version,
+                }
+            )
+            continue
+        old_version = old_package.latestVersion().version
+        new_version = package.latestVersion().version
+        if old_version != new_version:
+            packages.append(
+                {
+                    "name": name,
+                    "state": "update",
+                    "from": old_version,
+                    "to": new_version,
+                }
+            )
 
-f.write(f"# Diff from PikaPython {commit_diff}\n")
+    for name, package in previous_by_name.items():
+        if name not in current_by_name:
+            packages.append(
+                {
+                    "name": name,
+                    "state": "delete",
+                    "version": package.latestVersion().version,
+                }
+            )
 
-f.write(f"## package diff\n")
-f.write("|package|state|version|\n")
-f.write("|---|---|---|\n")
+    commits = [
+        {"commit": commit.hexsha, "subject": commit.summary}
+        for commit in repo.iter_commits(f"{baseline}..HEAD")
+    ]
+    return {
+        "ok": True,
+        "baseline": repo.commit(baseline).hexsha,
+        "head": repo.head.commit.hexsha,
+        "packages": packages,
+        "commits": commits,
+    }
 
-# find new released package and package version
-for pkg in pkgReleases.packages:
-    # find pkg in pkgReleases_diff
-    pkg_diff = pkgReleases_diff.findPackage(pkg.name)
-    if None == pkg_diff:
-        # print("New package: " + pkg.name + pkg.latestVersion().version)
-        out_str = f"|{pkg.name}| Create | {pkg.latestVersion().version}|"
-        print(out_str)
-        f.write(out_str + '\n')
-        continue
 
-    pkg_diff = pkgReleases_diff.findPackage(pkg.name)
-    if pkg_diff.latestVersion().version != pkg.latestVersion().version:
-            out_str = f"|{pkg.name}| Update | {pkg_diff.latestVersion().version} --> {pkg.latestVersion().version}|"
-            print(out_str)
-            f.write(out_str + '\n')
+def render_markdown(result):
+    lines = [
+        f"# Diff from PikaPython {result['baseline']}",
+        "",
+        "## Package diff",
+        "",
+        "| package | state | version |",
+        "| --- | --- | --- |",
+    ]
+    for package in result["packages"]:
+        if package["state"] == "update":
+            version = f"{package['from']} -> {package['to']}"
+        else:
+            version = package["version"]
+        lines.append(f"| {package['name']} | {package['state']} | {version} |")
+    lines.extend(["", "## Git diff", ""])
+    lines.extend(
+        f"- `{commit['commit'][:10]}` {commit['subject']}"
+        for commit in result["commits"]
+    )
+    return "\n".join(lines) + "\n"
 
-# 构建 git log 命令并调用 subprocess 执行
-git_log_cmd = f"git log {tag}..HEAD --pretty=format:%s"
-result = subprocess.run(git_log_cmd, stdout=subprocess.PIPE, shell=True)
 
-# 从结果中获取输出并将其写入文件
-output_str = result.stdout.decode("utf-8").replace('\n', '\n\n')
-f.write('## git diff\n')
-f.write(output_str)
-f.close()
-exit()
+def main():
+    parser = argparse.ArgumentParser(
+        description="Compare release metadata without changing the worktree."
+    )
+    parser.add_argument("baseline", help="Git tag or commit used as the baseline")
+    parser.add_argument(
+        "--markdown-output", type=Path, help="Also write a Markdown report"
+    )
+    args = parser.parse_args()
+
+    try:
+        result = build_release_diff(git.Repo(REPO_ROOT), args.baseline)
+        if args.markdown_output is not None:
+            args.markdown_output.write_text(
+                render_markdown(result), encoding="utf-8"
+            )
+            result["markdownOutput"] = str(args.markdown_output)
+        print(json.dumps(result, ensure_ascii=False))
+    except Exception as exc:
+        print(
+            json.dumps(
+                {
+                    "ok": False,
+                    "baseline": args.baseline,
+                    "error": str(exc),
+                },
+                ensure_ascii=False,
+            )
+        )
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,5 +1,7 @@
 import os
-import toml
+from enum import Enum
+
+import tomlkit
 
 
 REPO_PATH = "../.."
@@ -9,10 +11,14 @@ PACKAGE_RELEASE_PATH = REPO_PATH + "/packages.toml"
 WORK_DIR = os.getcwd()
 
 
-class VersoinType:
+class VersionType(Enum):
     MAJOR = 1
     MINOR = 2
     PATCH = 3
+
+
+# Keep the historical misspelling available for existing local release scripts.
+VersoinType = VersionType
 
 
 class VersionInfo:
@@ -25,13 +31,16 @@ class VersionInfo:
     def __init__(self, version_discription: str):
         # v1.0.0
         try:
-            self.version = version_discription.split(" ")[0]
-            self.commit = version_discription.split(" ")[1]
-            self.vmajor = int(self.version.split(".")[0][1:])
-            self.vminor = int(self.version.split(".")[1])
-            self.vpatch = int(self.version.split(".")[2])
-        except:
-            raise ValueError("Invalid version discription")
+            fields = version_discription.split()
+            if len(fields) != 2:
+                raise ValueError
+            self.version, self.commit = fields
+            version_fields = self.version.removeprefix("v").split(".")
+            if not self.version.startswith("v") or len(version_fields) != 3:
+                raise ValueError
+            self.vmajor, self.vminor, self.vpatch = map(int, version_fields)
+        except (TypeError, ValueError):
+            raise ValueError("Invalid version description")
 
 
 class PackageRelease:
@@ -69,10 +78,18 @@ class PackageReleaseList:
     packages: list[PackageRelease]
 
     def __init__(self, file_path):
-        # read releases.toml
-        with open(file_path, "r") as f:
-            self.pkg_dict = toml.load(f)
+        with open(file_path, "r", encoding="utf-8") as f:
+            self.pkg_dict = tomlkit.load(f)
+        self._load_packages()
 
+    @classmethod
+    def from_text(cls, text: str):
+        release_list = cls.__new__(cls)
+        release_list.pkg_dict = tomlkit.loads(text)
+        release_list._load_packages()
+        return release_list
+
+    def _load_packages(self):
         self.packages = []
         for package in self.pkg_dict['packages']:
             self.packages.append(PackageRelease(
@@ -95,7 +112,7 @@ class PackageReleaseList:
                                 latest_version = version
                 return latest_version.commit
 
-    def versionRelease(self, package_name: str, version_type: VersoinType, commit: str):
+    def versionRelease(self, package_name: str, version_type: VersionType, commit: str):
         # find the package
         for package in self.packages:
             if package.name == package_name:
@@ -112,24 +129,22 @@ class PackageReleaseList:
                                 latest_version = version
 
                 # release new version
-                if version_type == VersoinType.MAJOR:
-                    latest_version.vmajor += 1
-                    latest_version.vminor = 0
-                    latest_version.vpatch = 0
-                elif version_type == VersoinType.MINOR:
-                    latest_version.vminor += 1
-                    latest_version.vpatch = 0
-                elif version_type == VersoinType.PATCH:
-                    latest_version.vpatch += 1
+                major = latest_version.vmajor
+                minor = latest_version.vminor
+                patch = latest_version.vpatch
+                if version_type == VersionType.MAJOR:
+                    major += 1
+                    minor = 0
+                    patch = 0
+                elif version_type == VersionType.MINOR:
+                    minor += 1
+                    patch = 0
+                elif version_type == VersionType.PATCH:
+                    patch += 1
+                else:
+                    raise ValueError(f"Invalid version type: {version_type}")
 
-                # solve version overflow
-                if latest_version.vpatch > 9:
-                    latest_version.vpatch = 0
-                    latest_version.vminor += 1
-                if latest_version.vminor > 9:
-                    latest_version.vminor = 0
-                    latest_version.vmajor += 1
-                new_version_str = f"v{latest_version.vmajor}.{latest_version.vminor}.{latest_version.vpatch}"
+                new_version_str = f"v{major}.{minor}.{patch}"
                 # add new version to the package
                 for package in self.pkg_dict['packages']:
                     if package['name'] == package_name:
@@ -138,9 +153,8 @@ class PackageReleaseList:
                 return new_version_str
 
     def dump(self, file_path):
-        with open(file_path, "w") as f:
-            # dump with formating
-            toml.dump(self.pkg_dict, f)
+        with open(file_path, "w", encoding="utf-8") as f:
+            tomlkit.dump(self.pkg_dict, f)
 
     def findPackage(self, pkg_name:str):
         for package in self.packages:
