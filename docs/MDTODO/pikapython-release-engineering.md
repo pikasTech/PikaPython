@@ -45,7 +45,7 @@
 
 裁决 Issue #373 不阻断本次 v1.14.0 源码发布：保持 Issue 开放并转入发布后改进，当前 Release 不宣称 Pages benchmark 的精确跨版本墙钟收益，完成任务后将详细报告写入[任务报告](./details/pikapython-release-engineering/R1.7_Task_Report.md)。
 
-### R1.8 [in_progress]
+### R1.8 [completed]
 
 直接同步 v1.14.0 版本元数据和源码快照，定点更新 pikascript-core v1.14.0、PikaStdLib v1.14.0、threading v0.1.0、requests v1.0.4、mqtt v0.1.2、time v0.2.3 包索引；R1.3-R1.7 的发布门禁已按用户裁决收口，完成任务后将详细报告写入[任务报告](./details/pikapython-release-engineering/R1.8_Task_Report.md)。
 
