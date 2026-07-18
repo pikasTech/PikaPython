@@ -49,7 +49,7 @@
 
 直接同步 v1.14.0 版本元数据和源码快照，定点更新 pikascript-core v1.14.0、PikaStdLib v1.14.0、threading v0.1.0、requests v1.0.4、mqtt v0.1.2、time v0.2.3 包索引；R1.3-R1.7 的发布门禁已按用户裁决收口，完成任务后将详细报告写入[任务报告](./details/pikapython-release-engineering/R1.8_Task_Report.md)。
 
-### R1.9
+### R1.9 [completed]
 
 跳过 RC 阶段；对正式源码候选执行版本一致性、发布工具单测、核心 Linux 编译/定向回归和工作区清洁检查，开发测试工具、环境、LVGL 与网络问题不阻断源码 tag，完成任务后将详细报告写入[任务报告](./details/pikapython-release-engineering/R1.9_Task_Report.md)。
 
