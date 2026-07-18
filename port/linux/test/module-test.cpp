@@ -1375,16 +1375,29 @@ TEST(jrpc, exec_concat_str_space) {
 
 #if !PIKA_NANO_ENABLE
 TEST(threading, lock_rlock) {
-    g_PikaMemInfo.heapUsedMax = 0;
-    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    extern unsigned char pikaModules_py_a[];
-    obj_linkLibrary(pikaMain, pikaModules_py_a); /* run */
-    __platform_printf("BEGIN\r\n");
-    pikaVM_runSingleFile(pikaMain, "test/python/threading/lock_rlock.py");
-    /* assert */ /* deinit */
-    pika_vm_exit_await();
-    obj_deinit(pikaMain);
-    EXPECT_EQ(pikaMemNow(), 0);
+    char* files[] = {"test/python/threading/lock.py",
+                     "test/python/threading/lock_thread.py",
+                     "test/python/threading/rlock.py"};
+    for (size_t i = 0; i < sizeof(files) / sizeof(files[0]); i++) {
+        g_PikaMemInfo.heapUsedMax = 0;
+        PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+        extern unsigned char pikaModules_py_a[];
+        obj_linkLibrary(pikaMain, pikaModules_py_a);
+        __platform_printf("BEGIN\r\n");
+        pikaVM_runSingleFile(pikaMain, files[i]);
+        if (i == 1) {
+            pika_vm_exit_await();
+        }
+        EXPECT_STREQ(log_buff[0], "PASS\r\n");
+        EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+        obj_deinit(pikaMain);
+        if (i == 1) {
+            for (int retry = 0; retry < 1000 && pikaMemNow() != 0; retry++) {
+                pika_platform_thread_yield();
+            }
+        }
+        EXPECT_EQ(pikaMemNow(), 0);
+    }
 }
 #endif
 

@@ -5,9 +5,19 @@
 #include <time.h>
 #include <pthread.h>
 #include <errno.h>
-int pika_platform_thread_mutex_timedlock(pika_platform_thread_mutex_t* m,
-                                         pika_bool block,
-                                         Arg* timeout);
+typedef struct {
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
+    pika_bool locked;
+} pika_platform_thread_lock_t;
+
+void pika_platform_thread_lock_init(pika_platform_thread_lock_t* lock);
+void pika_platform_thread_lock_destroy(pika_platform_thread_lock_t* lock);
+int pika_platform_thread_lock_acquire(pika_platform_thread_lock_t* lock,
+                                      pika_bool block,
+                                      Arg* timeout);
+int pika_platform_thread_lock_release(pika_platform_thread_lock_t* lock);
+int pika_platform_thread_lock_locked(pika_platform_thread_lock_t* lock);
 
 //-------------------------------
 

@@ -338,3 +338,11 @@ P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩
 ### R14.11 [completed]
 
 隔离 Linux default 配置下依赖 `log_buff` 固定索引的 REPL 成组不稳定测试，保持显式 filter 可复现并由 [Issue #371](https://github.com/pikasTech/PikaPython/issues/371) 跟踪配置感知修复，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.11_Task_Report.md)。
+
+### R14.12 [completed]
+
+修复 [Issue #370](https://github.com/pikasTech/PikaPython/issues/370) 的 Lock 非法双 release 未定义行为和错误不可见问题，拆分 Lock/RLock 单元测试、验证错误后恢复，稳定后恢复 Linux TEST 与 VALGRIND 默认执行，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.12_Task_Report.md)。
+
+### R14.13
+
+跟踪并修复 [Issue #372](https://github.com/pikasTech/PikaPython/issues/372) 的 `optimize_speed` runtime 缓存受 GTest 注册数量和启动分配布局影响问题，定位缓存键、失效与对象生命周期根因，在不改变大架构且资源总体不膨胀的前提下增加稳定回归，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.13_Task_Report.md)。

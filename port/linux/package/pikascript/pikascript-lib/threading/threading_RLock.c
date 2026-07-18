@@ -30,5 +30,8 @@ pika_bool threading_RLock_locked(PikaObj* self) {
 }
 void threading_RLock_release(PikaObj* self) {
     pika_platform_thread_rtmutex_t* rm = obj_getPtr(self, "_rmutex_");
-    pika_platform_thread_rtmutex_unlock(rm);
+    if (pika_platform_thread_rtmutex_unlock(rm) != 0) {
+        obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
+        obj_setSysOut(self, "RuntimeError: cannot release un-acquired lock");
+    }
 }

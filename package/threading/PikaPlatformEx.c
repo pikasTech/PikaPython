@@ -1,90 +1,132 @@
 #include "PikaPlatformEx.h"
 
-//----------------------------- mutex -------------------------------
-// 带超时的互斥锁加锁
-int pika_platform_thread_mutex_timedlock(pika_platform_thread_mutex_t* m,
-                                         pika_bool block,
-                                         Arg* timeout) {
+//----------------------------- lock --------------------------------
+void pika_platform_thread_lock_init(pika_platform_thread_lock_t* lock) {
 #if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
-    ArgType timout_type = arg_getType(timeout);
-    pika_float timeout_f;
-    int result;
-    if (!(timout_type == ARG_TYPE_FLOAT || timout_type == ARG_TYPE_INT ||
-          timout_type == ARG_TYPE_NONE)) {
+    pthread_mutex_init(&lock->mutex, NULL);
+    pthread_cond_init(&lock->cond, NULL);
+    lock->locked = pika_false;
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
+#endif
+}
+
+void pika_platform_thread_lock_destroy(pika_platform_thread_lock_t* lock) {
+#if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
+    pthread_cond_destroy(&lock->cond);
+    pthread_mutex_destroy(&lock->mutex);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
+#endif
+}
+
+int pika_platform_thread_lock_acquire(pika_platform_thread_lock_t* lock,
+                                      pika_bool block,
+                                      Arg* timeout) {
+#if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
+    ArgType timeout_type = arg_getType(timeout);
+    pika_float timeout_f = 0.0f;
+    struct timespec ts = {0};
+    int result = 0;
+
+    if (!(timeout_type == ARG_TYPE_FLOAT || timeout_type == ARG_TYPE_INT ||
+          timeout_type == ARG_TYPE_NONE)) {
         return PIKA_RES_ERR_INVALID_PARAM;
     }
 
-    if (timout_type == ARG_TYPE_FLOAT || timout_type == ARG_TYPE_INT) {
-        // printf("==== #01\n");
-        if (timout_type == ARG_TYPE_FLOAT) {
-            timeout_f = arg_getFloat(timeout);
-        }
-        if (timout_type == ARG_TYPE_INT) {
-            int timeout_d = arg_getInt(timeout);
-            timeout_f = (pika_float)timeout_d;
-            // printf("==== #04  %lf\n", timeout_f);
-        }
+    if (timeout_type == ARG_TYPE_FLOAT || timeout_type == ARG_TYPE_INT) {
+        timeout_f = timeout_type == ARG_TYPE_FLOAT
+                        ? arg_getFloat(timeout)
+                        : (pika_float)arg_getInt(timeout);
         if (timeout_f < 0.0f) {
             return PIKA_RES_ERR_INVALID_PARAM;
         }
-
-        struct timespec ts;
-        clock_gettime(CLOCK_REALTIME, &ts);  // 获取当前时间
-
-        // 将浮点数秒转换为秒和纳秒
+        clock_gettime(CLOCK_REALTIME, &ts);
         long sec = (long)timeout_f;
         long nsec = (long)((timeout_f - (pika_float)sec) * 1000000000.0);
-
         ts.tv_sec += sec;
         ts.tv_nsec += nsec;
-
-        // 如果纳秒数超过 1 秒，则需要调整秒数和纳秒数
         if (ts.tv_nsec >= 1000000000) {
-            ts.tv_nsec -= 1000000000;  // 减去 1 秒的纳秒数
-            ts.tv_sec += 1;            // 增加 1 秒
+            ts.tv_nsec -= 1000000000;
+            ts.tv_sec += 1;
         }
+    }
 
-        pika_GIL_EXIT();
-        result = pthread_mutex_timedlock(&m->mutex, &ts);
+    pika_GIL_EXIT();
+    pthread_mutex_lock(&lock->mutex);
+
+    if (timeout_type == ARG_TYPE_FLOAT || timeout_type == ARG_TYPE_INT) {
+        while (lock->locked) {
+            result = pthread_cond_timedwait(&lock->cond, &lock->mutex, &ts);
+            if (result != 0) {
+                pthread_mutex_unlock(&lock->mutex);
+                pika_GIL_ENTER();
+                return -1;
+            }
+        }
+    } else if (!block && lock->locked) {
+        pthread_mutex_unlock(&lock->mutex);
         pika_GIL_ENTER();
-        return result == 0 ? 0 : -1;
-
-    } else if (timout_type == ARG_TYPE_NONE) {
-        if (block) {
-            // printf("==== #02\n");
-            pika_GIL_EXIT();
-            result = pthread_mutex_lock(&m->mutex);
-            pika_GIL_ENTER();
-            return result == 0 ? 0 : -1;
-        } else {
-            // printf("==== #03\n");
-            pika_GIL_EXIT();
-            result = pthread_mutex_trylock(&m->mutex);
-            pika_GIL_ENTER();
-            return result == 0 ? 0 : -1;
-        }
+        return -1;
     } else {
-        return PIKA_RES_ERR_INVALID_PARAM;
+        while (lock->locked) {
+            result = pthread_cond_wait(&lock->cond, &lock->mutex);
+            if (result != 0) {
+                pthread_mutex_unlock(&lock->mutex);
+                pika_GIL_ENTER();
+                return -1;
+            }
+        }
     }
 
-#elif PIKA_FREERTOS_ENABLE
-    if (pdTRUE == xSemaphoreTake(m->mutex, (TickType_t)(timeout * 1000.0f))) {
-        return 0;
-    }
-    return -1;
-
-#elif PIKA_RTTHREAD_ENABLE
-    return rt_mutex_take((m->mutex), (rt_tick_t)(timeout * RT_TICK_PER_SECOND));
-
-#elif PIKA_ZEUSOS_ENABLE
-    return zos_mutex_lock(m->mutex, (uint32_t)(timeout * 1000.0f));
-
+    lock->locked = pika_true;
+    pthread_mutex_unlock(&lock->mutex);
+    pika_GIL_ENTER();
+    return 0;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
     return -1;
 #endif
 }
 
+int pika_platform_thread_lock_release(pika_platform_thread_lock_t* lock) {
+#if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
+    pika_GIL_EXIT();
+    pthread_mutex_lock(&lock->mutex);
+    if (!lock->locked) {
+        pthread_mutex_unlock(&lock->mutex);
+        pika_GIL_ENTER();
+        return -1;
+    }
+    lock->locked = pika_false;
+    pthread_cond_signal(&lock->cond);
+    pthread_mutex_unlock(&lock->mutex);
+    pika_GIL_ENTER();
+    return 0;
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
+    return -1;
+#endif
+}
+
+int pika_platform_thread_lock_locked(pika_platform_thread_lock_t* lock) {
+#if defined(__linux) || (PIKA_WIN_PTHREAD_ENABLE)
+    pika_GIL_EXIT();
+    pthread_mutex_lock(&lock->mutex);
+    int result = lock->locked;
+    pthread_mutex_unlock(&lock->mutex);
+    pika_GIL_ENTER();
+    return result;
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_);
+    return 0;
+#endif
+}
+
+/*
+ * The recursive lock implementation below remains owner-aware. A regular
+ * Python Lock is deliberately ownerless and uses the helpers above.
+ */
 //----------------------------- rtmutex -------------------------------
 // 初始化递归互斥锁
 void pika_platform_thread_rtmutex_init(pika_platform_thread_rtmutex_t* rtm) {
@@ -258,7 +300,6 @@ int pika_platform_thread_rtmutex_unlock(pika_platform_thread_rtmutex_t* rtm) {
 
     // printf("rtm->owner = %lu\n", rtm->owner);
     if (rtm->owner != self) {
-        perror("Attempt to unlock a mutex not owned by the current thread");
         pthread_mutex_unlock(&rtm->mutex);
         return -1;
     }

@@ -1,0 +1,21 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        ca-certificates \
+        cmake \
+        git \
+        lcov \
+        libbenchmark-dev \
+        liblua5.3-dev \
+        libmbedtls-dev \
+        ninja-build \
+        python3 \
+        upx-ucl \
+        valgrind \
+        wget \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
