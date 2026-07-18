@@ -6,7 +6,7 @@
 - LVGL、网络及其他非核心依赖可从核心门禁隔离，但被发布包必须完成独立构建或 smoke。
 - 性能结论必须来自同环境重复样本；RAM/Flash 以 Release 或目标固件等价构建核算总体净变化。
 
-## R1 [in_progress]
+## R1 [completed]
 
 按已调查的发布链路直接发布 PikaPython v1.14.0：修复或裁决语法/runtime 发布问题，改进版本与包索引一致性工具，发布 core、PikaStdLib、threading、requests、mqtt、time 对应版本；按用户裁决跳过 RC，接受已量化的少量 Flash 增量，开发测试工具、环境、LVGL 与网络问题不阻断源码发布，最终创建不可移动 tag、GitHub Release 并做全新安装验证，完成任务后将详细报告写入[任务报告](./details/pikapython-release-engineering/R1_Task_Report.md)。
 
@@ -53,6 +53,6 @@
 
 跳过 RC 阶段；对正式源码候选执行版本一致性、发布工具单测、核心 Linux 编译/定向回归和工作区清洁检查，开发测试工具、环境、LVGL 与网络问题不阻断源码 tag，完成任务后将详细报告写入[任务报告](./details/pikapython-release-engineering/R1.9_Task_Report.md)。
 
-### R1.10
+### R1.10 [completed]
 
 审核直接发布候选与 release-check 输出，创建 annotated v1.14.0 tag 和 GitHub Release，从全新 clone 及包管理器完成发布后验证；失败时不移动 tag，改走后续 patch，完成任务后将详细报告写入[任务报告](./details/pikapython-release-engineering/R1.10_Task_Report.md)。
