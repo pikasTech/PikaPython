@@ -30,14 +30,10 @@
 
 void _stack_overflow_handler(Stack* stack, size_t stack_require) {
     pika_platform_printf(
-        "OverflowError: pika VM stack overflow, please use bigger "
-        "PIKA_STACK_BUFF_SIZE\r\n");
-    pika_platform_printf("Info: stack size request: %d\r\n",
-                         (int)stack_require);
-    pika_platform_printf("Info: stack size now: %d\r\n",
-                         (int)stack->stack_totle_size);
-    while (1) {
-    }
+        "FatalError: VM stack exhausted (%d/%d bytes, "
+        "PIKA_STACK_BUFF_SIZE); execution stopped\r\n",
+        (int)stack_require, (int)stack->stack_totle_size);
+    pika_platform_fatal_handle();
 }
 
 uint8_t* stack_popPyload(Stack* stack, int32_t size);

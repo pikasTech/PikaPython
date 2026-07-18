@@ -235,6 +235,7 @@ void pika_platform_error_handle(void);
 
 /* panic */
 void pika_platform_panic_handle(void);
+void pika_platform_fatal_handle(void);
 
 int64_t pika_platform_get_tick(void);
 

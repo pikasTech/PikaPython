@@ -358,3 +358,7 @@ P0 修复空 import 与 from-import 缺名称在 Suger_import 路径的解析崩
 ### R14.16 [completed]
 
 在上一轮递归调用查找优化基础上重新采样 runtime/VM 热点，选择至少一个由 benchmark 证明且不改变大架构的性能债务完成同配置 A/B；同步探测相关 runtime 错误边界并补单元测试，保持 RAM/Flash 总体不膨胀，CI 仅后台验收不阻塞本轮开发，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.16_Task_Report.md)。
+
+### R14.17 [completed]
+
+按 MCU 致命故障设计改进 VM 栈真实耗尽时的停机前错误可见性：保持清晰报告后永久停止，不恢复执行；盘点并修复停机信息缺失、不清晰或因缓冲未刷新而静默的路径，补受控子进程/watchdog 单元测试，并保持架构和资源总体不膨胀，完成任务后将详细报告写入[任务报告](./details/pikapython-syntax-compatibility/R14.17_Task_Report.md)。

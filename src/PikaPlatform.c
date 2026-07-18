@@ -243,11 +243,7 @@ PIKA_WEAK int64_t pika_platform_get_tick(void) {
 }
 
 PIKA_WEAK int pika_platform_fflush(void* stream) {
-#if PIKA_UNBUFFERED_ENABLE
     return fflush(stream);
-#else
-    return 0;
-#endif
 }
 
 PIKA_WEAK int pika_platform_putchar(char ch) {
@@ -1207,6 +1203,7 @@ PIKA_WEAK void pika_platform_error_handle() {
 }
 
 PIKA_WEAK void pika_platform_panic_handle() {
+    pika_platform_fflush(stdout);
     while (1) {
     };
 }
@@ -1228,3 +1225,10 @@ PIKA_WEAK void pika_thread_idle_hook(void) {
 }
 
 #endif
+
+void pika_platform_fatal_handle() {
+    pika_platform_fflush(stdout);
+    pika_platform_panic_handle();
+    while (1) {
+    };
+}

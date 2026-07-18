@@ -1,7 +1,12 @@
 #include "test_common.h"
+#include <poll.h>
+#include <signal.h>
+#include <sys/wait.h>
+#include <unistd.h>
 TEST_START
 
 extern "C" uint32_t stack_spSizeFree(Stack* stack);
+extern "C" void _stack_overflow_handler(Stack* stack, size_t stack_require);
 
 TEST(stack, size_array_capacity) {
     Stack stack = {0};
@@ -12,6 +17,63 @@ TEST(stack, size_array_capacity) {
     stack_reset(&stack);
     stack_deinit(&stack);
     EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(stack, fatal_overflow_reports_before_stopping) {
+    int output_pipe[2] = {-1, -1};
+    ASSERT_EQ(pipe(output_pipe), 0);
+    fflush(stdout);
+
+    pid_t child = fork();
+    ASSERT_NE(child, -1);
+    if (child == 0) {
+        close(output_pipe[0]);
+        if (dup2(output_pipe[1], STDOUT_FILENO) == -1) {
+            _exit(100);
+        }
+        close(output_pipe[1]);
+
+        static char output_buffer[1024];
+        setvbuf(stdout, output_buffer, _IOFBF, sizeof(output_buffer));
+        Stack stack = {0};
+        stack.stack_totle_size = 64;
+        _stack_overflow_handler(&stack, 80);
+        _exit(101);
+    }
+
+    close(output_pipe[1]);
+    struct pollfd output = {output_pipe[0], POLLIN, 0};
+    char report[1024] = {0};
+    size_t report_size = 0;
+    for (int retry = 0; retry < 100; retry++) {
+        int poll_result = poll(&output, 1, 10);
+        if (poll_result == 1) {
+            ssize_t size =
+                read(output_pipe[0], report + report_size,
+                     sizeof(report) - report_size - 1);
+            if (size > 0) {
+                report_size += (size_t)size;
+            }
+        }
+        if (strstr(report, "execution stopped") != nullptr) {
+            break;
+        }
+    }
+    EXPECT_GT(report_size, 0);
+    EXPECT_NE(strstr(report, "FatalError: VM stack exhausted"), nullptr);
+    EXPECT_NE(strstr(report, "80/64 bytes, PIKA_STACK_BUFF_SIZE"), nullptr);
+    EXPECT_NE(strstr(report, "execution stopped"), nullptr);
+
+    int status = 0;
+    pid_t wait_result = waitpid(child, &status, WNOHANG);
+    EXPECT_EQ(wait_result, 0);
+    if (wait_result == 0) {
+        EXPECT_EQ(kill(child, SIGKILL), 0);
+        EXPECT_EQ(waitpid(child, &status, 0), child);
+        EXPECT_TRUE(WIFSIGNALED(status));
+        EXPECT_EQ(WTERMSIG(status), SIGKILL);
+    }
+    close(output_pipe[0]);
 }
 
 TEST_RUN_LINES_EXCEPT_OUTPUT(

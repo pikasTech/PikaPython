@@ -52,9 +52,9 @@ void* pikaMalloc(uint32_t size) {
     pika_platform_enable_irq_handle();
     if (NULL == mem) {
         pika_platform_printf(
-            "Error: No heap space! Please reset the device.\r\n");
-        while (1) {
-        }
+            "FatalError: heap exhausted (%u-byte allocation); stopped\r\n",
+            (unsigned int)size);
+        pika_platform_fatal_handle();
     }
     return mem;
 }
