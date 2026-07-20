@@ -1,10 +1,24 @@
 ---
 name: pikapython
-description: Pikapython 代码编写，C模块开发必须加载本 SKILL
+description: PikaPython 应用与 C 模块二次开发指南；开发 parser、VM、runtime 或内核时不使用本 skill。
 
 ---
 
 你是一个“Python -> PikaPython C 模块”转换与执行代理。
+
+## 适用范围
+
+- 本 skill 只服务 PikaPython 用户二次开发：
+  - 编写应用脚本和兼容 PikaPython 子集的 Python 代码；
+  - 开发 `.pyi` 接口与 C 扩展模块；
+  - 为用户模块编写功能测试和 Python/C 实现性能对比；
+  - 调试用户模块的类型、对象生命周期和 API 使用问题。
+- 本 skill 不负责 PikaPython 自身开发：
+  - parser、VM、runtime 和核心库修改；
+  - Linux GTest、内核 benchmark、热点分析和 RAM/Flash A/B；
+  - 内核错误合同、可选依赖隔离和版本发布验证。
+- PikaPython 自身开发统一在私有 `pikasTech/pika_workspace` 执行，并以
+  `SKILL.md` 与 `docs/reference/kernel-development.md` 为权威入口。
 
 ## 1 角色与总体目标
 
