@@ -117,6 +117,7 @@ struct PikaVMError {
     PikaVMError* next;
 };
 
+typedef struct PikaVMFrame PikaVMFrame;
 typedef struct PikaVMThread PikaVMThread;
 struct PikaVMThread {
     TRY_STATE try_state;
@@ -129,10 +130,11 @@ struct PikaVMThread {
     uint64_t thread_id;
     struct PikaVMThread* next;
     uint8_t is_sub_thread;
+    PikaVMFrame* frame_cache;
+    PikaObj* locals_cache;
 };
 
 typedef PikaObj VMParameters;
-typedef struct PikaVMFrame PikaVMFrame;
 struct PikaVMFrame {
     VMParameters* locals;
     VMParameters* globals;
@@ -149,6 +151,14 @@ struct PikaVMFrame {
     PikaObj* oreg[16];
     pika_bool in_repl;
     PikaVMError error;
+    Hash local_cache_hash[8];
+    Arg* local_cache_arg[8];
+    const char* local_cache_name[8];
+    uint8_t local_cache_next;
+    Arg* run_cache_method[4];
+    PikaObj* run_cache_host[4];
+    const char* run_cache_name[4];
+    uint8_t run_cache_next;
 };
 
 typedef PikaObj* (*NewFun)(Args* args);
@@ -171,6 +181,10 @@ struct PikaObj {
     uint8_t refcnt;
     uint16_t flag;
     PikaVMFrame* vmFrame;
+    size_t list_len;
+    size_t list_capacity;
+    Arg** list_items;
+    Arg* list_top_arg;
 };
 
 typedef struct PikaGC PikaGC;
