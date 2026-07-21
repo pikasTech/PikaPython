@@ -43,6 +43,7 @@ extern "C" {
 typedef struct {
     uint32_t heapUsed;
     uint32_t heapUsedMax;
+    uint32_t allocationCount;
 #if PIKA_ARG_CACHE_ENABLE
     uint8_t* cache_pool[PIKA_ARG_CACHE_POOL_SIZE];
     uint32_t cache_pool_top;
@@ -76,6 +77,8 @@ void* pikaMalloc(uint32_t size);
 uint32_t pikaMemNow(void);
 uint32_t pikaMemMax(void);
 void pikaMemMaxReset(void);
+uint32_t pikaMemAllocationCount(void);
+void pikaMemAllocationCountReset(void);
 
 BitMap bitmap_init(uint32_t size);
 void bitmap_set(BitMap bitmap, uint32_t index, uint8_t bit);

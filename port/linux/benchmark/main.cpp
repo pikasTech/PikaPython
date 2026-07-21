@@ -1,4 +1,6 @@
 #include <benchmark/benchmark.h>
+#include <algorithm>
+#include <chrono>
 #include "test_common.h"
 
 extern "C" {
@@ -184,6 +186,12 @@ static void function_call_starred_1000(benchmark::State& state) {
 BENCHMARK(function_call_starred_1000)->Unit(benchmark::kMillisecond);
 
 static void fibonacci_recursive_20(benchmark::State& state) {
+    using clock = std::chrono::steady_clock;
+    auto nanoseconds = [](clock::duration duration) {
+        return std::chrono::duration_cast<std::chrono::nanoseconds>(duration)
+            .count();
+    };
+    auto compile_start = clock::now();
     Args* buffs = New_strBuff();
     char* pikaAsm = pika_lines2Asm(
         buffs, (char*)
@@ -196,16 +204,63 @@ static void fibonacci_recursive_20(benchmark::State& state) {
     ByteCodeFrame bytecode_frame;
     byteCodeFrame_init(&bytecode_frame);
     byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    auto compile_end = clock::now();
+    uint64_t root_create_ns = 0;
+    uint64_t execute_ns = 0;
+    uint64_t root_destroy_ns = 0;
+    uint64_t root_create_allocations = 0;
+    uint64_t execute_allocations = 0;
+    uint64_t root_destroy_allocations = 0;
+    uint32_t heap_peak_bytes = 0;
     for (auto _ : state) {
+        pikaMemMaxReset();
+        pikaMemAllocationCountReset();
+        auto root_create_start = clock::now();
         PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+        auto root_create_end = clock::now();
+        root_create_allocations += pikaMemAllocationCount();
+        uint32_t before_execute_allocations = pikaMemAllocationCount();
+        auto execute_start = clock::now();
         pikaVM_runByteCodeFrame(pikaMain, &bytecode_frame);
+        auto execute_end = clock::now();
+        execute_allocations +=
+            pikaMemAllocationCount() - before_execute_allocations;
         if (6765 != obj_getInt(pikaMain, (char*)"result")) {
             state.SkipWithError("recursive fibonacci result mismatch");
         }
+        uint32_t before_destroy_allocations = pikaMemAllocationCount();
+        auto root_destroy_start = clock::now();
         obj_deinit(pikaMain);
+        auto root_destroy_end = clock::now();
+        root_destroy_allocations +=
+            pikaMemAllocationCount() - before_destroy_allocations;
+        root_create_ns += nanoseconds(root_create_end - root_create_start);
+        execute_ns += nanoseconds(execute_end - execute_start);
+        root_destroy_ns += nanoseconds(root_destroy_end - root_destroy_start);
+        heap_peak_bytes = std::max(heap_peak_bytes, pikaMemMax());
     }
     byteCodeFrame_deinit(&bytecode_frame);
     args_deinit(buffs);
+    state.counters["compile_once_ns"] =
+        nanoseconds(compile_end - compile_start);
+    state.counters["root_create_ns"] = benchmark::Counter(
+        root_create_ns, benchmark::Counter::kAvgIterations);
+    state.counters["execute_ns"] = benchmark::Counter(
+        execute_ns, benchmark::Counter::kAvgIterations);
+    state.counters["root_destroy_ns"] = benchmark::Counter(
+        root_destroy_ns, benchmark::Counter::kAvgIterations);
+    state.counters["root_create_allocations"] = benchmark::Counter(
+        root_create_allocations, benchmark::Counter::kAvgIterations);
+    state.counters["execute_allocations"] = benchmark::Counter(
+        execute_allocations, benchmark::Counter::kAvgIterations);
+    state.counters["root_destroy_allocations"] = benchmark::Counter(
+        root_destroy_allocations, benchmark::Counter::kAvgIterations);
+    state.counters["heap_allocations"] = benchmark::Counter(
+        root_create_allocations + execute_allocations +
+            root_destroy_allocations,
+        benchmark::Counter::kAvgIterations);
+    state.counters["heap_peak_bytes"] = heap_peak_bytes;
+    state.counters["heap_residual_bytes"] = pikaMemNow();
 }
 BENCHMARK(fibonacci_recursive_20)->Unit(benchmark::kMillisecond);
 

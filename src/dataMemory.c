@@ -47,6 +47,7 @@ void* pikaMalloc(uint32_t size) {
     if (g_PikaMemInfo.heapUsedMax < g_PikaMemInfo.heapUsed) {
         g_PikaMemInfo.heapUsedMax = g_PikaMemInfo.heapUsed;
     }
+    g_PikaMemInfo.allocationCount++;
     pika_platform_disable_irq_handle();
     void* mem = pika_user_malloc(size);
     pika_platform_enable_irq_handle();
@@ -88,6 +89,14 @@ uint32_t pikaMemMax(void) {
 
 void pikaMemMaxReset(void) {
     g_PikaMemInfo.heapUsedMax = 0;
+}
+
+uint32_t pikaMemAllocationCount(void) {
+    return g_PikaMemInfo.allocationCount;
+}
+
+void pikaMemAllocationCountReset(void) {
+    g_PikaMemInfo.allocationCount = 0;
 }
 
 #if PIKA_POOL_ENABLE
