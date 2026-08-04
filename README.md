@@ -1,34 +1,14 @@
-# PikaPython v2
+<p align="center">
+  <img alt="PikaPython Logo" src="assets/pikapython-logo.jpg" width="300">
+</p>
+
+<h1 align="center">PikaPython v2</h1>
+<p align="center">跨平台的超轻量级嵌入式 Python 引擎</p>
 
 PikaPython v2 提供面向嵌入式设备的 Python 内核、模块包、项目模板和统一构建 CLI。
 公开产品版本位于 `pikasTech/PikaPython` 仓库的 `v2` 分支。
 
-## 首选入口：PikaPython CLI Skill
-
-使用 PikaPython v2 创建项目、安装模块、配置 capability、生成 binding、构建模板或
-诊断 CLI 时，优先阅读并遵循 [`skills/pikapython-cli/SKILL.md`](skills/pikapython-cli/SKILL.md)。
-
-使用 Codex、Claude Code 等 Code Agent 开发时，可以直接要求 Code Agent 读取并遵循
-该 Skill。Code Agent 应按照其中定义的标准工作流完成项目创建、依赖安装、配置、
-预构建、目标构建和问题诊断，并以其中的来源边界和失败处理规则为准。
-
-## 第二入口：手动使用 CLI
-
-以下方式直接运行仓库内的 `pikapython_cli`，不需要通过 pip 安装：
-
-```bash
-git clone --branch v2 --single-branch https://github.com/pikasTech/PikaPython.git
-cd PikaPython
-python3 skills/pikapython-cli/scripts/pikapython-cli.py --help
-```
-
-前置条件：
-
-- Python 3.9 或更高版本；
-- Python 环境中已有 `PyYAML>=6.0,<7`；
-- Git、CMake 和可用的 C 编译器。
-
-## 进度、性能与资源
+## V2 性能与资源改进
 
 ![PikaPython v2 进度与性能指标](assets/pikapython-v2-progress-and-performance.png)
 
@@ -50,6 +30,49 @@ v1.28.0 Unix minimal 的结果包括：
 性能数字来自匹配 CPU 的 Linux 测量，不是 QEMU 模拟速度。QEMU 只用于功能、
 Flash、RAM 和故障恢复验证，不用于性能结论。图表与指标来源：
 [`pikasTech/pikapython-v2-preview-stm32f4-qemu`](https://github.com/pikasTech/pikapython-v2-preview-stm32f4-qemu)。
+
+## 首选入口：PikaPython CLI Skill
+
+使用 PikaPython v2 创建项目、安装模块、配置 capability、生成 binding、构建模板或
+诊断 CLI 时，优先阅读并遵循 [`skills/pikapython-cli/SKILL.md`](skills/pikapython-cli/SKILL.md)。
+
+使用 Codex、Claude Code 等 Code Agent 开发时，可以直接要求 Code Agent 读取并遵循
+该 Skill。Code Agent 应按照其中定义的标准工作流完成项目创建、依赖安装、配置、
+预构建、目标构建和问题诊断，并以其中的来源边界和失败处理规则为准。
+
+## 通用 Python 示例
+
+以下示例沿用 V1 示例中通用的函数、循环和算术写法，不依赖 V1 专用模块，可以直接
+作为 V2 项目模板的 `main.py`：
+
+```python
+def square(value):
+    return value * value
+
+
+for value in range(4):
+    print(square(value))
+```
+
+V2 继续使用 `.pyi` 描述 Python 可见 API，并由 CLI 生成 C binding。模块声明、
+C callback 和 Program Image 的完整流程见
+[`docs/reference/modules-and-bindings.md`](docs/reference/modules-and-bindings.md)。
+
+## 第二入口：手动使用 CLI
+
+以下方式直接运行仓库内的 `pikapython_cli`，不需要通过 pip 安装：
+
+```bash
+git clone --branch v2 --single-branch https://github.com/pikasTech/PikaPython.git
+cd PikaPython
+python3 skills/pikapython-cli/scripts/pikapython-cli.py --help
+```
+
+前置条件：
+
+- Python 3.9 或更高版本；
+- Python 环境中已有 `PyYAML>=6.0,<7`；
+- Git、CMake 和可用的 C 编译器。
 
 ## 构建并运行 Linux 模板
 
@@ -75,3 +98,13 @@ python3 tools/verify-linux-output.py
 `install` 会从该 release 源解析并安装依赖；不会在网络失败时回退到内部研发仓。
 
 更多配置、平台模板和模块开发说明见 [`docs/reference/index.md`](docs/reference/index.md)。
+
+## 交流与资源
+
+- [GitHub Issues](https://github.com/pikasTech/PikaPython/issues)：报告 V2 问题和跟踪产品进展；
+- [PikaPython 论坛](https://whycan.com/f_55.html)：交流移植、模块和嵌入式应用；
+- [PikaPython 视频](https://space.bilibili.com/5365336/channel/seriesdetail?sid=1034902)：
+  查看项目介绍与开发内容。
+
+Logo 与通用示例结构迁移自 PikaPython V1；V2 的功能、命令、资源数据和支持边界
+以本分支的 SKILL、项目模板和参考文档为准。
