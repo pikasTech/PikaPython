@@ -10,7 +10,7 @@ PikaPython v2 提供面向嵌入式设备的 Python 内核、模块包、项目�
 ```bash
 git clone --branch v2 --single-branch https://github.com/pikasTech/PikaPython.git
 cd PikaPython
-python3 -m pikapython_cli --help
+python3 skills/pikapython-cli/scripts/pikapython-cli.py --help
 ```
 
 前置条件：
@@ -28,8 +28,8 @@ mkdir -p ../pika-linux-app
 cp -R project-templates/linux-console/. ../pika-linux-app/
 cd ../pika-linux-app
 
-PYTHONPATH=../PikaPython python3 -m pikapython_cli install
-PYTHONPATH=../PikaPython python3 -m pikapython_cli build
+python3 ../PikaPython/skills/pikapython-cli/scripts/pikapython-cli.py install
+python3 ../PikaPython/skills/pikapython-cli/scripts/pikapython-cli.py build
 python3 tools/verify-linux-output.py
 ```
 

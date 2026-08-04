@@ -4,6 +4,9 @@
 
 ## 阅读顺序
 
+- [`pikapython-cli` Skill](../../skills/pikapython-cli/SKILL.md)：
+  - 定义触发条件、仓库内无 pip 入口、标准工作流和失败处理；
+  - 按任务路由到本目录的详细配置、binding 和平台参考。
 - [快速开始](getting-started.md)：
   - 安装 CLI；
   - 从空目录完成初始化、依赖安装和预构建；

@@ -4,7 +4,8 @@
 
 - Python：
   - 版本至少为 3.9；
-  - 使用 `pip` 安装当前仓库提供的 `pikapython-cli`；
+  - 产品仓 checkout 可直接使用 `skills/pikapython-cli`，不要求通过 pip 安装；
+  - 标准 wheel 安装后使用 `pikapython-cli` console entry point；
   - CLI 运行时依赖 `PyYAML>=6.0,<7`。
   - Debian/Ubuntu 创建虚拟环境前需要安装 `python3-venv`。
 - 包源：
@@ -33,15 +34,20 @@ apt-get install -y --no-install-recommends libnewlib-arm-none-eabi
   - 安装 ARM GNU 工具链对应的 newlib 或 sysroot 头文件；
   - 不直接套用 Debian/Ubuntu 包名。
 
-从当前源码仓库安装 CLI：
+从当前产品仓 checkout 直接运行 CLI：
 
 ```bash
-python3 -m pip install .
-pikapython-cli --help
+python3 skills/pikapython-cli/scripts/pikapython-cli.py --help
 ```
 
-- 仓库内核对 CLI：
-  - 可以运行 `pikapython-cli --help`。
+- 构建标准 Python 包时：
+
+  ```bash
+  python3 -m pip wheel --no-deps .
+  ```
+
+- 安装 wheel 后可以运行 `pikapython-cli --help`；
+- 仓库内脚本和安装后的 console entry point 使用同一份 `pikapython_cli` 实现；
 - 项目文档：
   - 统一使用安装后的 `pikapython-cli` 命令。
 

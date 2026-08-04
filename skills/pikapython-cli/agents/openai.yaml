@@ -1,0 +1,4 @@
+interface:
+  display_name: "PikaPython CLI"
+  short_description: "管理 PikaPython v2 项目依赖、预构建和目标工具链"
+  default_prompt: "使用 $pikapython-cli 创建、安装、构建或诊断 PikaPython v2 项目。"
