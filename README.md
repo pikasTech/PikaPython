@@ -75,7 +75,7 @@ python3 skills/pikapython-cli/scripts/pikapython-cli.py --help
 
 ## 构建并运行 Linux 模板
 
-从产品仓复制公开模板，然后仍使用仓库内的 CLI 安装依赖和构建：
+复制 Linux 模板，然后安装依赖并构建：
 
 ```bash
 mkdir -p ../pika-linux-app
