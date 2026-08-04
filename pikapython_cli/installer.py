@@ -2,6 +2,7 @@ import hashlib
 import io
 import json
 import os
+import re
 import shutil
 import subprocess
 import tarfile
@@ -18,6 +19,7 @@ MANIFEST_SCHEMA = "pika.package-install/v1"
 STATE_DIRECTORY = ".pikapython"
 NETWORK_DISABLE_ENV = "PIKAPYTHON_CLI_NETWORK_DISABLE"
 MODULE_PACKAGE_METADATA_FILES = {"LICENSE", "UPSTREAM.md"}
+FULL_COMMIT_PATTERN = re.compile(r"^[0-9a-fA-F]{40}$")
 
 
 def _run_git(arguments, cwd=None, binary=False):
@@ -63,6 +65,20 @@ def _resolve_commit(repository, reference):
         "package source ref does not exist: %s" % reference,
         stage="install",
     )
+
+
+def _clone_remote(source_url, reference, repository):
+    if isinstance(reference, str) and FULL_COMMIT_PATTERN.fullmatch(reference):
+        repository.mkdir()
+        _run_git(["init"], cwd=repository)
+        _run_git(["remote", "add", "origin", source_url], cwd=repository)
+        _run_git(["fetch", "--depth", "1", "origin", reference], cwd=repository)
+        return
+    arguments = ["clone", "--no-checkout", "--depth", "1"]
+    if reference is not None:
+        arguments.extend(["--branch", reference, "--single-branch"])
+    arguments.extend([source_url, str(repository)])
+    _run_git(arguments)
 
 
 def _safe_extract(archive_bytes, destination):
@@ -167,7 +183,7 @@ def prepare_snapshot(project, packages, transaction):
                 stage="install",
             )
         repository = transaction / "repository"
-        _run_git(["clone", "--no-checkout", source_url, str(repository)])
+        _clone_remote(source_url, reference, repository)
         source_type = "remote-git"
     commit = _resolve_commit(repository, reference)
     archive = _run_git(

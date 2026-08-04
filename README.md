@@ -30,8 +30,13 @@ cd ../pika-linux-app
 
 PYTHONPATH=../PikaPython python3 -m pikapython_cli install
 PYTHONPATH=../PikaPython python3 -m pikapython_cli build
-./.pikapython/build/linux/linux-console
 python3 tools/verify-linux-output.py
+```
+
+自动验证通过后，可以交互运行生成的 Linux 程序；按 `Ctrl-D` 退出 REPL：
+
+```bash
+./.pikapython/build/linux/linux-console
 ```
 
 模板中的 `packages.sourceUrl` 默认指向公开产品仓，`packages.ref` 固定为 `v2`。
