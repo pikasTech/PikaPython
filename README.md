@@ -6,7 +6,7 @@
 <p align="center">跨平台的超轻量级嵌入式 Python 引擎</p>
 
 PikaPython v2 提供面向嵌入式设备的 Python 内核、模块包、项目模板和统一构建 CLI。
-公开产品版本位于 `pikasTech/PikaPython` 仓库的 `v2` 分支。
+源码与项目模板发布在 `pikasTech/PikaPython` 仓库的 `v2` 分支。
 
 ## V2 性能与资源改进
 
@@ -37,13 +37,12 @@ Flash、RAM 和故障恢复验证，不用于性能结论。图表与指标来�
 诊断 CLI 时，优先阅读并遵循 [`skills/pikapython-cli/SKILL.md`](skills/pikapython-cli/SKILL.md)。
 
 使用 Codex、Claude Code 等 Code Agent 开发时，可以直接要求 Code Agent 读取并遵循
-该 Skill。Code Agent 应按照其中定义的标准工作流完成项目创建、依赖安装、配置、
-预构建、目标构建和问题诊断，并以其中的来源边界和失败处理规则为准。
+该 Skill。Code Agent 可以按照其中的标准工作流完成项目创建、依赖安装、配置、
+预构建、目标构建和问题诊断。
 
 ## 通用 Python 示例
 
-以下示例沿用 V1 示例中通用的函数、循环和算术写法，不依赖 V1 专用模块，可以直接
-作为 V2 项目模板的 `main.py`：
+以下示例展示函数、循环和算术等基础写法，可以直接作为 V2 项目模板的 `main.py`：
 
 ```python
 def square(value):
@@ -94,8 +93,7 @@ python3 tools/verify-linux-output.py
 ./.pikapython/build/linux/linux-console
 ```
 
-模板中的 `packages.sourceUrl` 默认指向公开产品仓，`packages.ref` 固定为 `v2`。
-`install` 会从该 release 源解析并安装依赖；不会在网络失败时回退到内部研发仓。
+模板默认从 `pikasTech/PikaPython` 的 `v2` 分支安装依赖。
 
 更多配置、平台模板和模块开发说明见 [`docs/reference/index.md`](docs/reference/index.md)。
 
@@ -105,6 +103,3 @@ python3 tools/verify-linux-output.py
 - [PikaPython 论坛](https://whycan.com/f_55.html)：交流移植、模块和嵌入式应用；
 - [PikaPython 视频](https://space.bilibili.com/5365336/channel/seriesdetail?sid=1034902)：
   查看项目介绍与开发内容。
-
-Logo 与通用示例结构迁移自 PikaPython V1；V2 的功能、命令、资源数据和支持边界
-以本分支的 SKILL、项目模板和参考文档为准。
