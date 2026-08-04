@@ -77,7 +77,7 @@ pikapython-cli install
 - `add` 和 `remove` 只修改配置：
   - 修改后必须重新运行 `install`。
 - `install` 使用 Git archive 生成不可变快照：
-  - 包文件按 `package-catalog.json` 发布；
+  - 包文件按 `skills/pikapython-cli/assets/package-catalog.json` 发布；
   - 源快照保存为 `.pikapython/source`；
   - 安装事实保存为 `.pikapython/install-manifest.json`。
 

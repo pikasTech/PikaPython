@@ -9,6 +9,7 @@ description: 管理 PikaPython v2 项目依赖、capability、Python 模块预�
 
 ## 入口
 
+- 优先按本文件的标准工作流操作，不从产品 README 复制或推断另一套流程；
 - 已安装 Python 包时使用 `pikapython-cli`；
 - 在产品仓 checkout 内且不通过 pip 安装时使用：
 
@@ -18,6 +19,10 @@ python3 skills/pikapython-cli/scripts/pikapython-cli.py --help
 
 - 从仓库外项目目录使用本地 checkout 时，传入脚本的实际相对或绝对路径；
 - 不复制 `pikapython_cli/`，不创建第二个 wrapper 或隐藏 fallback。
+- CLI 自包含资源位于 skill 内：
+  - Python 打包元数据：`pyproject.toml`；
+  - Python 运行依赖：`requirements.txt`；
+  - 产品包索引：`assets/package-catalog.json`。
 
 ## 标准工作流
 

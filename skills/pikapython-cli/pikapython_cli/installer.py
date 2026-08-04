@@ -13,7 +13,7 @@ from .configuration import config_path, parse_dependency
 from .errors import PackageError
 
 
-CATALOG_NAME = "package-catalog.json"
+CATALOG_PATH = PurePosixPath("skills/pikapython-cli/assets/package-catalog.json")
 CATALOG_SCHEMA = "pika.package-catalog/v1"
 MANIFEST_SCHEMA = "pika.package-install/v1"
 STATE_DIRECTORY = ".pikapython"
@@ -203,19 +203,19 @@ def prepare_snapshot(project, packages, transaction):
 
 
 def _load_catalog(snapshot):
-    path = snapshot / CATALOG_NAME
+    path = snapshot.joinpath(*CATALOG_PATH.parts)
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
     except FileNotFoundError as error:
         raise PackageError(
             "package_catalog_missing",
-            "%s is missing from the package source" % CATALOG_NAME,
+            "%s is missing from the package source" % CATALOG_PATH,
             stage="install",
         ) from error
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
         raise PackageError(
             "package_catalog_invalid",
-            "cannot read %s: %s" % (CATALOG_NAME, error),
+            "cannot read %s: %s" % (CATALOG_PATH, error),
             stage="install",
         ) from error
     if (

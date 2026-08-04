@@ -1,12 +1,15 @@
 # 模块与 binding
 
 - 当前模块链路：
-  - 由包目录、`package-catalog.json`、`pikapython-cli install` 和 `pikapython-cli build` 共同完成；
+  - 由包目录、`skills/pikapython-cli/assets/package-catalog.json`、
+    `pikapython-cli install` 和 `pikapython-cli build` 共同完成；
   - target 不直接扫描源码仓库。
 
 ## 安装后的项目布局
 
-`package-catalog.json` 的 export destination 只允许以下布局：
+- 产品包索引：
+  - 路径是 `skills/pikapython-cli/assets/package-catalog.json`；
+  - export destination 只允许以下布局。
 
 ```text
 <project>/
@@ -49,7 +52,7 @@
 开发可分发纯 Python 模块时：
 
 1. 在包源仓库中维护模块 `.py`。
-2. 在 `package-catalog.json` 中把它导出到项目根目录。
+2. 在 `skills/pikapython-cli/assets/package-catalog.json` 中把它导出到项目根目录。
 3. 使用精确三段版本声明依赖。
 4. 重新运行 `pikapython-cli install`。
 5. 从 `main.py` 或其它已安装模块导入它。

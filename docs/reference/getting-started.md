@@ -43,7 +43,7 @@ python3 skills/pikapython-cli/scripts/pikapython-cli.py --help
 - 构建标准 Python 包时：
 
   ```bash
-  python3 -m pip wheel --no-deps .
+  python3 -m pip wheel --no-deps skills/pikapython-cli
   ```
 
 - 安装 wheel 后可以运行 `pikapython-cli --help`；

@@ -13,7 +13,7 @@ dependencies = ["PyYAML>=6.0,<7"]
 pikapython-cli = "pikapython_cli.__main__:run"
 
 [tool.setuptools.packages.find]
-where = ["skills/pikapython-cli"]
+where = ["."]
 include = ["pikapython_cli*"]
 
 [tool.setuptools.package-data]
