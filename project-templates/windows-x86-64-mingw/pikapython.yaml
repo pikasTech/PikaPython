@@ -1,0 +1,37 @@
+version: 1
+dependencies:
+- pikapython-base64==1.0.0
+- pikapython-binascii==1.0.0
+- pikapython-hashlib==1.0.0
+- pikapython-hmac==1.0.0
+- pikapython-json==1.0.0
+- pikapython-kernel==2.0.0
+- pikapython-math==1.0.0
+- pikapython-mqtt==1.0.0
+- pikapython-random==1.0.0
+- pikapython-re==1.0.0
+- pikapython-requests==1.0.0
+- pikapython-socket==1.0.0
+- pikapython-struct==1.0.0
+- pikapython-time==1.0.0
+- pikapython-zlib==1.0.0
+packages:
+  sourceUrl: https://github.com/pikasTech/PikaPython.git
+  ref: v2
+capability:
+  configFile: .pikapython/source/config/pikapython-capabilities.yaml
+  profile: runtime-full
+pythonModules:
+  format: program
+  include:
+  - '*'
+targets:
+  windows-x86-64:
+    adapter: cmake
+    projectFile: CMakeLists.txt
+    targetName: pikapython-windows
+    buildDirectory: .pikapython/build/windows-x86_64
+    arguments:
+    - -DCMAKE_BUILD_TYPE=Release
+    - -DCMAKE_TOOLCHAIN_FILE={project}/cmake/mingw-x86_64-toolchain.cmake
+defaultTarget: windows-x86-64

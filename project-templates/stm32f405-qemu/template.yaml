@@ -1,0 +1,13 @@
+version: 1
+id: stm32f405-qemu
+name: STM32F405 QEMU Interactive
+architecture: arm-cortex-m4
+mcu: STM32F405RGT6
+adapter: cmake
+machine: netduinoplus2
+cpu: cortex-m4
+projectFile: CMakeLists.txt
+targetName: qemu-firmware
+applicationFile: main.py
+runCommand: python3 tools/run-qemu.py
+interactive: true

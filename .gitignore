@@ -1,0 +1,11 @@
+build/
+build-*/
+__pycache__/
+*.pyc
+*.o
+*.a
+*.so
+*.out
+*.egg-info/
+.tmp/
+.pikapython/

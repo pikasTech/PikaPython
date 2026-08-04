@@ -1,0 +1,19 @@
+version: 1
+dependencies:
+- pikapython-kernel==2.0.0
+packages:
+  sourceUrl: https://github.com/pikasTech/PikaPython.git
+  ref: v2
+capability:
+  configFile: .pikapython/source/config/pikapython-capabilities.yaml
+  profile: runtime-full
+targets:
+  qemu:
+    adapter: cmake
+    projectFile: CMakeLists.txt
+    targetName: qemu-firmware
+    buildDirectory: .pikapython/build/qemu
+    arguments:
+    - -DCMAKE_TOOLCHAIN_FILE={project}/firmware/arm-gcc-toolchain.cmake
+    - -DCMAKE_BUILD_TYPE=MinSizeRel
+defaultTarget: qemu

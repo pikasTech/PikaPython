@@ -1,0 +1,25 @@
+from machine import I2C, SPI, UART
+
+uart = UART(1, baudrate=115200)
+uart_buffer = bytearray(b"\x00\x00\x00\x00")
+print(uart.readinto(uart_buffer, nbytes=3))
+print(uart_buffer[0])
+print(uart_buffer[1])
+print(uart_buffer[2])
+print(uart_buffer[3])
+
+i2c = I2C(0, freq=400000)
+devices = i2c.scan()
+print(devices[0])
+print(devices[1])
+i2c_buffer = bytearray(b"\x00\x00\x00")
+print(i2c.readfrom_into(0x40, i2c_buffer))
+print(i2c_buffer[0])
+print(i2c_buffer[1])
+print(i2c_buffer[2])
+
+spi = SPI(2, baudrate=2000000)
+spi_buffer = bytearray(b"\x00\x00")
+print(spi.write_readinto(b"AZ", spi_buffer))
+print(spi_buffer[0])
+print(spi_buffer[1])

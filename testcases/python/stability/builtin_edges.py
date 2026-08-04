@@ -1,0 +1,8 @@
+print(all([]), any([]), sum([]), len([]))
+print(all([1, 2]), any([0, 2]))
+print(round(2.5), round(3.5), round(-2.5), round(-3.5))
+print(int("0"), int("+0"), int("-0"))
+print(int(" 314 "), int(" -12 "))
+print(sorted([3, -1, 3, 0, -1]))
+print(list(enumerate(["a", "b"])))
+print(list(zip([1, 2], ["a", "b", "c"])))

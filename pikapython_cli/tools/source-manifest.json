@@ -1,0 +1,68 @@
+{
+  "schema": "pika.source-manifest/v1",
+  "includeDirectories": [
+    "pikapython-kernel"
+  ],
+  "groups": {
+    "application": [
+      "pikapython-kernel/application.c",
+      "pikapython-kernel/pika_platform.c"
+    ],
+    "frontend": [
+      "pikapython-kernel/frontend_diagnostic.c",
+      "pikapython-kernel/frontend_graph.c",
+      "pikapython-kernel/frontend_image.c",
+      "pikapython-kernel/frontend_lexer.c",
+      "pikapython-kernel/frontend_module.c",
+      "pikapython-kernel/frontend_parser.c"
+    ],
+    "host-runner": [
+      "pikapython-kernel/repl_shell_main.c",
+      "pikapython-kernel/script_main.c"
+    ],
+    "host-prebuild": [
+      "pikapython-kernel/program-prebuild.c"
+    ],
+    "network": [
+      "pikapython-kernel/platform_socket.c",
+      "pikapython-kernel/socket_module.c"
+    ],
+    "public-headers": [
+      "pikapython-kernel/pika_application.h",
+      "pikapython-kernel/pika_binding.h",
+      "pikapython-kernel/pika_builtin.h",
+      "pikapython-kernel/pika_capability.h",
+      "pikapython-kernel/pika_frontend.h",
+      "pikapython-kernel/pika_ir.h",
+      "pikapython-kernel/pika_kernel.h",
+      "pikapython-kernel/pika_platform.h",
+      "pikapython-kernel/pika_program.h",
+      "pikapython-kernel/pika_program_image.h",
+      "pikapython-kernel/pika_repl.h",
+      "pikapython-kernel/pika_status.h",
+      "pikapython-kernel/platform_socket.h"
+    ],
+    "repl": [
+      "pikapython-kernel/repl_execution.c",
+      "pikapython-kernel/repl_session.c",
+      "pikapython-kernel/repl_stream.c"
+    ],
+    "runtime": [
+      "pikapython-kernel/binding_engine.c",
+      "pikapython-kernel/binding_runtime.c",
+      "pikapython-kernel/builtin_registry.c",
+      "pikapython-kernel/builtin_runtime.c",
+      "pikapython-kernel/kernel.c",
+      "pikapython-kernel/program_verifier.c",
+      "pikapython-kernel/register_engine.c",
+      "pikapython-kernel/runtime_common.c",
+      "pikapython-kernel/segmented_engine.c",
+      "pikapython-kernel/status.c",
+      "pikapython-kernel/text_method_runtime.c",
+      "pikapython-kernel/typed_engine.c",
+      "pikapython-kernel/value_output.c",
+      "pikapython-kernel/value_runtime.c",
+      "pikapython-kernel/verifier_object.c"
+    ]
+  }
+}

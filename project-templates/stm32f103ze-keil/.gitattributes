@@ -1,0 +1,5 @@
+# 上游 CMSIS、HAL 和 CubeMX 文件保持原始字节风格。
+firmware/Drivers/** -whitespace
+firmware/Core/Src/system_stm32f1xx.c -whitespace
+firmware/Core/Src/usart.c -whitespace
+firmware/MDK-ARM/** -whitespace

@@ -1,0 +1,8 @@
+print(list(range(0)))
+print(list(range(-3)))
+print(list(range(1, 10, 3)))
+print(list(range(5, -5, -3)))
+print(list(range(1, 4, -1)))
+print(len(range(1, 100, 5)))
+print(list(range(1, 100, 5)[5:15:3]))
+print(list(range(1, 100, 5)[15:5:-3]))

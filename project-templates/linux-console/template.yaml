@@ -1,0 +1,10 @@
+version: 1
+id: linux-console
+name: Linux Native Console
+architecture: x86
+adapter: cmake
+projectFile: CMakeLists.txt
+targetName: linux-console
+applicationFile: main.py
+runCommand: python3 tools/verify-linux-output.py
+interactive: true

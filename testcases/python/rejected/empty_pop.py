@@ -1,0 +1,2 @@
+items = []
+print(items.pop())

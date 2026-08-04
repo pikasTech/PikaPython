@@ -1,0 +1,8 @@
+version: 1
+id: windows-x86-64-mingw
+name: Windows x86-64 MinGW
+architecture: x86-64
+adapter: cmake
+projectFile: CMakeLists.txt
+targetName: pikapython-windows
+applicationFile: main.py

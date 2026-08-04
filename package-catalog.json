@@ -1,0 +1,360 @@
+{
+  "schema": "pika.package-catalog/v1",
+  "packages": {
+    "pikapython-aes": {
+      "version": "1.0.0",
+      "capability": "library.aes",
+      "exports": [
+        {
+          "source": "packages/aes/aes.py",
+          "destination": "aes.py"
+        },
+        {
+          "source": "packages/aes/_aes.pyi",
+          "destination": "_aes.pyi"
+        },
+        {
+          "source": "packages/aes/*.c",
+          "destination": "pikapython-packages/aes/"
+        },
+        {
+          "source": "packages/aes/*.h",
+          "destination": "pikapython-packages/aes/"
+        }
+      ]
+    },
+    "pikapython-base64": {
+      "version": "1.0.0",
+      "capability": "library.base64",
+      "exports": [
+        {
+          "source": "packages/base64/base64.py",
+          "destination": "base64.py"
+        },
+        {
+          "source": "packages/base64/_base64.pyi",
+          "destination": "_base64.pyi"
+        },
+        {
+          "source": "packages/base64/*.c",
+          "destination": "pikapython-packages/base64/"
+        }
+      ]
+    },
+    "pikapython-binascii": {
+      "version": "1.0.0",
+      "capability": "library.binascii",
+      "exports": [
+        {
+          "source": "packages/binascii/binascii.pyi",
+          "destination": "binascii.pyi"
+        },
+        {
+          "source": "packages/binascii/*.c",
+          "destination": "pikapython-packages/binascii/"
+        }
+      ]
+    },
+    "pikapython-configparser": {
+      "version": "1.0.0",
+      "exports": [
+        {
+          "source": "packages/configparser/configparser.py",
+          "destination": "configparser.py"
+        }
+      ]
+    },
+    "pikapython-fuzzypid": {
+      "version": "1.0.0",
+      "capability": "library.fuzzypid",
+      "exports": [
+        {
+          "source": "packages/fuzzypid/fuzzypid.py",
+          "destination": "fuzzypid.py"
+        },
+        {
+          "source": "packages/fuzzypid/_fuzzypid.pyi",
+          "destination": "_fuzzypid.pyi"
+        },
+        {
+          "source": "packages/fuzzypid/*.c",
+          "destination": "pikapython-packages/fuzzypid/"
+        },
+        {
+          "source": "packages/fuzzypid/algorithm/*.c",
+          "destination": "pikapython-packages/fuzzypid/algorithm/"
+        },
+        {
+          "source": "packages/fuzzypid/algorithm/*.h",
+          "destination": "pikapython-packages/fuzzypid/algorithm/"
+        },
+        {
+          "source": "packages/fuzzypid/UPSTREAM.md",
+          "destination": "pikapython-packages/fuzzypid/"
+        },
+        {
+          "source": "packages/fuzzypid/upstream/LICENSE",
+          "destination": "pikapython-packages/fuzzypid/upstream/"
+        }
+      ]
+    },
+    "pikapython-kernel": {
+      "version": "2.0.0",
+      "exports": [
+        {
+          "source": "pikapython-kernel/*",
+          "exclude": [
+            "pikapython-kernel/platform_socket.c",
+            "pikapython-kernel/platform_socket.h",
+            "pikapython-kernel/program-prebuild.c",
+            "pikapython-kernel/program-prebuild.h",
+            "pikapython-kernel/socket_module.c"
+          ],
+          "destination": "pikapython-kernel/"
+        }
+      ]
+    },
+    "pikapython-hashlib": {
+      "version": "1.0.0",
+      "capability": "library.hashlib",
+      "exports": [
+        {
+          "source": "packages/hashlib/hashlib.py",
+          "destination": "hashlib.py"
+        },
+        {
+          "source": "packages/hashlib/_hashlib.pyi",
+          "destination": "_hashlib.pyi"
+        },
+        {
+          "source": "packages/hashlib/*.c",
+          "destination": "pikapython-packages/hashlib/"
+        },
+        {
+          "source": "packages/hashlib/*.h",
+          "destination": "pikapython-packages/hashlib/"
+        }
+      ]
+    },
+    "pikapython-hmac": {
+      "version": "1.0.0",
+      "capability": "library.hmac",
+      "dependencies": [
+        "pikapython-hashlib==1.0.0"
+      ],
+      "exports": [
+        {
+          "source": "packages/hmac/hmac.py",
+          "destination": "hmac.py"
+        },
+        {
+          "source": "packages/hmac/_hmac.pyi",
+          "destination": "_hmac.pyi"
+        },
+        {
+          "source": "packages/hmac/*.c",
+          "destination": "pikapython-packages/hmac/"
+        }
+      ]
+    },
+    "pikapython-json": {
+      "version": "1.0.0",
+      "capability": "library.json",
+      "exports": [
+        {
+          "source": "packages/json/json.py",
+          "destination": "json.py"
+        },
+        {
+          "source": "packages/json/_json.pyi",
+          "destination": "_json.pyi"
+        },
+        {
+          "source": "packages/json/*.c",
+          "destination": "pikapython-packages/json/"
+        }
+      ]
+    },
+    "pikapython-math": {
+      "version": "1.0.0",
+      "capability": "library.math",
+      "exports": [
+        {
+          "source": "packages/math/math.py",
+          "destination": "math.py"
+        },
+        {
+          "source": "packages/math/_math.pyi",
+          "destination": "_math.pyi"
+        },
+        {
+          "source": "packages/math/*.c",
+          "destination": "pikapython-packages/math/"
+        }
+      ]
+    },
+    "pikapython-mqtt": {
+      "version": "1.0.0",
+      "capability": "library.mqtt-client",
+      "dependencies": [
+        "pikapython-socket==1.0.0"
+      ],
+      "exports": [
+        {
+          "source": "packages/mqtt.py",
+          "destination": "mqtt.py"
+        }
+      ]
+    },
+    "pikapython-machine": {
+      "version": "1.0.0",
+      "capability": "machine.pin",
+      "exports": [
+        {
+          "source": "packages/machine/machine.pyi",
+          "destination": "machine.pyi"
+        },
+        {
+          "source": "packages/machine/*.c",
+          "destination": "pikapython-packages/machine/"
+        },
+        {
+          "source": "packages/machine/*.h",
+          "destination": "pikapython-packages/machine/"
+        }
+      ]
+    },
+    "pikapython-requests": {
+      "version": "1.0.0",
+      "capability": "library.http-client",
+      "dependencies": [
+        "pikapython-socket==1.0.0"
+      ],
+      "exports": [
+        {
+          "source": "packages/requests.py",
+          "destination": "requests.py"
+        }
+      ]
+    },
+    "pikapython-re": {
+      "version": "1.0.0",
+      "exports": [
+        {
+          "source": "packages/re/re.py",
+          "destination": "re.py"
+        },
+        {
+          "source": "packages/re/_re.pyi",
+          "destination": "_re.pyi"
+        },
+        {
+          "source": "packages/re/*.c",
+          "destination": "pikapython-packages/re/"
+        },
+        {
+          "source": "packages/re/*.h",
+          "destination": "pikapython-packages/re/"
+        }
+      ]
+    },
+    "pikapython-random": {
+      "version": "1.0.0",
+      "capability": "library.random",
+      "exports": [
+        {
+          "source": "packages/random/random.py",
+          "destination": "random.py"
+        },
+        {
+          "source": "packages/random/_random.pyi",
+          "destination": "_random.pyi"
+        },
+        {
+          "source": "packages/random/*.c",
+          "destination": "pikapython-packages/random/"
+        }
+      ]
+    },
+    "pikapython-socket": {
+      "version": "1.0.0",
+      "capability": "library.socket-basic",
+      "exports": [
+        {
+          "source": "pikapython-kernel/platform_socket.c",
+          "destination": "pikapython-packages/socket/platform_socket.c"
+        },
+        {
+          "source": "pikapython-kernel/platform_socket.h",
+          "destination": "pikapython-packages/socket/platform_socket.h"
+        },
+        {
+          "source": "pikapython-kernel/socket_module.c",
+          "destination": "pikapython-packages/socket/socket_module.c"
+        },
+        {
+          "source": "packages/socket.py",
+          "destination": "socket.py"
+        },
+        {
+          "source": "packages/socket/_socket.pyi",
+          "destination": "_socket.pyi"
+        }
+      ]
+    },
+    "pikapython-struct": {
+      "version": "1.0.0",
+      "capability": "library.struct-basic",
+      "exports": [
+        {
+          "source": "packages/struct/struct.py",
+          "destination": "struct.py"
+        },
+        {
+          "source": "packages/struct/_struct.pyi",
+          "destination": "_struct.pyi"
+        },
+        {
+          "source": "packages/struct/*.c",
+          "destination": "pikapython-packages/struct/"
+        }
+      ]
+    },
+    "pikapython-time": {
+      "version": "1.0.0",
+      "capability": "library.time-basic",
+      "exports": [
+        {
+          "source": "packages/time/time.pyi",
+          "destination": "time.pyi"
+        },
+        {
+          "source": "packages/time/*.c",
+          "destination": "pikapython-packages/time/"
+        }
+      ]
+    },
+    "pikapython-zlib": {
+      "version": "1.0.0",
+      "capability": "library.zlib",
+      "exports": [
+        {
+          "source": "packages/zlib/zlib.py",
+          "destination": "zlib.py"
+        },
+        {
+          "source": "packages/zlib/_zlib.pyi",
+          "destination": "_zlib.pyi"
+        },
+        {
+          "source": "packages/zlib/*.c",
+          "destination": "pikapython-packages/zlib/"
+        },
+        {
+          "source": "packages/zlib/*.h",
+          "destination": "pikapython-packages/zlib/"
+        }
+      ]
+    }
+  }
+}

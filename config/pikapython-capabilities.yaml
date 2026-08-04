@@ -1,0 +1,344 @@
+schema: pika.capability-config/v1
+resourceLimits:
+  frontend:
+    callDepth: 16
+    dynamicSequenceElements: 16
+    functionCount: 64
+  gc:
+    arenaBytes: 16384
+    arenaTriggerPercent: 75
+    bindingTriggerPercent: 50
+    objectSlotCapacity: 256
+    slotTriggerPercent: 75
+  httpClient:
+    bodyBytes: 4096
+    headerBytes: 2048
+    headerCount: 16
+    pathBytes: 256
+    recvBytes: 256
+    urlBytes: 512
+  mqttClient:
+    clientIdBytes: 128
+    packetBytes: 4096
+    payloadBytes: 3072
+    remainingLengthBytes: 4
+    topicBytes: 256
+capabilities:
+  async.basic:
+    dependencies: [exception.basic, generator.basic, module.import]
+    supported: false
+  assignment.unpack:
+    dependencies: [name.local]
+    supported: true
+  binding.c:
+    dependencies: [call.positional, module.import]
+    supported: true
+  binding.c-object:
+    dependencies: [binding.c, object.attribute]
+    supported: true
+  binding.constants:
+    dependencies: [binding.c, object.attribute]
+    supported: true
+  binding.container-argument:
+    dependencies: [binding.c, container.dict, container.list, container.tuple]
+    supported: true
+  binding.container-result:
+    dependencies: [binding.c, container.dict, container.list, container.tuple]
+    supported: true
+  binding.mutable-buffer:
+    dependencies: [binding.c, container.bytearray]
+    supported: true
+  binding.object-argument:
+    dependencies: [binding.c-object]
+    supported: true
+  binding.object-result:
+    dependencies: [binding.c-object]
+    supported: true
+  binding.python-callable:
+    dependencies: [binding.c, call.reference]
+    supported: true
+  builtin.container-construct:
+    dependencies: [container.bytearray, container.dict, container.list, container.tuple]
+    supported: true
+  builtin.embedded:
+    dependencies: [exec.module, protocol.truth]
+    supported: true
+  builtin.help:
+    dependencies: [builtin.type]
+    supported: true
+  builtin.len:
+    dependencies: [value.int]
+    supported: true
+  builtin.print:
+    dependencies: [exec.module]
+    supported: true
+  builtin.scalar-convert:
+    dependencies: [value.bool, value.bytes, value.int, value.string]
+    supported: true
+  builtin.type:
+    dependencies: [exec.module]
+    supported: true
+  call.defaults:
+    dependencies: [call.positional]
+    supported: true
+  call.keyword:
+    dependencies: [call.positional]
+    supported: true
+  call.positional:
+    dependencies: [name.local]
+    supported: true
+  call.reference:
+    dependencies: [call.positional]
+    supported: true
+  call.variadic:
+    dependencies: [call.positional, container.tuple]
+    supported: true
+  closure.cell:
+    dependencies: [call.positional]
+    supported: false
+  comprehension.basic:
+    dependencies: [closure.cell, container.dict, container.list, flow.loop, generator.basic]
+    supported: false
+  container.bytearray:
+    dependencies: [value.bytes]
+    supported: true
+  container.dict:
+    dependencies: [exec.module]
+    supported: true
+  container.list:
+    dependencies: [exec.module]
+    supported: true
+  container.tuple:
+    dependencies: [exec.module]
+    supported: true
+  exception.basic:
+    dependencies: [exec.module]
+    supported: true
+  exception.finally:
+    dependencies: [exception.basic]
+    supported: true
+  exec.module:
+    dependencies: []
+    supported: true
+  flow.branch:
+    dependencies: [protocol.truth]
+    supported: true
+  flow.loop:
+    dependencies: [flow.branch]
+    supported: true
+  flow.pass:
+    dependencies: [exec.module]
+    supported: true
+  generator.basic:
+    dependencies: [call.positional, iterator.user]
+    supported: false
+  iter.builtin:
+    dependencies: [flow.loop]
+    supported: true
+  iter.range:
+    dependencies: [flow.loop, value.int]
+    supported: true
+  iterator.user:
+    dependencies: [flow.loop, object.attribute]
+    supported: false
+  library.base64:
+    dependencies: [binding.c, call.keyword, container.bytearray, module.python, value.bytes, value.string]
+    supported: true
+  library.aes:
+    dependencies: [binding.c-object, binding.constants, call.keyword, module.python, value.bytes, value.none]
+    supported: true
+  library.binascii:
+    dependencies: [binding.c, call.keyword, container.bytearray, value.bytes, value.string]
+    supported: true
+  library.http-client:
+    dependencies: [container.dict, exception.finally, library.socket-basic, module.python, object.user-basic, protocol.text-network]
+    supported: true
+  library.hashlib:
+    dependencies: [binding.c-object, binding.object-result, call.keyword, module.python, value.bytes, value.none, value.string]
+    supported: true
+  library.fuzzypid:
+    dependencies: [binding.c-object, binding.constants, binding.container-argument, builtin.len, call.defaults, call.keyword, container.list, flow.loop, iter.range, module.python, object.user-basic, op.compare-basic, op.slice, op.subscript, value.bool, value.float, value.int, value.none]
+    supported: true
+  library.hmac:
+    dependencies: [binding.c-object, binding.object-result, call.keyword, library.hashlib, module.python, value.bytes, value.none, value.string]
+    supported: true
+  library.json:
+    dependencies: [binding.c, binding.constants, binding.container-result, builtin.len, builtin.scalar-convert, builtin.type, call.keyword, container.bytearray, container.dict, container.list, container.tuple, exception.basic, flow.loop, iter.builtin, logic.short-circuit, module.python, op.augmented, op.compare-basic, op.membership, op.numeric-basic, op.subscript, protocol.text-network, value.bool, value.bytes, value.float, value.none, value.string]
+    supported: true
+  library.mqtt-client:
+    dependencies: [container.bytearray, exception.finally, library.socket-basic, module.python, object.user-basic, op.bitwise, protocol.text-network]
+    supported: true
+  library.math:
+    dependencies: [binding.constants, call.keyword, module.python, value.float, value.int]
+    supported: true
+  library.random:
+    dependencies: [binding.c, call.defaults, call.keyword, module.python, value.float, value.int, value.none]
+    supported: true
+  library.socket-basic:
+    dependencies: [assignment.unpack, binding.c-object, binding.constants, binding.object-result, container.tuple, exception.basic, value.bytes]
+    supported: true
+  library.struct-basic:
+    dependencies: [binding.container-argument, binding.container-result, call.defaults, call.keyword, call.variadic, container.tuple, module.python, value.bytes, value.float, value.int, value.string]
+    supported: true
+  library.time-basic:
+    dependencies: [binding.c]
+    supported: true
+  library.zlib:
+    dependencies: [binding.c, call.defaults, call.keyword, module.python, value.bytes, value.int]
+    supported: true
+  literal.embedded-int:
+    dependencies: [value.int]
+    supported: true
+  logic.short-circuit:
+    dependencies: [flow.branch]
+    supported: true
+  machine.adc:
+    dependencies: [binding.object-argument, machine.pin]
+    supported: true
+  machine.pwm:
+    dependencies: [binding.object-argument, machine.pin]
+    supported: true
+  machine.pin:
+    dependencies: [module.machine]
+    supported: true
+  module.from-import:
+    dependencies: [module.import]
+    supported: true
+  module.import:
+    dependencies: [name.global]
+    supported: true
+  module.machine:
+    dependencies: [binding.c-object, binding.constants, call.defaults, call.keyword, module.from-import, value.int, value.none]
+    supported: true
+  module.python:
+    dependencies: [module.import, object.attribute]
+    supported: true
+  name.global:
+    dependencies: [exec.module]
+    supported: true
+  name.local:
+    dependencies: [exec.module]
+    supported: true
+  object.attribute:
+    dependencies: [call.positional, name.global]
+    supported: true
+  object.class:
+    dependencies: [object.attribute]
+    supported: false
+  object.user-basic:
+    dependencies: [object.attribute]
+    supported: true
+  op.augmented:
+    dependencies: [op.numeric-basic]
+    supported: true
+  op.bitwise:
+    dependencies: [value.int]
+    supported: true
+  op.compare-basic:
+    dependencies: [value.bool]
+    supported: true
+  op.complete:
+    dependencies: [logic.short-circuit, op.augmented, op.bitwise, op.compare-basic, op.matrix-multiply, op.membership, op.numeric-basic, op.slice, op.subscript]
+    supported: true
+  op.float:
+    dependencies: [value.float]
+    supported: true
+  op.integer:
+    dependencies: [value.int]
+    supported: true
+  op.matrix-multiply:
+    dependencies: [container.list, op.numeric-basic]
+    supported: true
+  op.membership:
+    dependencies: [value.bool]
+    supported: true
+  op.numeric-basic:
+    dependencies: [value.int]
+    supported: true
+  op.slice:
+    dependencies: [value.int]
+    supported: true
+  op.subscript:
+    dependencies: [value.int]
+    supported: true
+  protocol.context:
+    dependencies: [exception.finally, object.attribute]
+    supported: false
+  protocol.text-network:
+    dependencies: [container.list, object.attribute, value.bytes, value.string]
+    supported: true
+  protocol.truth:
+    dependencies: [value.bool]
+    supported: true
+  repl.core:
+    dependencies: [name.global]
+    macro: PIKA_REPL_ENABLE
+    supported: true
+  repl.auto-indent:
+    dependencies: [repl.core]
+    macro: PIKA_REPL_AUTO_INDENT_ENABLE
+    supported: true
+  runtime.frozen-program:
+    dependencies: [exec.module]
+    macro: PIKA_FROZEN_PROGRAM_ENABLE
+    supported: true
+  runtime.frozen-source:
+    dependencies: [exec.module]
+    macro: PIKA_FROZEN_SOURCE_ENABLE
+    supported: true
+  runtime.gc:
+    dependencies: []
+    macro: PIKA_GC_ENABLE
+    supported: true
+  scope.global-statement:
+    dependencies: [call.positional, name.global]
+    supported: true
+  value.bool:
+    dependencies: [exec.module]
+    supported: true
+  value.bytes:
+    dependencies: [exec.module]
+    supported: true
+  value.float:
+    dependencies: [exec.module]
+    supported: true
+  value.int:
+    dependencies: [exec.module]
+    supported: true
+  value.none:
+    dependencies: [exec.module]
+    supported: true
+  value.string:
+    dependencies: [exec.module]
+    supported: true
+profiles:
+  compute-min:
+    roots: [call.positional, flow.branch, op.integer, runtime.frozen-program]
+    syntaxLevel: 1
+  control-core:
+    roots: [builtin.container-construct, builtin.len, builtin.print, builtin.scalar-convert, call.positional, iter.range, logic.short-circuit, op.integer, runtime.frozen-program, runtime.gc, value.none]
+    syntaxLevel: 3
+  embedded-app:
+    roots: [binding.c-object, builtin.embedded, builtin.print, container.bytearray, container.dict, container.list, container.tuple, exception.basic, iter.builtin, iter.range, logic.short-circuit, module.python, op.complete, op.float, op.integer, runtime.frozen-program, runtime.gc, value.bytes, value.none, value.string]
+    syntaxLevel: 6
+  hardware-control:
+    roots: [binding.constants, binding.container-result, binding.mutable-buffer, binding.object-argument, binding.python-callable, builtin.container-construct, builtin.len, builtin.print, builtin.scalar-convert, call.defaults, call.keyword, call.reference, container.bytearray, container.dict, container.list, container.tuple, exception.finally, flow.loop, flow.pass, iter.builtin, iter.range, library.struct-basic, library.time-basic, literal.embedded-int, logic.short-circuit, machine.adc, machine.pin, machine.pwm, module.from-import, module.python, name.global, object.user-basic, op.augmented, op.bitwise, op.compare-basic, op.membership, op.numeric-basic, op.slice, op.subscript, runtime.frozen-program, runtime.gc, scope.global-statement, value.bool, value.bytes, value.float, value.none, value.string]
+    syntaxLevel: 6
+  interactive-minimal:
+    roots: [builtin.print, call.positional, flow.branch, name.global, op.integer, repl.auto-indent, runtime.frozen-program]
+    syntaxLevel: 1
+  network-ready:
+    roots: [binding.constants, binding.object-result, builtin.container-construct, builtin.len, builtin.print, builtin.scalar-convert, builtin.type, call.defaults, call.keyword, container.bytearray, container.dict, container.list, container.tuple, exception.finally, flow.loop, flow.pass, iter.builtin, iter.range, library.http-client, library.mqtt-client, library.socket-basic, literal.embedded-int, logic.short-circuit, module.from-import, module.python, name.global, object.user-basic, op.augmented, op.bitwise, op.compare-basic, op.membership, op.numeric-basic, op.slice, op.subscript, protocol.text-network, runtime.frozen-program, runtime.gc, value.bool, value.bytes, value.float, value.none, value.string]
+    syntaxLevel: 6
+  portable-base:
+    roots: [builtin.embedded, builtin.print, builtin.type, exception.basic, library.base64, library.binascii, library.math, library.random, library.zlib, logic.short-circuit, op.compare-basic, op.float, op.integer, op.numeric-basic, repl.auto-indent, runtime.frozen-program, runtime.gc]
+    syntaxLevel: 6
+  portable-data-security:
+    roots: [builtin.embedded, builtin.print, library.aes, library.hashlib, library.hmac, library.json, library.struct-basic, repl.auto-indent, runtime.frozen-program, runtime.gc]
+    syntaxLevel: 6
+  runtime-full:
+    roots: [assignment.unpack, binding.constants, binding.container-argument, binding.container-result, binding.mutable-buffer, binding.object-argument, binding.object-result, binding.python-callable, builtin.container-construct, builtin.embedded, builtin.help, builtin.len, builtin.print, builtin.scalar-convert, builtin.type, call.defaults, call.keyword, call.reference, call.variadic, container.bytearray, container.dict, container.list, container.tuple, exception.finally, flow.pass, iter.builtin, iter.range, library.base64, library.binascii, library.fuzzypid, library.hashlib, library.hmac, library.http-client, library.json, library.math, library.mqtt-client, library.random, library.socket-basic, library.struct-basic, library.time-basic, library.zlib, literal.embedded-int, logic.short-circuit, module.from-import, module.python, object.user-basic, op.complete, op.float, op.integer, protocol.text-network, repl.auto-indent, runtime.frozen-program, runtime.frozen-source, runtime.gc, scope.global-statement, value.bytes, value.float, value.none, value.string]
+    resourceLimits:
+      frontend:
+        functionCount: 192
+    syntaxLevel: 6

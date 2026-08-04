@@ -1,0 +1,9 @@
+/.pikapython/
+/pikapython-generated/
+/pikapython-kernel/
+/pikapython-packages/
+/firmware/MDK-ARM/PikaPython/
+/firmware/MDK-ARM/*.uvoptx
+/firmware/MDK-ARM/*.uvguix.*
+/firmware/MDK-ARM/*.lst
+/firmware/MDK-ARM/*.log

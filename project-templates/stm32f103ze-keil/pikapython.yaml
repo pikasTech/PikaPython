@@ -1,0 +1,21 @@
+version: 1
+
+dependencies:
+  - pikapython-kernel==2.0.0
+
+packages:
+  sourceUrl: https://github.com/pikasTech/PikaPython.git
+  ref: v2
+
+capability:
+  configFile: .pikapython/source/config/pikapython-capabilities.yaml
+  profile: runtime-full
+
+targets:
+  firmware:
+    adapter: keil
+    projectFile: firmware/MDK-ARM/pikapython.uvprojx
+    targetName: PikaPython
+    buildDirectory: .pikapython/build/firmware
+
+defaultTarget: firmware

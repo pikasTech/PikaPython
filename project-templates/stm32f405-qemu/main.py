@@ -1,0 +1,1 @@
+print("PikaPython QEMU ready")

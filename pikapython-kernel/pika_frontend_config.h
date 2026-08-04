@@ -1,0 +1,147 @@
+/* SPEC: PJ2026-0501 V2 kernel v0.20; configurable frontend bounds. */
+#ifndef PIKA_FRONTEND_CONFIG_H
+#define PIKA_FRONTEND_CONFIG_H
+
+#ifndef PIKA_FRONTEND_SOURCE_BYTE_LIMIT
+#define PIKA_FRONTEND_SOURCE_BYTE_LIMIT 262144u
+#endif
+
+#ifndef PIKA_FRONTEND_TOKEN_LIMIT
+#define PIKA_FRONTEND_TOKEN_LIMIT 32768u
+#endif
+
+#ifndef PIKA_FRONTEND_TOKEN_BYTE_LIMIT
+#define PIKA_FRONTEND_TOKEN_BYTE_LIMIT 65535u
+#endif
+
+#ifndef PIKA_FRONTEND_MEMORY_PROBE_ENABLE
+#define PIKA_FRONTEND_MEMORY_PROBE_ENABLE 0
+#endif
+
+#ifndef PIKA_FRONTEND_IDENTIFIER_BYTE_LIMIT
+#define PIKA_FRONTEND_IDENTIFIER_BYTE_LIMIT 95u
+#endif
+
+#ifndef PIKA_FRONTEND_NUMERIC_LITERAL_BYTE_LIMIT
+#define PIKA_FRONTEND_NUMERIC_LITERAL_BYTE_LIMIT 96u
+#endif
+
+#ifndef PIKA_FRONTEND_LITERAL_BYTE_LIMIT
+#define PIKA_FRONTEND_LITERAL_BYTE_LIMIT 4096u
+#endif
+
+#ifndef PIKA_FRONTEND_PARAMETER_LIMIT
+#define PIKA_FRONTEND_PARAMETER_LIMIT 32u
+#endif
+
+#ifndef PIKA_FRONTEND_ARGUMENT_LIMIT
+#define PIKA_FRONTEND_ARGUMENT_LIMIT 32u
+#endif
+
+#ifndef PIKA_FRONTEND_COLLECTION_ELEMENT_LIMIT
+#define PIKA_FRONTEND_COLLECTION_ELEMENT_LIMIT 128u
+#endif
+
+#ifndef PIKA_FRONTEND_DYNAMIC_SEQUENCE_ELEMENT_RESERVE
+#define PIKA_FRONTEND_DYNAMIC_SEQUENCE_ELEMENT_RESERVE 16u
+#endif
+
+#ifndef PIKA_FRONTEND_SYMBOL_LIMIT
+#define PIKA_FRONTEND_SYMBOL_LIMIT 128u
+#endif
+
+#ifndef PIKA_FRONTEND_EXPRESSION_DEPTH_LIMIT
+#define PIKA_FRONTEND_EXPRESSION_DEPTH_LIMIT 64u
+#endif
+
+#ifndef PIKA_FRONTEND_BLOCK_DEPTH_LIMIT
+#define PIKA_FRONTEND_BLOCK_DEPTH_LIMIT 64u
+#endif
+
+#ifndef PIKA_FRONTEND_LOOP_LIMIT
+#define PIKA_FRONTEND_LOOP_LIMIT 16u
+#endif
+
+#ifndef PIKA_FRONTEND_CALL_DEPTH_LIMIT
+#define PIKA_FRONTEND_CALL_DEPTH_LIMIT 64u
+#endif
+
+#ifndef PIKA_FRONTEND_FUNCTION_INSTRUCTION_LIMIT
+#define PIKA_FRONTEND_FUNCTION_INSTRUCTION_LIMIT 4096u
+#endif
+
+#ifndef PIKA_FRONTEND_FUNCTION_LIMIT
+#define PIKA_FRONTEND_FUNCTION_LIMIT 32u
+#endif
+
+#ifndef PIKA_FRONTEND_CLASS_LIMIT
+#define PIKA_FRONTEND_CLASS_LIMIT 16u
+#endif
+
+#ifndef PIKA_FRONTEND_CLASS_MEMBER_LIMIT
+#define PIKA_FRONTEND_CLASS_MEMBER_LIMIT 32u
+#endif
+
+#ifndef PIKA_FRONTEND_FIELD_LIMIT
+#define PIKA_FRONTEND_FIELD_LIMIT 32u
+#endif
+
+#ifndef PIKA_FRONTEND_MODULE_LIMIT
+#define PIKA_FRONTEND_MODULE_LIMIT 32u
+#endif
+
+#ifndef PIKA_FRONTEND_EXCEPTION_HANDLER_LIMIT
+#define PIKA_FRONTEND_EXCEPTION_HANDLER_LIMIT 128u
+#endif
+
+#if PIKA_FRONTEND_SOURCE_BYTE_LIMIT == 0u ||                         \
+    PIKA_FRONTEND_TOKEN_LIMIT == 0u ||                               \
+    PIKA_FRONTEND_TOKEN_BYTE_LIMIT == 0u ||                          \
+    PIKA_FRONTEND_IDENTIFIER_BYTE_LIMIT == 0u ||                     \
+    PIKA_FRONTEND_NUMERIC_LITERAL_BYTE_LIMIT == 0u ||                \
+    PIKA_FRONTEND_LITERAL_BYTE_LIMIT == 0u ||                        \
+    PIKA_FRONTEND_PARAMETER_LIMIT == 0u ||                           \
+    PIKA_FRONTEND_ARGUMENT_LIMIT == 0u ||                            \
+    PIKA_FRONTEND_COLLECTION_ELEMENT_LIMIT == 0u ||                  \
+    PIKA_FRONTEND_DYNAMIC_SEQUENCE_ELEMENT_RESERVE == 0u ||          \
+    PIKA_FRONTEND_SYMBOL_LIMIT == 0u ||                              \
+    PIKA_FRONTEND_EXPRESSION_DEPTH_LIMIT == 0u ||                    \
+    PIKA_FRONTEND_BLOCK_DEPTH_LIMIT == 0u ||                         \
+    PIKA_FRONTEND_LOOP_LIMIT == 0u ||                                \
+    PIKA_FRONTEND_CALL_DEPTH_LIMIT == 0u ||                          \
+    PIKA_FRONTEND_FUNCTION_INSTRUCTION_LIMIT == 0u ||                \
+    PIKA_FRONTEND_FUNCTION_LIMIT == 0u ||                            \
+    PIKA_FRONTEND_CLASS_LIMIT == 0u ||                               \
+    PIKA_FRONTEND_CLASS_MEMBER_LIMIT == 0u ||                        \
+    PIKA_FRONTEND_FIELD_LIMIT == 0u ||                               \
+    PIKA_FRONTEND_MODULE_LIMIT == 0u ||                              \
+    PIKA_FRONTEND_EXCEPTION_HANDLER_LIMIT == 0u
+#error "frontend limits must be greater than zero"
+#endif
+
+#if PIKA_FRONTEND_MEMORY_PROBE_ENABLE != 0 && \
+    PIKA_FRONTEND_MEMORY_PROBE_ENABLE != 1
+#error "PIKA_FRONTEND_MEMORY_PROBE_ENABLE must be 0 or 1"
+#endif
+
+#if PIKA_FRONTEND_TOKEN_BYTE_LIMIT > 65535u
+#error "PIKA_FRONTEND_TOKEN_BYTE_LIMIT exceeds token storage range"
+#endif
+
+#if PIKA_FRONTEND_PARAMETER_LIMIT > 255u ||                           \
+    PIKA_FRONTEND_ARGUMENT_LIMIT > 254u ||                            \
+    PIKA_FRONTEND_COLLECTION_ELEMENT_LIMIT > 255u ||                 \
+    PIKA_FRONTEND_DYNAMIC_SEQUENCE_ELEMENT_RESERVE > 255u ||         \
+    PIKA_FRONTEND_SYMBOL_LIMIT > 255u ||                             \
+    PIKA_FRONTEND_LITERAL_BYTE_LIMIT > 65535u ||                      \
+    PIKA_FRONTEND_CALL_DEPTH_LIMIT > 65535u ||                        \
+    PIKA_FRONTEND_FUNCTION_LIMIT > 65534u ||                          \
+    PIKA_FRONTEND_CLASS_LIMIT > 65535u ||                             \
+    PIKA_FRONTEND_CLASS_MEMBER_LIMIT > 65535u ||                      \
+    PIKA_FRONTEND_FIELD_LIMIT > 65535u ||                             \
+    PIKA_FRONTEND_MODULE_LIMIT > 64u ||                              \
+    PIKA_FRONTEND_EXCEPTION_HANDLER_LIMIT > 65535u
+#error "frontend limits exceed the bytecode encoding range"
+#endif
+
+#endif

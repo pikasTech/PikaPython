@@ -1,0 +1,9 @@
+version: 1
+id: stm32f103ze-keil
+name: STM32F103ZE Keil
+architecture: arm-cortex-m3
+mcu: STM32F103ZE
+adapter: keil
+projectFile: firmware/MDK-ARM/pikapython.uvprojx
+targetName: PikaPython
+applicationFile: main.py
