@@ -1,0 +1,10 @@
+version: 1
+id: linux-struct
+name: Linux Struct Module
+architecture: x86
+adapter: cmake
+projectFile: CMakeLists.txt
+targetName: linux-console
+applicationFile: main.py
+runCommand: python3 tools/verify-cpython.py
+interactive: false

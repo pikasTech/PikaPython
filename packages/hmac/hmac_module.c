@@ -71,6 +71,29 @@ static PikaStatus hmac_bytes(
     return PIKA_STATUS_OK;
 }
 
+static PikaStatus hmac_compare_buffer(
+    const PikaBindingValue* value,
+    uint32_t limit,
+    PikaBindingBuffer* buffer) {
+    if (value == NULL || buffer == NULL) {
+        return PIKA_STATUS_INVALID_ARGUMENT;
+    }
+    if (value->kind == PIKA_BINDING_VALUE_STRING ||
+        value->kind == PIKA_BINDING_VALUE_BYTES) {
+        *buffer = value->as.buffer;
+    } else if (value->kind == PIKA_BINDING_VALUE_BYTEARRAY) {
+        buffer->data = value->as.mutable_buffer.data;
+        buffer->length = value->as.mutable_buffer.length;
+    } else {
+        return PIKA_STATUS_TYPE_MISMATCH;
+    }
+    if (buffer->length > limit) return PIKA_STATUS_STORAGE_TOO_SMALL;
+    if (buffer->length > 0u && buffer->data == NULL) {
+        return PIKA_STATUS_INVALID_ARGUMENT;
+    }
+    return PIKA_STATUS_OK;
+}
+
 static PikaStatus hmac_initialize(
     PikaHmacObject* object,
     PikaHashAlgorithm algorithm,
@@ -301,10 +324,10 @@ PikaStatus pika_binding__hmac_compare_digest(
         call->argument_count != 2u) {
         return PIKA_STATUS_INVALID_ARGUMENT;
     }
-    status = hmac_bytes(
+    status = hmac_compare_buffer(
         &call->arguments[0], PIKA_HMAC_INPUT_BYTE_LIMIT, &left);
     if (status == PIKA_STATUS_OK) {
-        status = hmac_bytes(
+        status = hmac_compare_buffer(
             &call->arguments[1], PIKA_HMAC_INPUT_BYTE_LIMIT, &right);
     }
     if (status != PIKA_STATUS_OK) return status;
