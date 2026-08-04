@@ -7,7 +7,10 @@ PikaPython v2 提供面向嵌入式设备的 Python 内核、模块包、项目�
 
 使用 PikaPython v2 创建项目、安装模块、配置 capability、生成 binding、构建模板或
 诊断 CLI 时，优先阅读并遵循 [`skills/pikapython-cli/SKILL.md`](skills/pikapython-cli/SKILL.md)。
-该 Skill 是 CLI 工作流、来源边界和失败处理的首要说明。
+
+使用 Codex、Claude Code 等 Code Agent 开发时，可以直接要求 Code Agent 读取并遵循
+该 Skill。Code Agent 应按照其中定义的标准工作流完成项目创建、依赖安装、配置、
+预构建、目标构建和问题诊断，并以其中的来源边界和失败处理规则为准。
 
 ## 第二入口：手动使用 CLI
 
