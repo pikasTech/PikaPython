@@ -98,6 +98,9 @@ PikaStatus pika_binding__aes_AES_init(
         }
     } else {
         PikaBindingBuffer iv;
+        if (call->arguments[2].kind == PIKA_BINDING_VALUE_NONE) {
+            return PIKA_STATUS_VALUE_ERROR;
+        }
         status = aes_bytes(&call->arguments[2], &iv);
         if (status != PIKA_STATUS_OK) return status;
         if (iv.length != 16u) return PIKA_STATUS_VALUE_ERROR;
@@ -124,7 +127,7 @@ static PikaStatus aes_transform(
     int decrypt) {
     PikaAesObject* object;
     PikaBindingBuffer input;
-    uint8_t vector[16];
+    uint8_t vector[16] = {0};
     uint32_t offset;
     PikaStatus status;
     if (call == NULL || result == NULL || call->arguments == NULL ||

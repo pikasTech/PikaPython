@@ -27,6 +27,9 @@ class socket:
         address = (accepted.peer_host(), accepted.peer_port())
         return (socket(native=accepted), address)
 
+    def getsockname(self):
+        return (self._native.local_host(), self._native.local_port())
+
     def connect(self, address):
         return self._native.connect(address[0], address[1])
 

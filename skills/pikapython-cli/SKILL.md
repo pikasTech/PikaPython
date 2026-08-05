@@ -27,7 +27,7 @@ python3 skills/pikapython-cli/scripts/pikapython-cli.py --help
 ## 标准工作流
 
 1. 在项目根创建或读取唯一的 `pikapython.yaml`；
-2. 使用 `config` 和 `add|remove` 明确写入 package、capability 和 target；
+2. 使用 `config` 和 `add|remove` 明确写入 package、capability、`bootEntry` 和 target；
 3. 执行 `install`，并核对 `.pikapython/install-manifest.json` 的 source、ref 和 commit；
 4. 执行 `build --prebuild-only` 检查生成阶段；
 5. 执行 `build` 调用 YAML 选中的 target adapter；
@@ -35,6 +35,7 @@ python3 skills/pikapython-cli/scripts/pikapython-cli.py --help
 
 ```bash
 pikapython-cli init
+pikapython-cli config set bootEntry main.py
 pikapython-cli config capability \
   --config-file .pikapython/source/config/pikapython-capabilities.yaml \
   --profile runtime-full

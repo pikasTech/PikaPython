@@ -1,4 +1,4 @@
-# SPEC: PJ2026-050110 PikaPython CLI v0.21; explicit product and development sources.
+# SPEC: PJ2026-050110 PikaPython CLI v0.25; configurable boot entry.
 import os
 import re
 import tempfile
@@ -20,6 +20,7 @@ TOP_LEVEL_FIELDS = {
     "version",
     "projectKind",
     "dependencies",
+    "bootEntry",
     "packages",
     "capability",
     "pythonModules",
@@ -59,6 +60,7 @@ def default_config():
     return {
         "version": 1,
         "dependencies": ["pikapython-kernel==2.0.0"],
+        "bootEntry": "main.py",
         "packages": {
             "sourceUrl": DEFAULT_PACKAGE_SOURCE,
             "ref": DEFAULT_PACKAGE_REF,
@@ -134,6 +136,16 @@ def _validate_capability(value):
         )
     _validate_relative_path(value["configFile"], "capability.configFile")
     _require_string(value["profile"], "capability.profile")
+
+
+def _validate_boot_entry(value):
+    text = _validate_relative_path(value, "bootEntry")
+    path = Path(text)
+    if path.parent != Path(".") or path.suffix != ".py":
+        raise PackageError(
+            "invalid_boot_entry",
+            "bootEntry must name a Python file in the project root",
+        )
 
 
 def _validate_python_modules(value):
@@ -315,7 +327,9 @@ def validate_config(value):
                 "external projects must not configure package dependencies",
             )
         unsupported = sorted(
-            set(value).intersection({"packages", "capability", "pythonModules"})
+            set(value).intersection(
+                {"bootEntry", "packages", "capability", "pythonModules"}
+            )
         )
         if unsupported:
             raise PackageError(
@@ -324,6 +338,8 @@ def validate_config(value):
             )
     if "packages" in value:
         _validate_packages(value["packages"])
+    if "bootEntry" in value:
+        _validate_boot_entry(value["bootEntry"])
     if "capability" in value:
         _validate_capability(value["capability"])
     if "pythonModules" in value:

@@ -19,6 +19,7 @@ packages:
 capability:
   configFile: .pikapython/source/config/pikapython-capabilities.yaml
   profile: runtime-full
+bootEntry: main.py
 targets:
   linux:
     adapter: cmake
@@ -76,6 +77,18 @@ pikapython-cli install
 
 - `add` 和 `remove` 只修改配置：
   - 修改后必须重新运行 `install`。
+
+## 启动入口
+
+- `bootEntry`：
+  - 选择 prebuild 映射为唯一 `__main__` 的项目根直属 Python 文件；
+  - 省略时默认使用 `main.py`；
+  - 使用 `pikapython-cli config set bootEntry <FILE.py>` 切换；
+  - 修改后只需重新 prebuild 和 build，不需要重新 install。
+- 同一个基础模板可以保留多个测试脚本：
+  - `dependencies` 表达当前模块组合；
+  - `bootEntry` 选择本次启动和验证的测试脚本；
+  - 未被选择且不可达的脚本不会进入 Program Image。
 - `install` 使用 Git archive 生成不可变快照：
   - 包文件按 `skills/pikapython-cli/assets/package-catalog.json` 发布；
   - 源快照保存为 `.pikapython/source`；

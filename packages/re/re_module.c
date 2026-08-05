@@ -16,9 +16,13 @@
 #define PIKA_RE_SUBJECT_BYTE_LIMIT 4096u
 #endif
 
-#define PIKA_RE_ASCII_FLAG 0x02000000
+#define PIKA_RE_ASCII_FLAG 256
+#define PIKA_RE_IGNORECASE_FLAG 2
+#define PIKA_RE_MULTILINE_FLAG 8
+#define PIKA_RE_DOTALL_FLAG 16
 #define PIKA_RE_PUBLIC_FLAGS \
-    (PIKA_RE_ASCII_FLAG | PCRE_CASELESS | PCRE_MULTILINE | PCRE_DOTALL)
+    (PIKA_RE_ASCII_FLAG | PIKA_RE_IGNORECASE_FLAG | \
+     PIKA_RE_MULTILINE_FLAG | PIKA_RE_DOTALL_FLAG)
 #define PIKA_RE_OVECTOR_SIZE 30
 
 typedef enum {
@@ -60,7 +64,16 @@ static PikaStatus compile_options(int64_t flags, int* options) {
     if (unsupported != 0) {
         return PIKA_STATUS_VALUE_ERROR;
     }
-    *options = (int)(flags & ~(int64_t)PIKA_RE_ASCII_FLAG);
+    *options = 0;
+    if ((flags & PIKA_RE_IGNORECASE_FLAG) != 0) {
+        *options |= PCRE_CASELESS;
+    }
+    if ((flags & PIKA_RE_MULTILINE_FLAG) != 0) {
+        *options |= PCRE_MULTILINE;
+    }
+    if ((flags & PIKA_RE_DOTALL_FLAG) != 0) {
+        *options |= PCRE_DOTALL;
+    }
     if ((flags & PIKA_RE_ASCII_FLAG) == 0) {
         *options |= PCRE_UTF8;
     }

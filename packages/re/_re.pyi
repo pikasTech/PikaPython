@@ -1,14 +1,14 @@
 from typing import Any
 
 
-A: int = 33554432
-ASCII: int = 33554432
-I: int = 1
-IGNORECASE: int = 1
-M: int = 2
-MULTILINE: int = 2
-S: int = 4
-DOTALL: int = 4
+A: int = 256
+ASCII: int = 256
+I: int = 2
+IGNORECASE: int = 2
+M: int = 8
+MULTILINE: int = 8
+S: int = 16
+DOTALL: int = 16
 
 
 def match(pattern: str, subject: str, flags: int = 0) -> Any: ...

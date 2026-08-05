@@ -1,4 +1,4 @@
-# SPEC: PJ2026-050110 PikaPython CLI v0.13; deterministic module images.
+# SPEC: PJ2026-050110 PikaPython CLI v0.25; configurable boot entry.
 import ast
 import hashlib
 import json
@@ -278,11 +278,12 @@ def _python_imports(name, path, data):
 
 
 def _python_modules(project, install, config):
-    main = project / "main.py"
-    if not main.is_file():
+    boot_name = config.get("bootEntry", "main.py")
+    boot_entry = project / boot_name
+    if not boot_entry.is_file():
         raise PackageError(
-            "main_module_missing",
-            "project root main.py is required for application prebuild",
+            "boot_entry_missing",
+            "configured bootEntry is missing: %s" % boot_name,
             stage="prebuild",
         )
     installed_names = {
@@ -291,15 +292,15 @@ def _python_modules(project, install, config):
         if "/" not in path and path.endswith(".py")
     }
     paths = sorted(project.glob("*.py"), key=lambda item: item.name)
-    if main not in paths:
-        paths.append(main)
+    if boot_entry not in paths:
+        paths.append(boot_entry)
     discovered = []
     modules = []
     names = set()
     sources = {}
     source_paths = {}
     for path in sorted(paths, key=lambda item: item.name):
-        name = "__main__" if path.name == "main.py" else path.stem
+        name = "__main__" if path == boot_entry else path.stem
         if name in names:
             raise PackageError(
                 "module_name_conflict",
@@ -313,7 +314,7 @@ def _python_modules(project, install, config):
         source_paths[name] = path
         modules.append({
             "name": name,
-            "path": path.name,
+            "path": path.relative_to(project).as_posix(),
             "sha256": hashlib.sha256(data).hexdigest(),
         })
     policy = config.get("pythonModules")

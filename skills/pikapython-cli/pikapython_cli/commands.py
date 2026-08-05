@@ -1,4 +1,4 @@
-# SPEC: PJ2026-050110 PikaPython CLI v0.21; visible default product source.
+# SPEC: PJ2026-050110 PikaPython CLI v0.25; visible default boot entry.
 from copy import deepcopy
 
 from . import builder
@@ -19,6 +19,7 @@ def initialize_project():
     return {
         "config": "pikapython.yaml",
         "dependencies": value["dependencies"],
+        "bootEntry": value["bootEntry"],
         "packages": deepcopy(value["packages"]),
     }
 
@@ -108,6 +109,7 @@ def validate_project_config():
 
 def set_config(key, value_text):
     if key not in {
+        "bootEntry",
         "projectKind",
         "packages.sourceUrl",
         "packages.ref",
@@ -115,13 +117,13 @@ def set_config(key, value_text):
         raise PackageError(
             "unsupported_config_key",
             "unsupported config key: %s" % key,
-            "Use projectKind, packages.sourceUrl or packages.ref.",
+            "Use bootEntry, projectKind, packages.sourceUrl or packages.ref.",
         )
     if not value_text:
         raise PackageError("invalid_config", "%s must not be empty" % key)
     with config_lock():
         value = load_config()
-        if key == "projectKind":
+        if key in {"bootEntry", "projectKind"}:
             value[key] = value_text
         else:
             field = key.split(".", 1)[1]

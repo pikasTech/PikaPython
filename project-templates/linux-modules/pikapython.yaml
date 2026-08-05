@@ -1,0 +1,29 @@
+version: 1
+dependencies:
+- pikapython-kernel==2.0.0
+- pikapython-time==1.0.0
+- pikapython-re==1.0.0
+- pikapython-socket==1.0.0
+- pikapython-aes==1.0.0
+- pikapython-fuzzypid==1.0.0
+bootEntry: main.py
+packages:
+  sourceUrl: https://github.com/pikasTech/PikaPython.git
+  ref: v2
+capability:
+  configFile: .pikapython/source/config/pikapython-capabilities.yaml
+  profile: runtime-full
+pythonModules:
+  format: program
+  include:
+  - "*"
+targets:
+  linux:
+    adapter: cmake
+    projectFile: CMakeLists.txt
+    targetName: linux-console
+    buildDirectory: .pikapython/build/linux
+    arguments:
+    - -DCMAKE_BUILD_TYPE=Release
+    - -DPIKA_LINUX_32BIT=ON
+defaultTarget: linux

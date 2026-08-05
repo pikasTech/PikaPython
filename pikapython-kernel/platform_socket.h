@@ -92,6 +92,10 @@ PikaSocketStatus pika_platform_socket_resolve_ipv4(
 PikaSocketStatus pika_platform_socket_local_port(
     PikaPlatformSocket* socket,
     uint16_t* port);
+PikaSocketStatus pika_platform_socket_local_host(
+    PikaPlatformSocket* socket,
+    char* host,
+    uint32_t host_capacity);
 
 #ifdef __cplusplus
 }

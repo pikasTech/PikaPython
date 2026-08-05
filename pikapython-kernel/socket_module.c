@@ -342,6 +342,41 @@ PikaStatus pika_binding__socket_Socket_peer_port(
     return PIKA_STATUS_OK;
 }
 
+PikaStatus pika_binding__socket_Socket_local_port(
+    const PikaBindingCall* call,
+    PikaBindingValue* result) {
+    PikaSocketObject* object;
+    uint16_t port;
+    PikaStatus status = validate_call(call, result, 0u);
+    if (status == PIKA_STATUS_OK) status = require_socket(call, &object);
+    if (status == PIKA_STATUS_OK) {
+        status = socket_status(
+            pika_platform_socket_local_port(&object->endpoint, &port));
+    }
+    if (status != PIKA_STATUS_OK) return status;
+    result->kind = PIKA_BINDING_VALUE_INTEGER;
+    result->as.integer = port;
+    return PIKA_STATUS_OK;
+}
+
+PikaStatus pika_binding__socket_Socket_local_host(
+    const PikaBindingCall* call,
+    PikaBindingValue* result) {
+    PikaSocketObject* object;
+    PikaStatus status = validate_call(call, result, 0u);
+    if (status == PIKA_STATUS_OK) status = require_socket(call, &object);
+    if (status == PIKA_STATUS_OK) {
+        status = socket_status(pika_platform_socket_local_host(
+            &object->endpoint, socket_address_buffer,
+            (uint32_t)sizeof(socket_address_buffer)));
+    }
+    if (status != PIKA_STATUS_OK) return status;
+    result->kind = PIKA_BINDING_VALUE_STRING;
+    result->as.buffer.data = (const uint8_t*)socket_address_buffer;
+    result->as.buffer.length = (uint32_t)strlen(socket_address_buffer);
+    return PIKA_STATUS_OK;
+}
+
 PikaStatus pika_binding__socket_Socket_connect(
     const PikaBindingCall* call,
     PikaBindingValue* result) {

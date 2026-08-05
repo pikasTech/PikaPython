@@ -402,6 +402,31 @@ PikaSocketStatus pika_platform_socket_local_port(
     return PIKA_SOCKET_OK;
 }
 
+PikaSocketStatus pika_platform_socket_local_host(
+    PikaPlatformSocket* socket,
+    char* host,
+    uint32_t host_capacity) {
+    struct sockaddr_in address;
+    socklen_t length = (socklen_t)sizeof(address);
+    if (!socket_is_open(socket)) {
+        return PIKA_SOCKET_CLOSED;
+    }
+    if (host == NULL || host_capacity < PIKA_SOCKET_ADDRESS_BYTE_LIMIT) {
+        return PIKA_SOCKET_INVALID_ARGUMENT;
+    }
+    if (getsockname(
+            socket->handle, (struct sockaddr*)&address, &length) != 0 ||
+        length < (socklen_t)sizeof(address) ||
+        address.sin_family != AF_INET) {
+        return PIKA_SOCKET_IO_ERROR;
+    }
+    return inet_ntop(
+               AF_INET, &address.sin_addr, host,
+               (socklen_t)host_capacity) != NULL
+               ? PIKA_SOCKET_OK
+               : PIKA_SOCKET_IO_ERROR;
+}
+
 #elif defined(_WIN32)
 
 #include <limits.h>
@@ -778,6 +803,31 @@ PikaSocketStatus pika_platform_socket_local_port(
     }
     *port = ntohs(address.sin_port);
     return PIKA_SOCKET_OK;
+}
+
+PikaSocketStatus pika_platform_socket_local_host(
+    PikaPlatformSocket* socket,
+    char* host,
+    uint32_t host_capacity) {
+    struct sockaddr_in address;
+    int length = (int)sizeof(address);
+    if (!socket_is_open(socket)) {
+        return PIKA_SOCKET_CLOSED;
+    }
+    if (host == NULL || host_capacity < PIKA_SOCKET_ADDRESS_BYTE_LIMIT) {
+        return PIKA_SOCKET_INVALID_ARGUMENT;
+    }
+    if (getsockname(
+            (SOCKET)socket->handle,
+            (struct sockaddr*)&address, &length) != 0 ||
+        length < (int)sizeof(address) ||
+        address.sin_family != AF_INET) {
+        return PIKA_SOCKET_IO_ERROR;
+    }
+    return InetNtopA(
+               AF_INET, &address.sin_addr, host, host_capacity) != NULL
+               ? PIKA_SOCKET_OK
+               : PIKA_SOCKET_IO_ERROR;
 }
 
 #else
