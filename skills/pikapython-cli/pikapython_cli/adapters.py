@@ -1,5 +1,6 @@
 import shutil
 import subprocess
+import sys
 
 from .errors import PackageError
 from . import keil_adapter
@@ -82,6 +83,7 @@ def build_cmake(project, descriptor, generated, source):
         "source": source,
         "generated": generated,
         "build": build_directory,
+        "python": sys.executable,
     }
     arguments = [
         _expand_argument(item, paths)

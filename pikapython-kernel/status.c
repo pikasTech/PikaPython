@@ -97,6 +97,8 @@ const char* pika_status_name(PikaStatus status) {
             return "PIKA_SOCKET_OBJECT_LIMIT";
         case PIKA_STATUS_OVERFLOW_ERROR:
             return "overflow_error";
+        case PIKA_STATUS_ASSERTION_ERROR:
+            return "assertion_error";
         default:
             return "unknown_status";
     }
@@ -104,7 +106,7 @@ const char* pika_status_name(PikaStatus status) {
 
 int pika_status_is_known(PikaStatus status) {
     return (unsigned int)status <=
-           (unsigned int)PIKA_STATUS_OVERFLOW_ERROR;
+           (unsigned int)PIKA_STATUS_ASSERTION_ERROR;
 }
 
 int pika_status_can_raise(PikaStatus status) {
@@ -123,7 +125,8 @@ int pika_status_can_raise(PikaStatus status) {
            status == PIKA_STATUS_SOCKET_RECEIVE_BYTE_LIMIT ||
            status == PIKA_STATUS_SOCKET_HOST_BYTE_LIMIT ||
            status == PIKA_STATUS_SOCKET_OBJECT_LIMIT ||
-           status == PIKA_STATUS_OVERFLOW_ERROR;
+           status == PIKA_STATUS_OVERFLOW_ERROR ||
+           status == PIKA_STATUS_ASSERTION_ERROR;
 }
 
 PikaExceptionKind pika_status_exception_kind(PikaStatus status) {
@@ -148,6 +151,8 @@ PikaExceptionKind pika_status_exception_kind(PikaStatus status) {
             return PIKA_EXCEPTION_ZERO_DIVISION_ERROR;
         case PIKA_STATUS_OVERFLOW_ERROR:
             return PIKA_EXCEPTION_OVERFLOW_ERROR;
+        case PIKA_STATUS_ASSERTION_ERROR:
+            return PIKA_EXCEPTION_ASSERTION_ERROR;
         case PIKA_STATUS_OS_ERROR:
         case PIKA_STATUS_IO_ERROR:
         case PIKA_STATUS_OUTPUT_ERROR:
@@ -180,6 +185,8 @@ const char* pika_status_exception_name(PikaStatus status) {
             return "OSError";
         case PIKA_EXCEPTION_OVERFLOW_ERROR:
             return "OverflowError";
+        case PIKA_EXCEPTION_ASSERTION_ERROR:
+            return "AssertionError";
         case PIKA_EXCEPTION_EXCEPTION:
         case PIKA_EXCEPTION_ANY:
         case PIKA_EXCEPTION_NONE:

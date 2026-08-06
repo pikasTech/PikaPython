@@ -5,6 +5,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 from .errors import PackageError
@@ -26,14 +27,21 @@ def read_json(path, code):
 
 
 def _run_tool(command, cwd, code, preserve_json_error=False):
-    result = subprocess.run(
-        command,
-        cwd=cwd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        check=False,
-    )
+    try:
+        result = subprocess.run(
+            command,
+            cwd=cwd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+        )
+    except OSError as error:
+        raise PackageError(
+            code,
+            "cannot start prebuild tool: %s" % error,
+            stage="prebuild",
+        ) from error
     if result.returncode != 0:
         if preserve_json_error:
             try:
@@ -131,7 +139,7 @@ def _generate_capability(stage, project, source, config):
     output = stage.parent / "capability"
     _run_tool(
         [
-            "python3",
+            sys.executable,
             str(tool),
             "--config",
             str(config_file),
@@ -178,7 +186,7 @@ def _generate_bindings(stage, source, install, capabilities):
             )
         output = stage.parent / ("binding-" + module)
         command = [
-            "python3",
+            sys.executable,
             str(tool),
             "prebuild",
             "--module",
@@ -925,6 +933,7 @@ def _generate_python_data(
             "path": filename,
             "sha256": hashlib.sha256(data).hexdigest(),
         })
+        public_names.add(name)
         selected_names.add(name)
     sources.sort(key=lambda item: item[0])
     modules.sort(key=lambda item: item["name"])

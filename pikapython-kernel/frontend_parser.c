@@ -613,6 +613,28 @@ static int token_matches_stable(
         parser, token, token_at(parser, name_position));
 }
 
+static int token_matches_method_stable(
+    const PikaParser* parser,
+    const PikaToken* token,
+    const char* stable_name,
+    uint16_t stable_length,
+    uint32_t name_position) {
+    if (stable_name == NULL) {
+        return tokens_text_equal(
+            parser, token, token_at(parser, name_position));
+    }
+    if (token->length == stable_length &&
+        memcmp(&parser->source[token->offset], stable_name,
+               token->length) == 0) {
+        return 1;
+    }
+    return stable_length > token->length &&
+           stable_name[stable_length - token->length - 1u] == '_' &&
+           memcmp(
+               &stable_name[stable_length - token->length],
+               &parser->source[token->offset], token->length) == 0;
+}
+
 static int semantic_name_valid(const PikaCompiledModule* module,
                                uint32_t offset,
                                uint16_t length) {
@@ -1315,6 +1337,30 @@ static const PikaClassDeclaration* find_class(
                 declaration->name_position)) {
             return declaration;
         }
+        if (name->length > 4u &&
+            (unsigned char)parser->source[name->offset] == 95u &&
+            (unsigned char)parser->source[name->offset + 1u] == 95u &&
+            (unsigned char)parser->source[name->offset + 2u] == 112u) {
+            uint32_t prefix = 3u;
+            while (prefix < name->length &&
+                   (unsigned char)parser->source[name->offset + prefix] >= 48u &&
+                   (unsigned char)parser->source[name->offset + prefix] <= 57u) {
+                ++prefix;
+            }
+            if (prefix < name->length &&
+                (unsigned char)parser->source[name->offset + prefix] == 95u) {
+                PikaToken original = *name;
+                ++prefix;
+                original.offset += prefix;
+                original.length = (uint16_t)(name->length - prefix);
+                if (token_matches_stable(
+                        parser, &original, declaration->stable_name,
+                        declaration->stable_name_length,
+                        declaration->name_position)) {
+                    return declaration;
+                }
+            }
+        }
     }
     return NULL;
 }
@@ -1370,7 +1416,7 @@ static const PikaFunctionDeclaration* find_method(
             const PikaFunctionDeclaration* declaration =
                 &parser->declarations[index];
             if (declaration->owner_class == class_index &&
-                token_matches_stable(
+                token_matches_method_stable(
                     parser, name, declaration->stable_name,
                     declaration->stable_name_length,
                     declaration->name_position)) {
@@ -1393,7 +1439,7 @@ static const PikaFunctionDeclaration* find_unambiguous_method(
         const PikaFunctionDeclaration* declaration =
             &parser->declarations[index];
         if (declaration->owner_class == UINT16_MAX ||
-            !token_matches_stable(
+            !token_matches_method_stable(
                 parser, name, declaration->stable_name,
                 declaration->stable_name_length,
                 declaration->name_position)) {
@@ -1420,7 +1466,43 @@ static uint32_t find_method_candidates(
         const PikaFunctionDeclaration* declaration =
             &parser->declarations[index];
         if (declaration->owner_class == UINT16_MAX ||
-            !token_matches_stable(
+            !token_matches_method_stable(
+                parser, name, declaration->stable_name,
+                declaration->stable_name_length,
+                declaration->name_position)) {
+            continue;
+        }
+        if (count < capacity) candidates[count] = declaration;
+        ++count;
+    }
+    return count;
+}
+
+static int class_is_descendant(const PikaParser* parser,
+                               uint16_t class_index,
+                               uint16_t base_class) {
+    while (class_index != UINT16_MAX) {
+        if (class_index == base_class) return 1;
+        class_index = parser->classes[class_index].base_class;
+    }
+    return 0;
+}
+
+static uint32_t find_inherited_method_candidates(
+    const PikaParser* parser,
+    uint16_t class_index,
+    const PikaToken* name,
+    const PikaFunctionDeclaration** candidates,
+    uint32_t capacity) {
+    uint32_t count = 0u;
+    uint32_t index;
+    for (index = 0u; index < parser->declaration_count; ++index) {
+        const PikaFunctionDeclaration* declaration =
+            &parser->declarations[index];
+        if (declaration->owner_class == UINT16_MAX ||
+            !class_is_descendant(
+                parser, declaration->owner_class, class_index) ||
+            !token_matches_method_stable(
                 parser, name, declaration->stable_name,
                 declaration->stable_name_length,
                 declaration->name_position)) {
@@ -3241,6 +3323,10 @@ static int exception_for_token(
                    parser, token, "OverflowError", 13u)) {
         *kind = PIKA_EXCEPTION_OVERFLOW_ERROR;
         *status = PIKA_STATUS_OVERFLOW_ERROR;
+    } else if (token_matches_text(
+                   parser, token, "AssertionError", 14u)) {
+        *kind = PIKA_EXCEPTION_ASSERTION_ERROR;
+        *status = PIKA_STATUS_ASSERTION_ERROR;
     } else if (token_matches_text(parser, token, "OSError", 7u)) {
         *kind = PIKA_EXCEPTION_OS_ERROR;
         *status = PIKA_STATUS_OS_ERROR;
@@ -4215,15 +4301,21 @@ static PikaStatus discover_class(PikaParser* parser) {
         const PikaToken* base_name = current_token(parser);
         const PikaClassDeclaration* base;
         status = require(parser, PIKA_TOKEN_NAME);
+        while (status == PIKA_STATUS_OK && match(parser, PIKA_TOKEN_DOT)) {
+            base_name = current_token(parser);
+            status = require(parser, PIKA_TOKEN_NAME);
+        }
+        if (status == PIKA_STATUS_OK) {
+            base = find_class(parser, base_name);
+            if (base == NULL) {
+                return fail_at(parser, PIKA_STATUS_UNDEFINED_NAME, base_name);
+            }
+            base_class = base->class_index;
+        }
         if (status == PIKA_STATUS_OK) {
             status = require(parser, PIKA_TOKEN_RIGHT_PAREN);
         }
         if (status != PIKA_STATUS_OK) return status;
-        base = find_class(parser, base_name);
-        if (base == NULL) {
-            return fail_at(parser, PIKA_STATUS_UNDEFINED_NAME, base_name);
-        }
-        base_class = base->class_index;
     }
     status = require(parser, PIKA_TOKEN_COLON);
     if (status == PIKA_STATUS_OK) status = require(parser, PIKA_TOKEN_NEWLINE);

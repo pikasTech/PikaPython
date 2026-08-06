@@ -123,7 +123,16 @@ def set_config(key, value_text):
         raise PackageError("invalid_config", "%s must not be empty" % key)
     with config_lock():
         value = load_config()
-        if key in {"bootEntry", "projectKind"}:
+        if key == "projectKind" and value_text == "external":
+            value[key] = value_text
+            for field in (
+                "bootEntry",
+                "packages",
+                "capability",
+                "pythonModules",
+            ):
+                value.pop(field, None)
+        elif key in {"bootEntry", "projectKind"}:
             value[key] = value_text
         else:
             field = key.split(".", 1)[1]

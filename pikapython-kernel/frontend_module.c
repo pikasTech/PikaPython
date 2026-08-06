@@ -2105,7 +2105,7 @@ PikaStatus pika_module_compile(const char* source,
                                PikaCompiledModule** module,
                                PikaDiagnostic* diagnostic) {
     const PikaFrontendConfig config = {
-        PIKA_CAPABILITY_DEFAULT,
+        PIKA_CAPABILITY_APPLICATION_DEFAULT,
         NULL,
     };
     return pika_module_compile_configured(

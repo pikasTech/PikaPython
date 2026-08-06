@@ -1088,6 +1088,8 @@ static PikaReplResult repl_emit_runtime_error(
         exception_name = "ValueError";
     } else if (status == PIKA_STATUS_OVERFLOW_ERROR) {
         exception_name = "OverflowError";
+    } else if (status == PIKA_STATUS_ASSERTION_ERROR) {
+        exception_name = "AssertionError";
     } else if (status == PIKA_STATUS_OS_ERROR ||
                status == PIKA_STATUS_IO_ERROR) {
         exception_name = "OSError";

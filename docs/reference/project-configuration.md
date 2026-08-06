@@ -160,6 +160,10 @@ profile 是能力根集合，不是 target，也不等同于线性兼容等级�
   - `{source}`；
   - `{generated}`；
   - `{build}`。
+  - `{python}`：当前 `pikapython-cli` 使用的 Python 解释器。
+- CMake 工程包含依赖 CLI Python 包的 host 测试时：
+  - 显式传入 `-DPython3_EXECUTABLE={python}`；
+  - 保证 configure、prebuild 与 CTest 使用同一解释器和依赖环境。
 - Keil `arguments`：
   - 原样追加到 UV4 build 命令；
   - adapter 不读取或改写工程的 C 语言标准。

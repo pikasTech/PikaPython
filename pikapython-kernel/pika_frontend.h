@@ -412,6 +412,7 @@ typedef uint64_t PikaCapability;
      (PIKA_CAPABILITY_DEFAULT | PIKA_CAPABILITY_NAME_GLOBAL |         \
       PIKA_CAPABILITY_MODULE_IMPORT |                                 \
       PIKA_CAPABILITY_OBJECT_ATTRIBUTE |                              \
+      PIKA_CAPABILITY_OBJECT_CLASS |                                  \
       PIKA_CAPABILITY_PYTHON_MODULE | PIKA_CAPABILITY_FROM_IMPORT |   \
       PIKA_CAPABILITY_GLOBAL_STATEMENT))
 

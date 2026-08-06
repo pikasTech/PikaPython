@@ -13,9 +13,24 @@ class Derived(Counter):
         return self.value
 
 
+class Bucket:
+    def __init__(self):
+        self.values = []
+
+    def add(self, value):
+        self.values.append(value)
+
+    def take(self):
+        return self.values.pop()
+
+
 counter = Derived(3)
 print(counter.value)
 print(counter.add(4))
 print(counter.double())
+bucket = Bucket()
+bucket.add(11)
+bucket.add(22)
+print(bucket.take())
 counter.value = 5
 print(counter.double())

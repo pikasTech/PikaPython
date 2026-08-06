@@ -26,7 +26,7 @@ SOURCE_GROUPS = (
     "host-prebuild",
     "network",
 )
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[4]
 MANIFEST = Path(__file__).with_name("source-manifest.json")
 
 

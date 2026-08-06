@@ -8,7 +8,7 @@
 #if PIKA_CAPABILITY_PROTOCOL_TEXT_NETWORK_ENABLE
 
 static const char text_method_names[] =
-    "encode\0decode\0find\0split\0startswith\0lower";
+    "encode\0decode\0find\0split\0startswith\0lower\0endswith";
 
 static const PikaTextMethodDescriptor text_methods[] = {
     {0u, 1u, 2u},
@@ -17,6 +17,7 @@ static const PikaTextMethodDescriptor text_methods[] = {
     {19u, 1u, 3u},
     {25u, 2u, 2u},
     {36u, 1u, 1u},
+    {42u, 2u, 2u},
 };
 
 static uint16_t method_offset(uint16_t method_id) {
@@ -27,7 +28,7 @@ const PikaTextMethodDescriptor* pika_text_method_descriptor(
     uint16_t method_id) {
     uint16_t offset;
     if (method_id < PIKA_TEXT_METHOD_ENCODE ||
-        method_id > PIKA_TEXT_METHOD_LOWER) {
+        method_id > PIKA_TEXT_METHOD_ENDSWITH) {
         return NULL;
     }
     offset = method_offset(method_id);
@@ -430,6 +431,34 @@ static PikaStatus text_startswith(
     return PIKA_STATUS_OK;
 }
 
+static PikaStatus text_endswith(
+    PikaRuntimeContext* context,
+    const PikaRuntimeValue* arguments,
+    PikaRuntimeValue* result) {
+    const unsigned char* text;
+    const unsigned char* suffix;
+    uint32_t text_length;
+    uint32_t suffix_length;
+    PikaStatus status;
+    if (arguments[0].kind != arguments[1].kind) {
+        return PIKA_STATUS_TYPE_MISMATCH;
+    }
+    status = text_view(context, arguments[0], &text, &text_length);
+    if (status == PIKA_STATUS_OK) {
+        status = text_view(context, arguments[1], &suffix, &suffix_length);
+    }
+    if (status != PIKA_STATUS_OK) return status;
+    memset(result, 0, sizeof(*result));
+    result->kind = PIKA_RUNTIME_VALUE_BOOLEAN;
+    result->as.integer =
+        suffix_length <= text_length &&
+        (suffix_length == 0u ||
+         memcmp(
+             &text[text_length - suffix_length],
+             suffix, suffix_length) == 0);
+    return PIKA_STATUS_OK;
+}
+
 static PikaStatus text_lower(
     PikaRuntimeContext* context,
     PikaRuntimeValue value,
@@ -521,6 +550,9 @@ PikaStatus pika_runtime_execute_text_method(
             break;
         case PIKA_TEXT_METHOD_LOWER:
             status = text_lower(context, arguments[0], result);
+            break;
+        case PIKA_TEXT_METHOD_ENDSWITH:
+            status = text_endswith(context, arguments, result);
             break;
         default:
             status = PIKA_STATUS_UNSUPPORTED_SYNTAX;

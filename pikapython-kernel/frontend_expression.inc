@@ -645,7 +645,10 @@ static PikaValueKind text_method_result_kind(
     }
     if (method_id == PIKA_TEXT_METHOD_FIND) return PIKA_VALUE_INTEGER;
     if (method_id == PIKA_TEXT_METHOD_SPLIT) return PIKA_VALUE_LIST;
-    if (method_id == PIKA_TEXT_METHOD_STARTSWITH) return PIKA_VALUE_BOOLEAN;
+    if (method_id == PIKA_TEXT_METHOD_STARTSWITH ||
+        method_id == PIKA_TEXT_METHOD_ENDSWITH) {
+        return PIKA_VALUE_BOOLEAN;
+    }
     return PIKA_VALUE_UNKNOWN;
 }
 
@@ -806,6 +809,19 @@ static PikaStatus parse_instance_member_access(
             return fail_at(
                 parser, PIKA_STATUS_MEMBER_NOT_FOUND, member);
         }
+        {
+            const PikaFunctionDeclaration* candidates[
+                PIKA_FRONTEND_CLASS_LIMIT];
+            uint32_t candidate_count = find_inherited_method_candidates(
+                parser, receiver->class_index, member, candidates,
+                PIKA_FRONTEND_CLASS_LIMIT);
+            if (candidate_count > 1u &&
+                candidate_count <= PIKA_FRONTEND_CLASS_LIMIT) {
+                return parse_dynamic_user_method_call(
+                    parser, receiver, candidates, candidate_count,
+                    expression);
+            }
+        }
         return parse_user_method_call(
             parser, receiver, method, expression);
     }
@@ -912,6 +928,22 @@ static PikaStatus find_unambiguous_binding_method(
 }
 #endif
 
+#if PIKA_CAPABILITY_PROTOCOL_TEXT_NETWORK_ENABLE
+static int token_names_text_method(
+    PikaParser* parser,
+    const PikaToken* member) {
+    char member_name[PIKA_FRONTEND_IDENTIFIER_BYTE_LIMIT + 1u];
+    uint16_t method_id;
+    if (copy_token_text(
+            parser, member, member_name,
+            (uint32_t)sizeof(member_name)) != PIKA_STATUS_OK) {
+        return 0;
+    }
+    return pika_text_method_find(member_name, &method_id) ==
+           PIKA_STATUS_OK;
+}
+#endif
+
 static PikaStatus parse_field_member_chain(
     PikaParser* parser,
     PikaExpression* expression) {
@@ -960,9 +992,100 @@ static PikaStatus parse_field_member_chain(
                 parser, expression, member, member_name, &result);
         }
 #endif
-        else if (expression->kind == PIKA_VALUE_UNKNOWN &&
+#if PIKA_CAPABILITY_PROTOCOL_TEXT_NETWORK_ENABLE
+        else if ((expression->kind == PIKA_VALUE_STRING ||
+                  expression->kind == PIKA_VALUE_BYTES ||
+                  (expression->kind == PIKA_VALUE_UNKNOWN &&
+                   token_names_text_method(parser, member))) &&
                  token_at(parser, parser->position + 2u)->kind ==
                      PIKA_TOKEN_LEFT_PAREN) {
+            uint16_t method_id;
+            char member_name[
+                PIKA_FRONTEND_IDENTIFIER_BYTE_LIMIT + 1u];
+            status = copy_token_text(
+                parser, member, member_name, sizeof(member_name));
+            if (status == PIKA_STATUS_OK) {
+                status = pika_text_method_find(
+                    member_name, &method_id);
+            }
+            if (status == PIKA_STATUS_OK) {
+                parser->position += 2u;
+                status = parse_text_method_call(
+                    parser, expression, member, method_id, &result);
+            } else if (expression->kind != PIKA_VALUE_UNKNOWN) {
+                return fail_at(
+                    parser, PIKA_STATUS_MEMBER_NOT_FOUND, member);
+            } else {
+                status = PIKA_STATUS_OK;
+            }
+        }
+#endif
+        else if ((expression->kind == PIKA_VALUE_LIST ||
+                  expression->kind == PIKA_VALUE_DICT ||
+                  expression->kind == PIKA_VALUE_BYTES ||
+                  expression->kind == PIKA_VALUE_BYTEARRAY ||
+                  expression->kind == PIKA_VALUE_NONE ||
+                  expression->kind == PIKA_VALUE_UNKNOWN) &&
+                 token_at(parser, parser->position + 2u)->kind ==
+                     PIKA_TOKEN_LEFT_PAREN) {
+#if PIKA_CONTAINER_RUNTIME_ENABLE
+            if (token_matches_text(parser, member, "append", 6u) ||
+                token_matches_text(parser, member, "pop", 3u)) {
+                PikaExpression arguments[2];
+                uint32_t count = 0u;
+                uint8_t argument_slot = UINT8_MAX;
+                int32_t default_slot = -1;
+                status = require_capability_at(
+                    parser, PIKA_CAPABILITY_VALUE_CONTAINER, member);
+                if (status != PIKA_STATUS_OK) return status;
+                parser->position += 2u;
+                status = parse_argument_list(
+                    parser, arguments, &count);
+                if (status != PIKA_STATUS_OK) return status;
+                if (token_matches_text(parser, member, "append", 6u)) {
+                    if (count != 1u) {
+                        return fail_at(
+                            parser, PIKA_STATUS_ARGUMENT_COUNT, member);
+                    }
+                    argument_slot = arguments[0].slot;
+                    status = allocate_slot(parser, &result.slot);
+                    if (status != PIKA_STATUS_OK) return status;
+                    set_expression_kind(&result, PIKA_VALUE_NONE);
+                    mark_typed(parser);
+                    status = emit_instruction(
+                        parser, PIKA_OP_APPEND, result.slot,
+                        expression->slot, argument_slot, 0, NULL);
+                } else {
+                    if (count > 2u ||
+                        (expression->kind != PIKA_VALUE_DICT &&
+                         count > 1u) ||
+                        (expression->kind == PIKA_VALUE_DICT &&
+                         count == 0u)) {
+                        return fail_at(
+                            parser, PIKA_STATUS_ARGUMENT_COUNT, member);
+                    }
+                    if (count > 0u) argument_slot = arguments[0].slot;
+                    status = allocate_slot(parser, &result.slot);
+                    if (status != PIKA_STATUS_OK) return status;
+                    set_expression_kind(&result, PIKA_VALUE_UNKNOWN);
+                    mark_typed(parser);
+                    status = emit_instruction(
+                        parser, PIKA_OP_POP, result.slot,
+                        expression->slot, argument_slot, default_slot,
+                        NULL);
+                }
+                if (status != PIKA_STATUS_OK) return status;
+                *expression = result;
+                continue;
+            }
+#endif
+            if (expression->kind != PIKA_VALUE_NONE &&
+                expression->kind != PIKA_VALUE_UNKNOWN &&
+                !(expression->kind == PIKA_VALUE_INSTANCE &&
+                  expression->class_index == UINT16_MAX)) {
+                return fail_at(
+                    parser, PIKA_STATUS_MEMBER_NOT_FOUND, member);
+            }
 #if PIKA_CAPABILITY_OBJECT_ATTRIBUTE_ENABLE
             const PikaFunctionDeclaration* method;
             const PikaFunctionDeclaration* methods[

@@ -767,7 +767,7 @@ PikaStatus pika_program_verify(const PikaProgram* program) {
         function = &program->functions[handler->function_index];
         if (!slot_is_valid(function, handler->status_slot) ||
             handler->catch_kind <= PIKA_EXCEPTION_NONE ||
-            handler->catch_kind > PIKA_EXCEPTION_OVERFLOW_ERROR) {
+            handler->catch_kind > PIKA_EXCEPTION_ASSERTION_ERROR) {
             return PIKA_STATUS_INVALID_OPERAND;
         }
         function_end = function->first_instruction +

@@ -324,6 +324,10 @@ PikaStatus pika_binding__hmac_compare_digest(
         call->argument_count != 2u) {
         return PIKA_STATUS_INVALID_ARGUMENT;
     }
+    if ((call->arguments[0].kind == PIKA_BINDING_VALUE_STRING) !=
+        (call->arguments[1].kind == PIKA_BINDING_VALUE_STRING)) {
+        return PIKA_STATUS_TYPE_MISMATCH;
+    }
     status = hmac_compare_buffer(
         &call->arguments[0], PIKA_HMAC_INPUT_BYTE_LIMIT, &left);
     if (status == PIKA_STATUS_OK) {

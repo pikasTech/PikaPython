@@ -206,6 +206,16 @@
         }
       ]
     },
+    "pikapython-modbus": {
+      "version": "1.0.0",
+      "capability": "library.modbus-codec",
+      "exports": [
+        {
+          "source": "packages/modbus.py",
+          "destination": "modbus.py"
+        }
+      ]
+    },
     "pikapython-machine": {
       "version": "1.0.0",
       "capability": "machine.pin",
@@ -234,6 +244,38 @@
         {
           "source": "packages/requests.py",
           "destination": "requests.py"
+        }
+      ]
+    },
+    "pikapython-os": {
+      "version": "1.0.0",
+      "capability": "library.os-basic",
+      "exports": [
+        {
+          "source": "packages/os/os.py",
+          "destination": "os.py"
+        },
+        {
+          "source": "packages/os/_os.pyi",
+          "destination": "_os.pyi"
+        },
+        {
+          "source": "packages/os/*.c",
+          "destination": "pikapython-packages/os/"
+        },
+        {
+          "source": "packages/os/*.h",
+          "destination": "pikapython-packages/os/"
+        }
+      ]
+    },
+    "pikapython-unittest": {
+      "version": "1.0.0",
+      "capability": "library.unittest-basic",
+      "exports": [
+        {
+          "source": "packages/unittest.py",
+          "destination": "unittest.py"
         }
       ]
     },

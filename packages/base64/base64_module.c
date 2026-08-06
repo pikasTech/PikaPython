@@ -170,6 +170,9 @@ PikaStatus pika_binding__base64_b64decode(const PikaBindingCall* call,
                 pending_double_padding = 1;
                 continue;
             }
+            if ((quartet[1] & 0x0fu) != 0u) {
+                return PIKA_STATUS_VALUE_ERROR;
+            }
             if (destination >= PIKA_BASE64_OUTPUT_BYTE_LIMIT) {
                 return PIKA_STATUS_STORAGE_TOO_SMALL;
             }
@@ -179,6 +182,9 @@ PikaStatus pika_binding__base64_b64decode(const PikaBindingCall* call,
             finished = 1;
         } else if (current == (uint8_t)'=' && quartet_length == 3u) {
             uint32_t value;
+            if ((quartet[2] & 0x03u) != 0u) {
+                return PIKA_STATUS_VALUE_ERROR;
+            }
             if (destination + 2u > PIKA_BASE64_OUTPUT_BYTE_LIMIT) {
                 return PIKA_STATUS_STORAGE_TOO_SMALL;
             }

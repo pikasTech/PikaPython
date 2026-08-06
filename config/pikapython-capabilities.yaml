@@ -168,6 +168,15 @@ capabilities:
   library.mqtt-client:
     dependencies: [container.bytearray, exception.finally, library.socket-basic, module.python, object.user-basic, op.bitwise, protocol.text-network]
     supported: true
+  library.modbus-codec:
+    dependencies: [builtin.container-construct, builtin.scalar-convert, container.bytearray, container.list, exception.basic, flow.loop, module.python, op.bitwise, op.compare-basic, op.integer, value.bool, value.bytes, value.int, value.string]
+    supported: true
+  library.os-basic:
+    dependencies: [binding.c-object, binding.constants, binding.container-result, builtin.container-construct, builtin.len, call.defaults, module.python, object.user-basic, value.bytes, value.int, value.none, value.string]
+    supported: true
+  library.unittest-basic:
+    dependencies: [builtin.len, container.list, exception.basic, flow.branch, flow.loop, module.python, op.compare-basic, value.bool, value.int, value.none, value.string]
+    supported: true
   library.math:
     dependencies: [binding.constants, call.keyword, module.python, value.float, value.int]
     supported: true
@@ -224,7 +233,7 @@ capabilities:
     supported: true
   object.class:
     dependencies: [object.attribute]
-    supported: false
+    supported: true
   object.user-basic:
     dependencies: [object.attribute]
     supported: true
@@ -337,7 +346,7 @@ profiles:
     roots: [builtin.embedded, builtin.print, library.aes, library.hashlib, library.hmac, library.json, library.struct-basic, repl.auto-indent, runtime.frozen-program, runtime.gc]
     syntaxLevel: 6
   runtime-full:
-    roots: [assignment.unpack, binding.constants, binding.container-argument, binding.container-result, binding.mutable-buffer, binding.object-argument, binding.object-result, binding.python-callable, builtin.container-construct, builtin.embedded, builtin.help, builtin.len, builtin.print, builtin.scalar-convert, builtin.type, call.defaults, call.keyword, call.reference, call.variadic, container.bytearray, container.dict, container.list, container.tuple, exception.finally, flow.pass, iter.builtin, iter.range, library.aes, library.base64, library.binascii, library.fuzzypid, library.hashlib, library.hmac, library.http-client, library.json, library.math, library.mqtt-client, library.random, library.socket-basic, library.struct-basic, library.time-basic, library.zlib, literal.embedded-int, logic.short-circuit, module.from-import, module.python, object.user-basic, op.complete, op.float, op.integer, protocol.text-network, repl.auto-indent, runtime.frozen-program, runtime.frozen-source, runtime.gc, scope.global-statement, value.bytes, value.float, value.none, value.string]
+    roots: [assignment.unpack, binding.constants, binding.container-argument, binding.container-result, binding.mutable-buffer, binding.object-argument, binding.object-result, binding.python-callable, builtin.container-construct, builtin.embedded, builtin.help, builtin.len, builtin.print, builtin.scalar-convert, builtin.type, call.defaults, call.keyword, call.reference, call.variadic, container.bytearray, container.dict, container.list, container.tuple, exception.finally, flow.pass, iter.builtin, iter.range, library.aes, library.base64, library.binascii, library.fuzzypid, library.hashlib, library.hmac, library.http-client, library.json, library.math, library.modbus-codec, library.mqtt-client, library.os-basic, library.random, library.socket-basic, library.struct-basic, library.time-basic, library.unittest-basic, library.zlib, literal.embedded-int, logic.short-circuit, module.from-import, module.python, object.class, object.user-basic, op.complete, op.float, op.integer, protocol.text-network, repl.auto-indent, runtime.frozen-program, runtime.frozen-source, runtime.gc, scope.global-statement, value.bool, value.bytes, value.float, value.int, value.none, value.string]
     resourceLimits:
       frontend:
         functionCount: 192

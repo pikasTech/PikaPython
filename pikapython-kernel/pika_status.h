@@ -54,6 +54,7 @@ typedef enum {
     PIKA_STATUS_SOCKET_HOST_BYTE_LIMIT = 44,
     PIKA_STATUS_SOCKET_OBJECT_LIMIT = 45,
     PIKA_STATUS_OVERFLOW_ERROR = 46,
+    PIKA_STATUS_ASSERTION_ERROR = 47,
 } PikaStatus;
 
 typedef enum {
@@ -66,6 +67,7 @@ typedef enum {
     PIKA_EXCEPTION_OS_ERROR = 6,
     PIKA_EXCEPTION_ANY = 7,
     PIKA_EXCEPTION_OVERFLOW_ERROR = 8,
+    PIKA_EXCEPTION_ASSERTION_ERROR = 9,
 } PikaExceptionKind;
 
 const char* pika_status_name(PikaStatus status);
