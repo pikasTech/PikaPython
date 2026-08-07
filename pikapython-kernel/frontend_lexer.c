@@ -292,6 +292,9 @@ static PikaTokenKind name_kind(const char* text, uint32_t length) {
     if (length == 5u && memcmp(text, "raise", 5u) == 0) {
         return PIKA_TOKEN_RAISE;
     }
+    if (length == 6u && memcmp(text, "assert", 6u) == 0) {
+        return PIKA_TOKEN_ASSERT;
+    }
     if (length == 5u && memcmp(text, "range", 5u) == 0) {
         return PIKA_TOKEN_RANGE;
     }
@@ -688,29 +691,62 @@ PikaStatus pika_source_tokenize(const char* source,
         if (current == '\'' || current == '"') {
             char quote = current;
             uint32_t start = offset;
-            ++offset;
-            while (offset < (uint32_t)length &&
-                   source[offset] != quote && source[offset] != '\n' &&
-                   source[offset] != '\r') {
+            int triple = offset + 2u < (uint32_t)length &&
+                         source[offset + 1u] == quote &&
+                         source[offset + 2u] == quote;
+            offset += triple ? 3u : 1u;
+            while (offset < (uint32_t)length) {
+                if (triple && offset + 2u < (uint32_t)length &&
+                    source[offset] == quote &&
+                    source[offset + 1u] == quote &&
+                    source[offset + 2u] == quote) {
+                    offset += 3u;
+                    break;
+                }
+                if (!triple && source[offset] == quote) {
+                    ++offset;
+                    break;
+                }
+                if (!triple && (source[offset] == '\n' ||
+                                source[offset] == '\r')) {
+                    break;
+                }
                 if (source[offset] == '\\' &&
                     offset + 1u < (uint32_t)length) {
                     offset += 2u;
+                } else if (triple && (source[offset] == '\n' ||
+                                      source[offset] == '\r')) {
+                    if (source[offset] == '\r' &&
+                        offset + 1u < (uint32_t)length &&
+                        source[offset + 1u] == '\n') {
+                        offset += 2u;
+                    } else {
+                        ++offset;
+                    }
+                    ++line;
+                    line_start = offset;
                 } else {
                     ++offset;
                 }
             }
-            if (offset >= (uint32_t)length || source[offset] != quote) {
+            if (offset > (uint32_t)length ||
+                (triple ? (offset < 3u ||
+                           source[offset - 1u] != quote ||
+                           source[offset - 2u] != quote ||
+                           source[offset - 3u] != quote)
+                        : (offset == 0u ||
+                           source[offset - 1u] != quote))) {
                 pika_frontend_set_diagnostic(
                     diagnostic, PIKA_STATUS_LEX_ERROR, line, column);
                 return PIKA_STATUS_LEX_ERROR;
             }
-            ++offset;
-            if (offset - start - 2u >
+            if (offset - start - (triple ? 6u : 2u) >
                 PIKA_FRONTEND_LITERAL_BYTE_LIMIT) {
                 pika_frontend_set_limit_diagnostic(
                     diagnostic, PIKA_FRONTEND_BOUND_LITERAL_BYTES,
                     PIKA_FRONTEND_LITERAL_BYTE_LIMIT,
-                    offset - start - 2u, line, column, start);
+                    offset - start - (triple ? 6u : 2u),
+                    line, column, start);
                 return PIKA_STATUS_FRONTEND_LIMIT;
             }
             status = emit_token(
@@ -727,30 +763,62 @@ PikaStatus pika_source_tokenize(const char* source,
              source[offset + 1u] == '"')) {
             char quote = source[offset + 1u];
             uint32_t start = offset;
-            ++offset;
-            ++offset;
-            while (offset < (uint32_t)length &&
-                   source[offset] != quote && source[offset] != '\n' &&
-                   source[offset] != '\r') {
+            int triple = offset + 3u < (uint32_t)length &&
+                         source[offset + 2u] == quote &&
+                         source[offset + 3u] == quote;
+            offset += triple ? 4u : 2u;
+            while (offset < (uint32_t)length) {
+                if (triple && offset + 2u < (uint32_t)length &&
+                    source[offset] == quote &&
+                    source[offset + 1u] == quote &&
+                    source[offset + 2u] == quote) {
+                    offset += 3u;
+                    break;
+                }
+                if (!triple && source[offset] == quote) {
+                    ++offset;
+                    break;
+                }
+                if (!triple && (source[offset] == '\n' ||
+                                source[offset] == '\r')) {
+                    break;
+                }
                 if (source[offset] == '\\' &&
                     offset + 1u < (uint32_t)length) {
                     offset += 2u;
+                } else if (triple && (source[offset] == '\n' ||
+                                      source[offset] == '\r')) {
+                    if (source[offset] == '\r' &&
+                        offset + 1u < (uint32_t)length &&
+                        source[offset + 1u] == '\n') {
+                        offset += 2u;
+                    } else {
+                        ++offset;
+                    }
+                    ++line;
+                    line_start = offset;
                 } else {
                     ++offset;
                 }
             }
-            if (offset >= (uint32_t)length || source[offset] != quote) {
+            if (offset > (uint32_t)length ||
+                (triple ? (offset < 3u ||
+                           source[offset - 1u] != quote ||
+                           source[offset - 2u] != quote ||
+                           source[offset - 3u] != quote)
+                        : (offset == 0u ||
+                           source[offset - 1u] != quote))) {
                 pika_frontend_set_diagnostic(
                     diagnostic, PIKA_STATUS_LEX_ERROR, line, column);
                 return PIKA_STATUS_LEX_ERROR;
             }
-            ++offset;
-            if (offset - start - 3u >
+            if (offset - start - (triple ? 7u : 3u) >
                 PIKA_FRONTEND_LITERAL_BYTE_LIMIT) {
                 pika_frontend_set_limit_diagnostic(
                     diagnostic, PIKA_FRONTEND_BOUND_LITERAL_BYTES,
                     PIKA_FRONTEND_LITERAL_BYTE_LIMIT,
-                    offset - start - 3u, line, column, start);
+                    offset - start - (triple ? 7u : 3u),
+                    line, column, start);
                 return PIKA_STATUS_FRONTEND_LIMIT;
             }
             status = emit_token(

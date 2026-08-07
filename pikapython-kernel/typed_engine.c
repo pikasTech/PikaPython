@@ -1629,6 +1629,13 @@ PikaStatus pika_runtime_execute_typed(PikaRuntimeContext* context) {
                     context, instruction->a, instruction->b,
                     instruction->c, (uint16_t)instruction->immediate);
                     break;
+                case PIKA_OP_CALL_CALLABLE:
+                    frame->instruction_index++;
+                    status = pika_runtime_push_callable_call(
+                        context, instruction->a, instruction->b,
+                        instruction->c,
+                        (uint16_t)instruction->immediate);
+                    break;
                 case PIKA_OP_CALL_DYNAMIC_METHOD:
                     frame->instruction_index++;
                     status = pika_runtime_push_dynamic_method_call(

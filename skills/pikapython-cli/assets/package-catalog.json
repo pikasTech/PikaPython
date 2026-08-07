@@ -64,6 +64,48 @@
         }
       ]
     },
+    "pikapython-ctypes": {
+      "version": "1.0.0",
+      "exports": [
+        {
+          "source": "packages/ctypes.py",
+          "destination": "ctypes.py"
+        }
+      ]
+    },
+    "pikapython-eventloop": {
+      "version": "1.0.0",
+      "dependencies": [
+        "pikapython-time==1.0.0"
+      ],
+      "exports": [
+        {
+          "source": "packages/eventloop/eventloop.py",
+          "destination": "eventloop.py"
+        }
+      ]
+    },
+    "pikapython-flashdb": {
+      "version": "1.0.0",
+      "dependencies": [
+        "pikapython-time==1.0.0"
+      ],
+      "exports": [
+        {
+          "source": "packages/flashdb.py",
+          "destination": "flashdb.py"
+        }
+      ]
+    },
+    "pikapython-fsm": {
+      "version": "1.0.0",
+      "exports": [
+        {
+          "source": "packages/fsm.py",
+          "destination": "fsm.py"
+        }
+      ]
+    },
     "pikapython-fuzzypid": {
       "version": "1.0.0",
       "capability": "library.fuzzypid",
@@ -157,6 +199,27 @@
         }
       ]
     },
+    "pikapython-i18n": {
+      "version": "1.0.0",
+      "exports": [
+        {
+          "source": "packages/i18n.py",
+          "destination": "i18n.py"
+        }
+      ]
+    },
+    "pikapython-jrpc": {
+      "version": "1.0.0",
+      "dependencies": [
+        "pikapython-json==1.0.0"
+      ],
+      "exports": [
+        {
+          "source": "packages/jrpc.py",
+          "destination": "jrpc.py"
+        }
+      ]
+    },
     "pikapython-json": {
       "version": "1.0.0",
       "capability": "library.json",
@@ -216,6 +279,27 @@
         }
       ]
     },
+    "pikapython-modbus-rt": {
+      "version": "1.0.0",
+      "dependencies": [
+        "pikapython-modbus==1.0.0"
+      ],
+      "exports": [
+        {
+          "source": "packages/modbus_rt.py",
+          "destination": "modbus_rt.py"
+        }
+      ]
+    },
+    "pikapython-network": {
+      "version": "1.0.0",
+      "exports": [
+        {
+          "source": "packages/network.py",
+          "destination": "network.py"
+        }
+      ]
+    },
     "pikapython-machine": {
       "version": "1.0.0",
       "capability": "machine.pin",
@@ -266,6 +350,18 @@
         {
           "source": "packages/os/*.h",
           "destination": "pikapython-packages/os/"
+        }
+      ]
+    },
+    "pikapython-posixfs": {
+      "version": "1.0.0",
+      "dependencies": [
+        "pikapython-os==1.0.0"
+      ],
+      "exports": [
+        {
+          "source": "packages/pika_posixfs.py",
+          "destination": "pika_posixfs.py"
         }
       ]
     },

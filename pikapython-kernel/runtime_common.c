@@ -930,6 +930,36 @@ PikaStatus pika_runtime_push_call(PikaRuntimeContext* context,
     return PIKA_STATUS_OK;
 }
 
+PikaStatus pika_runtime_push_callable_call(
+    PikaRuntimeContext* context,
+    uint16_t return_slot,
+    uint16_t callable_slot,
+    uint16_t argument_base,
+    uint16_t argument_count) {
+    const PikaRuntimeFrame* caller;
+    PikaRuntimeValue callable;
+    if (context == NULL || context->typed_values == NULL ||
+        context->frames == NULL) {
+        return PIKA_STATUS_INVALID_OPERAND;
+    }
+    caller = &context->frames[context->depth];
+    if (callable_slot >= caller->slot_count) {
+        return PIKA_STATUS_INVALID_OPERAND;
+    }
+    callable = context->typed_values[
+        caller->value_base + callable_slot];
+    if (callable.kind != PIKA_RUNTIME_VALUE_CALLABLE) {
+        return PIKA_STATUS_TYPE_MISMATCH;
+    }
+    if (callable.as.integer < 0 ||
+        callable.as.integer > UINT16_MAX) {
+        return PIKA_STATUS_INVALID_FUNCTION;
+    }
+    return pika_runtime_push_call(
+        context, return_slot, argument_base, argument_count,
+        (uint16_t)callable.as.integer);
+}
+
 PikaStatus pika_runtime_push_dynamic_method_call(
     PikaRuntimeContext* context,
     uint16_t return_slot,

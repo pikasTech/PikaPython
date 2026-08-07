@@ -54,6 +54,7 @@ modbus-rtu-bytes: 8
 modbus-tcp-header: 0 7 0 6
 modbus-registers: [1, 4660]
 """,
+    "case_next_batch.py": b"[NEXT_BATCH] fsm=i18n=pika_posixfs=flashdb ok\n",
 }
 
 

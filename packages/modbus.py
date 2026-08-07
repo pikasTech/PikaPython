@@ -282,3 +282,41 @@ class ModBusTCP:
 
     def serializeWriteRegisters(self, address, values):
         return self._frame(write_multiple_pdu(16, address, values))
+"""CPython-compatible Modbus PDU helpers (transport independent)."""
+
+
+def crc16(data):
+    value = 0xFFFF
+    for byte in data:
+        value ^= byte
+        for _ in range(8):
+            if value & 1:
+                value = (value >> 1) ^ 0xA001
+            else:
+                value >>= 1
+    return value
+
+
+def read_holding_registers(unit, address, count):
+    if unit < 0 or unit > 255 or address < 0 or address > 0xFFFF or count < 1 or count > 125:
+        raise ValueError("invalid Modbus register request")
+    return bytes([unit, 3, address >> 8, address & 255, count >> 8, count & 255])
+
+
+def parse_read_holding_registers(response, expected_unit=None):
+    if len(response) < 5:
+        raise ValueError("Modbus response is too short")
+    if expected_unit is not None and response[0] != expected_unit:
+        raise ValueError("Modbus unit mismatch")
+    if response[1] & 0x80:
+        raise ValueError("Modbus exception %d" % response[2])
+    if response[1] != 3 or response[2] != len(response) - 3:
+        raise ValueError("invalid Modbus register response")
+    if response[2] % 2 != 0:
+        raise ValueError("Modbus register payload has odd length")
+    values = []
+    index = 3
+    while index < len(response):
+        values.append((response[index] << 8) | response[index + 1])
+        index += 2
+    return values

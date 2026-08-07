@@ -7,6 +7,7 @@
 
 PikaPython v2 提供面向嵌入式设备的 Python 内核、模块包、项目模板和统一构建 CLI。
 源码与项目模板发布在 `pikasTech/PikaPython` 仓库的 `v2` 分支。
+当前预发布版本为 [`2.0.0-rc3`](docs/releases/v2.0.0-rc3.md)。
 
 ## V2 性能与资源改进
 

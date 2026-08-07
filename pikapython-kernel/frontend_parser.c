@@ -2857,18 +2857,20 @@ static PikaStatus parse_expression_statement(PikaParser* parser) {
     return status;
 }
 
-#if PIKA_CAPABILITY_BINDING_C_ENABLE && PIKA_CAPABILITY_MODULE_IMPORT_ENABLE
+#if PIKA_CAPABILITY_MODULE_IMPORT_ENABLE
+static const PikaPythonModule* find_python_import(
+    const PikaParser* parser,
+    const PikaToken* token);
+
 static PikaStatus parse_import(PikaParser* parser) {
     const PikaToken* token = current_token(parser);
     const PikaToken* name;
+#if PIKA_CAPABILITY_BINDING_C_ENABLE
     const PikaBindingModule* module = NULL;
+#endif
     char module_name[PIKA_FRONTEND_IDENTIFIER_BYTE_LIMIT + 1u];
     PikaStatus status = require_capability_at(
         parser, PIKA_CAPABILITY_MODULE_IMPORT, token);
-    if (status == PIKA_STATUS_OK) {
-        status = require_capability_at(
-            parser, PIKA_CAPABILITY_C_BINDING, token);
-    }
     if (status != PIKA_STATUS_OK) {
         return status;
     }
@@ -2883,6 +2885,19 @@ static PikaStatus parse_import(PikaParser* parser) {
             parser, name, module_name,
             (uint32_t)sizeof(module_name));
     }
+    if (status != PIKA_STATUS_OK) {
+        return status;
+    }
+#if PIKA_CAPABILITY_MODULE_PYTHON_ENABLE
+    if (find_python_import(parser, name) != NULL) {
+        return PIKA_STATUS_OK;
+    }
+#endif
+#if !PIKA_CAPABILITY_BINDING_C_ENABLE
+    return fail_at(parser, PIKA_STATUS_MODULE_NOT_FOUND, name);
+#else
+    status = require_capability_at(
+        parser, PIKA_CAPABILITY_C_BINDING, name);
     if (status != PIKA_STATUS_OK) {
         return status;
     }
@@ -2912,8 +2927,10 @@ static PikaStatus parse_import(PikaParser* parser) {
     parser->imports[parser->import_count].selected = 0u;
     ++parser->import_count;
     return PIKA_STATUS_OK;
+#endif
 }
 
+#if PIKA_CAPABILITY_BINDING_C_ENABLE
 static PikaStatus parse_from_import(PikaParser* parser) {
     const PikaToken* from_token = current_token(parser);
     const PikaToken* module_token;
@@ -3000,24 +3017,27 @@ static PikaStatus parse_from_import(PikaParser* parser) {
     return require(parser, PIKA_TOKEN_NEWLINE);
 }
 #endif
+#endif
 
 static PikaStatus discover_imports(PikaParser* parser) {
     uint32_t depth = 0u;
     parser->position = 0u;
     while (current_token(parser)->kind != PIKA_TOKEN_EOF) {
         PikaTokenKind kind = current_token(parser)->kind;
-#if PIKA_CAPABILITY_BINDING_C_ENABLE && PIKA_CAPABILITY_MODULE_IMPORT_ENABLE
+#if PIKA_CAPABILITY_MODULE_IMPORT_ENABLE
         PikaStatus status;
         if (depth == 0u && kind == PIKA_TOKEN_IMPORT) {
             status = parse_import(parser);
             if (status != PIKA_STATUS_OK) return status;
             continue;
         }
+#if PIKA_CAPABILITY_BINDING_C_ENABLE
         if (depth == 0u && kind == PIKA_TOKEN_FROM) {
             status = parse_from_import(parser);
             if (status != PIKA_STATUS_OK) return status;
             continue;
         }
+#endif
 #endif
         if (kind == PIKA_TOKEN_INDENT) {
             ++depth;
@@ -3416,6 +3436,76 @@ static PikaStatus parse_raise(PikaParser* parser) {
         (int32_t)raised_status, NULL);
 }
 
+static PikaStatus parse_assert(PikaParser* parser) {
+    const PikaToken* assert_token = current_token(parser);
+    PikaExpression condition;
+    PikaStatus status = require_capability_at(
+        parser, PIKA_CAPABILITY_BRANCH_FLOW, assert_token);
+    uint8_t status_slot = 0u;
+    uint8_t message_slot = 0u;
+    uint8_t has_message = 0u;
+    uint32_t branch_index = 0u;
+    uint32_t jump_index = 0u;
+    uint32_t raise_index;
+
+    if (status == PIKA_STATUS_OK) {
+        status = require_capability_at(
+            parser, PIKA_CAPABILITY_EXCEPTION_BASIC, assert_token);
+    }
+    if (status != PIKA_STATUS_OK) {
+        return status;
+    }
+    ++parser->position;
+    status = parse_expression(parser, &condition);
+    if (status == PIKA_STATUS_OK &&
+        match(parser, PIKA_TOKEN_COMMA)) {
+        const PikaToken* message_token = current_token(parser);
+        PikaExpression message;
+        status = parse_expression(parser, &message);
+        if (status == PIKA_STATUS_OK &&
+            message.kind != PIKA_VALUE_STRING &&
+            message.kind != PIKA_VALUE_UNKNOWN) {
+            status = fail_at(
+                parser, PIKA_STATUS_TYPE_MISMATCH, message_token);
+        }
+        if (status == PIKA_STATUS_OK) {
+            message_slot = message.slot;
+            has_message = 1u;
+        }
+    }
+    if (status == PIKA_STATUS_OK) {
+        status = require(parser, PIKA_TOKEN_NEWLINE);
+    }
+    if (status == PIKA_STATUS_OK) {
+        status = emit_instruction(
+            parser, PIKA_OP_BRANCH_FALSE, condition.slot,
+            0u, 0u, 0, &branch_index);
+    }
+    if (status == PIKA_STATUS_OK) {
+        status = emit_instruction(
+            parser, PIKA_OP_JUMP, 0u, 0u, 0u, 0, &jump_index);
+    }
+    raise_index = parser->module->program.instruction_count;
+    if (status == PIKA_STATUS_OK) {
+        status = allocate_slot(parser, &status_slot);
+    }
+    if (status == PIKA_STATUS_OK) {
+        status = emit_instruction(
+            parser, PIKA_OP_RAISE, status_slot, message_slot,
+            has_message, (int32_t)PIKA_STATUS_ASSERTION_ERROR, NULL);
+    }
+    if (status == PIKA_STATUS_OK) {
+        status = set_instruction_immediate(
+            parser, branch_index, (int32_t)raise_index);
+    }
+    if (status == PIKA_STATUS_OK) {
+        status = set_instruction_immediate(
+            parser, jump_index,
+            (int32_t)parser->module->program.instruction_count);
+    }
+    return status;
+}
+
 static PikaStatus emit_normal_jump(PikaParser* parser,
                                    int32_t* head) {
     uint32_t index;
@@ -3766,13 +3856,15 @@ static PikaStatus parse_try(PikaParser* parser) {
 }
 
 static PikaStatus parse_statement(PikaParser* parser) {
-#if PIKA_CAPABILITY_BINDING_C_ENABLE && PIKA_CAPABILITY_MODULE_IMPORT_ENABLE
+#if PIKA_CAPABILITY_MODULE_IMPORT_ENABLE
     if (current_token(parser)->kind == PIKA_TOKEN_IMPORT) {
         return parse_import(parser);
     }
+#if PIKA_CAPABILITY_BINDING_C_ENABLE
     if (current_token(parser)->kind == PIKA_TOKEN_FROM) {
         return parse_from_import(parser);
     }
+#endif
 #else
     if (current_token(parser)->kind == PIKA_TOKEN_IMPORT ||
         current_token(parser)->kind == PIKA_TOKEN_FROM) {
@@ -3788,6 +3880,9 @@ static PikaStatus parse_statement(PikaParser* parser) {
     }
     if (current_token(parser)->kind == PIKA_TOKEN_RAISE) {
         return parse_raise(parser);
+    }
+    if (current_token(parser)->kind == PIKA_TOKEN_ASSERT) {
+        return parse_assert(parser);
     }
     if (current_token(parser)->kind == PIKA_TOKEN_WHILE) {
         return parse_while(parser);

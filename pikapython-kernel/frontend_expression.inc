@@ -1891,8 +1891,16 @@ static PikaStatus make_string_constant(PikaParser* parser,
                                        PikaConstant* constant) {
     uint32_t source_end = token->offset + token->length;
     uint32_t prefix = token->kind == PIKA_TOKEN_BYTES ? 2u : 1u;
-    uint32_t position = token->offset + prefix;
-    uint32_t end = source_end - 1u;
+    uint32_t quote_offset = token->offset +
+                            (token->kind == PIKA_TOKEN_BYTES ? 1u : 0u);
+    int triple = quote_offset + 2u < source_end &&
+                 parser->source[quote_offset] == parser->source[quote_offset + 1u] &&
+                 parser->source[quote_offset] == parser->source[quote_offset + 2u];
+    uint32_t position;
+    uint32_t end;
+    if (triple) prefix += 2u;
+    position = token->offset + prefix;
+    end = source_end - (triple ? 3u : 1u);
     uint32_t length = 0u;
     char* bytes;
     PikaStatus status = require_capability_at(
@@ -3286,6 +3294,37 @@ static PikaStatus parse_postfix_new(PikaParser* parser,
     PikaStatus status = parse_primary_new(parser, expression);
     if (status != PIKA_STATUS_OK) return status;
     for (;;) {
+        if (current_token(parser)->kind == PIKA_TOKEN_LEFT_PAREN) {
+            PikaExpression callable = *expression;
+            PikaExpression arguments[PIKA_FRONTEND_ARGUMENT_LIMIT];
+            uint32_t count = 0u;
+            uint8_t base = 0u;
+            status = require_capability_at(
+                parser,
+                PIKA_CAPABILITY_POSITIONAL_CALL |
+                    PIKA_CAPABILITY_CALL_REFERENCE,
+                current_token(parser));
+            if (status == PIKA_STATUS_OK) {
+                status = parse_argument_list(
+                    parser, arguments, &count);
+            }
+            if (status == PIKA_STATUS_OK) {
+                status = allocate_slot(parser, &expression->slot);
+            }
+            if (status == PIKA_STATUS_OK) {
+                status = emit_argument_moves(
+                    parser, arguments, count, &base);
+            }
+            if (status != PIKA_STATUS_OK) return status;
+            set_expression_kind(expression, PIKA_VALUE_UNKNOWN);
+            mark_typed(parser);
+            status = emit_instruction(
+                parser, PIKA_OP_CALL_CALLABLE,
+                expression->slot, callable.slot, base,
+                (int32_t)count, NULL);
+            if (status != PIKA_STATUS_OK) return status;
+            continue;
+        }
 #if PIKA_OBJECT_BYTECODE_RUNTIME_ENABLE || PIKA_BINDING_RUNTIME_ENABLE
         if (current_token(parser)->kind == PIKA_TOKEN_DOT) {
             uint32_t member_position = parser->position;

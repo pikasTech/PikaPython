@@ -273,6 +273,11 @@ PikaStatus pika_runtime_execute_register(PikaRuntimeContext* context) {
                         break;
                     }
                     remainder = left % right;
+                    if (left >= 0 && right > 0) {
+                        slots[instruction->a] = remainder;
+                        frame->instruction_index++;
+                        break;
+                    }
                     needs_adjustment = (int64_t)(
                         ((left < 0) != (right < 0)) &
                         (remainder != 0));

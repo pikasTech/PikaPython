@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-#define PIKA_PROGRAM_FORMAT_VERSION 12u
+#define PIKA_PROGRAM_FORMAT_VERSION 13u
 #define PIKA_TYPE_NAME_ATTRIBUTE 65535u
 
 typedef enum {
@@ -68,6 +68,7 @@ typedef enum {
     PIKA_OP_UNPACK_SEQUENCE = 53,
     PIKA_OP_BUILD_DICT = 54,
     PIKA_OP_CALL_DYNAMIC_METHOD = 55,
+    PIKA_OP_CALL_CALLABLE = 56,
 } PikaOpcode;
 
 typedef enum {

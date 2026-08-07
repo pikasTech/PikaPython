@@ -218,6 +218,9 @@ static int opcode_capability_state(const PikaProgram* program,
             return PIKA_CAPABILITY_EXCEPTION_BASIC_ENABLE;
         case PIKA_OP_LOAD_CALLABLE:
             return PIKA_CAPABILITY_CALL_REFERENCE_ENABLE;
+        case PIKA_OP_CALL_CALLABLE:
+            return PIKA_CAPABILITY_CALL_REFERENCE_ENABLE &&
+                   PIKA_CAPABILITY_CALL_POSITIONAL_ENABLE;
         case PIKA_OP_LOAD_GLOBAL:
         case PIKA_OP_STORE_GLOBAL:
             return PIKA_CAPABILITY_NAME_GLOBAL_ENABLE;
@@ -529,6 +532,17 @@ static PikaStatus verify_instruction(const PikaProgram* program,
             }
             return PIKA_STATUS_OK;
         }
+        case PIKA_OP_CALL_CALLABLE:
+            return program->uses_typed_values != 0u &&
+                           slot_is_valid(function, instruction->a) &&
+                           slot_is_valid(function, instruction->b) &&
+                           instruction->immediate >= 0 &&
+                           instruction->immediate <= UINT8_MAX &&
+                           (uint32_t)instruction->c +
+                                   (uint32_t)instruction->immediate <=
+                               function->slot_count
+                       ? PIKA_STATUS_OK
+                       : PIKA_STATUS_INVALID_OPERAND;
         case PIKA_OP_CALL_DYNAMIC_METHOD: {
             const PikaDynamicMethodCallSite* site;
             uint32_t end;

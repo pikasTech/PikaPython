@@ -116,6 +116,12 @@ PikaStatus pika_runtime_push_call(PikaRuntimeContext* context,
                                   uint16_t argument_base,
                                   uint16_t argument_count,
                                   uint16_t function_index);
+PikaStatus pika_runtime_push_callable_call(
+    PikaRuntimeContext* context,
+    uint16_t return_slot,
+    uint16_t callable_slot,
+    uint16_t argument_base,
+    uint16_t argument_count);
 PikaStatus pika_runtime_push_dynamic_method_call(
     PikaRuntimeContext* context,
     uint16_t return_slot,

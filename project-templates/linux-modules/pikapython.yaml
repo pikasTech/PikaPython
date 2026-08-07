@@ -10,7 +10,16 @@ dependencies:
 - pikapython-mqtt==1.0.0
 - pikapython-os==1.0.0
 - pikapython-unittest==1.0.0
+- pikapython-eventloop==1.0.0
 - pikapython-modbus==1.0.0
+- pikapython-modbus-rt==1.0.0
+- pikapython-jrpc==1.0.0
+- pikapython-ctypes==1.0.0
+- pikapython-network==1.0.0
+- pikapython-fsm==1.0.0
+- pikapython-i18n==1.0.0
+- pikapython-posixfs==1.0.0
+- pikapython-flashdb==1.0.0
 bootEntry: main.py
 packages:
   sourceUrl: https://github.com/pikasTech/PikaPython.git

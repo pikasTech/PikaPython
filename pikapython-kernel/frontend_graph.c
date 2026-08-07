@@ -1718,6 +1718,20 @@ static PikaStatus graph_append_hidden(PikaGraph* graph,
     return PIKA_STATUS_OK;
 }
 
+static int graph_has_hidden(
+    const PikaGraph* graph,
+    const PikaGraphFunction* function) {
+    uint32_t module_index;
+    for (module_index = 0u;
+         module_index < graph->module_count;
+         ++module_index) {
+        if (function->hidden_globals[module_index] != 0u) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 static PikaStatus graph_append_callable(
     PikaGraph* graph,
     PikaGraphBuffer* buffer,
@@ -1757,8 +1771,10 @@ static PikaStatus graph_append_callable(
         left_end -
             ((size_t)name_end->offset + name_end->length));
     if (status != PIKA_STATUS_OK) return status;
-    status = graph_append_hidden(
-        graph, buffer, function, original_arguments);
+    if (graph->build_program_image == 0u) {
+        status = graph_append_hidden(
+            graph, buffer, function, original_arguments);
+    }
     if (status != PIKA_STATUS_OK) return status;
     *cursor = left_end;
     return PIKA_STATUS_OK;
@@ -1825,6 +1841,36 @@ static PikaStatus graph_rewrite_module_flat(PikaGraph* graph,
         const PikaGraphFunction* scope =
             graph_function_scope(module, index);
         if (token->kind == PIKA_TOKEN_EOF) break;
+        if (graph->build_program_image != 0u &&
+            scope != NULL &&
+            index == scope->body_first &&
+            graph_has_hidden(graph, scope)) {
+            size_t line_start = token->offset;
+            while (line_start > 0u &&
+                   module->source[line_start - 1u] != '\n') {
+                --line_start;
+            }
+            status = graph_buffer_append(
+                buffer, &module->source[cursor],
+                (size_t)token->offset - cursor);
+            if (status == PIKA_STATUS_OK) {
+                status = graph_buffer_text(buffer, "global ");
+            }
+            if (status == PIKA_STATUS_OK) {
+                status = graph_append_hidden(
+                    graph, buffer, scope, 0);
+            }
+            if (status == PIKA_STATUS_OK) {
+                status = graph_buffer_text(buffer, "\n");
+            }
+            if (status == PIKA_STATUS_OK) {
+                status = graph_buffer_append(
+                    buffer, &module->source[line_start],
+                    (size_t)token->offset - line_start);
+            }
+            if (status != PIKA_STATUS_OK) return status;
+            cursor = token->offset;
+        }
         if (import_entry != NULL &&
             (import_entry->is_python != 0u ||
              import_entry->is_program_image != 0u ||
@@ -1879,6 +1925,10 @@ static PikaStatus graph_rewrite_module_flat(PikaGraph* graph,
                 declaration);
             if (status != PIKA_STATUS_OK) return status;
             ++index;
+            continue;
+        }
+        if (token->kind == PIKA_TOKEN_NAME && index > 0u &&
+            module->tokens[index - 1u].kind == PIKA_TOKEN_DEF) {
             continue;
         }
         if (token->kind == PIKA_TOKEN_NAME &&
