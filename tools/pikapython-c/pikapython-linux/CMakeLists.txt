@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(pikapython)
 
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+
 # 添加components文件夹中所有的.c文件及其子文件夹路径
 file(GLOB_RECURSE COMPONENTS_FILES pikapython/*.c)
 
@@ -19,6 +21,7 @@ include_directories(${CMAKE_SOURCE_DIR}/pikapython/pikascript-api)
 
 # 设置输出目标
 add_executable(pikapython ${SOURCE_FILES})
+target_compile_definitions(pikapython PRIVATE PIKA_EVENT_ENABLE=0)
 
 # 添加pthread库链接
 find_package(Threads REQUIRED)

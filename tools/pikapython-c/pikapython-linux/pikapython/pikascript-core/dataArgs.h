@@ -52,6 +52,7 @@ PIKA_RES args_moveArg(Args* self, Args* dict, Arg* arg);
 Arg* args_getArg_hash(Args* self, Hash nameHash);
 
 PIKA_RES args_setArg(Args* self, Arg* arg);
+Arg* args_pushArgAndReturn(Args* self, Arg* arg);
 
 PIKA_RES args_copyArgByName(Args* self, char* name, Args* directList);
 PIKA_RES args_copyArg(Args* self, Arg* argToBeCopy);

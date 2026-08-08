@@ -192,10 +192,59 @@ static int32_t _stack_pushArg(Stack* stack, Arg* arg, pika_bool is_alloc) {
     return 0;
 }
 
+static int32_t stack_pushScalarArg(Stack* stack,
+                                   Arg* arg,
+                                   ArgType type,
+                                   uint32_t content_size) {
+    stack->top++;
+    size_t size = sizeof(Arg) + content_size;
+#if PIKA_ARG_ALIGN_ENABLE
+    size = (size + 4 - 1) & ~(4 - 1);
+#endif
+    stack_pushSize(stack, size);
+    size_t stack_require = size + (stack->sp - stack_getSpStart(stack));
+    if (stack_require > stack->stack_totle_size) {
+        _stack_overflow_handler(stack, stack_require);
+    }
+    Arg* top = (Arg*)stack->sp;
+    top->_.next = NULL;
+    top->size = content_size;
+#if PIKA_ARG_CACHE_ENABLE
+    top->heap_size = 0;
+#endif
+    top->type = type;
+    top->flag = ARG_FLAG_SERIALIZED;
+    top->name_hash = arg_getNameHash(arg);
+#if PIKA_KERNAL_DEBUG_ENABLE
+    top->value = (_arg_value*)&top->content;
+    top->str = (char*)&top->content;
+    top->bytes = (uint8_t*)&top->content;
+    top->name = top->_name_buff;
+    pika_platform_memset(top->_name_buff, 0, PIKA_NAME_BUFF_SIZE);
+#endif
+    if (type == ARG_TYPE_INT) {
+        *(int64_t*)top->content = *(int64_t*)arg_getContent(arg);
+    } else {
+        *(pika_bool*)top->content = *(pika_bool*)arg_getContent(arg);
+    }
+    stack->sp += size;
+    arg_deinitHeap(arg);
+    return 0;
+}
+
 int32_t stack_pushArg(Stack* stack, Arg* arg) {
     pika_assert(arg != NULL);
     if (arg_isObject(arg)) {
         pika_assert(obj_checkAlive(arg_getPtr(arg)));
+    }
+    if (!arg_isSerialized(arg)) {
+        ArgType type = arg_getType(arg);
+        if (type == ARG_TYPE_INT) {
+            return stack_pushScalarArg(stack, arg, type, sizeof(int64_t));
+        }
+        if (type == ARG_TYPE_BOOL) {
+            return stack_pushScalarArg(stack, arg, type, sizeof(pika_bool));
+        }
     }
     if (arg_isSerialized(arg)) {
         return _stack_pushArg(stack, arg, pika_true);
@@ -243,6 +292,57 @@ Arg* stack_popArg_alloc(Stack* stack) {
 
 Arg* stack_popArg(Stack* stack, Arg* arg_dict) {
     return _stack_popArg(stack, arg_dict, pika_false);
+}
+
+pika_bool stack_popInt2(Stack* stack, int64_t* left, int64_t* right) {
+    if (stack->top < 2) {
+        return pika_false;
+    }
+    int32_t right_size = stack->sp_size[-1];
+    int32_t left_size = stack->sp_size[-2];
+    if (right_size <= 0 || left_size <= 0) {
+        return pika_false;
+    }
+    Arg* right_arg = (Arg*)(stack->sp - right_size);
+    Arg* left_arg = (Arg*)((uint8_t*)right_arg - left_size);
+    if (arg_getType(left_arg) != ARG_TYPE_INT ||
+        arg_getType(right_arg) != ARG_TYPE_INT) {
+        return pika_false;
+    }
+    *left = arg_getInt(left_arg);
+    *right = arg_getInt(right_arg);
+    stack->sp -= (right_size + left_size);
+    stack->sp_size -= 2;
+    stack->top -= 2;
+    return pika_true;
+}
+
+pika_bool stack_popIntOrBool(Stack* stack,
+                             ArgType* type,
+                             int64_t* int_val,
+                             pika_bool* bool_val) {
+    if (stack->top < 1) {
+        return pika_false;
+    }
+    int32_t size = stack->sp_size[-1];
+    if (size <= 0) {
+        return pika_false;
+    }
+    Arg* arg = (Arg*)(stack->sp - size);
+    ArgType arg_type = arg_getType(arg);
+    if (arg_type == ARG_TYPE_INT) {
+        *type = arg_type;
+        *int_val = arg_getInt(arg);
+    } else if (arg_type == ARG_TYPE_BOOL) {
+        *type = arg_type;
+        *bool_val = arg_getBool(arg);
+    } else {
+        return pika_false;
+    }
+    stack->sp -= size;
+    stack->sp_size -= 1;
+    stack->top -= 1;
+    return pika_true;
 }
 
 char* stack_popStr(Stack* stack, char* outBuff) {
