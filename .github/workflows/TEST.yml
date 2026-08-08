@@ -36,6 +36,9 @@ jobs:
     - name: PULL_CORE
       run: cd ${{github.workspace}}/port/linux && bash pull-core.sh
 
+    - name: BUILD_SCRIPT_FAIL_FAST_TEST
+      run: cd ${{github.workspace}}/port/linux && sh test-build-fail-fast.sh
+
 #     - name: CHMOD
 #       run: cd ${{github.workspace}}/port/linux/package/pikascript && chmod +x ./rust-msc-latest-linux
 

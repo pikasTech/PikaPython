@@ -1,5 +1,6 @@
+set -eu
+
 ROOT=$PWD
-reset
 cp config/pika_config_default.h config/pika_config.h
 
 # Linux core tests do not require optional board or LVGL submodules.
@@ -11,8 +12,10 @@ chmod +x package/pikascript/rust-msc-latest-linux
 cp package/pikascript/rust-msc-latest-linux /bin 
 find package/pikascript/pikascript-lib/pika_lvgl -type f -delete
 find package/pikascript -maxdepth 1 -name 'pika_lvgl.pyi' -type f -delete
-find package/pikascript/pikascript-api -maxdepth 1 \
-    \( -name '__pikaBinding.c' -o -name 'pika_lvgl*.h' \) -type f -delete
+if [ -d package/pikascript/pikascript-api ]; then
+    find package/pikascript/pikascript-api -maxdepth 1 \
+        \( -name '__pikaBinding.c' -o -name 'pika_lvgl*.h' \) -type f -delete
+fi
 cd package/pikascript/pikascript-core
 # git checkout master
 cd $ROOT
