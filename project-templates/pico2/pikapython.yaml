@@ -1,0 +1,48 @@
+version: 1
+dependencies:
+- pikapython-aes==1.0.0
+- pikapython-base64==1.0.0
+- pikapython-binascii==1.0.0
+- pikapython-configparser==1.0.0
+- pikapython-ctypes==1.0.0
+- pikapython-eventloop==1.0.0
+- pikapython-flashdb==1.0.0
+- pikapython-fsm==1.0.0
+- pikapython-fuzzypid==1.0.0
+- pikapython-kernel==2.0.0
+- pikapython-hashlib==1.0.0
+- pikapython-hmac==1.0.0
+- pikapython-i18n==1.0.0
+- pikapython-jrpc==1.0.0
+- pikapython-json==1.0.0
+- pikapython-math==1.0.0
+- pikapython-mqtt==1.0.0
+- pikapython-modbus==1.0.0
+- pikapython-modbus-rt==1.0.0
+- pikapython-network==1.0.0
+- pikapython-machine==1.0.0
+- pikapython-requests==1.0.0
+- pikapython-os==1.0.0
+- pikapython-posixfs==1.0.0
+- pikapython-unittest==1.0.0
+- pikapython-re==1.0.0
+- pikapython-random==1.0.0
+- pikapython-socket==1.0.0
+- pikapython-struct==1.0.0
+- pikapython-time==1.0.0
+- pikapython-zlib==1.0.0
+packages:
+  sourceUrl: https://github.com/pikasTech/PikaPython.git
+  ref: v2
+capability:
+  configFile: .pikapython/source/config/pikapython-capabilities.yaml
+  profile: pico2-full
+targets:
+  pico2:
+    adapter: cmake
+    projectFile: CMakeLists.txt
+    targetName: pico2-firmware
+    buildDirectory: .pikapython/build/pico2
+    arguments:
+    - -DCMAKE_BUILD_TYPE=MinSizeRel
+defaultTarget: pico2

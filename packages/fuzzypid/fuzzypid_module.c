@@ -81,8 +81,8 @@ typedef struct {
     int mf_parameters[PIKA_FUZZYPID_MF_PARAMETER_COUNT];
     PikaFuzzyPidState pids[PIKA_FUZZYPID_DOF_LIMIT];
     PikaFuzzyPidInference fuzzy[PIKA_FUZZYPID_DOF_LIMIT];
-    unsigned int mf_types[PIKA_FUZZYPID_DOF_LIMIT]
-                         [PIKA_FUZZYPID_MAX_MF_TYPES];
+    uint32_t mf_types[PIKA_FUZZYPID_DOF_LIMIT]
+                     [PIKA_FUZZYPID_MAX_MF_TYPES];
     float fuzzy_outputs[PIKA_FUZZYPID_DOF_LIMIT]
                        [PIKA_FUZZYPID_MAX_FUZZY_OUTPUTS];
     uint8_t directions[PIKA_FUZZYPID_DOF_LIMIT];
