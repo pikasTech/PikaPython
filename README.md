@@ -734,4 +734,4 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=pikastech/pikascript&type=Date)](https://star-history.com/#pikastech/pikascript&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=pikastech/pikascript&type=Date)](https://star-history.dera.page/#pikastech/pikascript&type=Date)
