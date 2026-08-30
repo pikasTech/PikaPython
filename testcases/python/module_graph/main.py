@@ -1,6 +1,6 @@
-import helper
-import helper
+import helper as support
+import helper as support
 
 
-print(helper.compute(3))
-print(helper.OFFSET)
+print(support.compute(3))
+print(support.OFFSET)

@@ -353,6 +353,28 @@
         }
       ]
     },
+    "pikapython-lvgl": {
+      "version": "1.0.0",
+      "capability": "library.lvgl-core",
+      "exports": [
+        {
+          "source": "packages/lvgl/lvgl.py",
+          "destination": "lvgl.py"
+        },
+        {
+          "source": "packages/lvgl/_lvgl.pyi",
+          "destination": "_lvgl.pyi"
+        },
+        {
+          "source": "packages/lvgl/*.c",
+          "destination": "pikapython-packages/lvgl/"
+        },
+        {
+          "source": "packages/lvgl/UPSTREAM.md",
+          "destination": "pikapython-packages/lvgl/"
+        }
+      ]
+    },
     "pikapython-posixfs": {
       "version": "1.0.0",
       "dependencies": [

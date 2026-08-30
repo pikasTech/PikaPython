@@ -966,6 +966,11 @@ static PikaCompiledModule* allocate_incremental_module(
     if (module == NULL) return NULL;
     added_functions = count_tokens(
         tokens, PIKA_TOKEN_DEF, PIKA_FRONTEND_FUNCTION_LIMIT);
+    added_functions += count_tokens(
+        tokens, PIKA_TOKEN_LAMBDA, PIKA_FRONTEND_FUNCTION_LIMIT);
+    if (added_functions > PIKA_FRONTEND_FUNCTION_LIMIT) {
+        added_functions = PIKA_FRONTEND_FUNCTION_LIMIT;
+    }
     added_classes = count_tokens(
         tokens, PIKA_TOKEN_CLASS, PIKA_FRONTEND_CLASS_LIMIT);
     module->instruction_storage_base = retained_instructions;
@@ -1718,6 +1723,8 @@ static PikaStatus compile_configured_mode(
     }
     compiled->function_capacity = 1u + count_tokens(
         &tokens, PIKA_TOKEN_DEF, PIKA_FRONTEND_FUNCTION_LIMIT);
+    compiled->function_capacity += count_tokens(
+        &tokens, PIKA_TOKEN_LAMBDA, PIKA_FRONTEND_FUNCTION_LIMIT);
     compiled->functions = (PikaFunction*)calloc(
         compiled->function_capacity, sizeof(PikaFunction));
     compiled->class_capacity = count_tokens(

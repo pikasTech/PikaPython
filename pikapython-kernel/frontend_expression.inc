@@ -1171,6 +1171,11 @@ static PikaStatus parse_binding_access(
     PikaSymbol resolved_global;
     PikaSymbol* symbol = find_read_symbol(
         parser, owner, &resolved_global);
+#if PIKA_BINDING_RUNTIME_ENABLE
+    if (symbol != NULL && symbol->initialized != 0u) {
+        imported = NULL;
+    }
+#endif
     const PikaToken* member;
 #if PIKA_BINDING_RUNTIME_ENABLE
     const PikaBindingCallable* callable = NULL;
@@ -2977,6 +2982,35 @@ static PikaStatus parse_primary_new(PikaParser* parser,
 #endif
     PikaStatus status;
     PikaConstant constant;
+    if (token->kind == PIKA_TOKEN_LAMBDA) {
+        const PikaFunctionDeclaration* lambda = NULL;
+        uint32_t declaration_index;
+        for (declaration_index = 0u;
+             declaration_index < parser->declaration_count;
+             ++declaration_index) {
+            if (parser->declarations[declaration_index].is_lambda != 0u &&
+                parser->declarations[declaration_index].header_position ==
+                    parser->position) {
+                lambda = &parser->declarations[declaration_index];
+                break;
+            }
+        }
+        if (lambda == NULL) {
+            return fail_current(parser, PIKA_STATUS_UNSUPPORTED_SYNTAX);
+        }
+        status = require_capability_at(
+            parser, PIKA_CAPABILITY_CALL_REFERENCE, token);
+        if (status != PIKA_STATUS_OK) return status;
+        parser->position = lambda->after_body;
+        status = allocate_slot(parser, &expression->slot);
+        if (status != PIKA_STATUS_OK) return status;
+        set_expression_kind(expression, PIKA_VALUE_CALLABLE);
+        expression->binding_kind = PIKA_BINDING_VALUE_CALLABLE;
+        mark_typed(parser);
+        return emit_instruction(parser, PIKA_OP_LOAD_CALLABLE,
+                                expression->slot, 0u, 0u,
+                                lambda->function_index, NULL);
+    }
     if (match(parser, PIKA_TOKEN_INTEGER)) {
         if (integer_literal_is_embedded(parser, token)) {
             status = require_capability_at(

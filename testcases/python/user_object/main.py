@@ -24,6 +24,13 @@ class Bucket:
         return self.values.pop()
 
 
+class DynamicField:
+    def __init__(self, value=None):
+        self.data = {"answer": 0}
+        if value is not None:
+            self.data = value["data"]
+
+
 counter = Derived(3)
 print(counter.value)
 print(counter.add(4))
@@ -34,3 +41,5 @@ bucket.add(22)
 print(bucket.take())
 counter.value = 5
 print(counter.double())
+dynamic = DynamicField({"data": {"answer": 42}})
+print(dynamic.data["answer"])

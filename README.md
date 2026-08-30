@@ -7,7 +7,7 @@
 
 PikaPython v2 提供面向嵌入式设备的 Python 内核、模块包、项目模板和统一构建 CLI。
 源码与项目模板发布在 `pikasTech/PikaPython` 仓库的 `v2` 分支。
-当前预发布版本为 [`2.0.0-rc3`](docs/releases/v2.0.0-rc3.md)。
+当前预发布版本为 [`2.0.0-rc4`](docs/releases/v2.0.0-rc4.md)。
 
 ## V2 性能与资源改进
 
@@ -97,6 +97,15 @@ python3 tools/verify-linux-output.py
 模板默认从 `pikasTech/PikaPython` 的 `v2` 分支安装依赖。
 
 更多配置、平台模板和模块开发说明见 [`docs/reference/index.md`](docs/reference/index.md)。
+
+## 已知问题
+
+- `examples/uasyncio_example1.py` 及 `lib/lv_utils.py` 的官方同源 exact-source 适配仍在进行中，不能视为本 RC 已完全兼容。
+- 当前 `eventloop` 只提供无 thread 的协作式调度；thread-backed concurrency 和 lock API 尚未纳入本 RC。
+- LVGL 的部分字体、PNG、文件系统、fbdev/evdev 和目标硬件 driver 仍按 `feature-disabled` 或 `platform-only` 分类，不能在 Linux SDL 结果中替代验证。
+- CPython 兼容范围是文档化的嵌入式子集和已发布模块合同，不等同于完整 CPython 标准库。
+- QEMU 仅用于功能、Flash、RAM 和故障恢复验证，不用于性能结论。
+- 生成式 LVGL binding 的全部 class 反射元数据仍需继续做 generator 端到端验收；现有 runtime fixture 证据不等同于完整生成链通过。
 
 ## 交流与资源
 

@@ -571,6 +571,29 @@ static PikaStatus builtin_bytes(PikaRuntimeContext* context,
     if (!has_value) {
         return pika_runtime_create_text(context, kind, NULL, 0u, result);
     }
+    if (kind == PIKA_RUNTIME_VALUE_BYTEARRAY &&
+        value.kind == PIKA_RUNTIME_VALUE_INTEGER) {
+        char* bytes;
+        PikaStatus status;
+        if (value.as.integer < 0) {
+            return PIKA_STATUS_VALUE_ERROR;
+        }
+        if (value.as.integer > (int64_t)UINT32_MAX) {
+            return PIKA_STATUS_OVERFLOW_ERROR;
+        }
+        if (value.as.integer == 0) {
+            return pika_runtime_create_text(
+                context, kind, NULL, 0u, result);
+        }
+        bytes = (char*)calloc((size_t)value.as.integer, 1u);
+        if (bytes == NULL) {
+            return PIKA_STATUS_STORAGE_TOO_SMALL;
+        }
+        status = pika_runtime_create_text(
+            context, kind, bytes, (uint32_t)value.as.integer, result);
+        free(bytes);
+        return status;
+    }
     if (value.kind == PIKA_RUNTIME_VALUE_STRING) {
         PikaObjectSlot* slot = pika_runtime_object(context, value);
         if (slot == NULL || (slot->length != 0u && slot->data == NULL)) {

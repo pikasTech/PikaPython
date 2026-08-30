@@ -30,6 +30,7 @@ typedef struct {
 
 typedef struct {
     PikaGraphName name;
+    PikaGraphName bound_name;
     PikaGraphName* members;
     uint32_t member_count;
     uint32_t member_capacity;
@@ -557,6 +558,8 @@ static PikaStatus graph_analyze_module(PikaGraph* graph,
             PikaGraphImport* import_entry;
             uint32_t cursor = index + 3u;
             uint32_t member_cursor;
+            uint32_t member_end;
+            uint8_t parenthesized = 0u;
             if (cursor >= module->token_count ||
                 module->tokens[index + 1u].kind != PIKA_TOKEN_NAME ||
                 module->tokens[index + 2u].kind !=
@@ -564,6 +567,12 @@ static PikaStatus graph_analyze_module(PikaGraph* graph,
                 return graph_fail(
                     graph, PIKA_STATUS_SYNTAX_ERROR, module, index);
             }
+            if (module->tokens[cursor].kind ==
+                PIKA_TOKEN_LEFT_PAREN) {
+                parenthesized = 1u;
+                ++cursor;
+            }
+            member_cursor = cursor;
             for (;;) {
                 if (cursor >= module->token_count ||
                     module->tokens[cursor].kind != PIKA_TOKEN_NAME) {
@@ -577,8 +586,9 @@ static PikaStatus graph_analyze_module(PikaGraph* graph,
                         graph, PIKA_STATUS_SYNTAX_ERROR,
                         module, index);
                 }
-                if (module->tokens[cursor].kind ==
-                    PIKA_TOKEN_NEWLINE) {
+                if (!parenthesized &&
+                    module->tokens[cursor].kind ==
+                        PIKA_TOKEN_NEWLINE) {
                     break;
                 }
                 if (module->tokens[cursor].kind !=
@@ -588,6 +598,29 @@ static PikaStatus graph_analyze_module(PikaGraph* graph,
                         module, cursor);
                 }
                 ++cursor;
+                if (parenthesized &&
+                    cursor < module->token_count &&
+                    module->tokens[cursor].kind ==
+                        PIKA_TOKEN_RIGHT_PAREN) {
+                    break;
+                }
+            }
+            if (parenthesized) {
+                if (cursor >= module->token_count ||
+                    module->tokens[cursor].kind !=
+                        PIKA_TOKEN_RIGHT_PAREN) {
+                    return graph_fail(
+                        graph, PIKA_STATUS_SYNTAX_ERROR,
+                        module, index);
+                }
+                ++cursor;
+                if (cursor >= module->token_count ||
+                    module->tokens[cursor].kind !=
+                        PIKA_TOKEN_NEWLINE) {
+                    return graph_fail(
+                        graph, PIKA_STATUS_SYNTAX_ERROR,
+                        module, index);
+                }
             }
             status = graph_reserve_configured(
                 graph, module, index,
@@ -614,8 +647,8 @@ static PikaStatus graph_analyze_module(PikaGraph* graph,
             import_entry->last_token = cursor - 1u;
             import_entry->top_level = depth == 0u ? 1u : 0u;
             import_entry->from_import = 1u;
-            member_cursor = index + 3u;
-            while (member_cursor < cursor) {
+            member_end = parenthesized ? cursor - 1u : cursor;
+            while (member_cursor < member_end) {
                 status = graph_add_name(
                     graph, module, &import_entry->members,
                     &import_entry->member_count,
@@ -638,11 +671,31 @@ static PikaStatus graph_analyze_module(PikaGraph* graph,
         }
         if (kind == PIKA_TOKEN_IMPORT) {
             PikaGraphImport* import_entry;
+            uint32_t bound_index = index + 1u;
+            uint32_t last_token = index + 1u;
             if (index + 2u >= module->token_count ||
-                module->tokens[index + 1u].kind != PIKA_TOKEN_NAME ||
-                module->tokens[index + 2u].kind != PIKA_TOKEN_NEWLINE) {
+                module->tokens[index + 1u].kind != PIKA_TOKEN_NAME) {
                 return graph_fail(
                     graph, PIKA_STATUS_SYNTAX_ERROR, module, index);
+            }
+            if (module->tokens[index + 2u].kind == PIKA_TOKEN_NAME &&
+                graph_token_equals(module, index + 2u, "as")) {
+                if (index + 4u >= module->token_count ||
+                    module->tokens[index + 3u].kind !=
+                        PIKA_TOKEN_NAME ||
+                    module->tokens[index + 4u].kind !=
+                        PIKA_TOKEN_NEWLINE) {
+                    return graph_fail(
+                        graph, PIKA_STATUS_SYNTAX_ERROR,
+                        module, index + 2u);
+                }
+                bound_index = index + 3u;
+                last_token = index + 3u;
+            } else if (module->tokens[index + 2u].kind !=
+                       PIKA_TOKEN_NEWLINE) {
+                return graph_fail(
+                    graph, PIKA_STATUS_SYNTAX_ERROR,
+                    module, index + 2u);
             }
             status = graph_reserve_configured(
                 graph, module, index,
@@ -663,8 +716,16 @@ static PikaStatus graph_analyze_module(PikaGraph* graph,
             if (status != PIKA_STATUS_OK) {
                 return graph_fail(graph, status, module, index + 1u);
             }
+            status = graph_copy_token(
+                module, bound_index, import_entry->bound_name.text,
+                sizeof(import_entry->bound_name.text));
+            if (status != PIKA_STATUS_OK) {
+                return graph_fail(
+                    graph, status, module, bound_index);
+            }
             import_entry->name.token_index = index;
-            import_entry->last_token = index + 1u;
+            import_entry->bound_name.token_index = bound_index;
+            import_entry->last_token = last_token;
             import_entry->top_level = depth == 0u ? 1u : 0u;
         }
         if (depth == 0u && kind == PIKA_TOKEN_DEF) {
@@ -1043,6 +1104,30 @@ static PikaStatus graph_buffer_text(PikaGraphBuffer* buffer,
     return graph_buffer_append(buffer, text, strlen(text));
 }
 
+static int graph_module_name_is_bound(
+    const PikaGraph* graph, const char* name) {
+    uint32_t module_index;
+    for (module_index = 0u;
+         module_index < graph->module_count;
+         ++module_index) {
+        const PikaGraphModule* module =
+            graph->modules[module_index];
+        uint32_t import_index;
+        for (import_index = 0u;
+             import_index < module->import_count;
+             ++import_index) {
+            const PikaGraphImport* imported =
+                &module->imports[import_index];
+            if (imported->is_python != 0u &&
+                imported->from_import == 0u &&
+                strcmp(imported->bound_name.text, name) == 0) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
 static PikaStatus graph_capture_python_modules(
     PikaGraph* graph,
     uint8_t entry_index,
@@ -1060,6 +1145,9 @@ static PikaStatus graph_capture_python_modules(
         size_t name_length;
         PikaStatus status;
         if (module_index == entry_index) continue;
+        if (!graph_module_name_is_bound(graph, imported->name)) {
+            continue;
+        }
         name_length = strlen(imported->name);
         if (*retained_count >= PIKA_FRONTEND_MODULE_LIMIT ||
             name_length > UINT16_MAX ||
@@ -1092,10 +1180,10 @@ static PikaStatus graph_capture_python_modules(
         size_t name_length;
         PikaStatus status;
         if (imported->is_python == 0u ||
-            imported->from_base == 0u) {
+            imported->from_import != 0u) {
             continue;
         }
-        name_length = strlen(imported->name.text);
+        name_length = strlen(imported->bound_name.text);
         if (*retained_count >= PIKA_FRONTEND_MODULE_LIMIT ||
             name_length > UINT16_MAX ||
             buffer->length > UINT32_MAX - name_length) {
@@ -1111,9 +1199,10 @@ static PikaStatus graph_capture_python_modules(
             imported->target_module;
         retained[*retained_count].flags =
             PIKA_PYTHON_MODULE_PUBLIC;
-        retained[*retained_count].target_is_stable = 1u;
+        retained[*retained_count].target_is_stable =
+            imported->from_base;
         status = graph_buffer_append(
-            buffer, imported->name.text, name_length);
+            buffer, imported->bound_name.text, name_length);
         if (status != PIKA_STATUS_OK) return status;
         ++*retained_count;
     }
@@ -1451,7 +1540,8 @@ static const PikaGraphImport* graph_python_import_name(
              import_entry->is_program_image != 0u) &&
             import_entry->from_import == 0u &&
             graph_token_equals(
-                module, token_index, import_entry->name.text)) {
+                module, token_index,
+                import_entry->bound_name.text)) {
             return import_entry;
         }
     }
@@ -2322,6 +2412,16 @@ static PikaStatus graph_append_program_binding_imports(
                         ? "from " : "import ");
         if (status == PIKA_STATUS_OK) {
             status = graph_buffer_text(buffer, imported->name.text);
+        }
+        if (status == PIKA_STATUS_OK &&
+            imported->from_import == 0u &&
+            strcmp(imported->name.text,
+                   imported->bound_name.text) != 0) {
+            status = graph_buffer_text(buffer, " as ");
+            if (status == PIKA_STATUS_OK) {
+                status = graph_buffer_text(
+                    buffer, imported->bound_name.text);
+            }
         }
         if (status == PIKA_STATUS_OK &&
             imported->from_import != 0u) {

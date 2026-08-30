@@ -96,7 +96,8 @@ typedef enum {
     PIKA_TOKEN_GLOBAL = 79,
     PIKA_TOKEN_DEL = 80,
     PIKA_TOKEN_ASSERT = 81,
-    PIKA_TOKEN_KIND_COUNT = 82,
+    PIKA_TOKEN_LAMBDA = 82,
+    PIKA_TOKEN_KIND_COUNT = 83,
 } PikaTokenKind;
 
 typedef char PikaTokenKindStorageCheck[

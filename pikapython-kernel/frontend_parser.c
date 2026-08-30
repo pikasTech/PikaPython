@@ -20,6 +20,7 @@ typedef struct {
 typedef struct {
     uint32_t header_position;
     uint32_t name_position;
+    uint32_t body_position;
     uint32_t after_body;
     const char* stable_name;
     uint16_t stable_name_length;
@@ -32,6 +33,7 @@ typedef struct {
     uint32_t first_return_element_shape;
     uint16_t return_element_shape_count;
     uint8_t has_return_shape;
+    uint8_t is_lambda;
     PikaParameterDeclaration* parameters;
 } PikaFunctionDeclaration;
 
@@ -401,6 +403,18 @@ static int count_header_parameters(
     return 0;
 }
 
+static uint32_t count_lambda_parameters(const PikaParser* parser,
+                                        uint32_t start) {
+    uint32_t count = 0u;
+    uint32_t cursor = start + 1u;
+    while (cursor < parser->token_count &&
+           parser->tokens[cursor].kind != PIKA_TOKEN_COLON) {
+        if (parser->tokens[cursor].kind == PIKA_TOKEN_NAME) ++count;
+        ++cursor;
+    }
+    return count;
+}
+
 static PikaStatus allocate_parameter_declarations(
     PikaParser* parser) {
     uint32_t capacity = 0u;
@@ -410,6 +424,15 @@ static PikaStatus allocate_parameter_declarations(
         PIKA_FRONTEND_PARAMETER_LIMIT;
     for (index = 0u; index + 2u < parser->token_count; ++index) {
         uint32_t count = 0u;
+        if (parser->tokens[index].kind == PIKA_TOKEN_LAMBDA) {
+            count = count_lambda_parameters(parser, index);
+            if (count > limit - capacity) {
+                capacity = limit;
+                break;
+            }
+            capacity += count;
+            continue;
+        }
         if (parser->tokens[index].kind != PIKA_TOKEN_DEF ||
             parser->tokens[index + 2u].kind !=
                 PIKA_TOKEN_LEFT_PAREN) {
@@ -823,6 +846,7 @@ static PikaStatus seed_semantic_catalog(PikaParser* parser) {
             semantic->first_element_shape;
         global->element_shape_count =
             semantic->element_shape_count;
+        global->initialized = 1u;
         global->global_slot = semantic->slot;
     }
     parser->module_global_count =
@@ -1650,6 +1674,9 @@ static PikaStatus update_field_type(
         field->allows_none = 1u;
         return PIKA_STATUS_OK;
     }
+    if (value->kind == PIKA_VALUE_UNKNOWN) {
+        return PIKA_STATUS_OK;
+    }
     if (field->kind == PIKA_VALUE_UNKNOWN ||
         field->kind == PIKA_VALUE_NONE) {
         field->kind = (uint8_t)value->kind;
@@ -1854,6 +1881,7 @@ static PikaStatus assign_symbol(PikaParser* parser,
     symbol->class_index = UINT16_MAX;
     symbol->first_element_shape = 0u;
     symbol->element_shape_count = 0u;
+    symbol->initialized = 1u;
     symbol->is_global = 0u;
     symbol->global_slot = 0u;
     *slot = symbol->slot;
@@ -2353,6 +2381,7 @@ static PikaStatus parse_assignment(PikaParser* parser) {
         expression.first_element_shape;
     symbol->element_shape_count =
         expression.element_shape_count;
+    symbol->initialized = 1u;
     if (is_global) {
         mark_typed(parser);
         return emit_instruction(
@@ -2412,6 +2441,7 @@ static PikaStatus parse_unpack_assignment(PikaParser* parser) {
                 parser, name, PIKA_VALUE_UNKNOWN, &slot);
             if (status != PIKA_STATUS_OK) return status;
             target = find_symbol(parser, name);
+            if (target != NULL) target->initialized = 0u;
         } else {
             slot = target->slot;
         }
@@ -2503,6 +2533,7 @@ static PikaStatus parse_unpack_assignment(PikaParser* parser) {
         if (status != PIKA_STATUS_OK) {
             return fail_at(parser, status, names[index]);
         }
+        targets[index]->initialized = 1u;
     }
     return PIKA_STATUS_OK;
 }
@@ -2865,6 +2896,7 @@ static const PikaPythonModule* find_python_import(
 static PikaStatus parse_import(PikaParser* parser) {
     const PikaToken* token = current_token(parser);
     const PikaToken* name;
+    const PikaToken* bound_name;
 #if PIKA_CAPABILITY_BINDING_C_ENABLE
     const PikaBindingModule* module = NULL;
 #endif
@@ -2878,6 +2910,16 @@ static PikaStatus parse_import(PikaParser* parser) {
     name = current_token(parser);
     status = require(parser, PIKA_TOKEN_NAME);
     if (status == PIKA_STATUS_OK) {
+        bound_name = name;
+        if (current_token(parser)->kind == PIKA_TOKEN_NAME &&
+            token_matches_text(
+                parser, current_token(parser), "as", 2u)) {
+            ++parser->position;
+            bound_name = current_token(parser);
+            status = require(parser, PIKA_TOKEN_NAME);
+        }
+    }
+    if (status == PIKA_STATUS_OK) {
         status = require(parser, PIKA_TOKEN_NEWLINE);
     }
     if (status == PIKA_STATUS_OK) {
@@ -2889,7 +2931,7 @@ static PikaStatus parse_import(PikaParser* parser) {
         return status;
     }
 #if PIKA_CAPABILITY_MODULE_PYTHON_ENABLE
-    if (find_python_import(parser, name) != NULL) {
+    if (find_python_import(parser, bound_name) != NULL) {
         return PIKA_STATUS_OK;
     }
 #endif
@@ -2901,7 +2943,7 @@ static PikaStatus parse_import(PikaParser* parser) {
     if (status != PIKA_STATUS_OK) {
         return status;
     }
-    if (find_import(parser, name) != NULL) {
+    if (find_import(parser, bound_name) != NULL) {
         return PIKA_STATUS_OK;
     }
     if (parser->bindings == NULL) {
@@ -2921,8 +2963,10 @@ static PikaStatus parse_import(PikaParser* parser) {
     }
     parser->imports[parser->import_count].name_source =
         parser->source;
-    parser->imports[parser->import_count].offset = name->offset;
-    parser->imports[parser->import_count].length = name->length;
+    parser->imports[parser->import_count].offset =
+        bound_name->offset;
+    parser->imports[parser->import_count].length =
+        bound_name->length;
     parser->imports[parser->import_count].module = module;
     parser->imports[parser->import_count].selected = 0u;
     ++parser->import_count;
@@ -2935,6 +2979,7 @@ static PikaStatus parse_from_import(PikaParser* parser) {
     const PikaToken* from_token = current_token(parser);
     const PikaToken* module_token;
     const PikaBindingModule* module = NULL;
+    int parenthesized = 0;
     char module_name[PIKA_FRONTEND_IDENTIFIER_BYTE_LIMIT + 1u];
     PikaStatus status = require_capability_at(
         parser, PIKA_CAPABILITY_FROM_IMPORT, from_token);
@@ -2955,6 +3000,7 @@ static PikaStatus parse_from_import(PikaParser* parser) {
             (uint32_t)sizeof(module_name));
     }
     if (status != PIKA_STATUS_OK) return status;
+    parenthesized = match(parser, PIKA_TOKEN_LEFT_PAREN);
     if (parser->bindings == NULL ||
         pika_binding_find_module(
             parser->bindings, module_name, &module) !=
@@ -3013,6 +3059,16 @@ static PikaStatus parse_from_import(PikaParser* parser) {
             ++parser->import_count;
         }
         if (!match(parser, PIKA_TOKEN_COMMA)) break;
+        if (parenthesized &&
+            current_token(parser)->kind == PIKA_TOKEN_RIGHT_PAREN) {
+            break;
+        }
+    }
+    if (parenthesized) {
+        status = require(parser, PIKA_TOKEN_RIGHT_PAREN);
+        if (status != PIKA_STATUS_OK) {
+            return status;
+        }
     }
     return require(parser, PIKA_TOKEN_NEWLINE);
 }
@@ -4310,6 +4366,111 @@ static PikaStatus discover_declaration(PikaParser* parser,
     return PIKA_STATUS_OK;
 }
 
+static uint32_t lambda_body_end(const PikaParser* parser,
+                                uint32_t position) {
+    uint32_t paren = 0u;
+    uint32_t bracket = 0u;
+    uint32_t brace = 0u;
+    while (position < parser->token_count) {
+        PikaTokenKind kind = parser->tokens[position].kind;
+        if (kind == PIKA_TOKEN_EOF ||
+            (kind == PIKA_TOKEN_NEWLINE && paren == 0u && bracket == 0u && brace == 0u) ||
+            (kind == PIKA_TOKEN_COMMA && paren == 0u && bracket == 0u && brace == 0u) ||
+            (kind == PIKA_TOKEN_RIGHT_PAREN && paren == 0u && bracket == 0u && brace == 0u) ||
+            (kind == PIKA_TOKEN_RIGHT_BRACKET && paren == 0u && bracket == 0u && brace == 0u) ||
+            (kind == PIKA_TOKEN_RIGHT_BRACE && paren == 0u && bracket == 0u && brace == 0u)) {
+            break;
+        }
+        if (kind == PIKA_TOKEN_LEFT_PAREN) ++paren;
+        else if (kind == PIKA_TOKEN_RIGHT_PAREN && paren > 0u) --paren;
+        else if (kind == PIKA_TOKEN_LEFT_BRACKET) ++bracket;
+        else if (kind == PIKA_TOKEN_RIGHT_BRACKET && bracket > 0u) --bracket;
+        else if (kind == PIKA_TOKEN_LEFT_BRACE) ++brace;
+        else if (kind == PIKA_TOKEN_RIGHT_BRACE && brace > 0u) --brace;
+        ++position;
+    }
+    return position;
+}
+
+static PikaStatus discover_lambda(PikaParser* parser) {
+    PikaFunctionDeclaration* declaration;
+    uint32_t header = parser->position;
+    uint32_t parameter_count = 0u;
+    uint32_t parameter_capacity;
+    PikaStatus status = require_capability_at(
+        parser, PIKA_CAPABILITY_CALL_REFERENCE, current_token(parser));
+    if (status != PIKA_STATUS_OK) return status;
+    if (parser->declaration_count >= parser->declaration_capacity ||
+        parser->declaration_count >= PIKA_FRONTEND_FUNCTION_LIMIT) {
+        return fail_limit_current(parser, PIKA_FRONTEND_BOUND_FUNCTIONS,
+                                   PIKA_FRONTEND_FUNCTION_LIMIT,
+                                   parser->declaration_count + 1u);
+    }
+    declaration = &parser->declarations[parser->declaration_count];
+    memset(declaration, 0, sizeof(*declaration));
+    declaration->header_position = header;
+    declaration->name_position = UINT32_MAX;
+    declaration->owner_class = UINT16_MAX;
+    declaration->is_lambda = 1u;
+    ++parser->position;
+    parameter_capacity = count_lambda_parameters(parser, header);
+    if (parameter_capacity > PIKA_FRONTEND_PARAMETER_LIMIT) {
+        parameter_capacity = PIKA_FRONTEND_PARAMETER_LIMIT;
+    }
+    status = reserve_parameter_declarations(parser, parameter_capacity,
+                                            &declaration->parameters);
+    if (status != PIKA_STATUS_OK) return status;
+    parameter_count = 0u;
+    while (current_token(parser)->kind != PIKA_TOKEN_COLON) {
+        const PikaToken* parameter = current_token(parser);
+        PikaParameterDeclaration* metadata;
+        if (parameter->kind == PIKA_TOKEN_STAR ||
+            parameter->kind == PIKA_TOKEN_DOUBLE_STAR ||
+            parameter->kind == PIKA_TOKEN_ASSIGN) {
+            return fail_current(parser, PIKA_STATUS_UNSUPPORTED_SYNTAX);
+        }
+        if (parameter->kind != PIKA_TOKEN_NAME) {
+            return fail_current(parser, PIKA_STATUS_SYNTAX_ERROR);
+        }
+        metadata = &declaration->parameters[parameter_count++];
+        metadata->name_position = parser->position;
+        metadata->default_start = UINT32_MAX;
+        metadata->default_end = UINT32_MAX;
+        metadata->default_constant = UINT16_MAX;
+        ++parser->position;
+        if (!match(parser, PIKA_TOKEN_COMMA)) break;
+    }
+    status = require(parser, PIKA_TOKEN_COLON);
+    if (status != PIKA_STATUS_OK) return status;
+    declaration->body_position = parser->position;
+    declaration->after_body = lambda_body_end(parser, parser->position);
+    if (declaration->body_position == declaration->after_body) {
+        return fail_current(parser, PIKA_STATUS_SYNTAX_ERROR);
+    }
+    declaration->parameter_count = (uint8_t)parameter_count;
+    declaration->required_parameter_count = (uint8_t)parameter_count;
+    declaration->variadic_parameter = UINT8_MAX;
+    declaration->function_index = (uint16_t)parser->declaration_count;
+    ++parser->declaration_count;
+    return PIKA_STATUS_OK;
+}
+
+static PikaStatus discover_lambdas(PikaParser* parser) {
+    uint32_t position = 0u;
+    while (position < parser->token_count) {
+        if (parser->tokens[position].kind == PIKA_TOKEN_LAMBDA) {
+            parser->position = position;
+            if (discover_lambda(parser) != PIKA_STATUS_OK) {
+                return parser->diagnostic->status;
+            }
+            position = parser->declarations[parser->declaration_count - 1u].after_body;
+            continue;
+        }
+        ++position;
+    }
+    return PIKA_STATUS_OK;
+}
+
 static int token_matches_text(const PikaParser* parser,
                               const PikaToken* token,
                               const char* text,
@@ -4723,6 +4884,59 @@ static PikaStatus compile_function(
             parser, declaration->function_index, first_instruction,
             declaration->parameter_count, declaration->owner_class);
     }
+    return status;
+}
+
+static PikaStatus compile_lambda(
+    PikaParser* parser,
+    const PikaFunctionDeclaration* declaration) {
+    uint32_t first_instruction;
+    uint32_t index;
+    PikaStatus status = PIKA_STATUS_OK;
+    PikaExpression expression;
+    uint32_t global_index;
+    reset_scope(parser, 1);
+    parser->current_function = declaration->function_index;
+    for (global_index = 0u;
+         global_index < parser->module_global_count;
+         ++global_index) {
+        PikaSymbol* global = &parser->module_globals[global_index];
+        if (parser->symbol_count >= parser->symbol_capacity) {
+            return fail_current(parser, PIKA_STATUS_FRONTEND_LIMIT);
+        }
+        parser->symbols[parser->symbol_count] = *global;
+        parser->symbols[parser->symbol_count].is_global = 1u;
+        ++parser->symbol_count;
+    }
+    parser->position = declaration->header_position + 1u;
+    index = 0u;
+    while (current_token(parser)->kind != PIKA_TOKEN_COLON) {
+        const PikaToken* parameter = current_token(parser);
+        uint8_t slot = 0u;
+        if (parameter->kind != PIKA_TOKEN_NAME ||
+            index >= declaration->parameter_count) {
+            return fail_current(parser, PIKA_STATUS_INTERNAL_ERROR);
+        }
+        status = assign_symbol(parser, parameter, PIKA_VALUE_UNKNOWN, &slot);
+        if (status != PIKA_STATUS_OK) return status;
+        ++index;
+        ++parser->position;
+        if (!match(parser, PIKA_TOKEN_COMMA)) break;
+    }
+    parser->position = declaration->body_position;
+    first_instruction = parser->module->program.instruction_count;
+    parser->function_instruction_start = first_instruction;
+    memset(&expression, 0, sizeof(expression));
+    status = parse_expression(parser, &expression);
+    if (status == PIKA_STATUS_OK) status = record_return_shape(parser, &expression);
+    if (status == PIKA_STATUS_OK) status = emit_instruction(
+        parser, PIKA_OP_RETURN, expression.slot, 0u, 0u, 0, NULL);
+    if (status == PIKA_STATUS_OK && parser->position != declaration->after_body) {
+        status = fail_current(parser, PIKA_STATUS_INTERNAL_ERROR);
+    }
+    if (status == PIKA_STATUS_OK) record_function(
+        parser, declaration->function_index, first_instruction,
+        declaration->parameter_count, UINT16_MAX);
     return status;
 }
 
@@ -5387,8 +5601,13 @@ static uint32_t planned_symbol_capacity(const PikaParser* parser) {
     for (cursor = 0u; cursor < parser->token_count; ++cursor) {
         uint32_t end;
         uint32_t function_names;
-        if (parser->tokens[cursor].kind != PIKA_TOKEN_DEF) continue;
-        end = parser_compound_end(parser, cursor);
+        if (parser->tokens[cursor].kind == PIKA_TOKEN_LAMBDA) {
+            end = lambda_body_end(parser, cursor + 1u);
+        } else if (parser->tokens[cursor].kind == PIKA_TOKEN_DEF) {
+            end = parser_compound_end(parser, cursor);
+        } else {
+            continue;
+        }
         function_names = unique_name_count(
             parser, cursor, end, PIKA_FRONTEND_SYMBOL_LIMIT);
         if (function_names > capacity) capacity = function_names;
@@ -5471,7 +5690,8 @@ static uint32_t planned_declaration_capacity(
         return PIKA_FRONTEND_FUNCTION_LIMIT;
     }
     for (cursor = 0u; cursor < parser->token_count; ++cursor) {
-        if (parser->tokens[cursor].kind == PIKA_TOKEN_DEF &&
+        if ((parser->tokens[cursor].kind == PIKA_TOKEN_DEF ||
+             parser->tokens[cursor].kind == PIKA_TOKEN_LAMBDA) &&
             ++capacity >= PIKA_FRONTEND_FUNCTION_LIMIT) {
             return PIKA_FRONTEND_FUNCTION_LIMIT;
         }
@@ -5665,6 +5885,11 @@ PikaStatus pika_frontend_parse(const char* source,
         release_parser(parser);
         return status;
     }
+    status = discover_lambdas(parser);
+    if (status != PIKA_STATUS_OK) {
+        release_parser(parser);
+        return status;
+    }
     status = discover_imports(parser);
     if (status != PIKA_STATUS_OK) {
         release_parser(parser);
@@ -5683,8 +5908,9 @@ PikaStatus pika_frontend_parse(const char* source,
     for (index = parser->base_declaration_count;
          index < parser->declaration_count;
          ++index) {
-        status = compile_function(
-            parser, &parser->declarations[index]);
+        status = parser->declarations[index].is_lambda != 0u
+                     ? compile_lambda(parser, &parser->declarations[index])
+                     : compile_function(parser, &parser->declarations[index]);
         if (status != PIKA_STATUS_OK) {
             release_parser(parser);
             return status;

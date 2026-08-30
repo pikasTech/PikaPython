@@ -277,6 +277,9 @@ static PikaTokenKind name_kind(const char* text, uint32_t length) {
     if (length == 3u && memcmp(text, "def", 3u) == 0) {
         return PIKA_TOKEN_DEF;
     }
+    if (length == 6u && memcmp(text, "lambda", 6u) == 0) {
+        return PIKA_TOKEN_LAMBDA;
+    }
     if (length == 3u && memcmp(text, "del", 3u) == 0) {
         return PIKA_TOKEN_DEL;
     }
@@ -841,13 +844,6 @@ PikaStatus pika_source_tokenize(const char* source,
                     PIKA_FRONTEND_IDENTIFIER_BYTE_LIMIT,
                     offset - start, line, column, start);
                 return PIKA_STATUS_FRONTEND_LIMIT;
-            }
-            if (offset - start == 6u &&
-                memcmp(&source[start], "lambda", 6u) == 0) {
-                pika_frontend_set_reason_diagnostic(
-                    diagnostic, PIKA_STATUS_UNSUPPORTED_SYNTAX,
-                    PIKA_DIAGNOSTIC_REASON_NONE, line, column, start);
-                return PIKA_STATUS_UNSUPPORTED_SYNTAX;
             }
             status = emit_token(
                 buffer, name_kind(&source[start], offset - start),

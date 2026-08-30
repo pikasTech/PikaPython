@@ -1,1 +1,1 @@
-identity = lambda value: value
+identity = lambda *values: values

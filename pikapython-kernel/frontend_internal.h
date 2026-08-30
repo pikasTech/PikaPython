@@ -145,6 +145,7 @@ typedef struct {
     uint16_t class_index;
     uint32_t first_element_shape;
     uint16_t element_shape_count;
+    uint8_t initialized;
     uint8_t is_global;
     uint8_t global_slot;
 } PikaSymbol;
