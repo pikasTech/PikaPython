@@ -7,6 +7,7 @@ import yaml
 
 from . import commands
 from .errors import PackageError
+from .identity import get_identity, get_project_ref
 
 
 class PackageArgumentParser(argparse.ArgumentParser):
@@ -35,6 +36,11 @@ def create_parser():
         "--json",
         action="store_true",
         help="emit JSON instead of human-readable text",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=json.dumps(get_identity(), ensure_ascii=True, sort_keys=True),
     )
     actions = parser.add_subparsers(dest="action", required=True)
     actions.add_parser("init", help="create pikapython.yaml")
@@ -236,11 +242,22 @@ def human_lines(operation, data):
 
 
 def emit_success(operation, data, json_output):
-    payload = {"ok": True, "operation": operation, "data": data}
+    payload = {
+        "ok": True,
+        "operation": operation,
+        "data": data,
+        "cli": get_identity(),
+        "projectRef": get_project_ref(),
+    }
     if json_output:
         print(json.dumps(payload, ensure_ascii=True, indent=2, sort_keys=True))
     else:
-        print("\n".join(human_lines(operation, data)))
+        lines = human_lines(operation, data)
+        lines.append("CLI source: %s" % (payload["cli"]["sourceCommit"] or "unknown"))
+        lines.append("CLI package: %s" % payload["cli"]["packageVersion"])
+        if payload["projectRef"] is not None:
+            lines.append("Project package ref: %s" % payload["projectRef"])
+        print("\n".join(lines))
     return 0
 
 
@@ -250,6 +267,8 @@ def emit_error(error, json_output):
         "operation": "error",
         "code": error.code,
         "error": str(error),
+        "cli": get_identity(),
+        "projectRef": get_project_ref(),
     }
     if error.stage is not None:
         payload["stage"] = error.stage
@@ -265,6 +284,16 @@ def emit_error(error, json_output):
             print("Hint: %s" % error.hint, file=sys.stderr)
         if error.module is not None:
             print("Module: %s" % error.module, file=sys.stderr)
+        print(
+            "CLI source: %s"
+            % (payload["cli"]["sourceCommit"] or "unknown"),
+            file=sys.stderr,
+        )
+        if payload["projectRef"] is not None:
+            print(
+                "Project package ref: %s" % payload["projectRef"],
+                file=sys.stderr,
+            )
     return 1
 
 

@@ -3,6 +3,7 @@ import io
 import json
 import os
 import re
+import stat
 import shutil
 import subprocess
 import tarfile
@@ -525,12 +526,53 @@ def _write_json_atomic(path, value):
             temporary.unlink()
 
 
+def _tree_manifest(root):
+    if not root.is_dir() or root.is_symlink():
+        return None
+    entries = []
+    for path in root.rglob("*"):
+        relative = path.relative_to(root).as_posix()
+        if path.is_symlink():
+            return None
+        if path.is_dir():
+            entries.append((relative, "directory", None))
+        elif path.is_file():
+            entries.append(
+                (relative, "file", hashlib.sha256(path.read_bytes()).hexdigest())
+            )
+        else:
+            return None
+    return sorted(entries)
+
+
+def _same_tree(left, right):
+    left_manifest = _tree_manifest(left)
+    return left_manifest is not None and left_manifest == _tree_manifest(right)
+
+
+def _remove_tree(path):
+    if not path.exists():
+        return
+
+    def onerror(function, name, exception):
+        try:
+            mode = os.stat(name, follow_symlinks=False).st_mode
+            os.chmod(name, mode | stat.S_IWRITE)
+        except OSError:
+            pass
+        function(name)
+
+    shutil.rmtree(path, onerror=onerror)
+
+
 def publish_install(project, state, publish, snapshot, manifest):
     previous = _read_previous_manifest(state)
     previous_targets = set(previous["managedTargets"] if previous else [])
     new_targets = set(manifest["managedTargets"])
     for target in sorted(new_targets.difference(previous_targets)):
-        if (project / target).exists():
+        if (project / target).exists() and not _same_tree(
+            project / target, publish / target
+        ):
             raise PackageError(
                 "package_file_conflict",
                 "install target already exists and is not package-owned: %s"
@@ -562,11 +604,11 @@ def publish_install(project, state, publish, snapshot, manifest):
         for target in reversed(installed_targets):
             path = project / target
             if path.is_dir():
-                shutil.rmtree(path)
+                _remove_tree(path)
             elif path.exists():
                 path.unlink()
         if source_target.exists():
-            shutil.rmtree(source_target)
+            _remove_tree(source_target)
         if moved_source and source_backup.exists():
             os.replace(source_backup, source_target)
         for target in reversed(moved_targets):
@@ -651,4 +693,4 @@ def install(config):
         }
     finally:
         if transaction.exists():
-            shutil.rmtree(transaction)
+            _remove_tree(transaction)

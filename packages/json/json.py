@@ -128,13 +128,13 @@ def _dump(value, depth, stack):
         closing = "]"
     index = 0
     for item in value:
-        if index != 0:
-            result = _fit(result + ", ")
         if mapping:
             encoded = _dump_key(item) + ": " + _dump(
                 value[item], depth + 1, stack)
         else:
             encoded = _dump(item, depth + 1, stack)
+        if index != 0:
+            encoded = ", " + encoded
         result = _fit(result + encoded)
         index += 1
     stack.pop()

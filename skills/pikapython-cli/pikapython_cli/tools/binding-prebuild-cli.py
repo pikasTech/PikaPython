@@ -95,8 +95,6 @@ def annotation_capabilities(annotation, class_names):
 
 def callable_capabilities(value, class_names):
     required = set()
-    if value["parameters"]:
-        required.add("call.keyword")
     for parameter in value["parameters"]:
         required.update(
             annotation_capabilities(

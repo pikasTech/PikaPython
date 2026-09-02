@@ -164,10 +164,23 @@ def _generate_capability(stage, project, source, config):
     )
 
 
-def _generate_bindings(stage, source, install, capabilities):
-    descriptors = []
+def _binding_inputs(project, source, install):
+    inputs = []
+    installed_targets = set()
     public = [path for path in install["files"] if "/" not in path]
     for target in sorted(path for path in public if path.endswith(".pyi")):
+        origin = install["fileOrigins"].get(target)
+        inputs.append((target, source / origin if origin else None))
+        installed_targets.add(target)
+    for target in sorted(project.glob("*.pyi"), key=lambda path: path.name):
+        if target.name not in installed_targets:
+            inputs.append((target.name, target))
+    return inputs
+
+
+def _generate_bindings(stage, project, source, install, capabilities):
+    descriptors = []
+    for target, input_path in _binding_inputs(project, source, install):
         if not capabilities:
             raise PackageError(
                 "capability_required",
@@ -175,8 +188,6 @@ def _generate_bindings(stage, source, install, capabilities):
                 stage="prebuild",
             )
         module = target[:-4]
-        origin = install["fileOrigins"].get(target)
-        input_path = source / origin if origin else None
         tool = _cli_tools() / "binding-prebuild-cli.py"
         if input_path is None or not input_path.is_file() or not tool.is_file():
             raise PackageError(
@@ -198,7 +209,7 @@ def _generate_bindings(stage, source, install, capabilities):
         ]
         for capability in capabilities:
             command.extend(["--capability", capability])
-        _run_tool(command, source, "binding_prebuild_failed")
+        _run_tool(command, project, "binding_prebuild_failed")
         descriptor_path = output / (module + ".json")
         descriptors.append(
             read_json(descriptor_path, "binding_descriptor_invalid")
@@ -1175,7 +1186,7 @@ def generate(stage, project, source, config, install):
         )
     active_install = _active_install(install, capability)
     bindings = _generate_bindings(
-        stage, source, active_install, capability.get("closure", [])
+        stage, project, source, active_install, capability.get("closure", [])
     )
     modules, skipped = _generate_python_data(
         stage, project, source, config, active_install, bindings, capability

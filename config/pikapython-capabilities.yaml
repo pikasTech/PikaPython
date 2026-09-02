@@ -39,6 +39,9 @@ capabilities:
   binding.constants:
     dependencies: [binding.c, object.attribute]
     supported: true
+  binding.native-callback:
+    dependencies: [binding.c, binding.constants]
+    supported: false
   binding.container-argument:
     dependencies: [binding.c, container.dict, container.list, container.tuple]
     supported: true
@@ -331,7 +334,7 @@ profiles:
     roots: [builtin.container-construct, builtin.len, builtin.print, builtin.scalar-convert, call.positional, iter.range, logic.short-circuit, op.integer, runtime.frozen-program, runtime.gc, value.none]
     syntaxLevel: 3
   embedded-app:
-    roots: [binding.c-object, builtin.embedded, builtin.print, container.bytearray, container.dict, container.list, container.tuple, exception.basic, iter.builtin, iter.range, logic.short-circuit, module.python, op.complete, op.float, op.integer, runtime.frozen-program, runtime.gc, value.bytes, value.none, value.string]
+    roots: [binding.c-object, binding.container-result, builtin.embedded, builtin.print, container.bytearray, container.dict, container.list, container.tuple, exception.basic, iter.builtin, iter.range, logic.short-circuit, module.python, op.complete, op.float, op.integer, runtime.frozen-program, runtime.gc, value.bytes, value.none, value.string]
     syntaxLevel: 6
   hardware-control:
     roots: [binding.constants, binding.container-result, binding.mutable-buffer, binding.object-argument, binding.python-callable, builtin.container-construct, builtin.len, builtin.print, builtin.scalar-convert, call.defaults, call.keyword, call.reference, container.bytearray, container.dict, container.list, container.tuple, exception.finally, flow.loop, flow.pass, iter.builtin, iter.range, library.struct-basic, library.time-basic, literal.embedded-int, logic.short-circuit, machine.adc, machine.pin, machine.pwm, module.from-import, module.python, name.global, object.user-basic, op.augmented, op.bitwise, op.compare-basic, op.membership, op.numeric-basic, op.slice, op.subscript, runtime.frozen-program, runtime.gc, scope.global-statement, value.bool, value.bytes, value.float, value.none, value.string]

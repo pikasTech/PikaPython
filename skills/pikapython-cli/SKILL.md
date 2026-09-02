@@ -56,7 +56,14 @@ pikapython-cli build
 
 - 先读取 CLI 返回的 `code`、`stage`、`message` 和 `hint`；
 - `install` 失败时检查 sourceUrl、ref、Git 可达性和 package catalog；
+- 缺少安装 manifest 但现有安装目录与本次 package 内容完全一致时，
+  `install` 可以接管并生成 manifest；目录、文件类型或内容不同仍返回
+  `package_file_conflict`；
+- Windows 清理 Git 快照或安装事务时会恢复只读项的写权限再删除，清理失败不得
+  用 traceback 覆盖原始安装错误；
 - prebuild 失败时检查 capability、`.pyi`、`main.py` 和已安装 manifest；
+- binding prebuild 会按确定顺序读取安装清单中的根目录 `.pyi` 以及项目根目录的
+  `.pyi`；项目本地 stub 不会被 install manifest 接管；
 - target build 失败时保留已生成产物，再检查 adapter、toolchain 和项目文件；
 - 不绕过 CLI 手工运行生成器、拼接产品源码清单或让 CMake 解析 `.pyi`。
 
