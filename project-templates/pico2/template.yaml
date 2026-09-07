@@ -1,0 +1,11 @@
+version: 1
+id: pico2
+name: Raspberry Pi Pico 2
+architecture: arm-cortex-m33
+mcu: RP2350A
+adapter: cmake
+machine: pico2
+projectFile: CMakeLists.txt
+targetName: pico2-firmware
+applicationFile: main.py
+interactive: true
