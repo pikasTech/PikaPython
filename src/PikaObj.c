@@ -1807,6 +1807,29 @@ static void handle_history_navigation(char inputChar,
     return;
 }
 
+static pika_bool _shell_lineStaysInBlock(char* line) {
+    if ((line[0] == ' ') || (line[0] == '\t')) {
+        return pika_true;
+    }
+    if (strIsStartWith(line, "else") &&
+        ((line[4] == ' ') || (line[4] == ':'))) {
+        return pika_true;
+    }
+    if (strIsStartWith(line, "elif") &&
+        ((line[4] == ' ') || (line[4] == ':'))) {
+        return pika_true;
+    }
+    if (strIsStartWith(line, "except") &&
+        ((line[6] == ' ') || (line[6] == ':'))) {
+        return pika_true;
+    }
+    if (strIsStartWith(line, "finally") &&
+        ((line[7] == ' ') || (line[7] == ':'))) {
+        return pika_true;
+    }
+    return pika_false;
+}
+
 enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
                                      char inputChar,
                                      ShellConfig* shell) {
@@ -1995,7 +2018,7 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
             obj_setStr(self, shell->blockBuffName, shell_buff_new);
             strsDeinit(&buffs);
             /* go out from block */
-            if ((shell->lineBuff[0] != ' ') && (shell->lineBuff[0] != '\t')) {
+            if (!_shell_lineStaysInBlock(shell->lineBuff)) {
                 shell->inBlock = pika_false;
                 input_line = obj_getStr(self, shell->blockBuffName);
                 ctrl = shell->handler(self, input_line, shell);
