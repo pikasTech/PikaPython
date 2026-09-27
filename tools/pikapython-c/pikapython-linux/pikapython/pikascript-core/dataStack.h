@@ -48,6 +48,11 @@ Arg* stack_checkArg(Stack* stack, int index);
 int32_t stack_pushArg(Stack* stack, Arg* arg);
 Arg* stack_popArg_alloc(Stack* stack);
 Arg* stack_popArg(Stack* stack, Arg* arg_dict);
+pika_bool stack_popInt2(Stack* stack, int64_t* left, int64_t* right);
+pika_bool stack_popIntOrBool(Stack* stack,
+                             ArgType* type,
+                             int64_t* int_val,
+                             pika_bool* bool_val);
 int32_t stack_getTop(Stack* stack);
 int32_t stack_init(Stack* stack);
 int32_t _stack_init(Stack* stack, size_t stack_size);

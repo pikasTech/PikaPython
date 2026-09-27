@@ -8,8 +8,6 @@ ADD_DEFINITIONS(
         -DCROSS_BUILD
 )
 aux_source_directory(pikascript/pikascript-core pikascript-core)
-aux_source_directory(pikascript/pikascript-lib/PikaStdLib PikaStdLib)
-aux_source_directory(pikascript/pikascript-api pikascript-api)
 include_directories(pikascript/pikascript-core)
 include_directories(pikascript/pikascript-api)
 include_directories(pikascript/pikascript-lib/PikaStdLib)
@@ -19,8 +17,6 @@ link_directories(libpikabinder)
 
 add_executable(pikaByteCodeGen main.c
                ${pikascript-core}
-               ${PikaStdLib}
-               ${pikascript-api}
 )
 
 OPTION(CROSS_COMPILE "cross-compile" OFF)
