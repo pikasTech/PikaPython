@@ -4341,9 +4341,11 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     char* data = PikaVMFrame_getConstWithInstructUnit(vm, ins_unit);
     /* run instruct */
     pika_assert(NULL != vm->vm_thread);
+#if PIKA_DEBUG_BREAK_POINT_MAX
     if (PikaVMFrame_checkBreakPoint(vm)) {
         pika_debug_set_trace(self);
     }
+#endif
 
 #if PIKA_INSTRUCT_EXTENSION_ENABLE
     const VMInstruction* ins = instructUnit_getInstruct(instruct);
@@ -4358,7 +4360,8 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     return_arg = VM_instruct_handler_table[instruct](self, vm, data, &ret_reg);
 #endif
 
-    if (pikaVMFrame_checkErrorStack(vm) != PIKA_RES_OK ||
+    PIKA_RES error_stack_result = pikaVMFrame_checkErrorStack(vm);
+    if (error_stack_result != PIKA_RES_OK ||
         VMSignal_getCtrl() == VM_SIGNAL_CTRL_EXIT) {
         /* raise jmp */
         if (vm->vm_thread->try_state != TRY_STATE_NONE) {
@@ -4370,7 +4373,7 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     }
 
 #if PIKA_BUILTIN_STRUCT_ENABLE
-    int invoke_deepth = PikaVMFrame_getInvokeDeepthNow(vm);
+    int invoke_deepth = instructUnit_getInvokeDeepth(ins_unit);
     if (invoke_deepth > 0) {
         PikaObj* oReg = vm->oreg[invoke_deepth - 1];
         if (NULL != oReg && NULL != return_arg) {
@@ -4424,7 +4427,7 @@ __next_line:
     pc_next = vm->pc + instructUnit_getSize();
 
     /* jump to next line */
-    if (pikaVMFrame_checkErrorStack(vm) != PIKA_RES_OK) {
+    if (error_stack_result != PIKA_RES_OK) {
         while (1) {
             if (pc_next >= (int)PikaVMFrame_getInstructArraySize(vm)) {
                 pc_next = VM_PC_EXIT;
